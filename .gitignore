@@ -1,0 +1,65 @@
+# You can keep your repository small and manageable with a .gitignore file.
+# Prevent build artifacts, large binary files, and other large file types
+# such as log files, media files, and executables from slowing down your workflow.
+#
+# If you need to keep large files in Bitbucket, consider introducing
+# Git Large File Storage (Git LFS) as part of your workflow.
+#
+# Learn more about .gitignore:
+#     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+# Learn more about Git LFS for large files:
+#     https://www.atlassian.com/git/tutorials/git-lfs
++*.iml
++.gradle
++/local.properties
++/.idea/caches
++/.idea/libraries
++/.idea/modules.xml
++/.idea/workspace.xml
++/.idea/navEditor.xml
++/.idea/assetWizardSettings.xml
++.DS_Store
++/build
++/captures
++.externalNativeBuild
++
++#built application files
++*.apk
++*.ap_
++
++# files for the dex VM
++*.dex
++
++# Java class files
++*.class
++
++# generated files
++bin/
++gen/
++
++# Local configuration file (sdk path, etc)
++local.properties
++
++# Windows thumbnail db
++Thumbs.db
++
++# OSX files
++.DS_Store
++
++# Eclipse project files
++.classpath
++.project
++
++# Android Studio
++*.iml
++.idea
++#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
++.gradle
++build/
++
++#NDK
++obj/
++
++
++*.swp
++*~
