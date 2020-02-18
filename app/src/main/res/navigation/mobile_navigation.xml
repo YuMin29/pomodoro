@@ -9,35 +9,41 @@
         android:id="@+id/nav_home"
         android:name="com.yumin.pomodoro.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home"/>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.yumin.pomodoro.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_backup"
+        android:name="com.yumin.pomodoro.ui.backuo.BackupFragment"
+        android:label="@string/menu_backup"
+        tools:layout="@layout/fragment_backup" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.yumin.pomodoro.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_restore"
+        android:name="com.yumin.pomodoro.ui.restore.RestoreFragment"
+        android:label="@string/menu_restore"
+        tools:layout="@layout/fragment_restore" />
 
     <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.yumin.pomodoro.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
+        android:id="@+id/nav_total"
+        android:name="com.yumin.pomodoro.ui.total.TotalFragment"
+        android:label="@string/menu_total"
+        tools:layout="@layout/fragment_total" />
 
     <fragment
-        android:id="@+id/nav_share"
-        android:name="com.yumin.pomodoro.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
+        android:id="@+id/nav_calender"
+        android:name="com.yumin.pomodoro.ui.calender.CalenderFragment"
+        android:label="@string/menu_calender"
+        tools:layout="@layout/fragment_calender" />
 
     <fragment
-        android:id="@+id/nav_send"
-        android:name="com.yumin.pomodoro.ui.send.SendFragment"
-        android:label="@string/menu_send"
-        tools:layout="@layout/fragment_send" />
+        android:id="@+id/nav_save_mission"
+        android:name="com.yumin.pomodoro.ui.save_mission.SaveMissionFragment"
+        android:label="@string/menu_save_mission"
+        tools:layout="@layout/fragment_save_mission" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.yumin.pomodoro.ui.settings.SenttingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

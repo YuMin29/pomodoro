@@ -1,14 +1,14 @@
-package com.yumin.pomodoro.ui.tools;
+package com.yumin.pomodoro.ui.calender;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class ToolsViewModel extends ViewModel {
+public class CalenderViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public ToolsViewModel() {
+    public CalenderViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is tools fragment");
     }
