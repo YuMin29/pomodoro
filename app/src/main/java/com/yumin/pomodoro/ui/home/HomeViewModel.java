@@ -4,21 +4,18 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
+import com.yumin.pomodoro.data.Mission;
+
 import java.util.List;
 
 public class HomeViewModel extends ViewModel {
-    MutableLiveData<List<String>> mList;
+    MutableLiveData<List<Mission>> mMissionList;
 
     public HomeViewModel(){
-        mList = new MutableLiveData<>();
-        List<String> data = new ArrayList<>();
-        data.add("aaaa");
-        data.add("bbbb");
-        mList.setValue(data);
+        mMissionList = new MutableLiveData<>();
     }
 
-    public LiveData<List<String>> getList(){
-        return mList;
+    public LiveData<List<Mission>> getList(){
+        return mMissionList;
     }
 }
