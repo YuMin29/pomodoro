@@ -6,16 +6,30 @@ import androidx.lifecycle.ViewModel;
 
 import com.yumin.pomodoro.data.Mission;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeViewModel extends ViewModel {
-    MutableLiveData<List<Mission>> mMissionList;
+    MutableLiveData<List<Mission>> mMissions;
 
     public HomeViewModel(){
-        mMissionList = new MutableLiveData<>();
+        mMissions = new MutableLiveData<>();
     }
 
     public LiveData<List<Mission>> getList(){
-        return mMissionList;
+        if (mMissions == null) {
+            mMissions = new MutableLiveData<List<Mission>>();
+            loadMissions();
+        }
+        return mMissions;
+    }
+
+    private void loadMissions(){
+        // Do an asynchronous operation to fetch missions.
+        // Define default mission items in here.
+        List<Mission> defaultMission = new ArrayList<>();
+        defaultMission.add(new Mission("test1"));
+        defaultMission.add(new Mission("test2"));
+        mMissions.setValue(defaultMission);
     }
 }

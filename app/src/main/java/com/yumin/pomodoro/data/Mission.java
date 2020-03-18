@@ -25,6 +25,7 @@ public class Mission {
     }
 
 
-    public Mission() {
+    public Mission(String name) {
+        mName = name;
     }
 }

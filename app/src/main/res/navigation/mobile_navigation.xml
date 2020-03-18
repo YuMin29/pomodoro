@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/nav_backup"
-        android:name="com.yumin.pomodoro.ui.backuo.BackupFragment"
+        android:name="com.yumin.pomodoro.ui.backup.BackupFragment"
         android:label="@string/menu_backup"
         tools:layout="@layout/fragment_backup" />
 
