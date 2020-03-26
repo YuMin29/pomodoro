@@ -10,7 +10,7 @@ public class BackupViewModel extends ViewModel {
 
     public BackupViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is backup fragment");
     }
 
     public LiveData<String> getText() {

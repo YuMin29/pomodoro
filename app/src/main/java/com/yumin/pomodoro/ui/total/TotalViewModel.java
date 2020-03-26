@@ -10,7 +10,7 @@ public class TotalViewModel extends ViewModel {
 
     public TotalViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("This is total fragment");
     }
 
     public LiveData<String> getText() {

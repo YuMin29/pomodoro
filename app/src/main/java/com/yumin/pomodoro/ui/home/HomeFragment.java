@@ -5,38 +5,46 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.Mission;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
     private HomeViewModel mHomeViewModel;
-    ArrayAdapter<Mission> mAdapter;
+    ArrayAdapter<String> mAdapter;
+    List<String> missionNames = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home,container,false);
-        mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        final ListView listView = root.findViewById(R.id.home_list_view);
+        return root;
+    }
 
-        mHomeViewModel.getList().observe(getViewLifecycleOwner(), missions -> {
-            // Update the ui
-            mAdapter = new ArrayAdapter<Mission>(getContext(), android.R.layout.simple_list_item_1);
-            listView.setAdapter(mAdapter);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        final ListView listView = view.findViewById(R.id.home_list_view);
+        mAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, missionNames);
+        listView.setAdapter(mAdapter);
+        observeViewModel();
+    }
+
+    private void observeViewModel(){
+        mHomeViewModel.getStringList().observe(getViewLifecycleOwner(), missionItems -> {
+            // Load data & update the ui
+            missionNames.addAll(missionItems);
             mAdapter.notifyDataSetChanged();
         });
-        return root;
     }
 }

@@ -24,6 +24,17 @@ public class HomeViewModel extends ViewModel {
         return mMissions;
     }
 
+    public LiveData<List<String>> getStringList(){
+        MutableLiveData<List<String>> list = new MutableLiveData<>();
+        List<String> data = new ArrayList<>();
+        data.add("000");
+        data.add("111");
+
+        list.setValue(data);
+
+        return list;
+    }
+
     private void loadMissions(){
         // Do an asynchronous operation to fetch missions.
         // Define default mission items in here.

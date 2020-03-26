@@ -10,7 +10,7 @@ public class SaveMissionViewModel extends ViewModel {
 
     public SaveMissionViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is share fragment");
+        mText.setValue("This is save fragment");
     }
 
     public LiveData<String> getText() {

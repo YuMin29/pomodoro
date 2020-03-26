@@ -10,7 +10,7 @@ public class RestoreViewModel extends ViewModel {
 
     public RestoreViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("This is restore fragment");
     }
 
     public LiveData<String> getText() {
