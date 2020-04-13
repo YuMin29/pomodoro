@@ -28,4 +28,8 @@ public class Mission {
     public Mission(String name) {
         mName = name;
     }
+
+    public String getName(){
+        return mName;
+    }
 }
