@@ -12,42 +12,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeViewModel extends ViewModel {
+    private boolean DEBUG = true;
+    private static final String TAG = "[HomeViewModel]";
     private MutableLiveData<List<Mission>> mMissions = null;
     private MutableLiveData<Boolean> mIsLoading;
 
     public HomeViewModel(){
         mMissions = new MutableLiveData<List<Mission>>();
         mIsLoading = new MutableLiveData<Boolean>();
+        loadMissions();
     }
 
     public LiveData<List<Mission>> getMissionList(){
-        Log.d("[Stella]","getMissionList");
-
-        mMissions = new MutableLiveData<List<Mission>>();
-        loadMissions();
-
+        if (DEBUG)
+            Log.d(TAG,"getMissionList");
         return mMissions;
     }
     
     public LiveData<Boolean> getLoading(){
-        if (mIsLoading == null) {
-            mIsLoading = new MutableLiveData<Boolean>();
-            mIsLoading.setValue(false);
-        }
+        if (DEBUG)
+            Log.d(TAG,"getLoading");
 		return mIsLoading;
 	}
 
-    public LiveData<List<String>> getStringList(){
-        MutableLiveData<List<String>> list = new MutableLiveData<>();
-        List<String> data = new ArrayList<>();
-        data.add("000");
-        data.add("111");
-        list.setValue(data);
-        return list;
-    }
-
     private void loadMissions(){
-        Log.d("[Stella]","loadMissions");
+        if (DEBUG)
+            Log.d(TAG,"loadMissions");
+
         mIsLoading.setValue(true);
         // Do an asynchronous operation to fetch missions.
         // Define default mission items in here.
