@@ -1,6 +1,9 @@
 
 package com.yumin.pomodoro;
 
+import android.app.FragmentManager;
+
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -14,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.yumin.pomodoro.ui.home.AddMissionFragment;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -36,8 +40,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                AddMissionFragment fragment = new AddMissionFragment();
+                fragmentTransaction.replace(R.id.nav_host_fragment, fragment, "ADD");
+                fragmentTransaction.commit();
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

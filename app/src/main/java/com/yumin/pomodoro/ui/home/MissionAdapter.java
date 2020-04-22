@@ -17,14 +17,12 @@ public class MissionAdapter extends BaseAdapter {
     LayoutInflater layoutInflater = null;
 
     public MissionAdapter(List<Mission> missions, Context context){
-        Log.d("[Stella]","MissionAdapter");
         if (layoutInflater == null)
             layoutInflater = LayoutInflater.from(context);
         this.missions = missions;
     }
 
     public void updateData(List<Mission> missions){
-        Log.d("[Stella]","updateData");
         this.missions = missions;
     }
 
@@ -45,7 +43,6 @@ public class MissionAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        Log.d("[Stella]","getView");
         MissionViewHolder missionViewHolder = null;
         if (view == null) {
             missionViewHolder = new MissionViewHolder();
@@ -60,13 +57,11 @@ public class MissionAdapter extends BaseAdapter {
         }
 
         Mission mission = (Mission) getItem(position);
-
         if (mission != null) {
-            Log.d("[Stella]","mission is not null, name = "+mission.getName());
             missionViewHolder.itemName.setText(mission.getName());
-        } else
-            Log.d("[Stella]","mission is null");
-
+            missionViewHolder.itemDay.setText(String.valueOf(mission.getDay()));
+            missionViewHolder.itemType.setText(mission.getType().toString());
+        }
         return view;
     }
 }

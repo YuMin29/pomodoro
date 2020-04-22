@@ -21,7 +21,7 @@ public class Mission {
 	public enum Repeat{NONE,EVERYDAY,MON,TUE,WED,THU,FRI,SAT,SUN;}
 	
     public Mission(String name, Type type, int time) {
-        this(name, type, time, null, -1, -1, -1, -1);
+        this(name, type, time, null, -1, 0, -1, -1);
     }
 
     public Mission(String name, Type type, int time, Drawable icon, int color, int day, int frequency, int repeat) {
@@ -81,5 +81,13 @@ public class Mission {
 
     public void setRepeat(int repeat) {
         mRepeat = repeat;
+    }
+
+    public int getDay(){
+	    return mDay;
+    }
+
+    public void setDay(int day){
+	    mDay = day;
     }
 }
