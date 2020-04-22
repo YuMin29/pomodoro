@@ -7,29 +7,79 @@ import java.util.List;
 
 public class Mission {
     protected String mName;
-    protected int mType;
-    private Drawable mIcon;
-    protected int mRepeatType;
+    protected Type mType;
     protected int mTime;
+    private Drawable mIcon;
     private int mColor;
+    private int mDay;
+    private int mFrequency;
+    private int mRepeat;
     private List<SubMission> mSubMissions;
     private List<SubMission> mSavedSubMissions;
 
-    public Mission(String name, int type, int time, int color, Drawable icon, int repeatType){
+	public enum Type{DEFAULT,NONE,COUNT;}
+	public enum Repeat{NONE,EVERYDAY,MON,TUE,WED,THU,FRI,SAT,SUN;}
+	
+    public Mission(String name, Type type, int time) {
+        this(name, type, time, null, -1, -1, -1, -1);
+    }
+
+    public Mission(String name, Type type, int time, Drawable icon, int color, int day, int frequency, int repeat) {
         mName = name;
         mType = type;
         mTime = time;
-        mColor = color;
         mIcon = icon;
-        repeatType = repeatType;
+        mColor = color;
+        mDay = day;
+        mFrequency = frequency;
+        mRepeat = repeat;
     }
 
+    public String getName() {
+        return mName;
+    }
 
-    public Mission(String name) {
+    public void setName(String name) {
         mName = name;
     }
 
-    public String getName(){
-        return mName;
+    public Type getType() {
+        return mType;
+    }
+
+    public void setType(Type type) {
+        mType = type;
+    }
+
+    public int getTime() {
+        return mTime;
+    }
+
+    public void setTime(int time) {
+        mTime = time;
+    }
+
+    public int getColor() {
+        return mColor;
+    }
+
+    public void setColor(int color) {
+        mColor = color;
+    }
+
+    public Drawable getIcon() {
+        return mIcon;
+    }
+
+    public void setIcon(Drawable icon) {
+        mIcon = icon;
+    }
+
+    public int getRepeat() {
+        return mRepeat;
+    }
+
+    public void setRepeat(int repeat) {
+        mRepeat = repeat;
     }
 }

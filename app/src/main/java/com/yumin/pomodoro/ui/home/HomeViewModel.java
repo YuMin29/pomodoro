@@ -43,11 +43,11 @@ public class HomeViewModel extends ViewModel {
         // Do an asynchronous operation to fetch missions.
         // Define default mission items in here.
         List<Mission> defaultMission = new ArrayList<>();
-        defaultMission.add(new Mission("test1"));
-        defaultMission.add(new Mission("test2"));
-        defaultMission.add(new Mission("test3"));
-        defaultMission.add(new Mission("test4"));
-        defaultMission.add(new Mission("test5"));
+        defaultMission.add(new Mission("test1", Mission.Type.DEFAULT,10));
+        defaultMission.add(new Mission("test2", Mission.Type.DEFAULT,10));
+        defaultMission.add(new Mission("test3", Mission.Type.DEFAULT,10));
+        defaultMission.add(new Mission("test4", Mission.Type.DEFAULT,10));
+        defaultMission.add(new Mission("test5", Mission.Type.DEFAULT,10));
         mMissions.setValue(defaultMission);
         mIsLoading.setValue(false);
     }

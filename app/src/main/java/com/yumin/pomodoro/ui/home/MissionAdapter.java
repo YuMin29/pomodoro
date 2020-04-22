@@ -51,6 +51,8 @@ public class MissionAdapter extends BaseAdapter {
             missionViewHolder = new MissionViewHolder();
             view = layoutInflater.inflate(R.layout.mission_item_layout,viewGroup,false);
             missionViewHolder.itemName = view.findViewById(R.id.item_name);
+            missionViewHolder.itemDay  = view.findViewById(R.id.item_day);
+            missionViewHolder.itemType  = view.findViewById(R.id.item_type);
             view.setTag(missionViewHolder);
 
         } else {
