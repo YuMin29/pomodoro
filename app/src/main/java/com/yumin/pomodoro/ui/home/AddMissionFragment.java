@@ -7,20 +7,23 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.yumin.pomodoro.R;
 
 public class AddMissionFragment extends Fragment {
 
-    public AddMissionFragment(){
-
+    public AddMissionFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_mission, container, false);
+        Toolbar toolbar = root.findViewById(R.id.fragment_add_toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         return root;
     }
 
