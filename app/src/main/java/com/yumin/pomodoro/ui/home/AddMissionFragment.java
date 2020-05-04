@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public class AddMissionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_add_mission, container, false);
         Toolbar toolbar = root.findViewById(R.id.fragment_add_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        toolbar.setTitle("新增任務");
         return root;
     }
 

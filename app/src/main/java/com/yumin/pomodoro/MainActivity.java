@@ -40,14 +40,13 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+                // jump to add mission fragment
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
                 AddMissionFragment fragment = new AddMissionFragment();
                 fragmentTransaction.replace(R.id.fragment_container, fragment, "ADD");
                 fragmentTransaction.commit();
+                fragmentTransaction.addToBackStack(null);
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
