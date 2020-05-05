@@ -23,7 +23,7 @@ public class AddMissionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_mission, container, false);
-        Toolbar toolbar = root.findViewById(R.id.fragment_add_toolbar);
+        Toolbar toolbar = root.findViewById(R.id.add_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle("新增任務");
         return root;
