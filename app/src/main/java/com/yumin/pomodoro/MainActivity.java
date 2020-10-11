@@ -1,23 +1,34 @@
 
 package com.yumin.pomodoro;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+<<<<<<< HEAD
 import androidx.fragment.app.FragmentManager;
+=======
+>>>>>>> d7e87be... tmp
 
+import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
 
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+<<<<<<< HEAD
 import com.yumin.pomodoro.ui.home.AddMissionFragment;
+=======
+>>>>>>> d7e87be... tmp
+import com.yumin.pomodoro.utils.IFragmentListener;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -25,28 +36,36 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener, IFragmentListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+    static TextView mToolbarTitle = null;
+<<<<<<< HEAD
+=======
+    private NavController mNavController;
+>>>>>>> d7e87be... tmp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set status bar color as tool bar color
+        setStatusBarGradient(this);
         setContentView(R.layout.activity_main);
+        // set toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mToolbarTitle = findViewById(R.id.tool_bar_title);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // jump to add mission fragment
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                AddMissionFragment fragment = new AddMissionFragment();
-                fragmentTransaction.replace(R.id.fragment_container, fragment, "ADD");
-                fragmentTransaction.commit();
-                fragmentTransaction.addToBackStack(null);
+                mNavController.navigate(R.id.add_mission_fragment);
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -58,10 +77,44 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_calender, R.id.nav_save_mission, R.id.nav_settings)
                 .setDrawerLayout(drawer)
                 .build();
+<<<<<<< HEAD
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.addOnDestinationChangedListener(this);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+=======
+        mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        mNavController.addOnDestinationChangedListener(this);
+        NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, mNavController);
+>>>>>>> d7e87be... tmp
     }
+
+    public static void setStatusBarGradient(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = activity.getWindow();
+            Drawable background = activity.getResources().getDrawable(R.drawable.background);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
+            window.setNavigationBarColor(activity.getResources().getColor(android.R.color.transparent));
+            window.setBackgroundDrawable(background);
+        }
+    }
+    
+    @Override
+    public void switchFragment(String fragmentName){
+<<<<<<< HEAD
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		if ("AddMissionFragment".contentEquals(fragmentName)) {
+			AddMissionFragment fragment = new AddMissionFragment();
+            transaction.replace(R.id.fragment_container, fragment, "AppManageFragment")
+                    .addToBackStack(fragment.getClass().getName())
+                    .commit();
+        }
+=======
+        mNavController.navigate(R.id.add_mission_fragment);
+>>>>>>> d7e87be... tmp
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,5 +128,14 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
+        mToolbarTitle.setText(navDestination.getLabel().toString());
+    }
+
+    public static void setToolbarTitle(String tile) {
+        mToolbarTitle.setText(tile);
     }
 }

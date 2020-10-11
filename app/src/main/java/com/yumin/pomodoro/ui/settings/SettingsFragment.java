@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.yumin.pomodoro.R;
 
-public class SenttingsFragment extends Fragment {
+public class SettingsFragment extends Fragment {
 
     private SettingsViewModel sendViewModel;
 

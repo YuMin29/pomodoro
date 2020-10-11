@@ -1,24 +1,33 @@
 package com.yumin.pomodoro.data;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
+
+import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
 
 public class Mission {
-    protected String mName;
-    protected Type mType;
-    protected int mTime;
-    private Drawable mIcon;
-    private int mColor;
-    private int mDay;
-    private int mFrequency;
-    private int mRepeat;
+    public String mName;
+    public Type mType;
+    public int mTime;
+    public Drawable mIcon;
+    public int mColor;
+    public int mDay;
+    public int mFrequency;
+    public int mRepeat;
     private List<SubMission> mSubMissions;
     private List<SubMission> mSavedSubMissions;
 
 	public enum Type{DEFAULT,NONE,COUNT;}
 	public enum Repeat{NONE,EVERYDAY,MON,TUE,WED,THU,FRI,SAT,SUN;}
+
+	private static final String TAG = "[Mission]";
+
+	public Mission(String name) {
+        this(name, Type.COUNT, 0, null, -1, 0, -1, -1);
+    }
 	
     public Mission(String name, Type type, int time) {
         this(name, type, time, null, -1, 0, -1, -1);
@@ -40,6 +49,7 @@ public class Mission {
     }
 
     public void setName(String name) {
+        LogUtil.logD(TAG,"[setName] name = "+name);
         mName = name;
     }
 

@@ -9,9 +9,27 @@
 
     <string name="menu_home">首頁</string>
     <string name="menu_backup">備份數據</string>
-    <string name="menu_restore">拉取數據</string>
+    <string name="menu_restore">還原數據</string>
     <string name="menu_total">統計</string>
     <string name="menu_calender">時間流</string>
-    <string name="menu_save_mission">已歸檔任務</string>
+    <string name="menu_save_mission">已完成任務</string>
     <string name="menu_settings">設置</string>
+    <string name="menu_category">Category</string>
+    <string name="count_list_not_finish_mission">未完成任務</string>
+    <string name="count_list_finish_mission">已完成任務</string>
+    <string name="count_list_time">預計時間</string>
+    <string name="count_list_finish_time">已用時間</string>
+    
+    
+    <string name="mission_time">時間</string>
+    <string name="mission_break">休息時間</string>
+    <string name="mission_repeat">重複</string>
+    <string name="mission_goal">目標</string>
+    <string name="mission_theme">主題</string>
+    <string name="mission_sound">背景音</string>
+    <string name="mission_sound_level">音量</string>
+    <string name="mission_notification">顯示通知</string>
+    <string name="mission_day">執行日</string>
+
+    <string name="default_val">0</string>
 </resources>

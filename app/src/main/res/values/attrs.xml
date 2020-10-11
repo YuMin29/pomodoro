@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<<<<<<< HEAD
+
+=======
+    <declare-styleable name="CountView">
+        <attr name="add_num_visibility" format="integer"></attr>
+        <attr name="minus_num" format="integer"></attr>
+        <attr name="android:text"></attr>
+        <attr name="android:description"></attr>
+    </declare-styleable>
+>>>>>>> d7e87be... tmp
+</resources>
