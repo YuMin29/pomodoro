@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FFFFFF">
-
-    <Button
-        android:id="@+id/add_num"
-        android:layout_width="0dp"
-=======
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -21,29 +9,11 @@
     <Button
         android:id="@+id/add_num"
         android:layout_width="wrap_content"
->>>>>>> d7e87be... tmp
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:background="@color/layout_item_background"
         android:stateListAnimator="@null"
         android:text="+"
-<<<<<<< HEAD
-        android:textColor="@android:color/tab_indicator_text"
-        app:layout_constraintEnd_toStartOf="@+id/count_linearLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.1" />
-
-    <LinearLayout
-        android:id="@+id/count_linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toStartOf="@+id/minus_num"
-        app:layout_constraintStart_toEndOf="@+id/add_num"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.8">
-=======
         android:textColor="@android:color/tab_indicator_text" />
 
     <LinearLayout
@@ -51,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
->>>>>>> d7e87be... tmp
 
         <TextView
             android:id="@+id/num_textview"
@@ -76,27 +45,12 @@
 
     <Button
         android:id="@+id/minus_num"
-<<<<<<< HEAD
-        android:layout_width="0dp"
-=======
         android:layout_width="wrap_content"
->>>>>>> d7e87be... tmp
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:background="@color/layout_item_background"
         android:stateListAnimator="@null"
         android:text="-"
-<<<<<<< HEAD
-        android:textColor="@android:color/tab_indicator_text"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/count_linearLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.1" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-=======
         android:textColor="@android:color/tab_indicator_text" />
 
 </LinearLayout>
->>>>>>> d7e87be... tmp

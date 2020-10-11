@@ -12,11 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
-<<<<<<< HEAD
-=======
 import com.yumin.pomodoro.R;
->>>>>>> d7e87be... tmp
 import com.yumin.pomodoro.data.Category;
 import com.yumin.pomodoro.data.Mission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
@@ -57,13 +53,8 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-<<<<<<< HEAD
-=======
-
         mFragmentHomeBinding.setViewModel(mHomeViewModel);
         mFragmentHomeBinding.setLifecycleOwner(this);
-
->>>>>>> d7e87be... tmp
         mFragmentHomeBinding.homeListView.setAdapter(mCategoryAdapter);
         mFragmentHomeBinding.homeListView.setGroupIndicator(null);
         mFragmentHomeBinding.homeListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {

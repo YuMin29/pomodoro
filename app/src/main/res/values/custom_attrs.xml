@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CountView">
-        <attr name="add_num_visibility" format="integer" />
-        <attr name="minus_num_visibility" format="integer" />
-    </declare-styleable>
+<!--    <declare-styleable name="CountView">-->
+<!--        <attr name="add_num_visibility" format="integer" />-->
+<!--        <attr name="minus_num_visibility" format="integer" />-->
+<!--    </declare-styleable>-->
 </resources>

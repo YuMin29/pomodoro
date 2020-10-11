@@ -3,11 +3,6 @@ package com.yumin.pomodoro;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-<<<<<<< HEAD
-import androidx.fragment.app.FragmentManager;
-=======
->>>>>>> d7e87be... tmp
-
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -24,10 +19,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-<<<<<<< HEAD
-import com.yumin.pomodoro.ui.home.AddMissionFragment;
-=======
->>>>>>> d7e87be... tmp
 import com.yumin.pomodoro.utils.IFragmentListener;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -44,11 +35,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
     private AppBarConfiguration mAppBarConfiguration;
     static TextView mToolbarTitle = null;
-<<<<<<< HEAD
-=======
     private NavController mNavController;
->>>>>>> d7e87be... tmp
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,17 +64,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 R.id.nav_calender, R.id.nav_save_mission, R.id.nav_settings)
                 .setDrawerLayout(drawer)
                 .build();
-<<<<<<< HEAD
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.addOnDestinationChangedListener(this);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-=======
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
         mNavController.addOnDestinationChangedListener(this);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, mNavController);
->>>>>>> d7e87be... tmp
     }
 
     public static void setStatusBarGradient(Activity activity) {
@@ -103,17 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     
     @Override
     public void switchFragment(String fragmentName){
-<<<<<<< HEAD
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		if ("AddMissionFragment".contentEquals(fragmentName)) {
-			AddMissionFragment fragment = new AddMissionFragment();
-            transaction.replace(R.id.fragment_container, fragment, "AppManageFragment")
-                    .addToBackStack(fragment.getClass().getName())
-                    .commit();
-        }
-=======
         mNavController.navigate(R.id.add_mission_fragment);
->>>>>>> d7e87be... tmp
 	}
 
     @Override
