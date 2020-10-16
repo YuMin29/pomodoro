@@ -25,6 +25,10 @@ public class Mission {
 
 	private static final String TAG = "[Mission]";
 
+	public Mission(){
+        this(null, null, 0, null, -1, 0, -1, -1);
+    }
+
 	public Mission(String name) {
         this(name, Type.COUNT, 0, null, -1, 0, -1, -1);
     }

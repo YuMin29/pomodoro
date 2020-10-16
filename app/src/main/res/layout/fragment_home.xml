@@ -15,17 +15,48 @@
         android:layout_height="match_parent"
         android:background="@color/layout_main_background">
 
-        <com.yumin.pomodoro.utils.CountList
-            android:id="@+id/count_list_view"
+        <LinearLayout
+            android:id="@+id/linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="visible"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.yumin.pomodoro.utils.CountView
+                android:id="@+id/countView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/count_list_finish_mission"
+                android:text="@string/default_val"
+                android:layout_weight="1"/>
+
+            <com.yumin.pomodoro.utils.CountView
+                android:id="@+id/countView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/count_list_not_finish_mission"
+                android:text="@string/default_val"
+                android:layout_weight="1"/>
+
+            <com.yumin.pomodoro.utils.CountView
+                android:id="@+id/countView3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/count_list_time"
+                android:text="@string/default_val"
+                android:layout_weight="1"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/add_item"
@@ -41,7 +72,7 @@
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/count_list_view" />
+            app:layout_constraintTop_toBottomOf="@+id/linear" />
 
         <ExpandableListView
             android:id="@+id/home_list_view"
