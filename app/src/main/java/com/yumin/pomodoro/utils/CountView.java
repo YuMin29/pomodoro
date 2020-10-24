@@ -24,103 +24,29 @@ public class CountView extends LinearLayout {
     private String mDescription;
     private TextView mDescriptionView;
     private TextView mNumView;
-    private Button mAddButton;
-    private Button mMinusButton;
+    public Button mAddButton;
+    public Button mMinusButton;
     CountViewBindingImpl mCountViewBinding;
-
-    public CountView(Context context,int addNumVisibility,int minusNumVisibility,String numText,int descTextResId){
-        this(context);
-        setAddButtonVisibility(addNumVisibility);
-        setMinusButtonVisibility(minusNumVisibility);
-        setCountText(numText);
-        setDescriptionText(descTextResId);
-    }
 
     public CountView(Context context) {
         super(context);
-    }
-
-    public CountView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        initView(context, attrs);
-    }
-
-    public CountView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initView(context, attrs);
-    }
-
-    private void initView(Context context, AttributeSet attributeSet) {
         inflateCountView(context);
-
-        TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CountView);
-        LogUtil.logD(TAG, "attr length: " + typedArray.length());
-        @SuppressLint("num") CharSequence num = typedArray.getText(R.styleable.CountView_android_text);
-        LogUtil.logD(TAG, "attr num: " + num);
-        setCountText(num.toString());
-        mCount = Integer.valueOf(num.toString());
-
-        @SuppressLint("Description") CharSequence des = typedArray.getText(R.styleable.CountView_android_description);
-        LogUtil.logD(TAG, "attrs des:" + des);
-        setDescriptionText(des.toString());
-
-        @SuppressLint("Add") int addVisibility = typedArray.getInt(R.styleable.CountView_add_button_visibility, DEFAULT_BUTTON_GONE_VAL);
-        LogUtil.logD(TAG, "addVisibility " + addVisibility);
-        setAddButtonVisibility(addVisibility);
-
-        @SuppressLint("Minus") int minusVisibility = typedArray.getInt(R.styleable.CountView_minus_button_visibility, DEFAULT_BUTTON_GONE_VAL);
-        LogUtil.logD(TAG, "minusVisibility " + minusVisibility);
-        setMinusButtonVisibility(minusVisibility);
-        typedArray.recycle();
     }
 
     private void inflateCountView(Context context) {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mCountViewBinding = DataBindingUtil.inflate(inflater, R.layout.count_view,this,true);
+        mAddButton = mCountViewBinding.addNum;
+        mAddButton = mCountViewBinding.minusNum;
     }
 
-    private void setCountText(String num) {
-        mNumView = findViewById(R.id.num_textview);
-        mNumView.setText(String.valueOf(num));
-    }
+    public void setViewModel(){
 
-    private void setDescriptionText(String des) {
-        mDescriptionView = findViewById(R.id.description_textview);
-        mDescriptionView.setText(des);
-    }
-
-    private void setDescriptionText(int des) {
-        mDescriptionView = findViewById(R.id.description_textview);
-        mDescriptionView.setText(des);
-    }
-
-
-    private void setAddButtonVisibility(int addVisibility) {
-        mAddButton = findViewById(R.id.add_num);
-        mAddButton.setVisibility(addVisibility);
-    }
-
-    private void setMinusButtonVisibility(int minusVisibility) {
-        mMinusButton = findViewById(R.id.minus_num);
-        mMinusButton.setVisibility(minusVisibility);
-    }
-
-    public int getCount(){
-        return mCount;
-    }
-
-    public void setShowNumText(String num){
-        mNumView.setText(num);
-    }
-
-    public void setListener(CountViewListener countViewListener) {
-        mAddButton.setOnClickListener(countViewListener.onAddButtonClick());
-        mMinusButton.setOnClickListener(countViewListener.onMinusButtonClock());
     }
 
     public interface CountViewListener{
-        public View.OnClickListener onAddButtonClick();
-        public View.OnClickListener onMinusButtonClock();
+        public void onAddButtonClick(View view,int position);
+        public void onMinusButtonClock(View view,int position);
     }
 
     public interface CountViewModel{

@@ -2,13 +2,18 @@ package com.yumin.pomodoro.ui.home;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.databinding.BindingAdapter;
 
+import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.utils.BaseBindingAdapter;
 import com.yumin.pomodoro.utils.CountView;
+import com.yumin.pomodoro.utils.CountViewItem;
 import com.yumin.pomodoro.utils.LogUtil;
 
 public class AddMissionEventHandler {
@@ -16,35 +21,51 @@ public class AddMissionEventHandler {
     private TextWatcher textWatcher;
     private AddMissionViewModel mAddMissionViewModel;
     public CountView.CountViewListener countViewListener;
+    private BaseBindingAdapter.OnItemClickListener mOnItemClickListener;
+    private BaseBindingAdapter.OnItemLongClickListener mOnItemLongClickListener;
 
     public AddMissionEventHandler(AddMissionViewModel addMissionViewModel) {
         mAddMissionViewModel = addMissionViewModel;
         this.textWatcher = getTextWatcherIns();
         countViewListener = new CountView.CountViewListener() {
             @Override
-            public View.OnClickListener onAddButtonClick() {
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        LogUtil.logD(TAG, "[onAddButtonClick] id = " + v.getId());
-                    }
-                };
+            public void onAddButtonClick(View view, int position) {
+                LogUtil.logD(TAG,"[onAddButtonClick] position = "+position);
             }
 
             @Override
-            public View.OnClickListener onMinusButtonClock() {
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        LogUtil.logD(TAG, "[onMinusButtonClock] id = " + v.getId());
-                    }
-                };
+            public void onMinusButtonClock(View view, int position) {
+                LogUtil.logD(TAG,"[onMinusButtonClock] position = "+position);
+            }
+        };
+
+        mOnItemClickListener = new BaseBindingAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                LogUtil.logD(TAG,"[onItemClick] position = "+position);
+                if (view.getId() == R.id.add_item)
+                    LogUtil.logD(TAG,"[onItemClick] view.getId() = "+view.getId());
+            }
+        };
+
+        mOnItemLongClickListener = new BaseBindingAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                LogUtil.logD(TAG,"[onItemLongClick] position = "+position);
             }
         };
     }
 
-    public void onCountViewClick(View view){
-        LogUtil.logD(TAG, "[onCountViewClick] id = " + view.getId());
+    public BaseBindingAdapter.OnItemClickListener getOnItemClickListener(){
+        return this.mOnItemClickListener;
+    }
+
+    public BaseBindingAdapter.OnItemLongClickListener getOnItemLongClickListener(){
+        return this.mOnItemLongClickListener;
+    }
+
+    public CountView.CountViewListener getCountViewListener(){
+        return countViewListener;
     }
 
     private TextWatcher getTextWatcherIns() {

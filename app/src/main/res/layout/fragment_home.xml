@@ -24,38 +24,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.yumin.pomodoro.utils.CountView
-                android:id="@+id/countView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/count_list_finish_mission"
-                android:text="@string/default_val"
-                android:layout_weight="1"/>
+<!--            <com.yumin.pomodoro.utils.CountView-->
+<!--                android:id="@+id/countView"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginEnd="8dp"-->
+<!--                android:contentDescription="@string/count_list_finish_mission"-->
+<!--                android:text="@string/default_val"-->
+<!--                android:layout_weight="1"/>-->
 
-            <com.yumin.pomodoro.utils.CountView
-                android:id="@+id/countView2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/count_list_not_finish_mission"
-                android:text="@string/default_val"
-                android:layout_weight="1"/>
+<!--            <com.yumin.pomodoro.utils.CountView-->
+<!--                android:id="@+id/countView2"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginEnd="8dp"-->
+<!--                android:contentDescription="@string/count_list_not_finish_mission"-->
+<!--                android:text="@string/default_val"-->
+<!--                android:layout_weight="1"/>-->
 
-            <com.yumin.pomodoro.utils.CountView
-                android:id="@+id/countView3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/count_list_time"
-                android:text="@string/default_val"
-                android:layout_weight="1"/>
+<!--            <com.yumin.pomodoro.utils.CountView-->
+<!--                android:id="@+id/countView3"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginEnd="8dp"-->
+<!--                android:contentDescription="@string/count_list_time"-->
+<!--                android:text="@string/default_val"-->
+<!--                android:layout_weight="1"/>-->
         </LinearLayout>
 
         <Button
