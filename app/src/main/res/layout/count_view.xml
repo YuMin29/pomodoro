@@ -8,8 +8,8 @@
             type="com.yumin.pomodoro.utils.CountViewItem" />
 
         <variable
-            name="CountViewListener"
-            type="com.yumin.pomodoro.utils.CountView.CountViewListener" />
+            name="ViewModel"
+            type="com.yumin.pomodoro.utils.CountViewViewModel" />
     </data>
 
     <LinearLayout

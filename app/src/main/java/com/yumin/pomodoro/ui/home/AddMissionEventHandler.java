@@ -22,7 +22,6 @@ public class AddMissionEventHandler {
     private AddMissionViewModel mAddMissionViewModel;
     public CountView.CountViewListener countViewListener;
     private BaseBindingAdapter.OnItemClickListener mOnItemClickListener;
-    private BaseBindingAdapter.OnItemLongClickListener mOnItemLongClickListener;
 
     public AddMissionEventHandler(AddMissionViewModel addMissionViewModel) {
         mAddMissionViewModel = addMissionViewModel;
@@ -31,6 +30,7 @@ public class AddMissionEventHandler {
             @Override
             public void onAddButtonClick(View view, int position) {
                 LogUtil.logD(TAG,"[onAddButtonClick] position = "+position);
+                mAddMissionViewModel.setMissionTime(1000);
             }
 
             @Override
@@ -43,12 +43,8 @@ public class AddMissionEventHandler {
             @Override
             public void onItemClick(View view, int position) {
                 LogUtil.logD(TAG,"[onItemClick] position = "+position);
-                if (view.getId() == R.id.add_item)
-                    LogUtil.logD(TAG,"[onItemClick] view.getId() = "+view.getId());
             }
-        };
 
-        mOnItemLongClickListener = new BaseBindingAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
                 LogUtil.logD(TAG,"[onItemLongClick] position = "+position);
@@ -58,10 +54,6 @@ public class AddMissionEventHandler {
 
     public BaseBindingAdapter.OnItemClickListener getOnItemClickListener(){
         return this.mOnItemClickListener;
-    }
-
-    public BaseBindingAdapter.OnItemLongClickListener getOnItemLongClickListener(){
-        return this.mOnItemLongClickListener;
     }
 
     public CountView.CountViewListener getCountViewListener(){

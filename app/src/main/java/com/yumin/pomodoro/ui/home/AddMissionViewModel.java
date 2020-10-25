@@ -60,5 +60,6 @@ public class AddMissionViewModel extends ViewModelProvider.AndroidViewModelFacto
 
     public void setMissionTime(int time){
         mMission.setTime(time);
+        missionMutableLiveData.postValue(mMission);
     }
 }

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
@@ -33,6 +34,7 @@ public class AddMissionFragment extends Fragment {
     ViewGroup viewGroup;
     RecyclerViewAdapter mRecyclerViewAdapter;
     List<CountViewItem> mCountViewItems = new ArrayList<>();
+
     public AddMissionFragment() {
     }
 
@@ -41,21 +43,21 @@ public class AddMissionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LogUtil.logD(TAG, "[onCreateView]");
         mFragmentAddMissionBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_mission, container, false);
-        mAddMissionViewModel = new AddMissionViewModel(getActivity().getApplication(),mFragmentAddMissionBinding);
+        mAddMissionViewModel = new AddMissionViewModel(getActivity().getApplication(), mFragmentAddMissionBinding);
         mAddMissionEventHandler = new AddMissionEventHandler(mAddMissionViewModel);
         viewGroup = container;
-        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext() ,mAddMissionEventHandler.getCountViewListener(),
-                mAddMissionEventHandler.getOnItemClickListener(), mAddMissionEventHandler.getOnItemLongClickListener());
+        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext(), mAddMissionEventHandler.getCountViewListener(),
+                mAddMissionEventHandler.getOnItemClickListener());
         initCountViewList();
         return mFragmentAddMissionBinding.getRoot();
     }
 
-    private void initCountViewList(){
+    private void initCountViewList() {
         mCountViewItems = new ArrayList<>();
-        mCountViewItems.add(new CountViewItem(getContext(),"0",R.string.mission_time,0,0));
-        mCountViewItems.add(new CountViewItem(getContext(),"0",R.string.mission_break,0,0));
-        mCountViewItems.add(new CountViewItem(getContext(),"0",R.string.mission_goal,0,0));
-        mCountViewItems.add(new CountViewItem(getContext(),"0",R.string.mission_repeat,0,0));
+        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_time, 0, 0));
+        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_break, 0, 0));
+        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_goal, 0, 0));
+        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_repeat, 0, 0));
         mRecyclerViewAdapter.getItems().addAll(mCountViewItems);
     }
 
@@ -87,14 +89,14 @@ public class AddMissionFragment extends Fragment {
     }
 
     public class RecyclerViewAdapter extends BaseBindingAdapter<CountViewItem, CountViewBindingImpl> {
-        CountView.CountViewListener countViewListener;
+        CountView.CountViewListener mCountViewListener;
+        OnItemClickListener mOnItemClickListener;
 
         public RecyclerViewAdapter(Context context, CountView.CountViewListener countViewListener,
-                                   OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener) {
+                                   OnItemClickListener onItemClickListener) {
             super(context);
-            this.countViewListener = countViewListener;
-            this.setOnItemClickListener(onItemClickListener);
-            this.setOnItemLongClickListener(onItemLongClickListener);
+            this.mCountViewListener = countViewListener;
+            this.mOnItemClickListener = onItemClickListener;
         }
 
         @Override
@@ -105,27 +107,40 @@ public class AddMissionFragment extends Fragment {
         @Override
         protected void onBindItem(CountViewBindingImpl binding, CountViewItem item) {
             binding.setCountViewItem(item);
-//            binding.setCountViewListener(countViewListener);
+
+            binding.addNum.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getItems().indexOf(item);
+                    mCountViewListener.onAddButtonClick(v, position);
+                }
+            });
+
+            binding.minusNum.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getItems().indexOf(item);
+                    mCountViewListener.onMinusButtonClock(v, position);
+                }
+            });
         }
 
         @Override
-        protected void setOnCountViewButtonClickListener(View view, int position) {
-            LogUtil.logD(TAG,"[setOnCountViewButtonClickListener]");
-            if (view instanceof CountView) {
-                ((CountView) view).mAddButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        countViewListener.onAddButtonClick(v,position);
-                    }
-                });
+        protected void onBindItemClickListener(RecyclerView.ViewHolder holder, int position) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(v, position);
+                }
+            });
 
-                ((CountView) view).mMinusButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        countViewListener.onMinusButtonClock(v,position);
-                    }
-                });
-            }
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mOnItemClickListener.onItemLongClick(v, position);
+                    return false;
+                }
+            });
         }
     }
 }

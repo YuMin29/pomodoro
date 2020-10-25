@@ -8,8 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.yumin.pomodoro.ui.home.AddMissionViewModel;
 
 public class CountViewViewModel {
-    public MutableLiveData<String> missionTime = new MutableLiveData<>();
-    public MutableLiveData<String> missionBreak = new MutableLiveData<>();
+    public MutableLiveData<Integer> missionCount = new MutableLiveData<>();
 
 
 }
