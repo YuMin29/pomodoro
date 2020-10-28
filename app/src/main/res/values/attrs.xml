@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CountView">
+    <declare-styleable name="MissionItemView">
         <attr name="add_button_visibility" format="integer"></attr>
         <attr name="minus_button_visibility" format="integer"></attr>
         <attr name="android:text"></attr>
         <attr name="android:description"></attr>
     </declare-styleable>
+
 </resources>

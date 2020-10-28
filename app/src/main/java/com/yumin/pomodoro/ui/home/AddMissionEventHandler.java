@@ -1,41 +1,46 @@
 package com.yumin.pomodoro.ui.home;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.databinding.BindingAdapter;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.utils.BaseBindingAdapter;
-import com.yumin.pomodoro.utils.CountView;
-import com.yumin.pomodoro.utils.CountViewItem;
+import com.yumin.pomodoro.utils.MissionItemView;
 import com.yumin.pomodoro.utils.LogUtil;
 
 public class AddMissionEventHandler {
     private static final String TAG = "[AddMissionEventHandler]";
     private TextWatcher textWatcher;
     private AddMissionViewModel mAddMissionViewModel;
-    public CountView.CountViewListener countViewListener;
+    public MissionItemView.MissionItemListener missionItemListener;
     private BaseBindingAdapter.OnItemClickListener mOnItemClickListener;
+    private Context context;
 
-    public AddMissionEventHandler(AddMissionViewModel addMissionViewModel) {
+    public AddMissionEventHandler(AddMissionViewModel addMissionViewModel, Context context) {
+        this.context = context;
         mAddMissionViewModel = addMissionViewModel;
-        this.textWatcher = getTextWatcherIns();
-        countViewListener = new CountView.CountViewListener() {
+        this.textWatcher = getTextWatcherInstance();
+        missionItemListener = new MissionItemView.MissionItemListener() {
             @Override
             public void onAddButtonClick(View view, int position) {
                 LogUtil.logD(TAG,"[onAddButtonClick] position = "+position);
                 mAddMissionViewModel.setMissionTime(1000);
+                mAddMissionViewModel.addCountItem(position);
             }
 
             @Override
             public void onMinusButtonClock(View view, int position) {
                 LogUtil.logD(TAG,"[onMinusButtonClock] position = "+position);
+                mAddMissionViewModel.minusCountItem(position);
             }
         };
 
@@ -43,6 +48,45 @@ public class AddMissionEventHandler {
             @Override
             public void onItemClick(View view, int position) {
                 LogUtil.logD(TAG,"[onItemClick] position = "+position);
+
+                if (position < 7) {
+                    // new a dialog to set count here
+                    final String[] editNum = {""};
+                    LayoutInflater layoutInflater = LayoutInflater.from(context);
+                    View view1 = layoutInflater.inflate(R.layout.dialog_count,null);
+                    final EditText editText = view1.findViewById(R.id.editText);
+                    editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+                    editText.setText(mAddMissionViewModel.getCountViewList().get(position).getContent());
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            editNum[0] = s.toString();
+                        }
+                    });
+                    AlertDialog alertDialog = new AlertDialog.Builder(context)
+                            .setTitle("設置"+mAddMissionViewModel.countViewItemList.getValue().get(position).getDesc())
+                            .setView(view1)
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mAddMissionViewModel.setCountItem(position,editNum[0]);
+                                }
+                            })
+                            .setNegativeButton("cancel", null).show();
+                    alertDialog.show();
+                } else {
+
+                }
             }
 
             @Override
@@ -56,11 +100,11 @@ public class AddMissionEventHandler {
         return this.mOnItemClickListener;
     }
 
-    public CountView.CountViewListener getCountViewListener(){
-        return countViewListener;
+    public MissionItemView.MissionItemListener getMissionItemListener(){
+        return missionItemListener;
     }
 
-    private TextWatcher getTextWatcherIns() {
+    private TextWatcher getTextWatcherInstance() {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

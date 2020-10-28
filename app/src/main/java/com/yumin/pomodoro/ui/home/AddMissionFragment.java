@@ -11,19 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.databinding.CountViewBindingImpl;
+import com.yumin.pomodoro.databinding.MissionItemViewBindingImpl;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBindingImpl;
 import com.yumin.pomodoro.utils.BaseBindingAdapter;
-import com.yumin.pomodoro.utils.CountView;
-import com.yumin.pomodoro.utils.CountViewItem;
+import com.yumin.pomodoro.utils.MissionItem;
+import com.yumin.pomodoro.utils.MissionItemView;
 import com.yumin.pomodoro.utils.LogUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AddMissionFragment extends Fragment {
@@ -33,7 +34,6 @@ public class AddMissionFragment extends Fragment {
     AddMissionEventHandler mAddMissionEventHandler;
     ViewGroup viewGroup;
     RecyclerViewAdapter mRecyclerViewAdapter;
-    List<CountViewItem> mCountViewItems = new ArrayList<>();
 
     public AddMissionFragment() {
     }
@@ -44,21 +44,24 @@ public class AddMissionFragment extends Fragment {
         LogUtil.logD(TAG, "[onCreateView]");
         mFragmentAddMissionBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_mission, container, false);
         mAddMissionViewModel = new AddMissionViewModel(getActivity().getApplication(), mFragmentAddMissionBinding);
-        mAddMissionEventHandler = new AddMissionEventHandler(mAddMissionViewModel);
+        mAddMissionEventHandler = new AddMissionEventHandler(mAddMissionViewModel,getContext());
         viewGroup = container;
-        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext(), mAddMissionEventHandler.getCountViewListener(),
-                mAddMissionEventHandler.getOnItemClickListener());
-        initCountViewList();
+        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext(), mAddMissionEventHandler.getMissionItemListener(),
+                mAddMissionEventHandler.getOnItemClickListener(), mAddMissionViewModel);
+        observeCountViewList();
         return mFragmentAddMissionBinding.getRoot();
     }
 
-    private void initCountViewList() {
-        mCountViewItems = new ArrayList<>();
-        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_time, 0, 0));
-        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_break, 0, 0));
-        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_goal, 0, 0));
-        mCountViewItems.add(new CountViewItem(getContext(), "0", R.string.mission_repeat, 0, 0));
-        mRecyclerViewAdapter.getItems().addAll(mCountViewItems);
+    private void observeCountViewList() {
+        mRecyclerViewAdapter.getItems().addAll(mAddMissionViewModel.getCountViewList());
+
+        mAddMissionViewModel.countViewItemList.observe(getViewLifecycleOwner(), new Observer<List<MissionItem>>() {
+            @Override
+            public void onChanged(List<MissionItem> missionItems) {
+                LogUtil.logD(TAG, "[observeCountViewList]");
+                mRecyclerViewAdapter.notifyItemRangeChanged(0, missionItems.size());
+            }
+        });
     }
 
     @Override
@@ -79,40 +82,56 @@ public class AddMissionFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         LogUtil.logD(TAG, "[onViewCreated]");
         // set title
-        MainActivity.setToolbarTitle("add mission");
-        // set click event
+        MainActivity.setToolbarTitle("Add mission");
         mFragmentAddMissionBinding.setEventHandler(mAddMissionEventHandler);
         mFragmentAddMissionBinding.setLifecycleOwner(this);
         mFragmentAddMissionBinding.recyclerView.setAdapter(mRecyclerViewAdapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        mFragmentAddMissionBinding.recyclerView.setLayoutManager(linearLayoutManager);
+        ((SimpleItemAnimator) mFragmentAddMissionBinding.recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),6);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+              if (position >= 8 && position < 11)
+                return 2;
+              else if ((position > 0 && position < 3) || (position >= 3 && position < 7))
+                  return 3;
+              else
+                  return 6;
+            }
+        });
+
+        mFragmentAddMissionBinding.recyclerView.setLayoutManager(gridLayoutManager);
     }
 
-    public class RecyclerViewAdapter extends BaseBindingAdapter<CountViewItem, CountViewBindingImpl> {
-        CountView.CountViewListener mCountViewListener;
+    public class RecyclerViewAdapter extends BaseBindingAdapter<MissionItem, MissionItemViewBindingImpl> {
+        MissionItemView.MissionItemListener mMissionItemListener;
         OnItemClickListener mOnItemClickListener;
+        AddMissionViewModel addMissionViewModel;
 
-        public RecyclerViewAdapter(Context context, CountView.CountViewListener countViewListener,
-                                   OnItemClickListener onItemClickListener) {
+        public RecyclerViewAdapter(Context context, MissionItemView.MissionItemListener missionItemListener,
+                                   OnItemClickListener onItemClickListener, AddMissionViewModel addMissionViewModel) {
             super(context);
-            this.mCountViewListener = countViewListener;
+            this.mMissionItemListener = missionItemListener;
             this.mOnItemClickListener = onItemClickListener;
+            this.addMissionViewModel = addMissionViewModel;
         }
 
         @Override
         protected int getLayoutResId(int viewType) {
-            return R.layout.count_view;
+            return R.layout.mission_item_view;
         }
 
         @Override
-        protected void onBindItem(CountViewBindingImpl binding, CountViewItem item) {
-            binding.setCountViewItem(item);
+        protected void onBindItem(MissionItemViewBindingImpl binding, MissionItem item) {
+            binding.setMissionItem(item);
+            binding.setViewModel(addMissionViewModel);
 
             binding.addNum.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getItems().indexOf(item);
-                    mCountViewListener.onAddButtonClick(v, position);
+                    mMissionItemListener.onAddButtonClick(v, position);
                 }
             });
 
@@ -120,9 +139,10 @@ public class AddMissionFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     int position = getItems().indexOf(item);
-                    mCountViewListener.onMinusButtonClock(v, position);
+                    mMissionItemListener.onMinusButtonClock(v, position);
                 }
             });
+            binding.setIsContentEmpty(item.isContentEmpty());
         }
 
         @Override

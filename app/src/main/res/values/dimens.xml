@@ -6,4 +6,7 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="stroke_size">1dp</dimen>
+
+    <dimen name="width">20dp</dimen>
+    <dimen name="textSize">28sp</dimen>
 </resources>
