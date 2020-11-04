@@ -5,15 +5,15 @@
     <data>
         <variable
             name="viewModel"
-            type="com.yumin.pomodoro.ui.home.AddMissionViewModel" />
+            type="com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel" />
 
         <variable
             name="mission"
-            type="com.yumin.pomodoro.data.Mission" />
+            type="com.yumin.pomodoro.data.model.Mission" />
 
         <variable
             name="eventHandler"
-            type="com.yumin.pomodoro.ui.home.AddMissionEventHandler" />
+            type="com.yumin.pomodoro.ui.main.viewmodel.AddMissionEventHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,11 +30,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:hint="mission name"
-            android:text="@={mission.mName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:textChangedListener="@{eventHandler.textWatcher}" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

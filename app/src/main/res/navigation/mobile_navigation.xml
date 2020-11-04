@@ -7,48 +7,48 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.yumin.pomodoro.ui.home.HomeFragment"
+        android:name="com.yumin.pomodoro.ui.view.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home"/>
 
     <fragment
         android:id="@+id/nav_backup"
-        android:name="com.yumin.pomodoro.ui.backup.BackupFragment"
+        android:name="com.yumin.pomodoro.ui.view.BackupFragment"
         android:label="@string/menu_backup"
         tools:layout="@layout/fragment_backup" />
 
     <fragment
         android:id="@+id/nav_restore"
-        android:name="com.yumin.pomodoro.ui.restore.RestoreFragment"
+        android:name="com.yumin.pomodoro.ui.view.RestoreFragment"
         android:label="@string/menu_restore"
         tools:layout="@layout/fragment_restore" />
 
     <fragment
         android:id="@+id/nav_total"
-        android:name="com.yumin.pomodoro.ui.total.TotalFragment"
+        android:name="com.yumin.pomodoro.ui.view.TotalFragment"
         android:label="@string/menu_total"
         tools:layout="@layout/fragment_total" />
 
     <fragment
         android:id="@+id/nav_calender"
-        android:name="com.yumin.pomodoro.ui.calender.CalenderFragment"
+        android:name="com.yumin.pomodoro.ui.view.CalenderFragment"
         android:label="@string/menu_calender"
         tools:layout="@layout/fragment_calender" />
 
     <fragment
         android:id="@+id/nav_save_mission"
-        android:name="com.yumin.pomodoro.ui.save_mission.SaveMissionFragment"
+        android:name="com.yumin.pomodoro.ui.view.SaveMissionFragment"
         android:label="@string/menu_save_mission"
         tools:layout="@layout/fragment_save_mission" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="com.yumin.pomodoro.ui.settings.SettingsFragment"
+        android:name="com.yumin.pomodoro.ui.view.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
 
     <fragment android:id="@+id/add_mission_fragment"
-        android:name="com.yumin.pomodoro.ui.home.AddMissionFragment"
+        android:name="com.yumin.pomodoro.ui.view.AddMissionFragment"
         android:label="Add mission"
         tools:layout="@layout/fragment_add_mission"/>
 </navigation>

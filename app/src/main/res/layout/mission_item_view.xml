@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-        <variable
-            name="MissionItem"
-            type="com.yumin.pomodoro.utils.MissionItem" />
-
-        <variable
-            name="ViewModel"
-            type="com.yumin.pomodoro.ui.home.AddMissionViewModel" />
-
-        <variable
-            name="isContentEmpty"
-            type="boolean" />
-
-        <import type="android.view.View"/>
-    </data>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,8 +20,7 @@
             android:stateListAnimator="@null"
             android:text="+"
             android:textColor="@android:color/tab_indicator_text"
-            android:layout_weight="1"
-            android:visibility="@{MissionItem.addButtonVisibility}" />
+            android:layout_weight="1" />
 
         <LinearLayout
             android:id="@+id/count_linearLayout"
@@ -55,9 +37,7 @@
                 android:gravity="center"
                 android:layout_marginBottom="4dp"
                 android:fontFamily="@font/roboto_thin"
-                android:textSize="36sp"
-                android:text="@{MissionItem.content}"
-                android:visibility="@{isContentEmpty ? View.GONE : View.VISIBLE}"/>
+                android:textSize="36sp" />
 
             <TextView
                 android:id="@+id/description_textview"
@@ -68,9 +48,7 @@
                 android:singleLine="false"
                 android:textColor="#878787"
                 android:textSize="14sp"
-                android:gravity="center"
-                app:loadIcon="@{isContentEmpty}"
-                android:text="@{MissionItem.desc}"/>
+                android:gravity="center" />
         </LinearLayout>
 
         <Button
@@ -82,7 +60,6 @@
             android:stateListAnimator="@null"
             android:text="-"
             android:textColor="@android:color/tab_indicator_text"
-            android:layout_weight="1"
-            android:visibility="@{MissionItem.minusButtonVisibility}" />
+            android:layout_weight="1" />
     </LinearLayout>
 </layout>

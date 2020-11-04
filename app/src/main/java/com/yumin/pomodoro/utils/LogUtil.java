@@ -2,9 +2,10 @@ package com.yumin.pomodoro.utils;
 
 import android.util.Log;
 
+import com.yumin.pomodoro.BuildConfig;
+
 public class LogUtil {
-    // maybe can use BuildConfig.DEBUG
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = BuildConfig.DEBUG;
 
     public static void logD(String tag, String logMessage){
         if (DEBUG)
