@@ -1,109 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layout_main_background">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel" />
-    </data>
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/relativeLayout"
+        <!--            <com.yumin.pomodoro.utils.CountView-->
+        <!--                android:id="@+id/countView"-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="8dp"-->
+        <!--                android:layout_marginTop="8dp"-->
+        <!--                android:layout_marginEnd="8dp"-->
+        <!--                android:contentDescription="@string/count_list_finish_mission"-->
+        <!--                android:text="@string/default_val"-->
+        <!--                android:layout_weight="1"/>-->
+
+        <!--            <com.yumin.pomodoro.utils.CountView-->
+        <!--                android:id="@+id/countView2"-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="8dp"-->
+        <!--                android:layout_marginTop="8dp"-->
+        <!--                android:layout_marginEnd="8dp"-->
+        <!--                android:contentDescription="@string/count_list_not_finish_mission"-->
+        <!--                android:text="@string/default_val"-->
+        <!--                android:layout_weight="1"/>-->
+
+        <!--            <com.yumin.pomodoro.utils.CountView-->
+        <!--                android:id="@+id/countView3"-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="8dp"-->
+        <!--                android:layout_marginTop="8dp"-->
+        <!--                android:layout_marginEnd="8dp"-->
+        <!--                android:contentDescription="@string/count_list_time"-->
+        <!--                android:text="@string/default_val"-->
+        <!--                android:layout_weight="1"/>-->
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add_item"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/layout_item_background"
+        android:stateListAnimator="@null"
+        android:text="ADD MISSION"
+        android:textColor="@android:color/tab_indicator_text"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear" />
+
+    <ExpandableListView
+        android:id="@+id/home_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:divider="@null"
+        android:dividerHeight="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.yumin.pomodoro.utils.CircleTimer
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/layout_main_background">
-
-        <LinearLayout
-            android:id="@+id/linear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-<!--            <com.yumin.pomodoro.utils.CountView-->
-<!--                android:id="@+id/countView"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_marginEnd="8dp"-->
-<!--                android:contentDescription="@string/count_list_finish_mission"-->
-<!--                android:text="@string/default_val"-->
-<!--                android:layout_weight="1"/>-->
-
-<!--            <com.yumin.pomodoro.utils.CountView-->
-<!--                android:id="@+id/countView2"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_marginEnd="8dp"-->
-<!--                android:contentDescription="@string/count_list_not_finish_mission"-->
-<!--                android:text="@string/default_val"-->
-<!--                android:layout_weight="1"/>-->
-
-<!--            <com.yumin.pomodoro.utils.CountView-->
-<!--                android:id="@+id/countView3"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_marginEnd="8dp"-->
-<!--                android:contentDescription="@string/count_list_time"-->
-<!--                android:text="@string/default_val"-->
-<!--                android:layout_weight="1"/>-->
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/add_item"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@color/layout_item_background"
-            android:stateListAnimator="@null"
-            android:text="ADD MISSION"
-            android:textColor="@android:color/tab_indicator_text"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linear" />
-
-        <ExpandableListView
-            android:id="@+id/home_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:divider="@null"
-            android:dividerHeight="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_item" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.yumin.pomodoro.utils.CircleTimer
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

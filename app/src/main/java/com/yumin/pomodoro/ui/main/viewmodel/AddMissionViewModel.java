@@ -4,16 +4,14 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.model.MissionItem;
+import com.yumin.pomodoro.data.model.AdjustMissionItem;
+import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,89 +19,101 @@ import java.util.List;
 
 public class AddMissionViewModel extends AndroidViewModel {
     public static final String TAG = "[AddMissionViewModel]";
-
-    private enum Visibility{
-        VISIBLE(0),
-        INVISIBLE(1),
-        GONE(8);
-
-        private int value;
-
-        Visibility(int value) {
-            this.value = value;
-        }
-        public int getValue() {
-            return value;
-        }
-    }
-
-
     private Application mApplication;
-    public MutableLiveData<Mission> missionMutableLiveData = new MutableLiveData<>();
-    Mission mMission;
-    List<MissionItem> missionItems = new ArrayList<>();
-    public MutableLiveData<List<MissionItem>> countViewItemList = new MutableLiveData<>();
+    private MainRepository mainRepository;
+    private MutableLiveData<List<AdjustMissionItem>> adjustMissionItems = new MutableLiveData<>();
+    private MutableLiveData<Mission> mission = new MutableLiveData<>();
+    private Mission mMission;
 
-    public AddMissionViewModel(@NonNull Application application) {
+    public AddMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
         this.mApplication = application;
-        mMission = new Mission();
-        init(application);
+        this.mainRepository = mainRepository;
+        fetchMission();
     }
 
-    public void setMissionTitle(String title){
-        mMission.setName(title);
-        missionMutableLiveData.postValue(mMission);
+    private void fetchMission(){
+        // new mission
+        mMission = mainRepository.getInitMission();
+        mission.postValue(mMission);
     }
 
-    public void setMissionTime(int time){
+    public LiveData<List<AdjustMissionItem>> getAdjustMissionItems(){
+        return this.adjustMissionItems;
+    }
+
+    public LiveData<Mission> getInitMission(){
+        return this.mission;
+    }
+
+    public void setMissionName(String name){
+        mMission.setName(name);
+        mission.postValue(mMission);
+    }
+
+    public void saveMission(){
+        mainRepository.addMission(mMission);
+    }
+
+    public void setTime(int time){
+        LogUtil.logD(TAG,"[setTime] time = "+time);
         mMission.setTime(time);
-        missionMutableLiveData.postValue(mMission);
+        mission.postValue(mMission);
     }
 
-    private void init(Application application){
-        missionItems = new ArrayList<>();
-        missionItems.add(new MissionItem(application.getApplicationContext(), "25", R.string.mission_time, Visibility.VISIBLE.getValue(), Visibility.VISIBLE.getValue()));
-        missionItems.add(new MissionItem(application.getApplicationContext(), "5", R.string.mission_break, Visibility.VISIBLE.getValue(), Visibility.VISIBLE.getValue()));
-        missionItems.add(new MissionItem(application.getApplicationContext(), "15", R.string.mission_long_break, Visibility.VISIBLE.getValue(), Visibility.VISIBLE.getValue()));
-        missionItems.add(new MissionItem(application.getApplicationContext(), "0", R.string.mission_goal, Visibility.VISIBLE.getValue(), Visibility.VISIBLE.getValue()));
-        missionItems.add(new MissionItem(application.getApplicationContext(), "0", R.string.mission_repeat, Visibility.VISIBLE.getValue(), Visibility.VISIBLE.getValue()));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"每天",R.string.mission_day,Visibility.GONE.getValue(),Visibility.GONE.value));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"藍",R.string.mission_theme,Visibility.GONE.getValue(),Visibility.GONE.value));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"",R.string.mission_notification,Visibility.GONE.getValue(),Visibility.GONE.value));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"",R.string.mission_sound,Visibility.GONE.getValue(),Visibility.GONE.value));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"",R.string.mission_sound_level,Visibility.GONE.getValue(),Visibility.GONE.value));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"",R.string.mission_vibrate,Visibility.GONE.getValue(),Visibility.GONE.value));
-        missionItems.add(new MissionItem(application.getApplicationContext(),"",R.string.mission_keep_awake,Visibility.GONE.getValue(),Visibility.GONE.value));
-        countViewItemList.setValue(missionItems);
-    }
-    public List<MissionItem> getCountViewList(){
-        return this.countViewItemList.getValue();
+    public void setLongBreak(int time){
+        LogUtil.logD(TAG,"[setLongBreak] time = "+time);
+        mMission.setLongBreakTime(time);
+        mission.postValue(mMission);
     }
 
-    public void setCountItem(int position, String count){
-
+    public void setShortBreak(int time){
+        mMission.setShortBreakTime(time);
+        mission.postValue(mMission);
     }
 
-    public void addCountItem(int position){
-        LogUtil.logD(TAG,"[updateCountItem] position = "+position);
-        MissionItem item = missionItems.get(position);
-        int count = Integer.valueOf(item.getContent());
-        count++;
-        item.setContent(String.valueOf(count));
-        missionItems.set(position,item);
-        countViewItemList.setValue(missionItems);
+    public void setGoal(int goal){
+        mMission.setGoal(goal);
+        mission.postValue(mMission);
     }
 
-    public void minusCountItem(int position){
-        LogUtil.logD(TAG,"[updateCountItem] position = "+position);
-        MissionItem item = missionItems.get(position);
-        int count = Integer.valueOf(item.getContent());
+    public void setRepeat(int repeat){
+        mMission.setRepeat(repeat);
+        mission.postValue(mMission);
+    }
 
-        if (count > 0)
-            count--;
-        item.setContent(String.valueOf(count));
-        missionItems.set(position,item);
-        countViewItemList.setValue(missionItems);
+    public void setOperateDay(Mission.Operate operateDay) {
+        mMission.setOperateDay(operateDay);
+        mission.postValue(mMission);
+    }
+
+    public void setColor(Mission.Color color){
+        mMission.setColor(color);
+        mission.postValue(mMission);
+    }
+
+    public void setEnableNotification(boolean enabled){
+        mMission.setEnableNotification(enabled);
+        mission.postValue(mMission);
+    }
+
+    public void setEnableSound(boolean enabled){
+        mMission.setEnableSound(enabled);
+        mission.postValue(mMission);
+    }
+
+    public void setVolume(Mission.Volume volume){
+        mMission.setVolume(volume);
+        mission.postValue(mMission);
+    }
+
+    public void setEnableVibrate(boolean enabled){
+        mMission.setEnableVibrate(enabled);
+        mission.postValue(mMission);
+    }
+
+    public void setKeepScreenOn(boolean enabled){
+        mMission.setKeepScreenOn(enabled);
+        mission.postValue(mMission);
     }
 }

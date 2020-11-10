@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.ui.main.viewmodel.MissionViewHolder;
-import com.yumin.pomodoro.ui.main.viewmodel.CategoryViewHolder;
+import com.yumin.pomodoro.ui.main.viewholder.CategoryViewHolder;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="item"
+            type="com.yumin.pomodoro.data.model.AdjustMissionItem" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +27,8 @@
             android:stateListAnimator="@null"
             android:text="+"
             android:textColor="@android:color/tab_indicator_text"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:visibility="@{item.addButtonVisibility}"/>
 
         <LinearLayout
             android:id="@+id/count_linearLayout"
@@ -35,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:text="@{item.content}"
                 android:layout_marginBottom="4dp"
                 android:fontFamily="@font/roboto_thin"
                 android:textSize="36sp" />
@@ -46,6 +55,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/roboto_thin"
                 android:singleLine="false"
+                android:text="@{item.desc}"
                 android:textColor="#878787"
                 android:textSize="14sp"
                 android:gravity="center" />
@@ -60,6 +70,7 @@
             android:stateListAnimator="@null"
             android:text="-"
             android:textColor="@android:color/tab_indicator_text"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:visibility="@{item.minusButtonVisibility}"/>
     </LinearLayout>
 </layout>

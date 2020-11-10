@@ -1,50 +1,63 @@
 package com.yumin.pomodoro.data.model;
 
-import android.graphics.drawable.Drawable;
-
 import com.yumin.pomodoro.utils.LogUtil;
-
-import java.util.List;
 
 
 public class Mission {
-    public String mName;
-    public Type mType;
-    public int mTime;
-    public Drawable mIcon;
-    public int mColor;
-    public int mDay;
-    public int mFrequency;
-    public int mRepeat;
-    private List<SubMission> mSubMissions;
-    private List<SubMission> mSavedSubMissions;
+    private String mName;
+    private Type mType;
+    private int mTime = 25;
+    private int mShortBreakTime = 5;
+    private int mLongBreakTime = 15;
+    private Color mColor = Color.WHITE;
+    private Operate mOperateDay = Operate.EVERYDAY;
+    private int mGoal = 0;
+    private int mRepeat = 1;
+    private boolean mEnableNotification = true;
+    private boolean mEnableSound = true;
+    private Volume mVolume = Volume.MEDIUM;
+    private boolean mEnableVibrate = true;
+    private boolean mKeepScreenOn = true;
 
-	public enum Type{DEFAULT,NONE,COUNT;}
-	public enum Repeat{NONE,EVERYDAY,MON,TUE,WED,THU,FRI,SAT,SUN;}
+    public enum Type{DEFAULT,NONE,COUNT;}
+
+	public enum Operate {
+        NONE(1),
+        EVERYDAY(2),
+        CHOOSE(3);
+
+        private Integer index;
+        public Integer getIndex() {
+            return index;
+        }
+        Operate(Integer index) {
+            this.index = index;
+        }
+        /**
+         * 根據索引獲取對應的列舉物件
+         * @param index
+         * @return
+         */
+        public static Operate getEnumTypeByIndex(Integer index) {
+            Operate[] values = Operate.values();
+            for (Operate value : values) {
+                if (value.getIndex() == index) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+	public enum Color{BLACK,WHITE,RED,YELLOW,GREEN;}
+	public enum Volume{SMALL,MEDIUM,LARGE;}
 
 	private static final String TAG = "[Mission]";
 
 	public Mission(){
-        this(null, null, 0, null, -1, 0, -1, -1);
+	    // init
     }
 
-	public Mission(String name) {
-        this(name, Type.COUNT, 0, null, -1, 0, -1, -1);
-    }
-	
-    public Mission(String name, Type type, int time) {
-        this(name, type, time, null, -1, 0, -1, -1);
-    }
-
-    public Mission(String name, Type type, int time, Drawable icon, int color, int day, int frequency, int repeat) {
-        mName = name;
-        mType = type;
-        mTime = time;
-        mIcon = icon;
-        mColor = color;
-        mDay = day;
-        mFrequency = frequency;
-        mRepeat = repeat;
+    public Mission(String test, Type aDefault, int i) {
     }
 
     public String getName() {
@@ -69,38 +82,95 @@ public class Mission {
     }
 
     public void setTime(int time) {
+	    LogUtil.logD(TAG,"[setTime] time = "+time);
         mTime = time;
     }
 
-    public int getColor() {
+    public void setShortBreakTime(int time){
+	    this.mShortBreakTime = time;
+    }
+
+    public int getShortBreakTime(){
+	    return this.mShortBreakTime;
+    }
+
+    public void setLongBreakTime(int time){
+	    this.mLongBreakTime = time;
+    }
+
+    public int getLongBreakTime(){
+	    return this.mLongBreakTime;
+    }
+
+    public Color getColor() {
         return mColor;
     }
 
-    public void setColor(int color) {
+    public void setColor(Color color) {
         mColor = color;
     }
 
-    public Drawable getIcon() {
-        return mIcon;
+    public Operate getOperateDay() {
+        return mOperateDay;
     }
 
-    public void setIcon(Drawable icon) {
-        mIcon = icon;
+    public void setOperateDay(Operate repeat) {
+        this.mOperateDay = repeat;
     }
 
-    public int getRepeat() {
-        return mRepeat;
+    public void setRepeat(int repeat){
+	    this.mRepeat = repeat;
     }
 
-    public void setRepeat(int repeat) {
-        mRepeat = repeat;
+    public int getRepeat(){
+	    return this.mRepeat;
     }
 
-    public int getDay(){
-	    return mDay;
+    public void setGoal(int goal) {
+	    mGoal = goal;
+	}
+
+    public int getGoal() {
+	    return this.mGoal;
+	}
+
+    public void setEnableNotification(boolean enabled) {
+        mEnableNotification = enabled;
     }
 
-    public void setDay(int day){
-	    mDay = day;
+    public boolean getEnableNotification() {
+        return this.mEnableNotification;
+    }
+
+    public void setEnableSound(boolean enabled) {
+        mEnableSound = enabled;
+    }
+
+    public boolean getEnableSound() {
+        return this.mEnableSound;
+    }
+
+    public void setVolume(Volume volume) {
+        mVolume = volume;
+    }
+
+    public Volume getVolume() {
+        return this.mVolume;
+    }
+
+    public void setEnableVibrate(boolean enabled) {
+        mEnableVibrate = enabled;
+    }
+
+    public boolean getEnableVibrate() {
+        return this.mEnableVibrate;
+    }
+
+    public void setKeepScreenOn(boolean enabled) {
+        mKeepScreenOn = enabled;
+    }
+
+    public boolean getKeepScreenOn() {
+        return this.mKeepScreenOn;
     }
 }

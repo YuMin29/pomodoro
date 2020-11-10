@@ -6,15 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.yumin.pomodoro.data.model.MissionItem;
+import com.yumin.pomodoro.data.model.AdjustMissionItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MissionItemViewModel extends AndroidViewModel {
-    public MutableLiveData<MissionItem> countViewItem = new MutableLiveData<>();
-    public MutableLiveData<List<MissionItem>> countViewItemList = new MutableLiveData<>();
-    List<MissionItem> missionItems = new ArrayList<>();
+    public MutableLiveData<AdjustMissionItem> countViewItem = new MutableLiveData<>();
+    public MutableLiveData<List<AdjustMissionItem>> countViewItemList = new MutableLiveData<>();
+    List<AdjustMissionItem> adjustMissionItems = new ArrayList<>();
 
     public MissionItemViewModel(@NonNull Application application) {
         super(application);
@@ -34,7 +34,7 @@ public class MissionItemViewModel extends AndroidViewModel {
 
     }
 
-    public List<MissionItem> getCountViewList(){
+    public List<AdjustMissionItem> getCountViewList(){
         return this.countViewItemList.getValue();
     }
 }

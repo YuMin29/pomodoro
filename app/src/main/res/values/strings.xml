@@ -31,7 +31,7 @@
     <string name="mission_vibrate">震動</string>
     <string name="mission_sound_level">音量</string>
     <string name="mission_notification">顯示通知</string>
-    <string name="mission_day">執行日</string>
+    <string name="mission_operate_day">執行日</string>
     <string name="mission_keep_awake">保持亮屏</string>
 
     <string name="default_val">0</string>
