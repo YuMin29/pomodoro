@@ -23,7 +23,6 @@ public class AddMissionViewModel extends AndroidViewModel {
     private MainRepository mainRepository;
     private MutableLiveData<List<AdjustMissionItem>> adjustMissionItems = new MutableLiveData<>();
     private MutableLiveData<Mission> mission = new MutableLiveData<>();
-    private Mission mMission;
 
     public AddMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
@@ -33,87 +32,82 @@ public class AddMissionViewModel extends AndroidViewModel {
     }
 
     private void fetchMission(){
-        // new mission
-        mMission = mainRepository.getInitMission();
-        mission.postValue(mMission);
+        // init adjust item
+        mission.setValue(mainRepository.getInitMission());
     }
 
-    public LiveData<List<AdjustMissionItem>> getAdjustMissionItems(){
-        return this.adjustMissionItems;
-    }
-
-    public LiveData<Mission> getInitMission(){
+    public LiveData<Mission> getMission(){
         return this.mission;
     }
 
-    public void setMissionName(String name){
-        mMission.setName(name);
-        mission.postValue(mMission);
-    }
-
     public void saveMission(){
-        mainRepository.addMission(mMission);
+//        mainRepository.addMission(mMission);
+        LogUtil.logD(TAG,"[saveMission] mission val = "+mission.getValue().dump());
     }
 
-    public void setTime(int time){
-        LogUtil.logD(TAG,"[setTime] time = "+time);
-        mMission.setTime(time);
-        mission.postValue(mMission);
-    }
-
-    public void setLongBreak(int time){
-        LogUtil.logD(TAG,"[setLongBreak] time = "+time);
-        mMission.setLongBreakTime(time);
-        mission.postValue(mMission);
-    }
-
-    public void setShortBreak(int time){
-        mMission.setShortBreakTime(time);
-        mission.postValue(mMission);
-    }
-
-    public void setGoal(int goal){
-        mMission.setGoal(goal);
-        mission.postValue(mMission);
-    }
-
-    public void setRepeat(int repeat){
-        mMission.setRepeat(repeat);
-        mission.postValue(mMission);
-    }
-
-    public void setOperateDay(Mission.Operate operateDay) {
-        mMission.setOperateDay(operateDay);
-        mission.postValue(mMission);
-    }
-
-    public void setColor(Mission.Color color){
-        mMission.setColor(color);
-        mission.postValue(mMission);
-    }
-
-    public void setEnableNotification(boolean enabled){
-        mMission.setEnableNotification(enabled);
-        mission.postValue(mMission);
-    }
-
-    public void setEnableSound(boolean enabled){
-        mMission.setEnableSound(enabled);
-        mission.postValue(mMission);
-    }
-
-    public void setVolume(Mission.Volume volume){
-        mMission.setVolume(volume);
-        mission.postValue(mMission);
-    }
-
-    public void setEnableVibrate(boolean enabled){
-        mMission.setEnableVibrate(enabled);
-        mission.postValue(mMission);
-    }
-
-    public void setKeepScreenOn(boolean enabled){
-        mMission.setKeepScreenOn(enabled);
-        mission.postValue(mMission);
-    }
+//    public void setMissionName(String name){
+//        mMission.setName(name);
+//        mission.postValue(mMission);
+//    }
+//    public void setTime(int time){
+//        LogUtil.logD(TAG,"[setTime] time = "+time);
+//        mMission.setTime(time);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setLongBreak(int time){
+//        LogUtil.logD(TAG,"[setLongBreak] time = "+time);
+//        mMission.setLongBreakTime(time);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setShortBreak(int time){
+//        mMission.setShortBreakTime(time);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setGoal(int goal){
+//        mMission.setGoal(goal);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setRepeat(int repeat){
+//        mMission.setRepeat(repeat);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setOperateDay(Mission.Operate operateDay) {
+//        mMission.setOperateDay(operateDay);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setColor(Mission.Color color){
+//        mMission.setColor(color);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setEnableNotification(boolean enabled){
+//        mMission.setEnableNotification(enabled);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setEnableSound(boolean enabled){
+//        mMission.setEnableSound(enabled);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setVolume(Mission.Volume volume){
+//        mMission.setVolume(volume);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setEnableVibrate(boolean enabled){
+//        mMission.setEnableVibrate(enabled);
+//        mission.postValue(mMission);
+//    }
+//
+//    public void setKeepScreenOn(boolean enabled){
+//        mMission.setKeepScreenOn(enabled);
+//        mission.postValue(mMission);
+//    }
 }

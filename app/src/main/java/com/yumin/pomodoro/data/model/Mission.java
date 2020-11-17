@@ -1,5 +1,7 @@
 package com.yumin.pomodoro.data.model;
 
+import android.graphics.Color;
+
 import com.yumin.pomodoro.utils.LogUtil;
 
 
@@ -10,9 +12,9 @@ public class Mission {
     private int mShortBreakTime = 5;
     private int mLongBreakTime = 15;
     private Color mColor = Color.WHITE;
-    private Operate mOperateDay = Operate.EVERYDAY;
+    private String mOperateDay = "TODAY";
     private int mGoal = 0;
-    private int mRepeat = 1;
+    private Repeat mRepeat = Repeat.NONE;
     private boolean mEnableNotification = true;
     private boolean mEnableSound = true;
     private Volume mVolume = Volume.MEDIUM;
@@ -21,16 +23,18 @@ public class Mission {
 
     public enum Type{DEFAULT,NONE,COUNT;}
 
-	public enum Operate {
+	public enum Repeat {
         NONE(1),
-        EVERYDAY(2),
-        CHOOSE(3);
+        TODAY(2),
+        EVERYDAY(3);
 
         private Integer index;
         public Integer getIndex() {
             return index;
         }
-        Operate(Integer index) {
+        private static Repeat[] vals = values();
+
+        Repeat(Integer index) {
             this.index = index;
         }
         /**
@@ -38,9 +42,9 @@ public class Mission {
          * @param index
          * @return
          */
-        public static Operate getEnumTypeByIndex(Integer index) {
-            Operate[] values = Operate.values();
-            for (Operate value : values) {
+        public static Repeat getEnumTypeByIndex(Integer index) {
+            Repeat[] values = Repeat.values();
+            for (Repeat value : values) {
                 if (value.getIndex() == index) {
                     return value;
                 }
@@ -58,6 +62,21 @@ public class Mission {
     }
 
     public Mission(String test, Type aDefault, int i) {
+    }
+
+    public String dump(){
+	    return "=== dump mission ===\n"+
+                "name = "+getName()+", time = "+String.valueOf(getTime())+
+                ", short break time = "+String.valueOf(getShortBreakTime())+
+                ", long break time  = "+String.valueOf(getLongBreakTime())+
+                ", color = "+String.valueOf(getColor())+
+                ", operate day = "+getOperateDay()+
+                ", goal = "+String.valueOf(getGoal())+
+                ", repeat = "+getRepeat().toString()+
+                ", notification = "+getEnableNotification()+
+                ", sound = "+getEnableSound()+
+                ", vibrate = "+getEnableVibrate()+
+                ", keep screen on"+getKeepScreenOn();
     }
 
     public String getName() {
@@ -102,27 +121,27 @@ public class Mission {
 	    return this.mLongBreakTime;
     }
 
-    public Color getColor() {
-        return mColor;
+    public int getColor() {
+        return android.graphics.Color.YELLOW;
     }
 
     public void setColor(Color color) {
         mColor = color;
     }
 
-    public Operate getOperateDay() {
+    public String getOperateDay() {
         return mOperateDay;
     }
 
-    public void setOperateDay(Operate repeat) {
+    public void setOperateDay(String repeat) {
         this.mOperateDay = repeat;
     }
 
-    public void setRepeat(int repeat){
+    public void setRepeat(Repeat repeat){
 	    this.mRepeat = repeat;
     }
 
-    public int getRepeat(){
+    public Repeat getRepeat(){
 	    return this.mRepeat;
     }
 

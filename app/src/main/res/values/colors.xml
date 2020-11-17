@@ -14,4 +14,17 @@
     <color name="timer_colorAccent">#F5FA55</color>
     <color name="timer_colorBackground">#151B29</color>
     <color name="timer_colorYellow">#F5FA55</color>
+
+    <string-array name="backgroundColors">
+        <item>#ABA6BF</item>
+        <item>#595775</item>
+        <item>#583E2E</item>
+        <item>#F1E0D6</item>
+        <item>#BF988F</item>
+        <item>#776B04</item>
+        <item>#EE6C8E</item>
+        <item>#EDD170</item>
+        <item>#99BFAA</item>
+        <item>#720017</item>
+    </string-array>
 </resources>

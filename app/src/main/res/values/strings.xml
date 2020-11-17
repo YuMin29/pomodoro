@@ -24,8 +24,8 @@
     <string name="mission_time">番茄時間</string>
     <string name="mission_break">短休息時間</string>
     <string name="mission_long_break">長休息時間</string>
-    <string name="mission_repeat">番茄數</string>
-    <string name="mission_goal">每日目標</string>
+    <string name="mission_repeat">重複</string>
+    <string name="mission_goal">番茄數</string>
     <string name="mission_theme">主題</string>
     <string name="mission_sound">背景音</string>
     <string name="mission_vibrate">震動</string>
@@ -35,4 +35,10 @@
     <string name="mission_keep_awake">保持亮屏</string>
 
     <string name="default_val">0</string>
+
+    <array name="repeat_array">
+        <item>"NONE"</item>
+        <item>"TODAY"</item>
+        <item>"EVERYDAY"</item>
+    </array>
 </resources>
