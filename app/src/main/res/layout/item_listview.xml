@@ -28,22 +28,6 @@
             android:gravity="center"
             android:textSize="36sp" />
 
-        <com.yumin.pomodoro.ui.view.ColorView
-            android:id="@+id/colorView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:visibility="gone"/>
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:visibility="gone"/>
-
         <TextView
             android:id="@+id/description_textview"
             android:layout_width="wrap_content"

@@ -20,10 +20,6 @@ public class ApiHelper {
         return apiService.getMissions();
     }
 
-    public List<AdjustMissionItem> getAdjustMissionItems(){
-        return apiService.getAdjustMissionItems(context);
-    }
-
     public void addMission(Mission mission){
         apiService.addMission(mission);
     }

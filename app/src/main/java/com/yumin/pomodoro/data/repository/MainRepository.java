@@ -17,10 +17,6 @@ public class MainRepository {
         return apiHelper.getMissions();
     }
 
-    public List<AdjustMissionItem> getAdjustMissionItems(){
-        return apiHelper.getAdjustMissionItems();
-    }
-
     public Mission getInitMission(){
         return apiHelper.getInitMission();
     }

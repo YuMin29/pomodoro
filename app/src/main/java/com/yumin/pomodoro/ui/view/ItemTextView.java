@@ -10,47 +10,58 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 
 import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.InverseBindingAdapter;
+import androidx.databinding.InverseBindingListener;
+import androidx.databinding.InverseBindingMethod;
+import androidx.databinding.InverseBindingMethods;
 
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.databinding.MissionItemNumViewBinding;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.databinding.ItemTextviewBinding;
 
-public class MissionItemView extends LinearLayout {
-    private static final String TAG = "[MissionItemView]";
-    private MissionItemNumViewBinding viewBinding;
+@InverseBindingMethods({@InverseBindingMethod(type = ItemTextView.class,
+        attribute = "itemContent", event = "itemContentAttrChanged")})
+public class ItemTextView extends LinearLayout {
+    private static final String TAG = "[ItemTextView]";
+    private ItemTextviewBinding viewBinding;
+    private int content;
+    private InverseBindingListener inverseBindingListener;
 
-    public MissionItemView(Context context) {
+    public ItemTextView(Context context) {
         super(context);
         inflateView(context);
     }
 
-    public MissionItemView(Context context, @Nullable AttributeSet attrs) {
+    public ItemTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         inflateView(context);
     }
 
-    public MissionItemView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ItemTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflateView(context);
     }
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        viewBinding = DataBindingUtil.inflate(inflater,R.layout.mission_item_num_view,this,true);
+        inverseBindingListener = new InverseBindingListener() {
+            @Override
+            public void onChange() {
+
+            }
+        };
+        viewBinding = DataBindingUtil.inflate(inflater,R.layout.item_textview,this,true);
         viewBinding.addNum.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 LogUtil.logD(TAG,"[addNum][onClick]");
                 int content = Integer.parseInt(viewBinding.numTextview.getText().toString());
                 content++;
-                viewBinding.numTextview.setText(String.valueOf(content));
+                setItemContent(content);
             }
         });
         viewBinding.minusNum.setOnClickListener(new OnClickListener() {
@@ -61,7 +72,7 @@ public class MissionItemView extends LinearLayout {
                 int content = Integer.parseInt(viewBinding.numTextview.getText().toString());
                 if (content > 0)
                     content--;
-                viewBinding.numTextview.setText(String.valueOf(content));
+                setItemContent(content);
             }
         });
         viewBinding.itemLinearlayout.setOnClickListener(new OnClickListener() {
@@ -81,7 +92,7 @@ public class MissionItemView extends LinearLayout {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 LogUtil.logD(TAG,"[AlerDialog][setText] : "+editText.getText());
-                                viewBinding.numTextview.setText(editText.getText());
+                                setItemContent(Integer.valueOf(editText.getText().toString()));
                             }
                         })
                         .setNegativeButton("cancel",null);
@@ -91,15 +102,29 @@ public class MissionItemView extends LinearLayout {
     }
 
 
-    public void setItemContent(int content1){
-        viewBinding.numTextview.setText(String.valueOf(content1));
+    public void setItemContent(int content){
+        LogUtil.logD(TAG,
+                "[setItemContent] content = "+content);
+        viewBinding.numTextview.setText(String.valueOf(content));
+        if (inverseBindingListener != null)
+            inverseBindingListener.onChange();
+        this.content = content;
     }
 
     public void setItemDescription(String string){
+        LogUtil.logD(TAG,
+                "[setItemDescription] string = "+string);
         viewBinding.descriptionTextview.setText(string);
     }
 
     public int getItemContent(){
-        return Integer.valueOf(viewBinding.numTextview.getText().toString());
+        LogUtil.logD(TAG,"[getItemContent] RETURN = "+viewBinding.numTextview.getText().toString());
+        if (viewBinding.numTextview.getText().toString().isEmpty())
+            return 0;
+        return Integer.parseInt(viewBinding.numTextview.getText().toString());
+    }
+
+    public void setItemContentAttrChanged(InverseBindingListener inverseBindingListener){
+        this.inverseBindingListener = inverseBindingListener;
     }
 }

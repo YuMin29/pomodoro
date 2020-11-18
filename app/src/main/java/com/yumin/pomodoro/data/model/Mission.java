@@ -11,10 +11,10 @@ public class Mission {
     private int mTime = 25;
     private int mShortBreakTime = 5;
     private int mLongBreakTime = 15;
-    private Color mColor = Color.WHITE;
+    private int mColor;
     private String mOperateDay = "TODAY";
     private int mGoal = 0;
-    private Repeat mRepeat = Repeat.NONE;
+    private String mRepeat = "NONE";
     private boolean mEnableNotification = true;
     private boolean mEnableSound = true;
     private Volume mVolume = Volume.MEDIUM;
@@ -125,7 +125,7 @@ public class Mission {
         return android.graphics.Color.YELLOW;
     }
 
-    public void setColor(Color color) {
+    public void setColor(int color) {
         mColor = color;
     }
 
@@ -137,11 +137,11 @@ public class Mission {
         this.mOperateDay = repeat;
     }
 
-    public void setRepeat(Repeat repeat){
+    public void setRepeat(String repeat){
 	    this.mRepeat = repeat;
     }
 
-    public Repeat getRepeat(){
+    public String getRepeat(){
 	    return this.mRepeat;
     }
 

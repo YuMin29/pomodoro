@@ -1,28 +1,12 @@
 package com.yumin.pomodoro.ui.main.clickhandler;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.Switch;
 
 
-import androidx.lifecycle.MutableLiveData;
-
-import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.model.AdjustMissionItem;
-import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.ui.main.adapter.RecyclerViewBaseAdapter;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
-import com.yumin.pomodoro.ui.view.MissionItemView;
 import com.yumin.pomodoro.utils.LogUtil;
-
-import java.util.List;
 
 public class AddMissionClickHandler {
     private static final String TAG = "[AddMissionEventHandler]";

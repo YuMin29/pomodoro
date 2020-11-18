@@ -37,6 +37,12 @@ public class AddMissionFragment extends Fragment {
 
     public AddMissionFragment() {}
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LogUtil.logD(TAG, "[onCreate]");
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,9 +67,9 @@ public class AddMissionFragment extends Fragment {
     }
 
     private void initViewModel() {
+        LogUtil.logD(TAG,"[initViewModel]");
         mAddMissionViewModel =  new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
                 new ApiHelper(new ApiServiceImpl(),getContext()))).get(AddMissionViewModel.class);
-
     }
 
     private void initClickHandler(){
