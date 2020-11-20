@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
     private ApiHelper apiHelper;
@@ -25,6 +26,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass == AddMissionViewModel.class) {
             return (T) new AddMissionViewModel(application,new MainRepository(apiHelper));
+        } else if (modelClass == HomeViewModel.class) {
+            return (T) new HomeViewModel(application,new MainRepository(apiHelper));
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package com.yumin.pomodoro.ui.view;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +70,7 @@ public class AddMissionFragment extends Fragment {
     private void initViewModel() {
         LogUtil.logD(TAG,"[initViewModel]");
         mAddMissionViewModel =  new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(),getContext()))).get(AddMissionViewModel.class);
+                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()))).get(AddMissionViewModel.class);
     }
 
     private void initClickHandler(){

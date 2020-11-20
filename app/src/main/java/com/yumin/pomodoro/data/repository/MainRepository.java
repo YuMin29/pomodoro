@@ -1,5 +1,9 @@
 package com.yumin.pomodoro.data.repository;
 
+import android.content.Context;
+
+import androidx.lifecycle.LiveData;
+
 import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.model.AdjustMissionItem;
 import com.yumin.pomodoro.data.model.Mission;
@@ -13,15 +17,19 @@ public class MainRepository {
         this.apiHelper = apiHelper;
     }
 
-    public List<Mission> getMissions(){
-        return apiHelper.getMissions();
+    public LiveData<List<Mission>> getMissions(Context context){
+        return apiHelper.getMissions(context);
+    }
+
+    public LiveData<List<Mission>> getMissionsByOperate(long start, long end){
+        return apiHelper.getMissionsByOperate(start,end);
     }
 
     public Mission getInitMission(){
         return apiHelper.getInitMission();
     }
 
-    public void addMission(Mission mission){
-        apiHelper.addMission(mission);
+    public void addMission(Context context, Mission mission){
+        apiHelper.addMission(context,mission);
     }
 }

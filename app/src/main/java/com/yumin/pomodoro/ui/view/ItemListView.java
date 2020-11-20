@@ -95,9 +95,14 @@ public class ItemListView extends LinearLayout {
     }
 
     public void setItemListVal(String val){
+        // long convert to string
         viewBinding.valTextview.setText(val);
         if (inverseBindingListener != null)
             inverseBindingListener.onChange();
+    }
+
+    public void setItemListVal(long val){
+
     }
 
     public String getItemListVal(){

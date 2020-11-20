@@ -1,25 +1,27 @@
 package com.yumin.pomodoro.data.model;
 
-import android.graphics.Color;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
-import com.yumin.pomodoro.utils.LogUtil;
-
-
+@Entity(tableName = "MyMission")
 public class Mission {
-    private String mName;
-    private Type mType;
-    private int mTime = 25;
-    private int mShortBreakTime = 5;
-    private int mLongBreakTime = 15;
-    private int mColor;
-    private String mOperateDay = "TODAY";
-    private int mGoal = 0;
-    private String mRepeat = "NONE";
-    private boolean mEnableNotification = true;
-    private boolean mEnableSound = true;
-    private Volume mVolume = Volume.MEDIUM;
-    private boolean mEnableVibrate = true;
-    private boolean mKeepScreenOn = true;
+    @PrimaryKey(autoGenerate = true)
+    int id;
+    private String name;
+//    private Type mType;
+    private int time = 25;
+    private int shortBreakTime = 5;
+    private int longBreakTime = 15;
+    private int color;
+    private long operateDay = System.currentTimeMillis();
+    private int goal = 0;
+    private String repeat = "NONE";
+    private boolean enableNotification = true;
+    private boolean enableSound = true;
+//    private Volume mVolume = Volume.MEDIUM;
+    private boolean enableVibrate = true;
+    private boolean keepScreenOn = true;
 
     public enum Type{DEFAULT,NONE,COUNT;}
 
@@ -64,132 +66,142 @@ public class Mission {
     public Mission(String test, Type aDefault, int i) {
     }
 
-    public String dump(){
-	    return "=== dump mission ===\n"+
-                "name = "+getName()+", time = "+String.valueOf(getTime())+
-                ", short break time = "+String.valueOf(getShortBreakTime())+
-                ", long break time  = "+String.valueOf(getLongBreakTime())+
-                ", color = "+String.valueOf(getColor())+
-                ", operate day = "+getOperateDay()+
-                ", goal = "+String.valueOf(getGoal())+
-                ", repeat = "+getRepeat().toString()+
-                ", notification = "+getEnableNotification()+
-                ", sound = "+getEnableSound()+
-                ", vibrate = "+getEnableVibrate()+
-                ", keep screen on"+getKeepScreenOn();
+    public Mission(String name, int time, int shortBreakTime, int longBreakTime, int color, long operateDay, int goal,
+                   String repeat, boolean enableNotification, boolean enableSound, boolean enableVibrate, boolean keepScreenOn) {
+        this.name = name;
+        this.time = time;
+        this.shortBreakTime = shortBreakTime;
+        this.longBreakTime = longBreakTime;
+        this.color = color;
+        this.operateDay = operateDay;
+        this.goal = goal;
+        this.repeat = repeat;
+        this.enableNotification = enableNotification;
+        this.enableSound = enableSound;
+        this.enableVibrate = enableVibrate;
+        this.keepScreenOn = keepScreenOn;
+    }
+
+    @Override
+    public String toString() {
+        return "Mission{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", time=" + time +
+                ", shortBreakTime=" + shortBreakTime +
+                ", longBreakTime=" + longBreakTime +
+                ", color=" + color +
+                ", operateDay='" + operateDay + '\'' +
+                ", goal=" + goal +
+                ", repeat='" + repeat + '\'' +
+                ", enableNotification=" + enableNotification +
+                ", enableSound=" + enableSound +
+                ", enableVibrate=" + enableVibrate +
+                ", keepScreenOn=" + keepScreenOn +
+                '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        LogUtil.logD(TAG,"[setName] name = "+name);
-        mName = name;
-    }
-
-    public Type getType() {
-        return mType;
-    }
-
-    public void setType(Type type) {
-        mType = type;
+        this.name = name;
     }
 
     public int getTime() {
-        return mTime;
+        return time;
     }
 
     public void setTime(int time) {
-	    LogUtil.logD(TAG,"[setTime] time = "+time);
-        mTime = time;
+        this.time = time;
     }
 
-    public void setShortBreakTime(int time){
-	    this.mShortBreakTime = time;
+    public int getShortBreakTime() {
+        return shortBreakTime;
     }
 
-    public int getShortBreakTime(){
-	    return this.mShortBreakTime;
+    public void setShortBreakTime(int shortBreakTime) {
+        this.shortBreakTime = shortBreakTime;
     }
 
-    public void setLongBreakTime(int time){
-	    this.mLongBreakTime = time;
+    public int getLongBreakTime() {
+        return longBreakTime;
     }
 
-    public int getLongBreakTime(){
-	    return this.mLongBreakTime;
+    public void setLongBreakTime(int longBreakTime) {
+        this.longBreakTime = longBreakTime;
     }
 
     public int getColor() {
-        return android.graphics.Color.YELLOW;
+        return color;
     }
 
     public void setColor(int color) {
-        mColor = color;
+        this.color = color;
     }
 
-    public String getOperateDay() {
-        return mOperateDay;
+    public long getOperateDay() {
+        return operateDay;
     }
 
-    public void setOperateDay(String repeat) {
-        this.mOperateDay = repeat;
+    public void setOperateDay(long operateDay) {
+        this.operateDay = operateDay;
     }
 
-    public void setRepeat(String repeat){
-	    this.mRepeat = repeat;
-    }
-
-    public String getRepeat(){
-	    return this.mRepeat;
+    public int getGoal() {
+        return goal;
     }
 
     public void setGoal(int goal) {
-	    mGoal = goal;
-	}
-
-    public int getGoal() {
-	    return this.mGoal;
-	}
-
-    public void setEnableNotification(boolean enabled) {
-        mEnableNotification = enabled;
+        this.goal = goal;
     }
 
-    public boolean getEnableNotification() {
-        return this.mEnableNotification;
+    public String getRepeat() {
+        return repeat;
     }
 
-    public void setEnableSound(boolean enabled) {
-        mEnableSound = enabled;
+    public void setRepeat(String repeat) {
+        this.repeat = repeat;
     }
 
-    public boolean getEnableSound() {
-        return this.mEnableSound;
+    public boolean isEnableNotification() {
+        return enableNotification;
     }
 
-    public void setVolume(Volume volume) {
-        mVolume = volume;
+    public void setEnableNotification(boolean enableNotification) {
+        this.enableNotification = enableNotification;
     }
 
-    public Volume getVolume() {
-        return this.mVolume;
+    public boolean isEnableSound() {
+        return enableSound;
     }
 
-    public void setEnableVibrate(boolean enabled) {
-        mEnableVibrate = enabled;
+    public void setEnableSound(boolean enableSound) {
+        this.enableSound = enableSound;
     }
 
-    public boolean getEnableVibrate() {
-        return this.mEnableVibrate;
+    public boolean isEnableVibrate() {
+        return enableVibrate;
     }
 
-    public void setKeepScreenOn(boolean enabled) {
-        mKeepScreenOn = enabled;
+    public void setEnableVibrate(boolean enableVibrate) {
+        this.enableVibrate = enableVibrate;
     }
 
-    public boolean getKeepScreenOn() {
-        return this.mKeepScreenOn;
+    public boolean isKeepScreenOn() {
+        return keepScreenOn;
+    }
+
+    public void setKeepScreenOn(boolean keepScreenOn) {
+        this.keepScreenOn = keepScreenOn;
     }
 }

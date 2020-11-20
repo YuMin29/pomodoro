@@ -114,12 +114,12 @@
                     android:layout_height="match_parent"
                     android:weightSum="2">
 
-                    <com.yumin.pomodoro.ui.view.ItemListView
+                    <com.yumin.pomodoro.ui.view.ItemDateView
                         android:id="@+id/item_operate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemListVal="@={viewmodel.mission.operateDay}"
+                        app:itemDateVal="@={viewmodel.mission.operateDay}"
                         app:itemDescription="@{@string/mission_operate_day}"/>
 
                     <com.yumin.pomodoro.ui.view.ItemDialogView

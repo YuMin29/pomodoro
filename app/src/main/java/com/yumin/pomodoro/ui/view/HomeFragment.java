@@ -9,13 +9,21 @@ import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.data.api.ApiHelper;
+import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
+import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
+import com.yumin.pomodoro.ui.main.clickhandler.AddMissionClickHandler;
+import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.base.IFragmentListener;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -24,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = "[HomeFragment]";
     private HomeViewModel mHomeViewModel;
     private CategoryAdapter mCategoryAdapter;
     private List<Mission> mMissions = new ArrayList<>();
@@ -31,31 +40,25 @@ public class HomeFragment extends Fragment {
     private IFragmentListener mIFragmentListener;
     FragmentHomeBinding fragmentHomeBinding;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragmentHomeBinding = FragmentHomeBinding.inflate(inflater);
+        fragmentHomeBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false);
+        initViewModel();
+//        initClickHandler();
+        initUI();
+        fragmentHomeBinding.setViewModel(mHomeViewModel);
         return fragmentHomeBinding.getRoot();
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mIFragmentListener = (IFragmentListener) context;
+    private void initViewModel() {
+        LogUtil.logD(TAG,"[initViewModel]");
+        mHomeViewModel =  new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
+                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()))).get(HomeViewModel.class);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+    private void initUI() {
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-//        mFragmentHomeBinding.setViewModel(mHomeViewModel);
-//        mFragmentHomeBinding.setLifecycleOwner(this);
         fragmentHomeBinding.homeListView.setAdapter(mCategoryAdapter);
         fragmentHomeBinding.homeListView.setGroupIndicator(null);
         fragmentHomeBinding.homeListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -77,17 +80,32 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // launch fragment to add new item
-				mIFragmentListener.switchFragment("AddMissionFragment");
+                mIFragmentListener.switchFragment("AddMissionFragment");
             }
         });
         observeViewModel();
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mIFragmentListener = (IFragmentListener) context;
+    }
 
     private void observeViewModel(){
+        mHomeViewModel.getMissions().observe(getViewLifecycleOwner(), missions -> {
+            LogUtil.logD(TAG,"[Observe] mission list size = "+missions.size());
+            if (missions != null)
+                mHomeViewModel.getLoading().postValue(false);
+        });
+
+        mHomeViewModel.getMissionsToday().observe(getViewLifecycleOwner(), missions -> {
+//            LogUtil.logD(TAG,"[Observe] today mission list size = "+missions.size());
+        });
+
         mHomeViewModel.getCategoryList().observe(getViewLifecycleOwner(), categories -> {
             if (!mCategory.containsAll(categories)) {
-                mCategory.clear();;
+                mCategory.clear();
                 mCategory.addAll(categories);
                 mCategoryAdapter.flashCategory(mCategory);
                 mCategoryAdapter.notifyDataSetChanged();
