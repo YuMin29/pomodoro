@@ -2,7 +2,6 @@ package com.yumin.pomodoro.data.api;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -19,7 +18,8 @@ public class ApiServiceImpl implements ApiService {
     private List<Mission> missions;
     private MissionDao missionDao;
     private LiveData<List<Mission>> allMissions;
-    private LiveData<List<Mission>> missionsByOperate = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> todayMissions = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> comingMissions = new LiveData<List<Mission>>(){};
 
     public ApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
@@ -29,9 +29,16 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public LiveData<List<Mission>> getMissionsByOperateDay(long start, long end) {
-        missionsByOperate = missionDao.getMissionsByOperateDay(start,end);
-        return missionsByOperate;
+    public LiveData<List<Mission>> getTodayMissions(long start, long end) {
+        todayMissions = missionDao.getTodayMissions(start,end);
+        return todayMissions;
+    }
+
+
+    @Override
+    public LiveData<List<Mission>> getComingMissions(long today) {
+        comingMissions = missionDao.getComingMissions(today);
+        return comingMissions;
     }
 
     @Override

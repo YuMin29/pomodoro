@@ -22,11 +22,13 @@ public class AddMissionViewModel extends AndroidViewModel {
     private MainRepository mainRepository;
     private MutableLiveData<List<AdjustMissionItem>> adjustMissionItems = new MutableLiveData<>();
     private MutableLiveData<Mission> mission = new MutableLiveData<>();
+    private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
 
     public AddMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
         this.mainRepository = mainRepository;
         fetchMission();
+        saveButtonClick.postValue(false);
     }
 
     private void fetchMission(){
@@ -38,8 +40,13 @@ public class AddMissionViewModel extends AndroidViewModel {
         return this.mission;
     }
 
+    public LiveData<Boolean> getSaveButtonClick(){
+        return this.saveButtonClick;
+    }
+
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+mission.getValue().toString());
         mainRepository.addMission(getApplication(),mission.getValue());
+        saveButtonClick.postValue(true);
     }
 }

@@ -81,7 +81,7 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
             categoryViewHolder = (CategoryViewHolder) convertView.getTag();
         }
 
-        Log.d(TAG,"[getGroupView] category name =  "
+        LogUtil.logD(TAG,"[getGroupView] category name =  "
                 +mCategoryList.get(groupPosition).getCategoryName());
 
         categoryViewHolder.categoryName.setText(mCategoryList.get(groupPosition).getCategoryName());

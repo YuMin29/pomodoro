@@ -1,8 +1,12 @@
 package com.yumin.pomodoro.data.model;
 
+import android.graphics.Color;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import com.yumin.pomodoro.R;
 
 @Entity(tableName = "MyMission")
 public class Mission {
@@ -13,7 +17,7 @@ public class Mission {
     private int time = 25;
     private int shortBreakTime = 5;
     private int longBreakTime = 15;
-    private int color;
+    private int color = Color.parseColor("#595775");
     private long operateDay = System.currentTimeMillis();
     private int goal = 0;
     private String repeat = "NONE";
@@ -54,7 +58,6 @@ public class Mission {
             return null;
         }
     }
-	public enum Color{BLACK,WHITE,RED,YELLOW,GREEN;}
 	public enum Volume{SMALL,MEDIUM,LARGE;}
 
 	private static final String TAG = "[Mission]";

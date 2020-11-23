@@ -13,7 +13,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.api.ApiServiceImpl;
@@ -22,8 +21,7 @@ import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
-import com.yumin.pomodoro.ui.main.clickhandler.AddMissionClickHandler;
-import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
+import com.yumin.pomodoro.ui.main.adapter.TestExpandableAdapter;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.base.IFragmentListener;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -35,10 +33,13 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "[HomeFragment]";
     private HomeViewModel mHomeViewModel;
     private CategoryAdapter mCategoryAdapter;
+    private TestExpandableAdapter testExpandableAdapter;
     private List<Mission> mMissions = new ArrayList<>();
     private List<Category> mCategory = new ArrayList<>();
     private IFragmentListener mIFragmentListener;
     FragmentHomeBinding fragmentHomeBinding;
+    Category today;
+    Category coming;
 
     @Nullable
     @Override
@@ -59,7 +60,8 @@ public class HomeFragment extends Fragment {
 
     private void initUI() {
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-        fragmentHomeBinding.homeListView.setAdapter(mCategoryAdapter);
+        testExpandableAdapter = new TestExpandableAdapter(mCategory,getContext());
+        fragmentHomeBinding.homeListView.setAdapter(testExpandableAdapter);
         fragmentHomeBinding.homeListView.setGroupIndicator(null);
         fragmentHomeBinding.homeListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -94,29 +96,50 @@ public class HomeFragment extends Fragment {
 
     private void observeViewModel(){
         mHomeViewModel.getMissions().observe(getViewLifecycleOwner(), missions -> {
-            LogUtil.logD(TAG,"[Observe] mission list size = "+missions.size());
+            LogUtil.logD(TAG,"[observeViewModel] mission list size = "+missions.size());
             if (missions != null)
                 mHomeViewModel.getLoading().postValue(false);
         });
 
-        mHomeViewModel.getMissionsToday().observe(getViewLifecycleOwner(), missions -> {
-//            LogUtil.logD(TAG,"[Observe] today mission list size = "+missions.size());
+        mHomeViewModel.getTodayMissions().observe(getViewLifecycleOwner(), missions -> {
+            LogUtil.logD(TAG,"[observeViewModel] today mission list size = "+missions.size());
+            if (missions.size() > 0) {
+                today = new Category("今天");
+               for (Mission mission : missions) {
+                   today.addMission(mission);
+               }
+               updateCategoryList();
+            }
         });
 
-        mHomeViewModel.getCategoryList().observe(getViewLifecycleOwner(), categories -> {
-            if (!mCategory.containsAll(categories)) {
-                mCategory.clear();
-                mCategory.addAll(categories);
-                mCategoryAdapter.flashCategory(mCategory);
-                mCategoryAdapter.notifyDataSetChanged();
-                int groupCount = fragmentHomeBinding.homeListView.getCount();
-                for (int i=0; i<groupCount; i++)
-                    fragmentHomeBinding.homeListView.expandGroup(i);
+        mHomeViewModel.getComingMissions().observe(getViewLifecycleOwner(),missions -> {
+            LogUtil.logD(TAG,"[observeViewModel] coming mission list size = "+missions.size());
+            if (missions.size() > 0) {
+                coming = new Category("即將到來");
+                for (Mission mission : missions) {
+                    coming.addMission(mission);
+                }
+                updateCategoryList();
             }
         });
 
         mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             fragmentHomeBinding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
         });
+    }
+
+    private void updateCategoryList(){
+        mCategory.clear();
+        if (today != null)
+            mCategory.add(today);
+        if (coming != null )
+            mCategory.add(coming);
+        testExpandableAdapter.flashCategory(mCategory);
+
+        int groupCount = testExpandableAdapter.getGroupCount();
+        for (int i=0; i<groupCount; i++) {
+            LogUtil.logD(TAG, "[updateCategoryList] group count = " + groupCount + " , i =" + i);
+            fragmentHomeBinding.homeListView.expandGroup(i);
+        }
     }
 }

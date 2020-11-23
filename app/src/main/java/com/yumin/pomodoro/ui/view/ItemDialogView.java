@@ -52,7 +52,7 @@ public class ItemDialogView extends LinearLayout {
             public void onClick(View v) {
                         // show color list dialog
                         ColorSelectorDialog dialog = new ColorSelectorDialog(context,
-                                getThemeColors(),1);
+                                getThemeColors(),0);
                         dialog.setClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {

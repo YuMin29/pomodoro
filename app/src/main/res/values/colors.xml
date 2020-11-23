@@ -16,8 +16,8 @@
     <color name="timer_colorYellow">#F5FA55</color>
 
     <string-array name="backgroundColors">
-        <item>#ABA6BF</item>
         <item>#595775</item>
+        <item>#ABA6BF</item>
         <item>#583E2E</item>
         <item>#F1E0D6</item>
         <item>#BF988F</item>

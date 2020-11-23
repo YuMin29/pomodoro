@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
-import com.yumin.pomodoro.data.model.AdjustMissionItem;
 import com.yumin.pomodoro.data.model.Mission;
 
 import java.util.List;
@@ -22,8 +21,12 @@ public class ApiHelper {
         return apiService.getMissions(context);
     }
 
-    public LiveData<List<Mission>> getMissionsByOperate(long start, long end){
-        return apiService.getMissionsByOperateDay(start,end);
+    public LiveData<List<Mission>> getTodayMissions(long start, long end){
+        return apiService.getTodayMissions(start,end);
+    }
+
+    public LiveData<List<Mission>> getComingMissions(long today){
+        return apiService.getComingMissions(today);
     }
 
 

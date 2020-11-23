@@ -12,5 +12,6 @@ public interface ApiService {
     public LiveData<List<Mission>> getMissions(Context context);
     public void addMission(Context context, Mission mission);
     public Mission getInitMission();
-    public LiveData<List<Mission>> getMissionsByOperateDay(long start, long end);
+    public LiveData<List<Mission>> getTodayMissions(long start, long end);
+    public LiveData<List<Mission>> getComingMissions(long today);
 }

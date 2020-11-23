@@ -1,81 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/header"
-    android:background="@drawable/mission_item_shape"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:clickable="false">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="mission"
+            type="com.yumin.pomodoro.data.model.Mission" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:background="@drawable/mission_item_shape"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:clickable="false">
+
+        <com.yumin.pomodoro.ui.view.ColorView
+            android:id="@+id/colorView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/item_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:ColorValue="@{mission.color}"
+            android:layout_gravity="center_horizontal|center_vertical"/>
+
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:fontFamily="@font/roboto_light"
+            android:textColor="#F77062"
+            android:textSize="16dp"
+            android:text="@{mission.name}"
+            app:layout_constraintBottom_toTopOf="@+id/item_time"
+            app:layout_constraintEnd_toStartOf="@+id/item_goal"
+            app:layout_constraintStart_toEndOf="@+id/colorView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:background="@drawable/round_button"
-        android:src="@drawable/ic_baseline_mood_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/item_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/item_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:textSize="12dp"
+            android:text="@{@string/mission_time + Integer.toString(mission.time) + @string/minute}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/item_name"
+            app:layout_constraintStart_toStartOf="@+id/item_name"
+            app:layout_constraintTop_toBottomOf="@+id/item_name" />
+
+        <TextView
+            android:id="@+id/item_goal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/roboto_light"
+            android:textSize="12dp"
+            android:text="@{@string/mission_goal + Integer.toString(mission.goal)}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/item_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_name" />
 
 
-    <TextView
-        android:id="@+id/item_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginRight="1dp"
-        android:fontFamily="@font/roboto_light"
-        android:textColor="#F77062"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/item_type"
-        app:layout_constraintEnd_toStartOf="@+id/item_day"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-
-    <TextView
-        android:id="@+id/item_type"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_light"
-        android:textSize="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/item_name"
-        app:layout_constraintStart_toStartOf="@+id/item_name"
-        app:layout_constraintTop_toBottomOf="@+id/item_name" />
-
-    <TextView
-        android:id="@+id/item_day"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:fontFamily="@font/roboto_light"
-        android:textSize="12dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/item_type"
-        app:layout_constraintEnd_toStartOf="@+id/arrow_more"
-        app:layout_constraintStart_toEndOf="@+id/item_name" />
-
-
- <!--   <ImageButton
-        android:id="@+id/arrow_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="62dp"
-        android:layout_marginRight="62dp"
-        android:backgroundTint="#ffffff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/item_day"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_expand_more_24" /> -->
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

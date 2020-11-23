@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -59,6 +60,15 @@ public class AddMissionFragment extends Fragment {
     }
 
     private void initObserver() {
+        mAddMissionViewModel.getSaveButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                LogUtil.logD(TAG,"[Observe][getSaveButtonClick] aBoolean = "+aBoolean);
+                if (aBoolean) {
+
+                }
+            }
+        });
     }
 
     private void initUI() {

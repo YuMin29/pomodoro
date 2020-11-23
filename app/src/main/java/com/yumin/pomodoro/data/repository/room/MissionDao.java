@@ -17,7 +17,10 @@ public interface MissionDao {
     LiveData<List<Mission>> getAllMissions();
 
     @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet")
-    LiveData<List<Mission>> getMissionsByOperateDay(long dayst, long dayet);
+    LiveData<List<Mission>> getTodayMissions(long dayst, long dayet);
+
+    @Query("SELECT * FROM MyMission WHERE operateDay > :current")
+    LiveData<List<Mission>> getComingMissions(long current);
 
     @Insert
     void insert(Mission... missions);

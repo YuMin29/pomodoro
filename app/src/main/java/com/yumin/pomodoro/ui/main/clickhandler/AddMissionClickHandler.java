@@ -46,6 +46,7 @@ public class AddMissionClickHandler {
     public void onSaveButtonClick(){
         LogUtil.logD(TAG,"[onSaveButtonClick]");
         mAddMissionViewModel.saveMission();
+
     }
 
     public void onCancelButtonClick(){
