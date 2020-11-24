@@ -2,8 +2,6 @@ package com.yumin.pomodoro.ui.main.adapter;
 
 import android.content.Context;
 
-import androidx.databinding.ViewDataBinding;
-
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
@@ -13,10 +11,10 @@ import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
-public class TestExpandableAdapter extends ExpandableBaseAdapter<CategoryItemLayoutBinding, MissionItemLayoutBinding>{
+public class ExpandableViewViewAdapter extends ExpandableViewBaseAdapter<CategoryItemLayoutBinding, MissionItemLayoutBinding> {
     private static final String TAG = "[TestExpandableAdapter]";
 
-    public TestExpandableAdapter(List<Category> dataList,Context context){
+    public ExpandableViewViewAdapter(List<Category> dataList, Context context){
         super(dataList,context);
     }
 

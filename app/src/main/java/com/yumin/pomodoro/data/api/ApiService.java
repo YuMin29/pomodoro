@@ -14,4 +14,6 @@ public interface ApiService {
     public Mission getInitMission();
     public LiveData<List<Mission>> getTodayMissions(long start, long end);
     public LiveData<List<Mission>> getComingMissions(long today);
+    public LiveData<Mission> getMissionById(int id);
+    public void updateMission(Mission mission);
 }

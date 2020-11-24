@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.utils.LogUtil;
 
 @Entity(tableName = "MyMission")
 public class Mission {
@@ -64,14 +65,13 @@ public class Mission {
 
 	public Mission(){
 	    // init
-    }
-
-    public Mission(String test, Type aDefault, int i) {
+        LogUtil.logD(TAG,"NEW [Mission]");
     }
 
     public Mission(String name, int time, int shortBreakTime, int longBreakTime, int color, long operateDay, int goal,
                    String repeat, boolean enableNotification, boolean enableSound, boolean enableVibrate, boolean keepScreenOn) {
-        this.name = name;
+        LogUtil.logD(TAG,"NEW [Mission] name = "+name+" ,time = "+time);
+	    this.name = name;
         this.time = time;
         this.shortBreakTime = shortBreakTime;
         this.longBreakTime = longBreakTime;

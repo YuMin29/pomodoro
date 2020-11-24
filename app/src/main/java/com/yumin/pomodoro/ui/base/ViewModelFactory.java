@@ -8,9 +8,12 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.yumin.pomodoro.data.api.ApiHelper;
+import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
+import com.yumin.pomodoro.ui.view.EditMissionFragment;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
     private ApiHelper apiHelper;

@@ -49,6 +49,11 @@
 
     <fragment android:id="@+id/add_mission_fragment"
         android:name="com.yumin.pomodoro.ui.view.AddMissionFragment"
-        android:label="Add mission"
+        android:label="@string/add_mission"
         tools:layout="@layout/fragment_add_mission"/>
+
+    <fragment android:id="@+id/edit_mission_fragment"
+        android:name="com.yumin.pomodoro.ui.view.EditMissionFragment"
+        android:label="@string/edit_mission"
+        tools:layout="@layout/fragment_edit_mission"/>
 </navigation>

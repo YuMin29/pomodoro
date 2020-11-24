@@ -22,6 +22,9 @@ public interface MissionDao {
     @Query("SELECT * FROM MyMission WHERE operateDay > :current")
     LiveData<List<Mission>> getComingMissions(long current);
 
+    @Query("SELECT * FROM MyMission WHERE id=:id")
+    LiveData<Mission> getMissionById(int id);
+
     @Insert
     void insert(Mission... missions);
 

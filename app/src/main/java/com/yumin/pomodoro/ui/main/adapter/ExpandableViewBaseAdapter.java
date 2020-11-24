@@ -22,12 +22,12 @@ import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
-public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends ViewDataBinding > extends BaseExpandableListAdapter {
+public abstract class ExpandableViewBaseAdapter<B extends ViewDataBinding, M extends ViewDataBinding > extends BaseExpandableListAdapter {
     private static final String TAG = "[ExpandableBaseAdapter]";
     protected List<Category> mDataList;
     private Context context;
 
-    public ExpandableBaseAdapter(List<Category> list,Context context) {
+    public ExpandableViewBaseAdapter(List<Category> list, Context context) {
         this.mDataList = list;
         this.context = context;
     }
@@ -77,9 +77,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         B binding = DataBindingUtil.inflate(LayoutInflater.from(this.context),
                 getGroupLayout(), parent, false);
-        GroupViewHolder groupViewHolder;
         if (convertView == null) {
-            groupViewHolder = new GroupViewHolder();
             convertView = binding.getRoot();
             convertView.setPadding(10, 10, 10, 10);
             convertView.setTag(binding);
@@ -96,9 +94,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         M binding = DataBindingUtil.inflate(LayoutInflater.from(this.context),getChildLayout(),parent,false);
-        ChildViewHolder childViewHolder;
         if (convertView == null) {
-            childViewHolder = new ChildViewHolder();
             convertView = binding.getRoot();
             convertView.setPadding(0, 0, 0, 20);
             convertView.setTag(binding);
@@ -106,16 +102,6 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
             binding = (M) convertView.getTag();
         }
         onBindChildLayout(binding,mDataList.get(groupPosition).getMissionList().get(childPosition));
-//        convertView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                LogUtil.logD(TAG,"convert view click! childPosition = "+childPosition );
-//            }
-//        });
-
-//        if (childPosition != 0)
-//            missionViewHolder.itemName.setText(mCategoryList.get(groupPosition).getMissionList().get(childPosition).getName());
-
         return convertView;
     }
 
@@ -123,7 +109,4 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
-
-    class GroupViewHolder{}
-    class ChildViewHolder{}
 }

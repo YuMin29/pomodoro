@@ -32,7 +32,15 @@ public class MainRepository {
         return apiHelper.getInitMission();
     }
 
+    public LiveData<Mission> getMissionById(int id){
+        return apiHelper.getMissionById(id);
+    }
+
     public void addMission(Context context, Mission mission){
         apiHelper.addMission(context,mission);
+    }
+
+    public void updateMission(Mission mission){
+        apiHelper.updateMission(mission);
     }
 }

@@ -37,4 +37,12 @@ public class ApiHelper {
     public Mission getInitMission(){
         return apiService.getInitMission();
     }
+
+    public LiveData<Mission> getMissionById(int id){
+        return apiService.getMissionById(id);
+    }
+
+    public void updateMission(Mission mission){
+        apiService.updateMission(mission);
+    }
 }
