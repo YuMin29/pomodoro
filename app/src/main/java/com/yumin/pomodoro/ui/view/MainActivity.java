@@ -34,7 +34,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener, IFragmentListener{
     private AppBarConfiguration mAppBarConfiguration;
     static TextView mToolbarTitle = null;
-    private NavController mNavController;
+    private static NavController mNavController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mNavController.addOnDestinationChangedListener(this);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, mNavController);
+    }
+
+    public static NavController getNavController(){
+        return mNavController;
     }
 
     public static void setStatusBarGradient(Activity activity) {

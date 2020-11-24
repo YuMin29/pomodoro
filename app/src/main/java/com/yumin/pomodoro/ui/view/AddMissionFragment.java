@@ -2,6 +2,8 @@ package com.yumin.pomodoro.ui.view;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,6 @@ import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
 import com.yumin.pomodoro.ui.base.ViewModelFactory;
-import com.yumin.pomodoro.ui.main.clickhandler.AddMissionClickHandler;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.data.model.AdjustMissionItem;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -33,9 +34,7 @@ import java.util.List;
 public class AddMissionFragment extends Fragment {
     private static final String TAG = "[AddMissionFragment]";
     AddMissionViewModel mAddMissionViewModel;
-    AddMissionClickHandler mAddMissionClickHandler;
     FragmentAddMissionBinding fragmentAddMissionBinding;
-    List<AdjustMissionItem> adjustMissionItems = new ArrayList<>();
 
     public AddMissionFragment() {}
 
@@ -51,10 +50,9 @@ public class AddMissionFragment extends Fragment {
         LogUtil.logD(TAG, "[onCreateView]");
         fragmentAddMissionBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_add_mission,container,false);
         initViewModel();
-        initClickHandler();
         initUI();
         initObserver();
-        fragmentAddMissionBinding.setClick(mAddMissionClickHandler);
+        fragmentAddMissionBinding.setClickProxy(new ClickProxy());
         fragmentAddMissionBinding.setViewmodel(mAddMissionViewModel);
         return fragmentAddMissionBinding.getRoot();
     }
@@ -62,10 +60,20 @@ public class AddMissionFragment extends Fragment {
     private void initObserver() {
         mAddMissionViewModel.getSaveButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                LogUtil.logD(TAG,"[Observe][getSaveButtonClick] aBoolean = "+aBoolean);
-                if (aBoolean) {
+            public void onChanged(Boolean click) {
+                LogUtil.logD(TAG,"[Observe][getSaveButtonClick] click = "+click);
+                if (click) {
+                    MainActivity.getNavController().navigateUp();
+                }
+            }
+        });
 
+        mAddMissionViewModel.getCancelButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean click) {
+                LogUtil.logD(TAG,"[Observe][getCancelButtonClick] click = "+click);
+                if (click) {
+                    MainActivity.getNavController().navigateUp();
                 }
             }
         });
@@ -73,8 +81,7 @@ public class AddMissionFragment extends Fragment {
 
     private void initUI() {
         // set title
-        MainActivity.setToolbarTitle("Add mission");
-//        fragmentAddMissionBinding.missionTitle.addTextChangedListener(mAddMissionClickHandler.getTextWatcher());
+        MainActivity.setToolbarTitle(getString(R.string.add_mission));
     }
 
     private void initViewModel() {
@@ -83,7 +90,16 @@ public class AddMissionFragment extends Fragment {
                 new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()))).get(AddMissionViewModel.class);
     }
 
-    private void initClickHandler(){
-        mAddMissionClickHandler = new AddMissionClickHandler(getContext(),mAddMissionViewModel);
+    public class ClickProxy{
+
+        public void onSaveButtonClick(){
+            LogUtil.logD(TAG,"[onSaveButtonClick]");
+            mAddMissionViewModel.saveMission();
+        }
+
+        public void onCancelButtonClick(){
+            LogUtil.logD(TAG,"[onCancelButtonClick]");
+            mAddMissionViewModel.cancel();
+        }
     }
 }

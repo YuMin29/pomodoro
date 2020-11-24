@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="click"
-            type="com.yumin.pomodoro.ui.main.clickhandler.AddMissionClickHandler" />
+            name="clickProxy"
+            type="com.yumin.pomodoro.ui.view.AddMissionFragment.ClickProxy" />
         <variable
             name="viewmodel"
             type="com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel" />
@@ -27,7 +27,6 @@
             android:layout_marginEnd="24dp"
             android:hint="mission name"
             android:text="@={viewmodel.mission.name}"
-            app:addTextChangedListener="@{click.textWatcher}"
             app:layout_constraintBottom_toTopOf="@+id/scrollview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -191,7 +190,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:onClick="@{()->click.onSaveButtonClick()}"
+            android:onClick="@{()->clickProxy.onSaveButtonClick()}"
             android:text="save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancel_button"
@@ -206,7 +205,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:onClick="@{()->click.onCancelButtonClick()}"
+            android:onClick="@{()->clickProxy.onCancelButtonClick()}"
             android:text="cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
