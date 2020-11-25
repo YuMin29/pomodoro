@@ -5,6 +5,9 @@
 
     <data>
         <variable
+            name="click"
+            type="com.yumin.pomodoro.ui.view.HomeFragment.ClickProxy" />
+        <variable
             name="viewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel" />
     </data>
@@ -67,9 +70,10 @@
             android:layout_marginEnd="16dp"
             android:background="@color/layout_item_background"
             android:stateListAnimator="@null"
-            android:text="ADD MISSION"
+            android:text="@string/add_mission"
             android:textColor="@android:color/tab_indicator_text"
             android:textSize="20sp"
+            android:onClick="@{()->click.addMission()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linear" />

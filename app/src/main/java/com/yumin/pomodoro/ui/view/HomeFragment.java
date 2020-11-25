@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragmentHomeBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false);
         fragmentHomeBinding.setLifecycleOwner(this);
+        fragmentHomeBinding.setClick(new ClickProxy());
         initViewModel();
         initUI();
         observeViewModel();
@@ -73,6 +74,9 @@ public class HomeFragment extends Fragment {
                 Mission mission = (Mission) expandableViewAdapter.getChild(groupPosition,childPosition);
                 LogUtil.logD(TAG,"[onChildClick] item = "+mission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
+                Bundle bundle = new Bundle();
+                bundle.putInt("itemId",mission.getId());
+                MainActivity.getNavController().navigate(R.id.fragment_timer,bundle);
                 return true;
             }
         });
@@ -97,14 +101,6 @@ public class HomeFragment extends Fragment {
                     return true;
                 }
                 return false;
-            }
-        });
-
-        fragmentHomeBinding.addItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                mIFragmentListener.switchFragment("AddMissionFragment");
-                MainActivity.getNavController().navigate(R.id.add_mission_fragment);
             }
         });
     }
@@ -166,7 +162,7 @@ public class HomeFragment extends Fragment {
 
     public class ClickProxy{
         public void addMission(){
-
+            MainActivity.getNavController().navigate(R.id.add_mission_fragment);
         }
     }
 }
