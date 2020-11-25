@@ -3,7 +3,6 @@ package com.yumin.pomodoro.utils;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,7 +55,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
             case R.id.imageViewReset:
                 reset();
                 break;
-            case R.id.imageViewStartStop:
+            case R.id.imageViewStartPause:
                 startStop();
                 break;
         }
@@ -73,7 +72,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         editTextMinute = (EditText) findViewById(R.id.editTextMinute);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
-        imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
+        imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartPause);
     }
 
     private void initListeners() {

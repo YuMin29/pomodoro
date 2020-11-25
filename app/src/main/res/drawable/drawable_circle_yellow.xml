@@ -4,5 +4,5 @@
     android:shape="ring"
     android:thickness="10dp"
     android:useLevel="true">
-    <solid android:color="@color/timer_colorYellow" />
+    <solid android:color="@color/timer_progressbar" />
 </shape>

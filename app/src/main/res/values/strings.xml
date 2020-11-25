@@ -38,8 +38,11 @@
     <string name="default_val">0</string>
     <string name="add_mission">新增蕃茄任務</string>
     <string name="edit_mission">編輯蕃茄任務</string>
+    <string name="mission_timer">蕃茄時鐘</string>
     <string name="category_today">今天</string>
     <string name="category_coming">即將到來</string>
+
+    <string name="timer_format">%tm:%ts</string>
 
     <array name="repeat_array">
         <item>"NONE"</item>

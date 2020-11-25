@@ -8,12 +8,15 @@
     <color name="theme_background">#9cabb8</color>
     <color name="layout_main_background">#f5f6f7</color>
     <color name="layout_item_background">#FFFFFF</color>
+    <color name="timer_progressbar">#FFFFFF</color>
 
     <color name="timer_colorPrimary">#1E2538</color>
     <color name="timer_colorPrimaryDark">#0E121B</color>
     <color name="timer_colorAccent">#F5FA55</color>
     <color name="timer_colorBackground">#151B29</color>
     <color name="timer_colorYellow">#F5FA55</color>
+    <color name="timer_test_background">#776B04</color>
+    <color name="break_timer_background">#87CEEB</color>
 
     <string-array name="backgroundColors">
         <item>#595775</item>

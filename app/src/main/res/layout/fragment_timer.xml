@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel" />
+        <variable
+            name="click"
+            type="com.yumin.pomodoro.ui.view.TimerFragment.ClickProxy" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/timer_relativelayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@{viewmodel.mission.color}">
+
+            <ProgressBar
+                android:id="@+id/progressBarCircle"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="270dp"
+                android:layout_height="270dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/drawable_circle_dark_blue"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="100"
+                android:progressDrawable="@drawable/drawable_circle_yellow"
+                android:rotation="-90" />
+
+            <TextView
+                android:id="@+id/textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@{viewmodel.missionTime}"
+                android:textColor="@color/timer_progressbar"
+                android:textSize="40sp" />
+
+            <ImageView
+                android:id="@+id/imageViewReset"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/textViewTime"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/ic_baseline_stop_24"
+                android:visibility="gone"
+                android:onClick="@{()->click.missionReset()}"/>
+
+
+            <ImageView
+                android:id="@+id/imageViewStartPause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/progressBarCircle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_baseline_play_arrow_24"
+                android:onClick="@{()->click.missionStartPause()}"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/timer_break"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/break_timer_background">
+
+            <ProgressBar
+                android:id="@+id/break_progressBarCircle"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="270dp"
+                android:layout_height="270dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/drawable_circle_dark_blue"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="100"
+                android:progressDrawable="@drawable/drawable_circle_yellow"
+                android:rotation="-90" />
+
+            <TextView
+                android:id="@+id/break_textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@{viewmodel.missionBreakTime}"
+                android:textColor="@color/timer_progressbar"
+                android:textSize="40sp" />
+
+            <ImageView
+                android:id="@+id/break_imageViewReset"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/break_textViewTime"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/ic_baseline_stop_24"
+                android:visibility="gone"
+                android:onClick="@{()->click.breakReset()}"/>
+
+
+            <ImageView
+                android:id="@+id/break_imageViewStartPause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/break_progressBarCircle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_baseline_play_arrow_24"
+                android:onClick="@{()->click.breakStartPause()}"/>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -56,4 +56,9 @@
         android:name="com.yumin.pomodoro.ui.view.EditMissionFragment"
         android:label="@string/edit_mission"
         tools:layout="@layout/fragment_edit_mission"/>
+
+    <fragment android:id="@+id/fragment_timer"
+        android:name="com.yumin.pomodoro.ui.view.TimerFragment"
+        android:label="@string/mission_timer"
+        tools:layout="@layout/fragment_timer"/>
 </navigation>
