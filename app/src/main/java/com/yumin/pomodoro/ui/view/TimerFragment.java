@@ -150,7 +150,12 @@ public class TimerFragment extends Fragment {
                 fragmentTimerBinding.imageViewStartPause.setImageResource(R.drawable.ic_baseline_play_arrow_24);
                 timerStatus = TimerStatus.STOPPED;
                 // switch to break time mode
-                initBreakTimerValue();
+
+                initBreakTimerValue(); // init
+                setBreakProgressBarValues(breakTime);
+                fragmentTimerBinding.breakImageViewStartPause.setImageResource(R.drawable.ic_baseline_pause_24);
+                fragmentTimerBinding.breakImageViewReset.setVisibility(View.GONE);
+                breakTimerStatus = TimerStatus.STARTED;
                 startBreakCountDownTimer(breakTime);
             }
 
@@ -170,7 +175,7 @@ public class TimerFragment extends Fragment {
     }
 
     public void continueBreakCountDownTimer(){
-        startBreakCountDownTimer(breakTime);
+        startBreakCountDownTimer(breakTimeLeft);
     }
 
     private String hmsTimeFormatter(long milliSeconds) {
@@ -203,6 +208,7 @@ public class TimerFragment extends Fragment {
             fragmentTimerBinding.textViewTime.setText(msTimeFormatter(missionTime));
             setProgressBarValues(missionTime);
             timerStatus = TimerStatus.STOPPED;
+            fragmentTimerBinding.imageViewReset.setVisibility(View.GONE);
         }
 
         public void missionStartPause(){
@@ -233,6 +239,7 @@ public class TimerFragment extends Fragment {
             fragmentTimerBinding.breakTextViewTime.setText(msTimeFormatter(breakTime));
             setBreakProgressBarValues(breakTime);
             breakTimerStatus = TimerStatus.STOPPED;
+            fragmentTimerBinding.breakImageViewReset.setVisibility(View.GONE);
         }
 
         public void breakStartPause(){
