@@ -3,30 +3,36 @@ package com.yumin.pomodoro.utils;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.databinding.CircleTimerBinding;
+import com.yumin.pomodoro.ui.view.TimerFragment;
 
 import java.util.concurrent.TimeUnit;
 
 public class CircleTimer extends RelativeLayout implements View.OnClickListener{
+    private CircleTimerBinding circleTimerBinding;
     private TimerStatus timerStatus = TimerStatus.STOPPED;
     private Context context;
     private ProgressBar progressBarCircle;
-    private EditText editTextMinute;
     private TextView textViewTime;
     private ImageView imageViewReset;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
     private long timeCountInMilliSeconds = 1 * 60000;
+    private long missionTime;
+    private long missionTimeLeft;
+    private OnFinishCountDownListener onFinishCountDownListener;
 
     public CircleTimer(Context context) {
         super(context);
@@ -49,6 +55,14 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         initListeners();
     }
 
+    public void setOnFinishCountDownListener(OnFinishCountDownListener listener){
+        this.onFinishCountDownListener = listener;
+    }
+
+    public interface OnFinishCountDownListener{
+        public void onFinished();
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -63,108 +77,105 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     private enum TimerStatus {
         STARTED,
+        PAUSE,
         STOPPED
     }
 
     private void initViews(Context context){
-        inflate(context,R.layout.circle_timer,this);
-        progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
-        editTextMinute = (EditText) findViewById(R.id.editTextMinute);
-        textViewTime = (TextView) findViewById(R.id.textViewTime);
-        imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
-        imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartPause);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        circleTimerBinding = DataBindingUtil.inflate(inflater,R.layout.circle_timer,this,true);
+        progressBarCircle = circleTimerBinding.progressBarCircle;
+        textViewTime = circleTimerBinding.textViewTime;
+        imageViewReset = circleTimerBinding.imageViewReset;
+        imageViewStartStop = circleTimerBinding.imageViewStartPause;
     }
 
     private void initListeners() {
-//        imageViewReset.setOnClickListener(this);
-//        imageViewStartStop.setOnClickListener(this);
+        circleTimerBinding.imageViewReset.setOnClickListener(this);
+        circleTimerBinding.imageViewStartPause.setOnClickListener(this);
     }
 
     private void reset() {
-        stopCountDownTimer();
-        startCountDownTimer();
+        initTimerValues();
+        textViewTime.setText(msTimeFormatter(missionTime));
+        setProgressBarValues(missionTime);
+        imageViewReset.setVisibility(GONE);
+        timerStatus = TimerStatus.STOPPED;
     }
 
     private void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
-
             // call to initialize the timer values
-            setTimerValues();
+            initTimerValues();
             // call to initialize the progress bar values
-            setProgressBarValues();
-            // showing the reset icon
-            imageViewReset.setVisibility(View.VISIBLE);
+            setProgressBarValues(missionTime);
+            // hide the reset icon
+            imageViewReset.setVisibility(View.GONE);
             // changing play icon to stop icon
-            imageViewStartStop.setImageResource(R.drawable.ic_baseline_refresh_24);
-            // making edit text not editable
-            editTextMinute.setEnabled(false);
+            imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
             // changing the timer status to started
             timerStatus = TimerStatus.STARTED;
             // call to start the count down timer
-            startCountDownTimer();
-
-        } else {
-
-            // hiding the reset icon
-            imageViewReset.setVisibility(View.GONE);
-            // changing stop icon to start icon
+            startCountDownTimer(missionTime);
+        } else if (timerStatus == TimerStatus.STARTED) {
             imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-            // making edit text editable
-            editTextMinute.setEnabled(true);
-            // changing the timer status to stopped
-            timerStatus = TimerStatus.STOPPED;
-            stopCountDownTimer();
-
+            imageViewReset.setVisibility(View.VISIBLE);
+            timerStatus = TimerStatus.PAUSE;
+            pauseCountDownTimer();
+        } else if (timerStatus == TimerStatus.PAUSE){
+            imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
+            timerStatus = TimerStatus.STARTED;
+            imageViewReset.setVisibility(View.GONE);
+            continueCountDownTimer();
+            setProgressBarValues(missionTimeLeft);
         }
 
     }
 
-    private void setTimerValues() {
-        int time = 0;
-        if (!editTextMinute.getText().toString().isEmpty()) {
-            // fetching value from edit text and type cast to integer
-            time = Integer.parseInt(editTextMinute.getText().toString().trim());
-        } else {
-            // toast message to fill edit text
-            Toast.makeText(context,"Please Enter Minutes...", Toast.LENGTH_LONG).show();
-        }
-        // assigning values after converting to milliseconds
-        timeCountInMilliSeconds = time * 60 * 1000;
+    private void pauseCountDownTimer(){
+        countDownTimer.cancel();
+    }
+
+    private void continueCountDownTimer(){
+        startCountDownTimer(missionTimeLeft);
+    }
+
+    private void initTimerValues() {
+        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
+        missionTime = timeCountInMilliSeconds;
     }
 
     /**
      * method to start count down timer
      */
-    private void startCountDownTimer() {
+    private void startCountDownTimer(long timeMilli) {
 
-        countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+        countDownTimer = new CountDownTimer(timeMilli, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
-                textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-
+                missionTimeLeft = millisUntilFinished;
+                textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
 
             }
 
             @Override
             public void onFinish() {
-
-                textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+                textViewTime.setText(msTimeFormatter(missionTime));
                 // call to initialize the progress bar values
-                setProgressBarValues();
+                setProgressBarValues(missionTime);
                 // hiding the reset icon
                 imageViewReset.setVisibility(View.GONE);
                 // changing stop icon to start icon
                 imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-                // making edit text editable
-                editTextMinute.setEnabled(true);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
+
+                if (onFinishCountDownListener != null)
+                    onFinishCountDownListener.onFinished();
             }
 
         }.start();
-        countDownTimer.start();
     }
 
     /**
@@ -177,10 +188,15 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     /**
      * method to set circular progress bar values
      */
-    private void setProgressBarValues() {
+    private void setProgressBarValues(long time) {
+        progressBarCircle.setProgress((int) time / 1000);
+    }
 
-        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
-        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
+    private String msTimeFormatter(long milliSeconds) {
+        String hms = String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
+                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
+        return hms;
     }
 
 
@@ -197,5 +213,17 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
                 TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
                 TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
         return hms;
+    }
+
+    public void setTimeCountInMilliSeconds(MutableLiveData<String> time){
+        circleTimerBinding.textViewTime.setText(time.getValue());
+    }
+
+    public void setTimerBackgroundColor(int color) {
+        circleTimerBinding.timerRelativelayout.setBackgroundColor(color);
+    }
+
+    public void setMissionTime(int time){
+        this.timeCountInMilliSeconds = Long.valueOf(time * 60 * 1000);
     }
 }

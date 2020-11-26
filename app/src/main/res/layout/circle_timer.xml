@@ -1,71 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
-        android:id="@+id/timer_relativelayout"
+    <data>
+<!--        <variable-->
+<!--            name="click"-->
+<!--            type="com.yumin.pomodoro.ui.view.TimerFragment.ClickProxy" />-->
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/timer_colorBackground">
+        android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/progressBarCircle"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="270dp"
-            android:layout_height="270dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/drawable_circle_dark_blue"
-            android:indeterminate="false"
-            android:max="100"
-            android:progress="100"
-            android:progressDrawable="@drawable/drawable_circle_yellow"
-            android:rotation="-90" />
+        <RelativeLayout
+            android:id="@+id/timer_relativelayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/timer_colorBackground">
 
-        <EditText
-            android:id="@+id/editTextMinute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/textViewTime"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:hint="Minute"
-            android:inputType="number"
-            android:maxLength="15"
-            android:maxLines="1"
-            android:minEms="5"
-            android:text="1"
-            android:textColor="@color/timer_colorYellow"
-            android:textColorHint="@color/timer_colorYellow" />
+            <ProgressBar
+                android:id="@+id/progressBarCircle"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="270dp"
+                android:layout_height="270dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/drawable_circle_dark_blue"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="100"
+                android:progressDrawable="@drawable/drawable_circle_yellow"
+                android:rotation="-90" />
 
-        <TextView
-            android:id="@+id/textViewTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="01:00"
-            android:textColor="@color/timer_colorYellow"
-            android:textSize="40sp" />
+            <TextView
+                android:id="@+id/textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="01:00"
+                android:textColor="@color/timer_progressbar"
+                android:textSize="40sp" />
 
-        <ImageView
-            android:id="@+id/imageViewReset"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/textViewTime"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/ic_baseline_refresh_24"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/imageViewReset"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/textViewTime"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/ic_baseline_stop_24"
+                android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/imageViewStartPause"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/progressBarCircle"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/ic_baseline_play_arrow_24" />
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/imageViewStartPause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/progressBarCircle"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_baseline_play_arrow_24" />
+        </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

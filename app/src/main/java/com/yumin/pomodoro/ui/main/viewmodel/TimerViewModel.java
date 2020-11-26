@@ -39,6 +39,10 @@ public class TimerViewModel extends AndroidViewModel {
         return this.missionTime;
     }
 
+    public void setMissionTime(String missionTime){
+        this.missionTime.postValue(missionTime);
+    }
+
     public MutableLiveData<String> getMissionBreakTime(){
         return this.missionBreakTime;
     }
