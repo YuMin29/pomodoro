@@ -70,4 +70,8 @@ public class HomeViewModel extends ViewModel {
         currentDate.set(Calendar.SECOND, 59);
         return currentDate.getTimeInMillis();
     }
+
+    public void deleteMission(Mission mission){
+        this.mainRepository.deleteMission(mission);
+    }
 }

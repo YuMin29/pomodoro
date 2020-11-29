@@ -73,6 +73,15 @@ public class ApiServiceImpl implements ApiService {
         });
     }
 
+    public void deleteMission(Mission mission){
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                missionDao.delete(mission);
+            }
+        });
+    }
+
     @Override
     public Mission getInitMission() {
         return new Mission();

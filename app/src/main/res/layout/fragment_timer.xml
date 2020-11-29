@@ -6,12 +6,9 @@
         <variable
             name="viewmodel"
             type="com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel" />
-<!--        <variable-->
-<!--            name="click"-->
-<!--            type="com.yumin.pomodoro.ui.view.TimerFragment.ClickProxy" />-->
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -29,8 +26,7 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             app:timeCountInMilliSeconds="@{viewmodel.missionBreakTime}"
-            app:timerBackgroundColor="@color/break_timer_background"
             app:missionTime="@{viewmodel.mission.shortBreakTime}"/>
 
-    </LinearLayout>
+    </FrameLayout>
 </layout>

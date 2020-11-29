@@ -23,8 +23,7 @@ import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
-import com.yumin.pomodoro.ui.main.adapter.ExpandableViewBaseAdapter;
-import com.yumin.pomodoro.ui.main.adapter.ExpandableViewViewAdapter;
+import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.base.IFragmentListener;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -36,7 +35,7 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "[HomeFragment]";
     private HomeViewModel mHomeViewModel;
     private CategoryAdapter mCategoryAdapter;
-    private ExpandableViewViewAdapter expandableViewAdapter;
+    private ExpandableViewAdapter expandableViewAdapter;
     private List<Mission> mMissions = new ArrayList<>();
     private List<Category> mCategory = new ArrayList<>();
     private IFragmentListener mIFragmentListener;
@@ -65,7 +64,15 @@ public class HomeFragment extends Fragment {
 
     private void initUI() {
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-        expandableViewAdapter = new ExpandableViewViewAdapter(mCategory,getContext());
+        expandableViewAdapter = new ExpandableViewAdapter(mCategory,getContext());
+        expandableViewAdapter.setOnClickListenerEditOrDelete(new ExpandableViewAdapter.OnClickListenerEditOrDelete() {
+            @Override
+            public void OnClickListenerDelete(Mission mission,int groupPosition, int childPosition) {
+                LogUtil.logD(TAG,"[item delete] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
+                mHomeViewModel.deleteMission(mission);
+                fragmentHomeBinding.homeListView.turnToNormal();
+            }
+        });
         fragmentHomeBinding.homeListView.setAdapter(expandableViewAdapter);
         fragmentHomeBinding.homeListView.setGroupIndicator(null);
         fragmentHomeBinding.homeListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -120,24 +127,26 @@ public class HomeFragment extends Fragment {
 
         mHomeViewModel.getTodayMissions().observe(getViewLifecycleOwner(), missions -> {
             LogUtil.logD(TAG,"[observeViewModel] today mission list size = "+missions.size());
+            today = null;
             if (missions.size() > 0) {
                 today = new Category(getString(R.string.category_today));
                for (Mission mission : missions) {
                    today.addMission(mission);
                }
-               updateCategoryList();
             }
+            updateCategoryList();
         });
 
         mHomeViewModel.getComingMissions().observe(getViewLifecycleOwner(),missions -> {
             LogUtil.logD(TAG,"[observeViewModel] coming mission list size = "+missions.size());
+            coming = null;
             if (missions.size() > 0) {
                 coming = new Category(getString(R.string.category_coming));
                 for (Mission mission : missions) {
                     coming.addMission(mission);
                 }
-                updateCategoryList();
             }
+            updateCategoryList();
         });
 
         mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {

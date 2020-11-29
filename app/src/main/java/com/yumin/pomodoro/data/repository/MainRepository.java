@@ -43,4 +43,8 @@ public class MainRepository {
     public void updateMission(Mission mission){
         apiHelper.updateMission(mission);
     }
+
+    public void deleteMission(Mission mission){
+        apiHelper.deleteMission(mission);
+    }
 }

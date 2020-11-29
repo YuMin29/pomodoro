@@ -68,6 +68,7 @@ public class Mission {
         LogUtil.logD(TAG,"NEW [Mission]");
     }
 
+    @Ignore
     public Mission(String name, int time, int shortBreakTime, int longBreakTime, int color, long operateDay, int goal,
                    String repeat, boolean enableNotification, boolean enableSound, boolean enableVibrate, boolean keepScreenOn) {
         LogUtil.logD(TAG,"NEW [Mission] name = "+name+" ,time = "+time);

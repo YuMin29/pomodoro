@@ -9,70 +9,86 @@
             type="com.yumin.pomodoro.data.model.Mission" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/header"
-        android:background="@drawable/mission_item_shape"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:clickable="false">
+        android:orientation="horizontal">
 
-        <com.yumin.pomodoro.ui.view.ColorView
-            android:id="@+id/colorView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/item_name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:ColorValue="@{mission.color}"
-            android:layout_gravity="center_horizontal|center_vertical"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
+            android:background="@drawable/mission_item_shape"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false">
 
+            <com.yumin.pomodoro.ui.view.ColorView
+                android:id="@+id/colorView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/item_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:ColorValue="@{mission.color}"
+                android:layout_gravity="center_horizontal|center_vertical"/>
+
+
+            <TextView
+                android:id="@+id/item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/roboto_light"
+                android:text="@{mission.name}"
+                android:textColor="#F77062"
+                android:textSize="16dp"
+                app:layout_constraintStart_toEndOf="@+id/colorView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/item_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/roboto_light"
+                android:text="@{@string/mission_time + Integer.toString(mission.time) + @string/minute}"
+                android:textSize="12dp"
+                app:layout_constraintStart_toEndOf="@+id/colorView"
+                app:layout_constraintTop_toBottomOf="@+id/item_name" />
+
+            <TextView
+                android:id="@+id/item_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/roboto_light"
+                android:text="@{@string/mission_goal + Integer.toString(mission.goal)}"
+                android:textSize="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/item_time"
+                app:layout_constraintTop_toBottomOf="@+id/item_name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--delete-->
         <TextView
-            android:id="@+id/item_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="1dp"
-            android:layout_marginRight="1dp"
-            android:fontFamily="@font/roboto_light"
-            android:textColor="#F77062"
-            android:textSize="16dp"
-            android:text="@{mission.name}"
-            app:layout_constraintBottom_toTopOf="@+id/item_time"
-            app:layout_constraintEnd_toStartOf="@+id/item_goal"
-            app:layout_constraintStart_toEndOf="@+id/colorView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
-
-
-        <TextView
-            android:id="@+id/item_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_light"
-            android:textSize="12dp"
-            android:text="@{@string/mission_time + Integer.toString(mission.time) + @string/minute}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/item_name"
-            app:layout_constraintStart_toStartOf="@+id/item_name"
-            app:layout_constraintTop_toBottomOf="@+id/item_name" />
-
-        <TextView
-            android:id="@+id/item_goal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/roboto_light"
-            android:textSize="12dp"
-            android:text="@{@string/mission_goal + Integer.toString(mission.goal)}"
-            app:layout_constraintBaseline_toBaselineOf="@+id/item_time"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/item_name" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/delete"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="#FFC20E23"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="删除"
+            android:textColor="#FFFFFF"
+            tools:layout_editor_absoluteX="315dp" />
+    </LinearLayout>
 </layout>

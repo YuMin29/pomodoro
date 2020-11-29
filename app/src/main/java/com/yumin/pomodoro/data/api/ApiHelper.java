@@ -45,4 +45,8 @@ public class ApiHelper {
     public void updateMission(Mission mission){
         apiService.updateMission(mission);
     }
+
+    public void deleteMission(Mission mission){
+        apiService.deleteMission(mission);
+    }
 }

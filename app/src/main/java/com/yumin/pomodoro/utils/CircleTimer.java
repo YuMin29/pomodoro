@@ -16,7 +16,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.CircleTimerBinding;
-import com.yumin.pomodoro.ui.view.TimerFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -221,6 +220,12 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public void setTimerBackgroundColor(int color) {
         circleTimerBinding.timerRelativelayout.setBackgroundColor(color);
+    }
+
+    public void setTimerBackgroundColorId(int colorId) {
+        circleTimerBinding.timerRelativelayout.setBackgroundColor(
+                getResources().getColor(colorId)
+        );
     }
 
     public void setMissionTime(int time){

@@ -22,12 +22,12 @@ import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
-public abstract class ExpandableViewBaseAdapter<B extends ViewDataBinding, M extends ViewDataBinding > extends BaseExpandableListAdapter {
+public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends ViewDataBinding > extends BaseExpandableListAdapter {
     private static final String TAG = "[ExpandableBaseAdapter]";
     protected List<Category> mDataList;
     private Context context;
 
-    public ExpandableViewBaseAdapter(List<Category> list, Context context) {
+    public ExpandableBaseAdapter(List<Category> list, Context context) {
         this.mDataList = list;
         this.context = context;
     }
@@ -71,7 +71,7 @@ public abstract class ExpandableViewBaseAdapter<B extends ViewDataBinding, M ext
     public abstract void onBindGroupLayout(B binding,Category category);
 
     public abstract int getChildLayout();
-    public abstract void onBindChildLayout(M binding, Mission mission);
+    public abstract void onBindChildLayout(M binding, Mission mission,int groupPosition, int childPosition);
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -101,7 +101,7 @@ public abstract class ExpandableViewBaseAdapter<B extends ViewDataBinding, M ext
         } else {
             binding = (M) convertView.getTag();
         }
-        onBindChildLayout(binding,mDataList.get(groupPosition).getMissionList().get(childPosition));
+        onBindChildLayout(binding,mDataList.get(groupPosition).getMissionList().get(childPosition),groupPosition,childPosition);
         return convertView;
     }
 
