@@ -18,7 +18,10 @@
             android:layout_height="match_parent"
             app:timeCountInMilliSeconds="@{viewmodel.missionTime}"
             app:timerBackgroundColor="@{viewmodel.mission.color}"
-            app:missionTime="@{viewmodel.mission.time}"/>
+            app:missionTime="@{viewmodel.mission.time}"
+            app:timerType="@{@string/type_mission}"
+            app:missionName="@{viewmodel.mission.name}"
+            app:missionGoal="@{viewmodel.mission.goal}"/>
 
         <com.yumin.pomodoro.utils.CircleTimer
             android:id="@+id/breakTimer"
@@ -26,7 +29,10 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             app:timeCountInMilliSeconds="@{viewmodel.missionBreakTime}"
-            app:missionTime="@{viewmodel.mission.shortBreakTime}"/>
+            app:missionTime="@{viewmodel.mission.shortBreakTime}"
+            app:timerType="@{@string/type_break}"
+            app:missionName="@{@string/timer_break}"
+            app:missionGoal="@{viewmodel.mission.goal}"/>
 
     </FrameLayout>
 </layout>

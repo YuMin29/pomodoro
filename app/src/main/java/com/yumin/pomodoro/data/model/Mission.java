@@ -20,13 +20,15 @@ public class Mission {
     private int longBreakTime = 15;
     private int color = Color.parseColor("#595775");
     private long operateDay = System.currentTimeMillis();
-    private int goal = 0;
+    private int goal = 1; // at least 1
     private String repeat = "NONE";
     private boolean enableNotification = true;
     private boolean enableSound = true;
 //    private Volume mVolume = Volume.MEDIUM;
     private boolean enableVibrate = true;
     private boolean keepScreenOn = true;
+    private boolean isFinished = false;
+    private int numberOfCompletions = 0;
 
     public enum Type{DEFAULT,NONE,COUNT;}
 
@@ -207,5 +209,21 @@ public class Mission {
 
     public void setKeepScreenOn(boolean keepScreenOn) {
         this.keepScreenOn = keepScreenOn;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
+    public int getNumberOfCompletions() {
+        return numberOfCompletions;
+    }
+
+    public void setNumberOfCompletions(int numberOfCompletions) {
+        this.numberOfCompletions = numberOfCompletions;
     }
 }

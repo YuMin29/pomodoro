@@ -46,6 +46,14 @@ public class ApiHelper {
         apiService.updateMission(mission);
     }
 
+    public void updateNumberOfCompletionById(int id, int num){
+        apiService.updateNumberOfCompletionById(id,num);
+    }
+
+    public void updateIsFinishedById(int id, boolean finished){
+        apiService.updateIsFinishedById(id,finished);
+    }
+
     public void deleteMission(Mission mission){
         apiService.deleteMission(mission);
     }

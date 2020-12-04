@@ -1,7 +1,9 @@
 package com.yumin.pomodoro.ui.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.api.ApiServiceImpl;
@@ -34,6 +37,7 @@ public class TimerFragment extends Fragment {
     private int missionCount;
     private CircleTimer missionTimer;
     private CircleTimer breakTimer;
+    private int numberOfCompletion;
 
     @Override
     public void onResume() {
@@ -68,10 +72,21 @@ public class TimerFragment extends Fragment {
             @Override
             public void onFinished() {
                 LogUtil.logD(TAG,"[mission timer][onFinished]");
-                    // switch to break timer
-                    fragmentTimerBinding.missionTimer.setVisibility(View.GONE);
-                    fragmentTimerBinding.breakTimer.setVisibility(View.VISIBLE);
-
+                if (missionCount >= 1) {
+                    missionCount--;
+                    // update finished goal ui
+                    numberOfCompletion++;
+                    LogUtil.logD(TAG,"[mission timer][onFinish] numberOfCompletion = "+numberOfCompletion);
+                    timerViewModel.updateNumberOfCompletionById(numberOfCompletion);
+                    fragmentTimerBinding.missionTimer.setMissionFinished(numberOfCompletion);
+                    fragmentTimerBinding.breakTimer.setMissionFinished(numberOfCompletion);
+                }
+                // switch to break timer
+                fragmentTimerBinding.missionTimer.setVisibility(View.GONE);
+                fragmentTimerBinding.breakTimer.setVisibility(View.VISIBLE);
+                // vibrate
+                Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(1000);
             }
         });
 
@@ -82,7 +97,15 @@ public class TimerFragment extends Fragment {
                 LogUtil.logD(TAG,"[break timer][onFinished]");
                 if (missionCount > 1) {
                     // switch to mission timer
-
+                    fragmentTimerBinding.missionTimer.setVisibility(View.VISIBLE);
+                    fragmentTimerBinding.breakTimer.setVisibility(View.GONE);
+                    // vibrate
+                    Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(1000);
+                } else {
+                    // finished timer fragment
+                    timerViewModel.updateIsFinishedById(true);
+                    MainActivity.getNavController().navigateUp();
                 }
             }
         });
@@ -104,9 +127,12 @@ public class TimerFragment extends Fragment {
                     long missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
                     missionCount = mission.getGoal();
+                    LogUtil.logD(TAG,"[onChanged] missionCount = "+missionCount);
+                    numberOfCompletion = mission.getNumberOfCompletions();
+
                     // post value back to view model
-                    timerViewModel.getMissionTime().postValue(msTimeFormatter(missionTime));
-                    timerViewModel.getMissionBreakTime().postValue(msTimeFormatter(missionBreakTime));
+                    timerViewModel.setMissionTime(msTimeFormatter(missionTime));
+                    timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
                 }
             }
         });

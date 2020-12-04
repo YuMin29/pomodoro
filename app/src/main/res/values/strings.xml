@@ -26,6 +26,7 @@
     <string name="mission_long_break">長休息時間</string>
     <string name="mission_repeat">重複</string>
     <string name="mission_goal">番茄數</string>
+    <string name="mission_finish_goal">已完成番茄數</string>
     <string name="mission_theme">主題</string>
     <string name="mission_sound">背景音</string>
     <string name="mission_vibrate">震動</string>
@@ -42,7 +43,10 @@
     <string name="category_today">今天</string>
     <string name="category_coming">即將到來</string>
 
+    <string name="timer_break">休息一下</string>
     <string name="timer_format">%tm:%ts</string>
+    <string name="type_mission">MISSION</string>
+    <string name="type_break">BREAK</string>
 
     <array name="repeat_array">
         <item>"NONE"</item>

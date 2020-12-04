@@ -1,6 +1,7 @@
 package com.yumin.pomodoro.utils;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.R;
@@ -20,6 +22,7 @@ import com.yumin.pomodoro.databinding.CircleTimerBinding;
 import java.util.concurrent.TimeUnit;
 
 public class CircleTimer extends RelativeLayout implements View.OnClickListener{
+    private static final String TAG = "[CircleTimer]";
     private CircleTimerBinding circleTimerBinding;
     private TimerStatus timerStatus = TimerStatus.STOPPED;
     private Context context;
@@ -32,23 +35,30 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     private long missionTime;
     private long missionTimeLeft;
     private OnFinishCountDownListener onFinishCountDownListener;
+    private Type type;
+    MediaPlayer mediaPlayer = null;
 
-    public CircleTimer(Context context) {
-        super(context);
-        this.context = context;
-        initViews(context);
-        initListeners();
+    private enum Type{
+        MISSION,
+        BREAK;
+
+        public static Type getEnum(String val){
+            if (val == null || val.length() < 1) {
+                return null;
+            }
+
+            for (Type type : values()) {
+                if (type.name().equals(val)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
+
 
     public CircleTimer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
-        initViews(context);
-        initListeners();
-    }
-
-    public CircleTimer(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
         this.context = context;
         initViews(context);
         initListeners();
@@ -133,6 +143,12 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     private void pauseCountDownTimer(){
         countDownTimer.cancel();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     private void continueCountDownTimer(){
@@ -148,14 +164,19 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
      * method to start count down timer
      */
     private void startCountDownTimer(long timeMilli) {
-
+        // init media player
+        if (this.type == Type.MISSION) {
+            mediaPlayer = MediaPlayer.create(context,R.raw.sound_effect_clock);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.start();
+        }
+        // start count down
         countDownTimer = new CountDownTimer(timeMilli, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 missionTimeLeft = millisUntilFinished;
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
-
             }
 
             @Override
@@ -169,6 +190,13 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
                 imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
+
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                }
 
                 if (onFinishCountDownListener != null)
                     onFinishCountDownListener.onFinished();
@@ -214,7 +242,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         return hms;
     }
 
-    public void setTimeCountInMilliSeconds(MutableLiveData<String> time){
+    public void setTimeCountInMilliSeconds(LiveData<String> time){
         circleTimerBinding.textViewTime.setText(time.getValue());
     }
 
@@ -222,13 +250,29 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         circleTimerBinding.timerRelativelayout.setBackgroundColor(color);
     }
 
-    public void setTimerBackgroundColorId(int colorId) {
-        circleTimerBinding.timerRelativelayout.setBackgroundColor(
-                getResources().getColor(colorId)
-        );
+    public void setTimerType(String type){
+        LogUtil.logD(TAG,"type = "+type);
+        if (!type.isEmpty()) {
+            this.type = Type.getEnum(type);
+        }
     }
 
     public void setMissionTime(int time){
         this.timeCountInMilliSeconds = Long.valueOf(time * 60 * 1000);
+    }
+
+    public void setMissionName(String name){
+        if (name != null) {
+            circleTimerBinding.timerName.setVisibility(VISIBLE);
+            circleTimerBinding.timerName.setText(name);
+        }
+    }
+
+    public void setMissionGoal(int goal){
+        circleTimerBinding.timerGoal.setText(String.valueOf(goal));
+    }
+
+    public void setMissionFinished(int num){
+        circleTimerBinding.timerFinish.setText(String.valueOf(num));
     }
 }

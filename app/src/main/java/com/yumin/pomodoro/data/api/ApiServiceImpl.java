@@ -73,6 +73,24 @@ public class ApiServiceImpl implements ApiService {
         });
     }
 
+    public void updateNumberOfCompletionById(int id, int num){
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                missionDao.updateNumberOfCompletionsById(id,num);
+            }
+        });
+    }
+
+    public void updateIsFinishedById(int id, boolean finished){
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                missionDao.updateIsFinishedById(id,finished);
+            }
+        });
+    }
+
     public void deleteMission(Mission mission){
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override

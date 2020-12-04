@@ -17,4 +17,6 @@ public interface ApiService {
     public LiveData<Mission> getMissionById(int id);
     public void updateMission(Mission mission);
     public void deleteMission(Mission mission);
+    public void updateNumberOfCompletionById(int id, int num);
+    public void updateIsFinishedById(int id, boolean finished);
 }

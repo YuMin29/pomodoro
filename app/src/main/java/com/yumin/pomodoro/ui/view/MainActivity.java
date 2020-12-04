@@ -3,7 +3,10 @@ package com.yumin.pomodoro;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.view.View;
 
+import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -20,6 +24,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.yumin.pomodoro.ui.base.IFragmentListener;
+import com.yumin.pomodoro.utils.LogUtil;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -32,6 +37,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener, IFragmentListener{
+    private static final String TAG = "[MainActivity]";
     private AppBarConfiguration mAppBarConfiguration;
     static TextView mToolbarTitle = null;
     private static NavController mNavController;
@@ -67,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mNavController.addOnDestinationChangedListener(this);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, mNavController);
+        isStoragePermissionGranted();
     }
 
     public static NavController getNavController(){
@@ -106,6 +113,23 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     @Override
     public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
         mToolbarTitle.setText(navDestination.getLabel().toString());
+    }
+
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                LogUtil.logV(TAG, "Permission is granted");
+                return true;
+            } else {
+                LogUtil.logV(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            LogUtil.logV(TAG, "Permission is granted");
+            return true;
+        }
     }
 
     public static void setToolbarTitle(String tile) {

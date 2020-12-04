@@ -35,7 +35,7 @@ public class TimerViewModel extends AndroidViewModel {
         return this.mission;
     }
 
-    public MutableLiveData<String> getMissionTime(){
+    public LiveData<String> getMissionTime(){
         return this.missionTime;
     }
 
@@ -43,7 +43,19 @@ public class TimerViewModel extends AndroidViewModel {
         this.missionTime.postValue(missionTime);
     }
 
-    public MutableLiveData<String> getMissionBreakTime(){
+    public LiveData<String> getMissionBreakTime(){
         return this.missionBreakTime;
+    }
+
+    public void setMissionBreakTime(String breakTime){
+        this.missionBreakTime.postValue(breakTime);
+    }
+
+    public void updateNumberOfCompletionById(int num){
+        mainRepository.updateNumberOfCompletionById(itemId,num);
+    }
+
+    public void updateIsFinishedById(boolean finished){
+        mainRepository.updateIsFinishedById(itemId,finished);
     }
 }

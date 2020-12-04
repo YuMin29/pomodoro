@@ -31,6 +31,12 @@ public interface MissionDao {
     @Update
     void update(Mission... missions);
 
+    @Query("UPDATE MyMission SET numberOfCompletions=:num WHERE id=:id")
+    void updateNumberOfCompletionsById(int id, int num);
+
+    @Query("UPDATE MyMission SET isFinished=:finished WHERE id=:id")
+    void updateIsFinishedById(int id, boolean finished);
+
     @Delete
     void delete(Mission... missions);
 

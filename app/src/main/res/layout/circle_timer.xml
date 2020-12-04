@@ -14,6 +14,56 @@
             android:layout_height="match_parent"
             android:background="@color/break_timer_background">
 
+            <TextView
+                android:id="@+id/timer_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@+id/mission_finish_goal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/timer_textview"
+                android:gravity="center"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/mission_finish_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:layout_above="@+id/progressBarCircle"
+                android:background="@drawable/timer_textview">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mission_finish_goal" />
+
+                <TextView
+                    android:id="@+id/timer_finish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" / " />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mission_goal" />
+
+                <TextView
+                    android:id="@+id/timer_goal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mission_goal" />
+            </LinearLayout>
+
             <ProgressBar
                 android:id="@+id/progressBarCircle"
                 style="?android:attr/progressBarStyleHorizontal"

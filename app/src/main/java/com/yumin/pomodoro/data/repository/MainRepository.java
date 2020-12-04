@@ -44,6 +44,14 @@ public class MainRepository {
         apiHelper.updateMission(mission);
     }
 
+    public void updateNumberOfCompletionById(int id, int num){
+        apiHelper.updateNumberOfCompletionById(id,num);
+    }
+
+    public void updateIsFinishedById(int id, boolean finished){
+        apiHelper.updateIsFinishedById(id,finished);
+    }
+
     public void deleteMission(Mission mission){
         apiHelper.deleteMission(mission);
     }

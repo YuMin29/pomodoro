@@ -118,7 +118,7 @@ public class HomeFragment extends Fragment {
         mIFragmentListener = (IFragmentListener) context;
     }
 
-    private void observeViewModel(){
+    private void observeViewModel() {
         mHomeViewModel.getMissions().observe(getViewLifecycleOwner(), missions -> {
             LogUtil.logD(TAG,"[observeViewModel] mission list size = "+missions.size());
             if (missions != null)
