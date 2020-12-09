@@ -1,6 +1,7 @@
 package com.yumin.pomodoro.ui.main.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.View;
 
 import com.yumin.pomodoro.R;
@@ -64,5 +65,10 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
                 }
             }
         });
+
+        // set delete line if finished
+        if (mission.isFinished()) {
+            binding.itemName.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        }
     }
 }

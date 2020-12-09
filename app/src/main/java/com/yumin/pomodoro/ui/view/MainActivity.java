@@ -16,6 +16,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.View;
 
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -78,6 +82,19 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
     public static NavController getNavController(){
         return mNavController;
+    }
+
+    public static void commitWhenStarted(Lifecycle lifecycle, int destination) {
+        lifecycle.addObserver(new LifecycleEventObserver() {
+            @Override
+            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                if (event == Lifecycle.Event.ON_START) {
+                    LogUtil.logD(TAG,"[commitWhenStarted]");
+                    lifecycle.removeObserver(this);
+                    mNavController.navigate(destination);
+                }
+            }
+        });
     }
 
     public static void setStatusBarGradient(Activity activity) {

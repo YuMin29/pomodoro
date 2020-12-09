@@ -81,9 +81,14 @@ public class HomeFragment extends Fragment {
                 Mission mission = (Mission) expandableViewAdapter.getChild(groupPosition,childPosition);
                 LogUtil.logD(TAG,"[onChildClick] item = "+mission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
-                Bundle bundle = new Bundle();
-                bundle.putInt("itemId",mission.getId());
-                MainActivity.getNavController().navigate(R.id.fragment_timer,bundle);
+                if (!mission.isFinished()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("itemId",mission.getId());
+                    MainActivity.getNavController().navigate(R.id.fragment_timer,bundle);
+                } else {
+                    // TODO: 清除完成紀錄？
+
+                }
                 return true;
             }
         });

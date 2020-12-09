@@ -55,6 +55,10 @@ public class HomeViewModel extends ViewModel {
 		return mIsLoading;
 	}
 
+    public void updateIsFinishedById(int itemId,boolean finished){
+        mainRepository.updateIsFinishedById(itemId,finished);
+    }
+
     private long getCurrentStartTime(){
         Calendar currentDate = new GregorianCalendar();
         currentDate.set(Calendar.HOUR_OF_DAY, 0);

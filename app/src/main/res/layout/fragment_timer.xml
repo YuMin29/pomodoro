@@ -21,7 +21,9 @@
             app:missionTime="@{viewmodel.mission.time}"
             app:timerType="@{@string/type_mission}"
             app:missionName="@{viewmodel.mission.name}"
-            app:missionGoal="@{viewmodel.mission.goal}"/>
+            app:missionGoal="@{viewmodel.mission.goal}"
+            app:missionFinished="@{viewmodel.mission.numberOfCompletions}"
+            app:missionEnabledSound="@{viewmodel.mission.enableSound}"/>
 
         <com.yumin.pomodoro.utils.CircleTimer
             android:id="@+id/breakTimer"
@@ -32,7 +34,8 @@
             app:missionTime="@{viewmodel.mission.shortBreakTime}"
             app:timerType="@{@string/type_break}"
             app:missionName="@{@string/timer_break}"
-            app:missionGoal="@{viewmodel.mission.goal}"/>
+            app:missionGoal="@{viewmodel.mission.goal}"
+            app:missionFinished="@{viewmodel.mission.numberOfCompletions}" />
 
     </FrameLayout>
 </layout>

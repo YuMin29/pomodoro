@@ -1,6 +1,8 @@
 package com.yumin.pomodoro.utils;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
@@ -37,6 +39,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     private OnFinishCountDownListener onFinishCountDownListener;
     private Type type;
     MediaPlayer mediaPlayer = null;
+    private boolean enabledSound;
 
     private enum Type{
         MISSION,
@@ -69,7 +72,9 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public interface OnFinishCountDownListener{
+        public void onStarted();
         public void onFinished();
+        public void onTick(long millisecond);
     }
 
     @Override
@@ -112,7 +117,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         timerStatus = TimerStatus.STOPPED;
     }
 
-    private void startStop() {
+    public void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
             // call to initialize the timer values
             initTimerValues();
@@ -165,11 +170,15 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
      */
     private void startCountDownTimer(long timeMilli) {
         // init media player
-        if (this.type == Type.MISSION) {
+        if (this.type == Type.MISSION && enabledSound) {
             mediaPlayer = MediaPlayer.create(context,R.raw.sound_effect_clock);
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
         }
+
+        if (onFinishCountDownListener != null)
+            onFinishCountDownListener.onStarted();
+
         // start count down
         countDownTimer = new CountDownTimer(timeMilli, 1000) {
             @Override
@@ -177,6 +186,9 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
                 missionTimeLeft = millisUntilFinished;
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+
+                if (onFinishCountDownListener != null)
+                    onFinishCountDownListener.onTick(millisUntilFinished);
             }
 
             @Override
@@ -274,5 +286,13 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public void setMissionFinished(int num){
         circleTimerBinding.timerFinish.setText(String.valueOf(num));
+    }
+
+    public void setMissionEnabledSound(boolean enabled){
+        this.enabledSound = enabled;
+    }
+
+    public void setMissionTimeLeft(long millisecond){
+        this.missionTimeLeft = millisecond;
     }
 }
