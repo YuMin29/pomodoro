@@ -61,4 +61,9 @@
         android:name="com.yumin.pomodoro.ui.view.TimerFragment"
         android:label="@string/mission_timer"
         tools:layout="@layout/fragment_timer"/>
+
+    <fragment android:id="@+id/fragment_break_timer"
+        android:name="com.yumin.pomodoro.ui.view.BreakTimerFragment"
+        android:label="string/mission_break_timer"
+        tools:layout="@layout/fragment_break_timer"/>
 </navigation>

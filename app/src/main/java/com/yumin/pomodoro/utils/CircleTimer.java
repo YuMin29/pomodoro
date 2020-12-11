@@ -1,8 +1,6 @@
 package com.yumin.pomodoro.utils;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.CircleTimerBinding;
@@ -36,7 +33,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     private long timeCountInMilliSeconds = 1 * 60000;
     private long missionTime;
     private long missionTimeLeft;
-    private OnFinishCountDownListener onFinishCountDownListener;
+    private CountDownTimerListener countDownTimerListener;
     private Type type;
     MediaPlayer mediaPlayer = null;
     private boolean enabledSound;
@@ -67,11 +64,11 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         initListeners();
     }
 
-    public void setOnFinishCountDownListener(OnFinishCountDownListener listener){
-        this.onFinishCountDownListener = listener;
+    public void setCountDownTimerListener(CountDownTimerListener listener){
+        this.countDownTimerListener = listener;
     }
 
-    public interface OnFinishCountDownListener{
+    public interface CountDownTimerListener {
         public void onStarted();
         public void onFinished();
         public void onTick(long millisecond);
@@ -109,7 +106,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         circleTimerBinding.imageViewStartPause.setOnClickListener(this);
     }
 
-    private void reset() {
+    public void reset() {
         initTimerValues();
         textViewTime.setText(msTimeFormatter(missionTime));
         setProgressBarValues(missionTime);
@@ -176,8 +173,8 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
             mediaPlayer.start();
         }
 
-        if (onFinishCountDownListener != null)
-            onFinishCountDownListener.onStarted();
+        if (countDownTimerListener != null)
+            countDownTimerListener.onStarted();
 
         // start count down
         countDownTimer = new CountDownTimer(timeMilli, 1000) {
@@ -187,8 +184,8 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
 
-                if (onFinishCountDownListener != null)
-                    onFinishCountDownListener.onTick(millisUntilFinished);
+                if (countDownTimerListener != null)
+                    countDownTimerListener.onTick(millisUntilFinished);
             }
 
             @Override
@@ -210,8 +207,8 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
                     mediaPlayer = null;
                 }
 
-                if (onFinishCountDownListener != null)
-                    onFinishCountDownListener.onFinished();
+                if (countDownTimerListener != null)
+                    countDownTimerListener.onFinished();
             }
 
         }.start();

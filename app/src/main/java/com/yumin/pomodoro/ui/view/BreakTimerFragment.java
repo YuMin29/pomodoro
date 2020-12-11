@@ -28,7 +28,7 @@ import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.databinding.FragmentTimerBinding;
+import com.yumin.pomodoro.databinding.FragmentBreakTimerBinding;
 import com.yumin.pomodoro.ui.base.TimerViewModelFactory;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.CircleTimer;
@@ -37,15 +37,15 @@ import com.yumin.pomodoro.utils.NotificationHelper;
 
 import java.util.concurrent.TimeUnit;
 
-public class TimerFragment extends Fragment {
-    private static final String TAG = "[TimerFragment]";
-    private FragmentTimerBinding fragmentTimerBinding;
+public class BreakTimerFragment extends Fragment {
+    private static final String TAG = "[BreakTimerFragment]";
+    private FragmentBreakTimerBinding fragmentBreakTimerBinding;
     private TimerViewModel timerViewModel;
     private boolean enabledVibrate;
     private boolean enabledNotification;
     private int itemId;
     private int missionCount;
-    private CircleTimer missionTimer;
+    private CircleTimer breakTimer;
     private int numberOfCompletion;
     private NotificationCompat.Builder notificationBuilder;
     private NotificationHelper notificationHelper;
@@ -88,12 +88,13 @@ public class TimerFragment extends Fragment {
         LogUtil.logD(TAG,"[onCreateView] itemId = "+itemId);
         initViewModel();
 
+
         // TODO：1209 handle back key in here
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 // pause
-                fragmentTimerBinding.missionTimer.startStop();
+                fragmentBreakTimerBinding.breakTimer.startStop();
 
                 // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -103,7 +104,7 @@ public class TimerFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // exit & cancel notification
-                                fragmentTimerBinding.missionTimer.reset();
+                                fragmentBreakTimerBinding.breakTimer.reset();
                                 notificationHelper.cancelNotification();
                                 MainActivity.getNavController().navigate(R.id.nav_home);
                                 // update finish status
@@ -115,7 +116,7 @@ public class TimerFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // continue
-                                fragmentTimerBinding.missionTimer.startStop();
+                                fragmentBreakTimerBinding.breakTimer.startStop();
                             }
                         })
                         .create();
@@ -128,53 +129,61 @@ public class TimerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         observeViewModel();
-        fragmentTimerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_timer,container,false);
-        fragmentTimerBinding.setLifecycleOwner(this);
-        fragmentTimerBinding.setViewmodel(timerViewModel);
-        missionTimer = fragmentTimerBinding.missionTimer;
-        missionTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
+        fragmentBreakTimerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_break_timer,container,false);
+        fragmentBreakTimerBinding.setLifecycleOwner(this);
+        fragmentBreakTimerBinding.setViewmodel(timerViewModel);
+
+        breakTimer = fragmentBreakTimerBinding.breakTimer;
+        breakTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
             @Override
             public void onStarted() {
                 // show notification in here
                 if (enabledNotification) {
-                    // Create an explicit intent for an Activity in your app
+                    notificationHelper = new NotificationHelper(getContext());
                     Intent intent = getContext().getPackageManager()
                             .getLaunchIntentForPackage(getContext().getPackageName())
                             .setPackage(null)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
-
-                    notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent);
+                    notificationBuilder = notificationHelper.getNotification("休息一下" + missionTitle,"",pendingIntent);
                     notificationHelper.notify(notificationBuilder);
                 }
             }
 
             @Override
             public void onFinished() {
-                LogUtil.logD(TAG,"[mission timer][onFinished]");
-                // update finished goal ui
-                numberOfCompletion++;
-                LogUtil.logD(TAG,"[mission timer][onFinish] numberOfCompletion = "+numberOfCompletion);
-                timerViewModel.updateNumberOfCompletionById(numberOfCompletion);
+                if ((missionCount - numberOfCompletion) >= 1) {
+                    LogUtil.logD(TAG,"[break timer][onFinished]");
 
-                // vibrate for remind
-                if (enabledVibrate) {
-                    Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(1000);
+
+                    // vibrate for remind
+                    if (enabledVibrate) {
+                        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                        vibrator.vibrate(1000);
+                    }
+
+                    if (enabledNotification) {
+                        notificationBuilder.setContentTitle("執行蕃茄任務！");
+                        notificationBuilder.setContentText("");
+                        notificationHelper.notify(notificationBuilder);
+                    }
+
+                    // switch to mission timer
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("itemId",itemId);
+                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_timer,bundle);
+
+                } else {
+                    LogUtil.logD(TAG,"[break timer][onFinished] 1");
+                    // finished timer fragment
+                    timerViewModel.updateIsFinishedById(true);
+                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.nav_home,null);
+
+                    // cancel notification when finish the mission
+                    if (enabledNotification) {
+                        notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                    }
                 }
-
-                // update notification
-                if (enabledNotification) {
-                    notificationBuilder.setContentTitle("休息一下吧！");
-                    notificationBuilder.setContentText("");
-                    notificationHelper.notify(notificationBuilder);
-                }
-
-                // switch to break timer
-                Bundle bundle = new Bundle();
-                bundle.putInt("itemId",itemId);
-                MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_break_timer,bundle);
             }
 
             @Override
@@ -185,7 +194,7 @@ public class TimerFragment extends Fragment {
                 }
             }
         });
-        return fragmentTimerBinding.getRoot();
+        return fragmentBreakTimerBinding.getRoot();
     }
 
     private void initViewModel() {
@@ -221,6 +230,7 @@ public class TimerFragment extends Fragment {
                             getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
                         }
                     }
+
                     // post value back to view model
                     timerViewModel.setMissionTime(msTimeFormatter(missionTime));
                     timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));

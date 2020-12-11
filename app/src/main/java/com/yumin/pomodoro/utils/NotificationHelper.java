@@ -1,5 +1,6 @@
 package com.yumin.pomodoro.utils;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 import com.yumin.pomodoro.R;
 
 public class NotificationHelper extends ContextWrapper {
+    private static final int NOTIFICATION_ID = 1000;
     private NotificationManager mNotificationManager;
     private NotificationChannel mNotificationChannel;
 
@@ -49,10 +51,16 @@ public class NotificationHelper extends ContextWrapper {
         return builder;
     }
 
-    public void notify(int id, NotificationCompat.Builder builder) {
+    public void notify(NotificationCompat.Builder builder) {
         if (getNotificationManager() != null) {
-            getNotificationManager().notify(id, builder.build());
+            // use same id to update notification
+            getNotificationManager().notify(NOTIFICATION_ID, builder.build());
         }
+    }
+
+    public void cancelNotification(){
+        if (getNotificationManager() != null)
+            getNotificationManager().cancel(NOTIFICATION_ID);
     }
 
     public void openChannelSetting(String channelId) {

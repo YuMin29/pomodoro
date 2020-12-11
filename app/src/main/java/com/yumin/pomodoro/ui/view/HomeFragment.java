@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
                     bundle.putInt("itemId",mission.getId());
                     MainActivity.getNavController().navigate(R.id.fragment_timer,bundle);
                 } else {
-                    // TODO: 清除完成紀錄？
+                    // TODO: 重新開始任務？ 清除完成紀錄？
 
                 }
                 return true;

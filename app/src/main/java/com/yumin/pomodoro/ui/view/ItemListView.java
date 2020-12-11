@@ -30,6 +30,9 @@ public class ItemListView extends LinearLayout {
     private static final String TAG = "[ItemListView]";
     private ItemListviewBinding viewBinding;
     private InverseBindingListener inverseBindingListener;
+    private static final int REPEAT_NONE = 0;
+    private static final int REPEAT_EVERYDAY = 1;
+    private static final int REPEAT_DEFINE = 2;
 
     public ItemListView(Context context) {
         super(context);
@@ -77,32 +80,52 @@ public class ItemListView extends LinearLayout {
 
                     datePickerDialog.show();
                 } else if (viewBinding.descriptionTextview.getText().toString().equals(getResources().getString(R.string.mission_repeat))) {
-                    {
-                        //create dialog to set value
-                        String[] repeatOptions = getResources().getStringArray(R.array.repeat_array);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                                .setTitle("請設置" + viewBinding.descriptionTextview.getText())
-                                .setItems(repeatOptions, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        setItemListVal(repeatOptions[which]);
+                    //create dialog to set value
+                    String[] repeatArray = getResources().getStringArray(R.array.repeat_array);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                            .setTitle("請設置" + viewBinding.descriptionTextview.getText())
+                            .setItems(repeatArray, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int index) {
+                                    setItemListVal(repeatArray[index]);
+                                    switch (index){
+                                        case REPEAT_DEFINE:
+                                            // show a choose dialog
+                                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
+                                                    .setTitle("choose time")
+                                                    .setView(R.layout.dialog_calendar_view)
+                                                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+
+                                                        }
+                                                    })
+                                                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+
+                                                        }
+                                                    });
+                                            dialogBuilder.show();
+                                            break;
                                     }
-                                });
-                        builder.show();
-                    }
+                                }
+                            });
+                    builder.show();
                 }
         }});
     }
 
     public void setItemListVal(String val){
-        // long convert to string
+        final String oldString = viewBinding.valTextview.getText().toString();
+        if (val == null || val == oldString)
+            return;
+        // update ui
         viewBinding.valTextview.setText(val);
+        // notify listener
         if (inverseBindingListener != null)
             inverseBindingListener.onChange();
-    }
-
-    public void setItemListVal(long val){
-
     }
 
     public String getItemListVal(){

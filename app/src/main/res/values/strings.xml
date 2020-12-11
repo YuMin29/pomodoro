@@ -43,14 +43,21 @@
     <string name="category_today">今天</string>
     <string name="category_coming">即將到來</string>
 
+    <string name="mission_break_timer">蕃茄休息時鐘</string>
     <string name="timer_break">休息一下</string>
     <string name="timer_format">%tm:%ts</string>
     <string name="type_mission">MISSION</string>
     <string name="type_break">BREAK</string>
 
     <array name="repeat_array">
-        <item>"NONE"</item>
-        <item>"TODAY"</item>
-        <item>"EVERYDAY"</item>
+        <item>無</item>
+        <item>每天</item>
+        <item>自訂</item>
+    </array>
+
+    <array name="repeat_index_array">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </array>
 </resources>

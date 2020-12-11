@@ -84,14 +84,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         return mNavController;
     }
 
-    public static void commitWhenStarted(Lifecycle lifecycle, int destination) {
+    public static void commitWhenLifecycleStarted(Lifecycle lifecycle, int destination, Bundle bundle) {
         lifecycle.addObserver(new LifecycleEventObserver() {
             @Override
             public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
                 if (event == Lifecycle.Event.ON_START) {
-                    LogUtil.logD(TAG,"[commitWhenStarted]");
+                    LogUtil.logD(TAG,"[commitWhenLifeCycleStarted]");
                     lifecycle.removeObserver(this);
-                    mNavController.navigate(destination);
+                    mNavController.navigate(destination,bundle);
                 }
             }
         });
