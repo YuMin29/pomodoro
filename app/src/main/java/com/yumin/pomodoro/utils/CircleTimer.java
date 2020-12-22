@@ -78,15 +78,15 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imageViewReset:
-                reset();
+                onClickReset();
                 break;
             case R.id.imageViewStartPause:
-                startStop();
+                onClickStartStop();
                 break;
         }
     }
 
-    private enum TimerStatus {
+    public enum TimerStatus {
         STARTED,
         PAUSE,
         STOPPED
@@ -106,7 +106,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         circleTimerBinding.imageViewStartPause.setOnClickListener(this);
     }
 
-    public void reset() {
+    public void onClickReset() {
         initTimerValues();
         textViewTime.setText(msTimeFormatter(missionTime));
         setProgressBarValues(missionTime);
@@ -114,33 +114,48 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         timerStatus = TimerStatus.STOPPED;
     }
 
-    public void startStop() {
+    public void onClickStartStop() {
         if (timerStatus == TimerStatus.STOPPED) {
-            // call to initialize the timer values
-            initTimerValues();
-            // call to initialize the progress bar values
-            setProgressBarValues(missionTime);
-            // hide the reset icon
-            imageViewReset.setVisibility(View.GONE);
-            // changing play icon to stop icon
-            imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
-            // changing the timer status to started
-            timerStatus = TimerStatus.STARTED;
-            // call to start the count down timer
-            startCountDownTimer(missionTime);
+            startTimer();
         } else if (timerStatus == TimerStatus.STARTED) {
-            imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-            imageViewReset.setVisibility(View.VISIBLE);
-            timerStatus = TimerStatus.PAUSE;
-            pauseCountDownTimer();
+            pauseTimer();
         } else if (timerStatus == TimerStatus.PAUSE){
-            imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
-            timerStatus = TimerStatus.STARTED;
-            imageViewReset.setVisibility(View.GONE);
-            continueCountDownTimer();
-            setProgressBarValues(missionTimeLeft);
+            continueTimer();
         }
+    }
 
+    public TimerStatus getTimerStatus(){
+        return timerStatus;
+    }
+
+    private void continueTimer() {
+        imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
+        timerStatus = TimerStatus.STARTED;
+        imageViewReset.setVisibility(View.GONE);
+        continueCountDownTimer();
+        setProgressBarValues(missionTimeLeft);
+    }
+
+    public void pauseTimer() {
+        imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+        imageViewReset.setVisibility(View.VISIBLE);
+        timerStatus = TimerStatus.PAUSE;
+        pauseCountDownTimer();
+    }
+
+    private void startTimer() {
+        // call to initialize the timer values
+        initTimerValues();
+        // call to initialize the progress bar values
+        setProgressBarValues(missionTime);
+        // hide the reset icon
+        imageViewReset.setVisibility(View.GONE);
+        // changing play icon to stop icon
+        imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
+        // changing the timer status to started
+        timerStatus = TimerStatus.STARTED;
+        // call to start the count down timer
+        startCountDownTimer(missionTime);
     }
 
     private void pauseCountDownTimer(){

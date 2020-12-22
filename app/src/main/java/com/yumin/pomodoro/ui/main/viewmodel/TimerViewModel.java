@@ -14,21 +14,21 @@ import com.yumin.pomodoro.utils.LogUtil;
 public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = "[TimerViewModel]";
     private MainRepository mainRepository;
-    private int itemId;
+    private int missionId;
     private LiveData<Mission> mission;
     private MutableLiveData<String> missionTime = new MutableLiveData<>();
     private MutableLiveData<String> missionBreakTime = new MutableLiveData<>();
 
-    public TimerViewModel(@NonNull Application application, MainRepository mainRepository, int itemId) {
+    public TimerViewModel(@NonNull Application application, MainRepository mainRepository, int missionId) {
         super(application);
         this.mainRepository = mainRepository;
-        this.itemId = itemId;
+        this.missionId = missionId;
         fetchMission();
     }
 
     private void fetchMission(){
         LogUtil.logD(TAG,"[fetchMission] ");
-        mission = mainRepository.getMissionById(itemId);
+        mission = mainRepository.getMissionById(missionId);
     }
 
     public LiveData<Mission> getMission(){
@@ -52,10 +52,10 @@ public class TimerViewModel extends AndroidViewModel {
     }
 
     public void updateNumberOfCompletionById(int num){
-        mainRepository.updateNumberOfCompletionById(itemId,num);
+        mainRepository.updateNumberOfCompletionById(missionId,num);
     }
 
     public void updateIsFinishedById(boolean finished){
-        mainRepository.updateIsFinishedById(itemId,finished);
+        mainRepository.updateIsFinishedById(missionId,finished);
     }
 }

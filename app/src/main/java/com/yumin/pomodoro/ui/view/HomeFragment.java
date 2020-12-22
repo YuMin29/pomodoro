@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
     private void initViewModel() {
         LogUtil.logD(TAG,"[initViewModel]");
         mHomeViewModel =  new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()))).get(HomeViewModel.class);
+                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),-1)).get(HomeViewModel.class);
     }
 
     private void initUI() {

@@ -30,4 +30,6 @@
         <item>#99BFAA</item>
         <item>#720017</item>
     </string-array>
+
+    <color name="line_color">#e7e7e7</color>
 </resources>

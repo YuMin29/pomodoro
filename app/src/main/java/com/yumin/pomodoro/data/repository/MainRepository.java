@@ -55,4 +55,12 @@ public class MainRepository {
     public void deleteMission(Mission mission){
         apiHelper.deleteMission(mission);
     }
+
+    public LiveData<Long> getMissionRepeatStart(int id){
+        return apiHelper.getMissionRepeatStart(id);
+    }
+
+    public LiveData<Long> getMissionRepeatEnd(int id){
+        return apiHelper.getMissionRepeatEnd(id);
+    }
 }

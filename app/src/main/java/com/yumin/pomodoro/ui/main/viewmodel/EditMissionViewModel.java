@@ -7,12 +7,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.yumin.pomodoro.data.model.AdjustMissionItem;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.utils.LogUtil;
-
-import java.util.List;
 
 public class EditMissionViewModel extends AndroidViewModel {
     private static final String TAG = "[EditMissionViewModel]";
@@ -20,21 +17,21 @@ public class EditMissionViewModel extends AndroidViewModel {
     private LiveData<Mission> editMission;
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
-    private int editId;
+    private int missionId;
 
-    public EditMissionViewModel(@NonNull Application application, MainRepository mainRepository, int editId) {
+    public EditMissionViewModel(@NonNull Application application, MainRepository mainRepository, int missionId) {
         super(application);
         this.mainRepository = mainRepository;
-        this.editId = editId;
+        this.missionId = missionId;
         saveButtonClick.postValue(false);
         cancelButtonClick.postValue(false);
-        LogUtil.logD(TAG,"editId = "+editId);
+        LogUtil.logD(TAG,"editId = "+ missionId);
         fetchMission();
     }
 
     private void fetchMission(){
         LogUtil.logD(TAG,"[fetchMission] ");
-        editMission = mainRepository.getMissionById(editId);
+        editMission = mainRepository.getMissionById(missionId);
     }
 
     public LiveData<Mission> getEditMission(){
@@ -58,4 +55,14 @@ public class EditMissionViewModel extends AndroidViewModel {
     public void cancel(){
         cancelButtonClick.postValue(true);
     }
+
+    public void updateRepeatStart(long time){
+        LogUtil.logD(TAG,"[updateRepeatStart] time = "+time);
+        editMission.getValue().setRepeatStart(time);
+    }
+    public void updateRepeatEnd(long time){
+        LogUtil.logD(TAG,"[updateRepeatEnd] time = "+time);
+        editMission.getValue().setRepeatEnd(time);
+    }
+
 }

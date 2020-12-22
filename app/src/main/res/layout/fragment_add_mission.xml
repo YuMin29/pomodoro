@@ -105,7 +105,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemListVal="@={viewmodel.mission.repeat}"
-                        app:itemDescription="@{@string/mission_repeat}"/>
+                        app:itemDescription="@{@string/mission_repeat}" />
                 </TableRow>
 
                 <TableRow

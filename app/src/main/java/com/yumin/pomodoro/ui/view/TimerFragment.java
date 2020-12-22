@@ -30,6 +30,7 @@ import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
 import com.yumin.pomodoro.ui.base.TimerViewModelFactory;
+import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.CircleTimer;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -92,8 +93,9 @@ public class TimerFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // pause
-                fragmentTimerBinding.missionTimer.startStop();
+                // pause timer if started
+                if (fragmentTimerBinding.missionTimer.getTimerStatus() == CircleTimer.TimerStatus.STARTED)
+                    fragmentTimerBinding.missionTimer.pauseTimer();
 
                 // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -103,9 +105,11 @@ public class TimerFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // exit & cancel notification
-                                fragmentTimerBinding.missionTimer.reset();
-                                notificationHelper.cancelNotification();
-                                MainActivity.getNavController().navigate(R.id.nav_home);
+                                if (fragmentTimerBinding.missionTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
+                                    fragmentTimerBinding.missionTimer.onClickReset();
+                                    notificationHelper.cancelNotification();
+                                }
+                                MainActivity.getNavController().navigateUp();
                                 // update finish status
                                 if ((missionCount - numberOfCompletion) < 1) {
                                     timerViewModel.updateIsFinishedById(true);
@@ -114,8 +118,8 @@ public class TimerFragment extends Fragment {
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // continue
-                                fragmentTimerBinding.missionTimer.startStop();
+                                // resume
+                                fragmentTimerBinding.missionTimer.onClickStartStop();
                             }
                         })
                         .create();
@@ -189,7 +193,7 @@ public class TimerFragment extends Fragment {
     }
 
     private void initViewModel() {
-        timerViewModel = new ViewModelProvider(this, new TimerViewModelFactory(getActivity().getApplication(),
+        timerViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
                 new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),itemId)).get(TimerViewModel.class);
     }
 

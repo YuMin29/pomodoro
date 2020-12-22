@@ -21,6 +21,8 @@ public class ApiServiceImpl implements ApiService {
     private LiveData<List<Mission>> todayMissions = new LiveData<List<Mission>>(){};
     private LiveData<List<Mission>> comingMissions = new LiveData<List<Mission>>(){};
     private LiveData<Mission> missionById = new LiveData<Mission>(){};
+    private LiveData<Long> missionRepeatStart = new LiveData<Long>() {};
+    private LiveData<Long> missionRepeatEnd = new LiveData<Long>() {};
 
     public ApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
@@ -89,6 +91,18 @@ public class ApiServiceImpl implements ApiService {
                 missionDao.updateIsFinishedById(id,finished);
             }
         });
+    }
+
+    @Override
+    public LiveData<Long> getMissionRepeatStart(int id) {
+        missionRepeatStart = missionDao.getMissionRepeatStart(id);
+        return missionRepeatStart;
+    }
+
+    @Override
+    public LiveData<Long> getMissionRepeatEnd(int id) {
+        missionRepeatEnd = missionDao.getMissionRepeatEnd(id);
+        return missionRepeatEnd;
     }
 
     public void deleteMission(Mission mission){

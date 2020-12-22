@@ -59,4 +59,14 @@ public class AddMissionViewModel extends AndroidViewModel {
     public void cancel(){
         cancelButtonClick.postValue(true);
     }
+
+    public void updateRepeatStart(long time){
+        LogUtil.logD(TAG,"[updateRepeatStart] time = "+time);
+        mission.getValue().setRepeatStart(time);
+    }
+
+    public void updateRepeatEnd(long time){
+        LogUtil.logD(TAG,"[updateRepeatStart] time = "+time);
+        mission.getValue().setRepeatEnd(time);
+    }
 }

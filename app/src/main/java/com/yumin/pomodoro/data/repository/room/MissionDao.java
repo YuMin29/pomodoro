@@ -40,4 +40,9 @@ public interface MissionDao {
     @Delete
     void delete(Mission... missions);
 
+    @Query("SELECT repeatStart FROM MyMission WHERE id=:id")
+    LiveData<Long> getMissionRepeatStart(int id);
+
+    @Query("SELECT repeatEnd FROM MyMission WHERE id=:id")
+    LiveData<Long> getMissionRepeatEnd(int id);
 }

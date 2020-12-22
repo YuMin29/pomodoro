@@ -48,6 +48,7 @@
     <string name="timer_format">%tm:%ts</string>
     <string name="type_mission">MISSION</string>
     <string name="type_break">BREAK</string>
+    <string name="fragment_range_calender">range</string>
 
     <array name="repeat_array">
         <item>無</item>
@@ -55,9 +56,13 @@
         <item>自訂</item>
     </array>
 
-    <array name="repeat_index_array">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </array>
+    <string name="dialog_ok">確認</string>
+    <string name="dialog_cancel">取消</string>
+
+    <string name="range_choose">選擇範圍</string>
+    <string name="range_start">開始日期</string>
+    <string name="range_end">結束日期</string>
+    <string name="range_commit">提交</string>
+    <string name="range_month">月</string>
+    <string name="range_day">日</string>
 </resources>

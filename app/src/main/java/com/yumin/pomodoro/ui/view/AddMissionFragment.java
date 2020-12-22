@@ -22,18 +22,21 @@ import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.api.ApiHelper;
 import com.yumin.pomodoro.data.api.ApiServiceImpl;
+import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
 import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.data.model.AdjustMissionItem;
+import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddMissionFragment extends Fragment {
+public class AddMissionFragment extends Fragment implements ItemListView.OnCalenderListener {
     private static final String TAG = "[AddMissionFragment]";
     AddMissionViewModel mAddMissionViewModel;
+    RangeCalenderViewModel mRangeCalenderViewModel;
     FragmentAddMissionBinding fragmentAddMissionBinding;
 
     public AddMissionFragment() {}
@@ -50,6 +53,7 @@ public class AddMissionFragment extends Fragment {
         LogUtil.logD(TAG, "[onCreateView]");
         fragmentAddMissionBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_add_mission,container,false);
         fragmentAddMissionBinding.setLifecycleOwner(this);
+        fragmentAddMissionBinding.itemRepeat.setOnCalenderListener(this);
         initViewModel();
         initObserver();
         fragmentAddMissionBinding.setClickProxy(new ClickProxy());
@@ -77,16 +81,46 @@ public class AddMissionFragment extends Fragment {
                 }
             }
         });
+
+        mRangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
+            @Override
+            public void onChanged(Long start) {
+
+            }
+        });
+
+        mRangeCalenderViewModel.getRepeatEnd().observe(getViewLifecycleOwner(), new Observer<Long>() {
+            @Override
+            public void onChanged(Long end) {
+
+            }
+        });
+
+        mRangeCalenderViewModel.getClickCommit().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                mAddMissionViewModel.updateRepeatStart(mRangeCalenderViewModel.getRepeatStart().getValue());
+                mAddMissionViewModel.updateRepeatEnd(mRangeCalenderViewModel.getRepeatEnd().getValue());
+            }
+        });
     }
 
     private void initViewModel() {
         LogUtil.logD(TAG,"[initViewModel]");
-        mAddMissionViewModel =  new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()))).get(AddMissionViewModel.class);
+        mAddMissionViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
+                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),-1)).get(AddMissionViewModel.class);
+        mRangeCalenderViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
+                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),-1)).get(RangeCalenderViewModel.class);
+    }
+
+    @Override
+    public void onOpened() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("missionId",-1);
+        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
     }
 
     public class ClickProxy{
-
         public void onSaveButtonClick(){
             LogUtil.logD(TAG,"[onSaveButtonClick]");
             mAddMissionViewModel.saveMission();

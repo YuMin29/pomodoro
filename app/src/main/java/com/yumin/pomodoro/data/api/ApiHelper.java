@@ -57,4 +57,12 @@ public class ApiHelper {
     public void deleteMission(Mission mission){
         apiService.deleteMission(mission);
     }
+
+    public LiveData<Long> getMissionRepeatStart(int id){
+        return apiService.getMissionRepeatStart(id);
+    }
+
+    public LiveData<Long> getMissionRepeatEnd(int id){
+        return apiService.getMissionRepeatEnd(id);
+    }
 }
