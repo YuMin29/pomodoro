@@ -5,6 +5,9 @@
 
     <data>
         <variable
+            name="viewModel"
+            type="com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel" />
+        <variable
             name="clickProxy"
             type="com.yumin.pomodoro.ui.view.range_calender.RangeCalenderFragment.ClickProxy" />
     </data>

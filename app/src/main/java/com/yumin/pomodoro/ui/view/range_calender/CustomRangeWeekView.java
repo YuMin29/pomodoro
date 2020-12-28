@@ -6,6 +6,7 @@ import android.graphics.Paint;
 
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.RangeWeekView;
+import com.yumin.pomodoro.utils.LogUtil;
 
 /**
  * 范围选择周视图
@@ -13,7 +14,7 @@ import com.haibin.calendarview.RangeWeekView;
  */
 
 public class CustomRangeWeekView extends RangeWeekView {
-
+    private static final String TAG = "[CustomRangeWeekView]";
     private int mRadius;
 
     public CustomRangeWeekView(Context context) {
@@ -30,6 +31,7 @@ public class CustomRangeWeekView extends RangeWeekView {
     @Override
     protected boolean onDrawSelected(Canvas canvas, Calendar calendar, int x, boolean hasScheme,
                                      boolean isSelectedPre, boolean isSelectedNext) {
+        LogUtil.logD(TAG,"onDrawSelected");
         int cx = x + mItemWidth / 2;
         int cy = mItemHeight / 2;
 
@@ -45,13 +47,24 @@ public class CustomRangeWeekView extends RangeWeekView {
                 canvas.drawRect(cx, cy - mRadius, x + mItemWidth, cy + mRadius, mSelectedPaint);
             }
             canvas.drawCircle(cx, cy, mRadius, mSelectedPaint);
+        }
 
+
+        if (onCalendarIntercept(calendar)) {
+            // gray out
+//            Paint grayOutPaint = new Paint();
+//            grayOutPaint.setAntiAlias(true);
+//            grayOutPaint.setStyle(Paint.Style.FILL);
+//            grayOutPaint.setStrokeWidth(2);
+//            grayOutPaint.setColor(mOtherMonthTextPaint);
+            canvas.drawCircle(cx,cy,mRadius,mOtherMonthTextPaint);
         }
         return false;
     }
 
     @Override
     protected void onDrawScheme(Canvas canvas, Calendar calendar, int x, boolean isSelected) {
+        LogUtil.logD(TAG,"onDrawScheme");
         int cx = x + mItemWidth / 2;
         int cy = mItemHeight / 2;
         canvas.drawCircle(cx, cy, mRadius, mSchemePaint);
@@ -59,6 +72,7 @@ public class CustomRangeWeekView extends RangeWeekView {
 
     @Override
     protected void onDrawText(Canvas canvas, Calendar calendar, int x, boolean hasScheme, boolean isSelected) {
+        LogUtil.logD(TAG,"onDrawText");
         float baselineY = mTextBaseLine;
         int cx = x + mItemWidth / 2;
         boolean isInRange = isInRange(calendar);

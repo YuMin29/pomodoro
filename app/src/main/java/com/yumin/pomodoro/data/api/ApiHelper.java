@@ -10,15 +10,13 @@ import java.util.List;
 
 public class ApiHelper {
     private ApiService apiService;
-    private Context context;
 
-    public ApiHelper(ApiService apiService,Context context){
+    public ApiHelper(ApiService apiService){
         this.apiService = apiService;
-        this.context = context;
     }
 
-    public LiveData<List<Mission>> getMissions(Context context){
-        return apiService.getMissions(context);
+    public LiveData<List<Mission>> getMissions(){
+        return apiService.getMissions();
     }
 
     public LiveData<List<Mission>> getTodayMissions(long start, long end){
@@ -30,8 +28,8 @@ public class ApiHelper {
     }
 
 
-    public void addMission(Context context, Mission mission){
-        apiService.addMission(context,mission);
+    public void addMission(Mission mission){
+        apiService.addMission(mission);
     }
 
     public Mission getInitMission(){
@@ -64,5 +62,9 @@ public class ApiHelper {
 
     public LiveData<Long> getMissionRepeatEnd(int id){
         return apiService.getMissionRepeatEnd(id);
+    }
+
+    public LiveData<Long> getMissionOperateDay(int id){
+        return apiService.getMissionOperateDay(id);
     }
 }

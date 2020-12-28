@@ -18,12 +18,10 @@ import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 public class ViewModelFactory implements ViewModelProvider.Factory {
     private ApiHelper apiHelper;
     private Application application;
-    private int missionId;
 
-    public ViewModelFactory(Application application, ApiHelper apiHelper, int missionId){
+    public ViewModelFactory(Application application, ApiHelper apiHelper){
         this.apiHelper = apiHelper;
         this.application = application;
-        this.missionId = missionId;
     }
 
     @NonNull
@@ -32,13 +30,13 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass == AddMissionViewModel.class) {
             return (T) new AddMissionViewModel(application,new MainRepository(apiHelper));
         } else if (modelClass == HomeViewModel.class) {
-            return (T) new HomeViewModel(application,new MainRepository(apiHelper));
+            return (T) new HomeViewModel(new MainRepository(apiHelper));
         } else if (modelClass == EditMissionViewModel.class) {
-            return (T) new EditMissionViewModel(application,new MainRepository(apiHelper), missionId);
+            return (T) new EditMissionViewModel(application,new MainRepository(apiHelper));
         } else if (modelClass == TimerViewModel.class) {
-            return (T) new TimerViewModel(application,new MainRepository(apiHelper), missionId);
+            return (T) new TimerViewModel(application,new MainRepository(apiHelper));
         } else if (modelClass == RangeCalenderViewModel.class) {
-            return (T) new RangeCalenderViewModel(application,new MainRepository(apiHelper), missionId);
+            return (T) new RangeCalenderViewModel(application,new MainRepository(apiHelper));
         }
         return null;
     }

@@ -45,4 +45,7 @@ public interface MissionDao {
 
     @Query("SELECT repeatEnd FROM MyMission WHERE id=:id")
     LiveData<Long> getMissionRepeatEnd(int id);
+
+    @Query("SELECT operateDay FROM MyMission WHERE id=:id")
+    LiveData<Long> getMissionOperateDay(int id);
 }

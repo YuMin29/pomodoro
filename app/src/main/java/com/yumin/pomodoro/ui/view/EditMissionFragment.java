@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,39 +25,38 @@ import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.base.DataBindingConfig;
+import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
-public class EditMissionFragment extends Fragment implements ItemListView.OnCalenderListener{
+public class EditMissionFragment extends DataBindingFragment implements ItemListView.OnCalenderListener{
     private static final String TAG = "[EditMissionFragment]";
     EditMissionViewModel editMissionViewModel;
-    RangeCalenderViewModel rangeCalenderViewModel;
+    SharedViewModel sharedViewModel;
     FragmentEditMissionBinding fragmentEditMissionBinding;
-    int editId = 0;
+//    RangeCalenderViewModel rangeCalenderViewModel;
     public EditMissionFragment() {}
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LogUtil.logD(TAG, "[onCreate]");
+    protected void initViewModel() {
+        editMissionViewModel = getFragmentScopeViewModel(EditMissionViewModel.class);
+        sharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LogUtil.logD(TAG, "[onCreateView]");
-        fragmentEditMissionBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_mission,container,false);
-        fragmentEditMissionBinding.setLifecycleOwner(this);
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_edit_mission, BR.viewmodel,editMissionViewModel)
+                .addBindingParam(BR.clickProxy,new ClickProxy());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fragmentEditMissionBinding = (FragmentEditMissionBinding) getBinding();
         fragmentEditMissionBinding.itemRepeat.setOnCalenderListener(this);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            editId = bundle.getInt("editId");
-        }
-        LogUtil.logD(TAG,"[onCreateView] editId = "+editId);
-        initViewModel(editId);
         initObserver();
-        fragmentEditMissionBinding.setClickProxy(new EditMissionFragment.ClickProxy());
-        fragmentEditMissionBinding.setViewmodel(editMissionViewModel);
-        return fragmentEditMissionBinding.getRoot();
     }
 
     private void initObserver() {
@@ -80,38 +80,46 @@ public class EditMissionFragment extends Fragment implements ItemListView.OnCale
             }
         });
 
-        rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
+        sharedViewModel.getRepeatStart().observeInFragment(this, new Observer<Long>() {
             @Override
-            public void onChanged(Long aLong) {
-                LogUtil.logD(TAG,"[initObserve] getRepeatStart");
+            public void onChanged(Long time) {
+                LogUtil.logD(TAG,"[Observe][getRepeatStart] time = "+time);
+                editMissionViewModel.getEditMission().getValue().setRepeatStart(time);
             }
         });
 
-        rangeCalenderViewModel.getClickCommit().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        sharedViewModel.getRepeatEnd().observeInFragment(this, new Observer<Long>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    LogUtil.logD(TAG,"[initObserve] getClickCommit = "+aBoolean);
-                    editMissionViewModel.updateRepeatStart(rangeCalenderViewModel.getRepeatStart().getValue());
-                    editMissionViewModel.updateRepeatEnd(rangeCalenderViewModel.getRepeatEnd().getValue());
-                }
+            public void onChanged(Long time) {
+                LogUtil.logD(TAG,"[Observe][getRepeatEnd] time = "+time);
+                editMissionViewModel.getEditMission().getValue().setRepeatEnd(time);
             }
         });
+
+//        rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
+//            @Override
+//            public void onChanged(Long aLong) {
+//                LogUtil.logD(TAG,"[initObserve] getRepeatStart");
+//            }
+//        });
+//
+//        rangeCalenderViewModel.getClickCommit().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//            @Override
+//            public void onChanged(Boolean aBoolean) {
+//                if (aBoolean) {
+//                    LogUtil.logD(TAG,"[initObserve] getClickCommit = "+aBoolean);
+//                    editMissionViewModel.updateRepeatStart(rangeCalenderViewModel.getRepeatStart().getValue());
+//                    editMissionViewModel.updateRepeatEnd(rangeCalenderViewModel.getRepeatEnd().getValue());
+//                }
+//            }
+//        });
     }
 
-    private void initViewModel(int editId) {
-        LogUtil.logD(TAG,"[initViewModel] edit id = "+editId);
-        editMissionViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),editId)).get(EditMissionViewModel.class);
-        rangeCalenderViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),editId)).get(RangeCalenderViewModel.class);
-    }
 
     @Override
     public void onOpened() {
-        Bundle bundle = new Bundle();
-        bundle.putInt("missionId",editId);
-        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
+        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getEditId());
+        MainActivity.getNavController().navigate(R.id.fragment_range_calender);
     }
 
     public class ClickProxy{

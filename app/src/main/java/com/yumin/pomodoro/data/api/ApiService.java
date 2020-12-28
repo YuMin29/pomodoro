@@ -9,8 +9,8 @@ import com.yumin.pomodoro.data.model.Mission;
 import java.util.List;
 
 public interface ApiService {
-    public LiveData<List<Mission>> getMissions(Context context);
-    public void addMission(Context context, Mission mission);
+    public LiveData<List<Mission>> getMissions();
+    public void addMission(Mission mission);
     public Mission getInitMission();
     public LiveData<List<Mission>> getTodayMissions(long start, long end);
     public LiveData<List<Mission>> getComingMissions(long today);
@@ -21,4 +21,5 @@ public interface ApiService {
     public void updateIsFinishedById(int id, boolean finished);
     public LiveData<Long> getMissionRepeatStart(int id);
     public LiveData<Long> getMissionRepeatEnd(int id);
+    public LiveData<Long> getMissionOperateDay(int id);
 }

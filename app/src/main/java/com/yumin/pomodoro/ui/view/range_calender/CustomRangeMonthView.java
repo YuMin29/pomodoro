@@ -6,9 +6,10 @@ import android.graphics.Paint;
 
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.RangeMonthView;
+import com.yumin.pomodoro.utils.LogUtil;
 
 public class CustomRangeMonthView extends RangeMonthView {
-
+    private static final String TAG = "[CustomRangeMonthView]";
     private int mRadius;
 
     public CustomRangeMonthView(Context context) {
@@ -25,6 +26,7 @@ public class CustomRangeMonthView extends RangeMonthView {
     @Override
     protected boolean onDrawSelected(Canvas canvas, Calendar calendar, int x, int y, boolean hasScheme,
                                      boolean isSelectedPre, boolean isSelectedNext) {
+        LogUtil.logD(TAG,"onDrawSelected");
         int cx = x + mItemWidth / 2;
         int cy = y + mItemHeight / 2;
         if (isSelectedPre) {
@@ -47,6 +49,7 @@ public class CustomRangeMonthView extends RangeMonthView {
 
     @Override
     protected void onDrawScheme(Canvas canvas, Calendar calendar, int x, int y, boolean isSelected) {
+        LogUtil.logD(TAG,"onDrawScheme");
         int cx = x + mItemWidth / 2;
         int cy = y + mItemHeight / 2;
         canvas.drawCircle(cx, cy, mRadius, mSchemePaint); //draw a circle
@@ -54,6 +57,7 @@ public class CustomRangeMonthView extends RangeMonthView {
 
     @Override
     protected void onDrawText(Canvas canvas, Calendar calendar, int x, int y, boolean hasScheme, boolean isSelected) {
+        LogUtil.logD(TAG,"onDrawText");
         float baselineY = mTextBaseLine + y;
         int cx = x + mItemWidth / 2;
 

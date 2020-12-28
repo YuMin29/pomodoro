@@ -11,6 +11,7 @@ import android.widget.ExpandableListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -26,14 +27,19 @@ import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
 import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.base.IFragmentListener;
+import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.base.DataBindingConfig;
+import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends DataBindingFragment {
     private static final String TAG = "[HomeFragment]";
     private HomeViewModel mHomeViewModel;
+    private SharedViewModel mSharedViewModel;
     private CategoryAdapter mCategoryAdapter;
     private ExpandableViewAdapter expandableViewAdapter;
     private List<Mission> mMissions = new ArrayList<>();
@@ -43,23 +49,32 @@ public class HomeFragment extends Fragment {
     Category today;
     Category coming;
 
-    @Nullable
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragmentHomeBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false);
-        fragmentHomeBinding.setLifecycleOwner(this);
-        fragmentHomeBinding.setClick(new ClickProxy());
-        initViewModel();
-        initUI();
-        observeViewModel();
-        fragmentHomeBinding.setViewModel(mHomeViewModel);
-        return fragmentHomeBinding.getRoot();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
-    private void initViewModel() {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fragmentHomeBinding = (FragmentHomeBinding) getBinding();
+        initUI();
+        observeViewModel();
+    }
+
+
+    @Override
+    protected void initViewModel() {
         LogUtil.logD(TAG,"[initViewModel]");
-        mHomeViewModel =  new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),-1)).get(HomeViewModel.class);
+        mHomeViewModel = getFragmentScopeViewModel(HomeViewModel.class);
+        mSharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
+    }
+
+    @Override
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_home, BR.viewModel, mHomeViewModel)
+                .addBindingParam(BR.click, new ClickProxy());
     }
 
     private void initUI() {
@@ -82,9 +97,10 @@ public class HomeFragment extends Fragment {
                 LogUtil.logD(TAG,"[onChildClick] item = "+mission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
                 if (!mission.isFinished()) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("itemId",mission.getId());
-                    MainActivity.getNavController().navigate(R.id.fragment_timer,bundle);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putInt("itemId",mission.getId());
+                    MissionManager.getInstance().setOperateId(mission.getId());
+                    MainActivity.getNavController().navigate(R.id.fragment_timer);
                 } else {
                     // TODO: 重新開始任務？ 清除完成紀錄？
 
@@ -107,9 +123,10 @@ public class HomeFragment extends Fragment {
                     LogUtil.logD(TAG,"[onItemLongClick] item = "+mission.getName()+
                             " ,groupPosition = "+groupPos+" ,childPosition = "+childPos);
                     // switch to edit mission fragment
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("editId",mission.getId());
-                    MainActivity.getNavController().navigate(R.id.edit_mission_fragment,bundle);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putInt("editId",mission.getId());
+                    MissionManager.getInstance().setEditId(mission.getId());
+                    MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
                     return true;
                 }
                 return false;

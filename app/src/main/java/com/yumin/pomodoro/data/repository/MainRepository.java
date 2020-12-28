@@ -16,8 +16,8 @@ public class MainRepository {
         this.apiHelper = apiHelper;
     }
 
-    public LiveData<List<Mission>> getMissions(Context context){
-        return apiHelper.getMissions(context);
+    public LiveData<List<Mission>> getMissions(){
+        return apiHelper.getMissions();
     }
 
     public LiveData<List<Mission>> getTodayMissions(long start, long end){
@@ -36,8 +36,8 @@ public class MainRepository {
         return apiHelper.getMissionById(id);
     }
 
-    public void addMission(Context context, Mission mission){
-        apiHelper.addMission(context,mission);
+    public void addMission(Mission mission){
+        apiHelper.addMission(mission);
     }
 
     public void updateMission(Mission mission){
@@ -62,5 +62,9 @@ public class MainRepository {
 
     public LiveData<Long> getMissionRepeatEnd(int id){
         return apiHelper.getMissionRepeatEnd(id);
+    }
+
+    public LiveData<Long> getMissionOperateDay(int id){
+        return apiHelper.getMissionOperateDay(id);
     }
 }

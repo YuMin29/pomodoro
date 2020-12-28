@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,16 +36,18 @@ import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.CircleTimer;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.NotificationHelper;
+import com.yumin.pomodoro.utils.base.DataBindingConfig;
+import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.util.concurrent.TimeUnit;
 
-public class TimerFragment extends Fragment {
+public class TimerFragment extends DataBindingFragment {
     private static final String TAG = "[TimerFragment]";
     private FragmentTimerBinding fragmentTimerBinding;
     private TimerViewModel timerViewModel;
     private boolean enabledVibrate;
     private boolean enabledNotification;
-    private int itemId;
     private int missionCount;
     private CircleTimer missionTimer;
     private int numberOfCompletion;
@@ -80,14 +83,20 @@ public class TimerFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LogUtil.logD(TAG,"[onCreate]");
-        Bundle bundle = getArguments();
-        if (bundle != null)
-            itemId = bundle.getInt("itemId");
-        LogUtil.logD(TAG,"[onCreateView] itemId = "+itemId);
-        initViewModel();
+    protected void initViewModel() {
+        timerViewModel = getFragmentScopeViewModel(TimerViewModel.class);
+    }
+
+    @Override
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_timer, BR.viewmodel,timerViewModel);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        fragmentTimerBinding = (FragmentTimerBinding) getBinding();
+
+        observeViewModel();
 
         // TODO：1209 handle back key in here
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -107,7 +116,8 @@ public class TimerFragment extends Fragment {
                                 // exit & cancel notification
                                 if (fragmentTimerBinding.missionTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
                                     fragmentTimerBinding.missionTimer.onClickReset();
-                                    notificationHelper.cancelNotification();
+                                    if (enabledNotification)
+                                        notificationHelper.cancelNotification();
                                 }
                                 MainActivity.getNavController().navigateUp();
                                 // update finish status
@@ -126,15 +136,7 @@ public class TimerFragment extends Fragment {
                 alertDialog.show();
             }
         });
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        observeViewModel();
-        fragmentTimerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_timer,container,false);
-        fragmentTimerBinding.setLifecycleOwner(this);
-        fragmentTimerBinding.setViewmodel(timerViewModel);
         missionTimer = fragmentTimerBinding.missionTimer;
         missionTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
             @Override
@@ -177,7 +179,7 @@ public class TimerFragment extends Fragment {
 
                 // switch to break timer
                 Bundle bundle = new Bundle();
-                bundle.putInt("itemId",itemId);
+                bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                 MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_break_timer,bundle);
             }
 
@@ -189,13 +191,8 @@ public class TimerFragment extends Fragment {
                 }
             }
         });
-        return fragmentTimerBinding.getRoot();
     }
 
-    private void initViewModel() {
-        timerViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),itemId)).get(TimerViewModel.class);
-    }
 
     private void observeViewModel(){
         timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {

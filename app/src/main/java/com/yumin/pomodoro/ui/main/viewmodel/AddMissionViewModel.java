@@ -52,7 +52,7 @@ public class AddMissionViewModel extends AndroidViewModel {
 
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+mission.getValue().toString());
-        mainRepository.addMission(getApplication(),mission.getValue());
+        mainRepository.addMission(mission.getValue());
         saveButtonClick.postValue(true);
     }
 

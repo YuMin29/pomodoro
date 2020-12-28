@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.yumin.pomodoro.data.api.ApiHelper;
+import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
@@ -24,14 +26,14 @@ public class HomeViewModel extends ViewModel {
     private LiveData<List<Mission>> todayMissions;
     private LiveData<List<Mission>> comingMissions;
 
-    public HomeViewModel(Application application,MainRepository mainRepository){
+    public HomeViewModel(MainRepository mainRepository){
         this.mainRepository = mainRepository;
-        fetchData(application);
+        fetchData();
     }
 
-    private void fetchData(Application application) {
+    private void fetchData() {
         mIsLoading.setValue(true);
-        missions = this.mainRepository.getMissions(application.getApplicationContext());
+        missions = this.mainRepository.getMissions();
         todayMissions = this.mainRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
         comingMissions = this.mainRepository.getComingMissions(getCurrentEndTime());
         mIsLoading.setValue(false);

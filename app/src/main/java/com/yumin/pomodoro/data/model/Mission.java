@@ -71,8 +71,8 @@ public class Mission {
                 ", operateDay='" + operateDay + '\'' +
                 ", goal=" + goal + '\'' +
                 ", repeat='" + repeat + '\'' +
-                ", repeatStart = "+repeatStart + '\'' +
-                ", repeatEnd = "+repeatEnd + '\'' +
+                ", repeatStart ='"+repeatStart + '\'' +
+                ", repeatEnd ='"+repeatEnd + '\'' +
                 ", enableNotification=" + enableNotification + '\'' +
                 ", enableSound=" + enableSound + '\'' +
                 ", enableVibrate=" + enableVibrate + '\'' +

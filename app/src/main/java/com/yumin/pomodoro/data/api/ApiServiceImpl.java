@@ -23,6 +23,7 @@ public class ApiServiceImpl implements ApiService {
     private LiveData<Mission> missionById = new LiveData<Mission>(){};
     private LiveData<Long> missionRepeatStart = new LiveData<Long>() {};
     private LiveData<Long> missionRepeatEnd = new LiveData<Long>() {};
+    private LiveData<Long> missionOperateDay = new LiveData<Long>() {};
 
     public ApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
@@ -51,13 +52,13 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public LiveData<List<Mission>> getMissions(Context context) {
+    public LiveData<List<Mission>> getMissions() {
         Log.d("[ApiServiceImpl]","[getMissions]");
         return allMissions;
     }
 
     @Override
-    public void addMission(Context context, Mission mission) {
+    public void addMission(Mission mission) {
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -104,6 +105,13 @@ public class ApiServiceImpl implements ApiService {
         missionRepeatEnd = missionDao.getMissionRepeatEnd(id);
         return missionRepeatEnd;
     }
+
+    @Override
+    public LiveData<Long> getMissionOperateDay(int id) {
+        missionOperateDay = missionDao.getMissionOperateDay(id);
+        return missionOperateDay;
+    }
+
 
     public void deleteMission(Mission mission){
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {

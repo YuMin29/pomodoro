@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
 public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = "[TimerViewModel]";
@@ -19,10 +20,10 @@ public class TimerViewModel extends AndroidViewModel {
     private MutableLiveData<String> missionTime = new MutableLiveData<>();
     private MutableLiveData<String> missionBreakTime = new MutableLiveData<>();
 
-    public TimerViewModel(@NonNull Application application, MainRepository mainRepository, int missionId) {
+    public TimerViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
         this.mainRepository = mainRepository;
-        this.missionId = missionId;
+        this.missionId = MissionManager.getInstance().getOperateId();
         fetchMission();
     }
 

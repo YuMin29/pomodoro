@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
 public class EditMissionViewModel extends AndroidViewModel {
     private static final String TAG = "[EditMissionViewModel]";
@@ -19,13 +20,13 @@ public class EditMissionViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
     private int missionId;
 
-    public EditMissionViewModel(@NonNull Application application, MainRepository mainRepository, int missionId) {
+    public EditMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
         this.mainRepository = mainRepository;
-        this.missionId = missionId;
+        this.missionId = MissionManager.getInstance().getEditId();
+        LogUtil.logD(TAG,"missionId = "+missionId);
         saveButtonClick.postValue(false);
         cancelButtonClick.postValue(false);
-        LogUtil.logD(TAG,"editId = "+ missionId);
         fetchMission();
     }
 

@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.api.ApiHelper;
@@ -35,16 +36,18 @@ import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.CircleTimer;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.NotificationHelper;
+import com.yumin.pomodoro.utils.base.DataBindingConfig;
+import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.util.concurrent.TimeUnit;
 
-public class BreakTimerFragment extends Fragment {
+public class BreakTimerFragment extends DataBindingFragment {
     private static final String TAG = "[BreakTimerFragment]";
     private FragmentBreakTimerBinding fragmentBreakTimerBinding;
     private TimerViewModel timerViewModel;
     private boolean enabledVibrate;
     private boolean enabledNotification;
-    private int itemId;
     private int missionCount;
     private CircleTimer breakTimer;
     private int numberOfCompletion;
@@ -68,27 +71,20 @@ public class BreakTimerFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        LogUtil.logD(TAG,"[onPause]");
+    protected void initViewModel() {
+        timerViewModel = getFragmentScopeViewModel(TimerViewModel.class);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        LogUtil.logD(TAG,"[onDestroy]");
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_break_timer, BR.viewmodel, timerViewModel);
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LogUtil.logD(TAG,"[onCreate]");
-        Bundle bundle = getArguments();
-        if (bundle != null)
-            itemId = bundle.getInt("itemId");
-        LogUtil.logD(TAG,"[onCreateView] itemId = "+itemId);
-        initViewModel();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        fragmentBreakTimerBinding = (FragmentBreakTimerBinding) getBinding();
 
+        observeViewModel();
 
         // TODO：1209 handle back key in here
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -127,15 +123,6 @@ public class BreakTimerFragment extends Fragment {
                 alertDialog.show();
             }
         });
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        observeViewModel();
-        fragmentBreakTimerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_break_timer,container,false);
-        fragmentBreakTimerBinding.setLifecycleOwner(this);
-        fragmentBreakTimerBinding.setViewmodel(timerViewModel);
 
         breakTimer = fragmentBreakTimerBinding.breakTimer;
         breakTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
@@ -174,7 +161,7 @@ public class BreakTimerFragment extends Fragment {
 
                     // switch to mission timer
                     Bundle bundle = new Bundle();
-                    bundle.putInt("itemId",itemId);
+                    bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                     MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_timer,bundle);
 
                 } else {
@@ -198,12 +185,6 @@ public class BreakTimerFragment extends Fragment {
                 }
             }
         });
-        return fragmentBreakTimerBinding.getRoot();
-    }
-
-    private void initViewModel() {
-        timerViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),itemId)).get(TimerViewModel.class);
     }
 
     private void observeViewModel(){

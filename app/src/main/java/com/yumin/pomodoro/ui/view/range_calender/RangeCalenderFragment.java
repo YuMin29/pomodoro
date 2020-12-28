@@ -1,49 +1,47 @@
 package com.yumin.pomodoro.ui.view.range_calender;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
+import com.yumin.pomodoro.BR;
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.api.ApiServiceImpl;
-import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.databinding.FragmentRangeCalenderBinding;
-import com.yumin.pomodoro.ui.base.EditViewModelFactory;
-import com.yumin.pomodoro.ui.base.ViewModelFactory;
-import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
-import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.base.DataBindingConfig;
+import com.yumin.pomodoro.utils.base.DataBindingFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class RangeCalenderFragment extends Fragment implements CalendarView.OnCalendarRangeSelectListener,
+public class RangeCalenderFragment extends DataBindingFragment implements CalendarView.OnCalendarRangeSelectListener,
         CalendarView.OnMonthChangeListener, CalendarView.OnCalendarInterceptListener, View.OnClickListener {
     private static final String TAG = "[RangeCalenderFragment]";
     private FragmentRangeCalenderBinding fragmentRangeCalenderBinding;
     private int mCalendarHeight;
     private static final String[] WEEK = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
     private RangeCalenderViewModel rangeCalenderViewModel;
+    private SharedViewModel sharedViewModel;
+    private int startYear;
+    private int startMonth;
+    private int startDay;
+    private int endYear;
+    private int endMonth;
+    private int endDay;
+    private long missionOperateDay = -1L;
 
     @Override
     public void onResume() {
@@ -59,22 +57,23 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Bundle bundle = getArguments();
-        int missionId = -1;
-        if (bundle != null) {
-            missionId = bundle.getInt("missionId");
-        }
-        fragmentRangeCalenderBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_range_calender,container,false);
-        fragmentRangeCalenderBinding.setLifecycleOwner(this);
-        fragmentRangeCalenderBinding.setClickProxy(new ClickProxy());
+    protected void initViewModel() {
+        rangeCalenderViewModel = getFragmentScopeViewModel(RangeCalenderViewModel.class);
+        sharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
+    }
 
-        initViewModel(missionId);
+    @Override
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_range_calender,BR.viewModel,rangeCalenderViewModel)
+                .addBindingParam(BR.clickProxy, new ClickProxy());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        fragmentRangeCalenderBinding = (FragmentRangeCalenderBinding) getBinding();
         initView();
         initObserve();
-        return fragmentRangeCalenderBinding.getRoot();
     }
 
     // TODO: put chosen date to start &　end. If no data, just init.
@@ -89,20 +88,22 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
 
         mCalendarHeight = dipToPx(getContext(), 46);
 
-        fragmentRangeCalenderBinding.calendarView.setRange(fragmentRangeCalenderBinding.calendarView.getCurYear(), fragmentRangeCalenderBinding.calendarView.getCurMonth(),
-                fragmentRangeCalenderBinding.calendarView.getCurDay(),2030,12,31
-        );
+        if (missionOperateDay == -1L) {
+            fragmentRangeCalenderBinding.calendarView.setRange(fragmentRangeCalenderBinding.calendarView.getCurYear(), fragmentRangeCalenderBinding.calendarView.getCurMonth(),
+                    fragmentRangeCalenderBinding.calendarView.getCurDay(),2030,12,31
+            );
+        } else {
+            fragmentRangeCalenderBinding.calendarView.setRange(Integer.valueOf(getYear(missionOperateDay)),
+                    Integer.valueOf(getMonth(missionOperateDay)),
+                    Integer.valueOf(getDay(missionOperateDay)),2030,12,31);
+        }
+
         fragmentRangeCalenderBinding.calendarView.post(new Runnable() {
             @Override
             public void run() {
                 fragmentRangeCalenderBinding.calendarView.scrollToCurrent();
             }
         });
-    }
-
-    private void initViewModel(int id){
-        rangeCalenderViewModel = new ViewModelProvider(this, new ViewModelFactory(getActivity().getApplication(),
-                new ApiHelper(new ApiServiceImpl(getActivity().getApplication()),getContext()),id)).get(RangeCalenderViewModel.class);
     }
 
     private void initObserve() {
@@ -116,12 +117,14 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
                         fragmentRangeCalenderBinding.tvLeftDate.setText("");
                     } else {
                         // convert to date
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd");
-                        Date date = new Date(start);
-                        LogUtil.logD(TAG,"[initObserve] simpleDateFormat = "+simpleDateFormat.format(date));
-                        fragmentRangeCalenderBinding.tvLeftDate.setText(simpleDateFormat.format(date));
-                        fragmentRangeCalenderBinding.calendarView.setSelectStartCalendar(date.getYear(),date.getMonth(),date.getDay());
+                        fragmentRangeCalenderBinding.tvLeftDate.setText(getMonth(start)+"/"+getDay(start));
+                        startYear = Integer.valueOf(getYear(start));
+                        startMonth = Integer.valueOf(getMonth(start));
+                        startDay = Integer.valueOf(getDay(start));
+                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
+                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
                     }
+                    sharedViewModel.setRepeatStart(start);
                 }
             }
         });
@@ -136,15 +139,51 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
                         fragmentRangeCalenderBinding.tvRightDate.setText("");
                     } else {
                         // convert to date
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd");
-                        Date date = new Date(end);
-                        LogUtil.logD(TAG,"[initObserve] simpleDateFormat = "+simpleDateFormat.format(date));
-                        fragmentRangeCalenderBinding.tvLeftDate.setText(simpleDateFormat.format(date));
-                        fragmentRangeCalenderBinding.calendarView.setSelectEndCalendar(date.getYear(),date.getMonth(),date.getDay());
+                        fragmentRangeCalenderBinding.tvRightDate.setText(getMonth(end)+"/"+getDay(end));
+                        endYear = Integer.valueOf(getYear(end));
+                        endMonth = Integer.valueOf(getMonth(end));
+                        endDay = Integer.valueOf(getDay(end));
+                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
+                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
+                    }
+                    sharedViewModel.setRepeatEnd(end);
+                }
+            }
+        });
+
+        rangeCalenderViewModel.getMissionOperateDay().observe(getViewLifecycleOwner(), new Observer<Long>() {
+            @Override
+            public void onChanged(Long operateDay) {
+                if (operateDay != null) {
+                    if (operateDay != -1L) {
+                        LogUtil.logD(TAG,"[initObserve] operateDay = "+operateDay);
+                        missionOperateDay = operateDay;
                     }
                 }
             }
         });
+    }
+
+
+    public static String getYear(long milli){
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat ("yyyy");
+        String ctime = formatter.format(new Date(milli));
+        return ctime;
+    }
+
+    public static String getMonth(long milli){
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat ("M");
+        String ctime = formatter.format(new Date(milli));
+        return ctime;
+    }
+
+    public static String getDay(long milli) {
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat("d");
+        String ctime = formatter.format(new Date(milli));
+        return ctime;
     }
 
     @Override
@@ -179,6 +218,10 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
 
     @Override
     public boolean onCalendarIntercept(Calendar calendar) {
+        if (missionOperateDay != -1L &&
+                calendar.getTimeInMillis() < missionOperateDay) {
+            return true;
+        }
         return false;
     }
 
@@ -235,7 +278,7 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
                 return;
             }
             for (Calendar c : calendars) {
-                Log.e("SelectCalendarRange", c.toString()
+                Log.e(TAG, c.toString()
                         + " -- " + c.getScheme()
                         + "  --  " + c.getLunar());
             }
@@ -243,10 +286,12 @@ public class RangeCalenderFragment extends Fragment implements CalendarView.OnCa
                     calendars.get(0).toString(), calendars.get(calendars.size()-1).toString()),
                     Toast.LENGTH_SHORT).show();
             long start = calendars.get(0).getTimeInMillis();
-            long end  = calendars.get(calendars.size()-1).getTimeInMillis();
-            rangeCalenderViewModel.setRepeatStart(start);
-            rangeCalenderViewModel.setRepeatEnd(end);
-            rangeCalenderViewModel.setClickCommit(true);
+            long end = calendars.get(calendars.size()-1).getTimeInMillis();
+            Log.e(TAG,"SelectCalendarRange , start = " +start);
+            Log.e(TAG,"SelectCalendarRange , start = " +start);
+            sharedViewModel.setRepeatStart(start);
+            sharedViewModel.setRepeatEnd(end);
+            MainActivity.getNavController().navigateUp(); // back
         }
     }
 }
