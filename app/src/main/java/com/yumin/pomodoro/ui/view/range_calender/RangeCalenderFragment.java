@@ -76,7 +76,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
         initObserve();
     }
 
-    // TODO: put chosen date to start &　end. If no data, just init.
     private void initView(){
         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -93,6 +92,7 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
                     fragmentRangeCalenderBinding.calendarView.getCurDay(),2030,12,31
             );
         } else {
+            // TODO: 2020/12/29 需要新增獲得即時的執行日期(temp operate day)
             fragmentRangeCalenderBinding.calendarView.setRange(Integer.valueOf(getYear(missionOperateDay)),
                     Integer.valueOf(getMonth(missionOperateDay)),
                     Integer.valueOf(getDay(missionOperateDay)),2030,12,31);

@@ -119,7 +119,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemDateVal="@={viewmodel.mission.operateDay}"
-                        app:itemDescription="@{@string/mission_operate_day}"/>
+                        app:itemDescription="@{@string/mission_operate_day}" />
 
                     <com.yumin.pomodoro.ui.view.ItemDialogView
                         android:id="@+id/item_theme"

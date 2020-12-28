@@ -60,7 +60,6 @@ public class ColorView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        // TODO Auto-generated method stub
         super.onDraw(canvas);
         LogUtil.logD("[ColorView]","[onDraw]");
         float cx = getWidth() / 2.0f;

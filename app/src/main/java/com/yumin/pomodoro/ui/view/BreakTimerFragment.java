@@ -86,7 +86,6 @@ public class BreakTimerFragment extends DataBindingFragment {
 
         observeViewModel();
 
-        // TODO：1209 handle back key in here
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

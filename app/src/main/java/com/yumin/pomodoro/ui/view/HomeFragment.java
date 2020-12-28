@@ -102,7 +102,7 @@ public class HomeFragment extends DataBindingFragment {
                     MissionManager.getInstance().setOperateId(mission.getId());
                     MainActivity.getNavController().navigate(R.id.fragment_timer);
                 } else {
-                    // TODO: 重新開始任務？ 清除完成紀錄？
+                    // TODO: 2020/12/29 重新開始任務？ 清除完成紀錄？
 
                 }
                 return true;
