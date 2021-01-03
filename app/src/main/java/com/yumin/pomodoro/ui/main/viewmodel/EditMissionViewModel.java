@@ -12,6 +12,9 @@ import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class EditMissionViewModel extends AndroidViewModel {
     private static final String TAG = "[EditMissionViewModel]";
     private MainRepository mainRepository;
@@ -39,6 +42,11 @@ public class EditMissionViewModel extends AndroidViewModel {
         return this.editMission;
     }
 
+    private String getTransferDate(long time){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return simpleDateFormat.format(new Date(time));
+    }
+
     public LiveData<Boolean> getSaveButtonClick(){
         return this.saveButtonClick;
     }
@@ -58,12 +66,11 @@ public class EditMissionViewModel extends AndroidViewModel {
     }
 
     public void updateRepeatStart(long time){
-        LogUtil.logD(TAG,"[updateRepeatStart] time = "+time);
+        LogUtil.logD(TAG,"[updateRepeatStart] time = "+getTransferDate(time));
         editMission.getValue().setRepeatStart(time);
     }
     public void updateRepeatEnd(long time){
-        LogUtil.logD(TAG,"[updateRepeatEnd] time = "+time);
+        LogUtil.logD(TAG,"[updateRepeatEnd] time = "+getTransferDate(time));
         editMission.getValue().setRepeatEnd(time);
     }
-
 }

@@ -26,8 +26,8 @@ public class Mission {
     private long operateDay = System.currentTimeMillis();
     private int goal = 1; // at least 1
     private int repeat = TYPE_NONE;
-    private long repeatStart = -1;
-    private long repeatEnd = -1;
+    private long repeatStart = -1L;
+    private long repeatEnd = -1L;
     private boolean enableNotification = true;
     private boolean enableSound = true;
     private boolean enableVibrate = true;

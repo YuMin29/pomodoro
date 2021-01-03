@@ -13,6 +13,8 @@ import com.yumin.pomodoro.data.model.AdjustMissionItem;
 import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 //TODO: ViewModel class shouldn't import any android.* or view.* class
@@ -25,6 +27,7 @@ public class AddMissionViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
 
+    // TODO: 12/29/20 operate day have relationship with repeat day 選的時候應該要監聽值 從init mission賦值
     public AddMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
         this.mainRepository = mainRepository;
@@ -36,6 +39,14 @@ public class AddMissionViewModel extends AndroidViewModel {
     private void fetchMission(){
         // init adjust item
         mission.setValue(mainRepository.getInitMission());
+    }
+    public void setMissionOperateDay(long operateDay){
+        LogUtil.logD(TAG,"[setTmpMissionOperateDay] operateDay ="+getTransferDate(operateDay));
+        this.mission.getValue().setOperateDay(operateDay);
+    }
+
+    public long getMissionOperateDay(){
+        return this.mission.getValue().getOperateDay();
     }
 
     public LiveData<Mission> getMission(){
@@ -61,12 +72,17 @@ public class AddMissionViewModel extends AndroidViewModel {
     }
 
     public void updateRepeatStart(long time){
-        LogUtil.logD(TAG,"[updateRepeatStart] time = "+time);
+        LogUtil.logD(TAG,"[updateRepeatStart] time = "+getTransferDate(time));
         mission.getValue().setRepeatStart(time);
     }
 
     public void updateRepeatEnd(long time){
-        LogUtil.logD(TAG,"[updateRepeatStart] time = "+time);
+        LogUtil.logD(TAG,"[updateRepeatStart] time = "+getTransferDate(time));
         mission.getValue().setRepeatEnd(time);
+    }
+
+    private String getTransferDate(long time){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return simpleDateFormat.format(new Date(time));
     }
 }

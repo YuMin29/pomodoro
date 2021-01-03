@@ -42,6 +42,8 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     private int endMonth;
     private int endDay;
     private long missionOperateDay = -1L;
+    private long latestRepeatStart = -1L;
+    private long latestRepeatEnd = -1L;
 
     @Override
     public void onResume() {
@@ -59,6 +61,14 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     @Override
     protected void initViewModel() {
+        // TODO: 2021/1/4 需要思考 this fragment取得的START & END 是否要從ADD 或 EDIT MISSION來?
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            latestRepeatStart = bundle.getLong("repeat_start");
+            latestRepeatEnd = bundle.getLong("repeat_end");
+            LogUtil.logD(TAG,"[initViewModel] latestRepeatStart = "+latestRepeatStart+
+                    " ,latestRepeatEnd = "+latestRepeatEnd);
+        }
         rangeCalenderViewModel = getFragmentScopeViewModel(RangeCalenderViewModel.class);
         sharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
     }
@@ -105,6 +115,10 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             }
         });
     }
+    // TODO: 2021/1/3 思考一下....
+    //  在選擇範圍時,暫時保存這次點選的範圍 讓再次進入選擇範圍的頁面能即時更新狀態
+    //  這和initObserve有衝突....嗎?
+    //  用flag紀錄尚未儲存的狀態 便於區分暫存的值?
 
     private void initObserve() {
         rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
@@ -148,6 +162,13 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
                     }
                     sharedViewModel.setRepeatEnd(end);
                 }
+            }
+        });
+
+        sharedViewModel.getChangedRepeatRange().observeInFragment(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                LogUtil.logD(TAG,"[getChangedRepeatRange] status = "+aBoolean);
             }
         });
 
@@ -270,6 +291,7 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
             fragmentRangeCalenderBinding.tvLeftDate.setText("");
             fragmentRangeCalenderBinding.tvRightDate.setText("");
+            MainActivity.getNavController().navigateUp(); // back
         }
 
         public void onCommit() {
@@ -291,6 +313,7 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             Log.e(TAG,"SelectCalendarRange , start = " +start);
             sharedViewModel.setRepeatStart(start);
             sharedViewModel.setRepeatEnd(end);
+            sharedViewModel.setChangedRepeatRange(true);
             MainActivity.getNavController().navigateUp(); // back
         }
     }

@@ -1,42 +1,40 @@
 package com.yumin.pomodoro.ui.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
 import androidx.databinding.library.baseAdapters.BR;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
-import com.yumin.pomodoro.ui.base.EditViewModelFactory;
-import com.yumin.pomodoro.ui.base.ViewModelFactory;
-import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
-import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
-public class EditMissionFragment extends DataBindingFragment implements ItemListView.OnCalenderListener{
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class EditMissionFragment extends DataBindingFragment implements ItemListView.OnCalenderListener, ItemDateView.OnOperateDayChanged{
     private static final String TAG = "[EditMissionFragment]";
     EditMissionViewModel editMissionViewModel;
     SharedViewModel sharedViewModel;
     FragmentEditMissionBinding fragmentEditMissionBinding;
 //    RangeCalenderViewModel rangeCalenderViewModel;
+    Mission editMission;
+    private static final int REPEAT_NONE = 0;
+    private static final int REPEAT_EVERYDAY = 1;
+    private static final int REPEAT_DEFINE = 2;
+
     public EditMissionFragment() {}
 
     @Override
@@ -56,6 +54,7 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
         super.onViewCreated(view, savedInstanceState);
         fragmentEditMissionBinding = (FragmentEditMissionBinding) getBinding();
         fragmentEditMissionBinding.itemRepeat.setOnCalenderListener(this);
+        fragmentEditMissionBinding.itemOperate.setOperateDayListener(this);
         initObserver();
     }
 
@@ -96,30 +95,60 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             }
         });
 
-//        rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
-//            @Override
-//            public void onChanged(Long aLong) {
-//                LogUtil.logD(TAG,"[initObserve] getRepeatStart");
-//            }
-//        });
-//
-//        rangeCalenderViewModel.getClickCommit().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-//            @Override
-//            public void onChanged(Boolean aBoolean) {
-//                if (aBoolean) {
-//                    LogUtil.logD(TAG,"[initObserve] getClickCommit = "+aBoolean);
-//                    editMissionViewModel.updateRepeatStart(rangeCalenderViewModel.getRepeatStart().getValue());
-//                    editMissionViewModel.updateRepeatEnd(rangeCalenderViewModel.getRepeatEnd().getValue());
-//                }
-//            }
-//        });
+        editMissionViewModel.getEditMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {
+            @Override
+            public void onChanged(Mission mission) {
+                if (mission != null) {
+                    editMission = mission;
+                }
+            }
+        });
     }
 
+    private String getTransferDate(long time){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return simpleDateFormat.format(new Date(time));
+    }
 
     @Override
     public void onOpened() {
         MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getEditId());
         MainActivity.getNavController().navigate(R.id.fragment_range_calender);
+    }
+
+    @Override
+    public void onOperateChanged(long time) {
+        // TODO: 12/29/20 check operate day
+        LogUtil.logD(TAG,"[onOperateChanged] = "+getTransferDate(time));
+        if (editMission!=null && editMission.getRepeat() == REPEAT_DEFINE &&
+                editMission.getRepeatStart() != -1L &&
+                editMission.getRepeatEnd() != -1L) {
+            // TODO: 12/29/20 compare operate day with defined repeat day
+            if (time > editMissionViewModel.getEditMission().getValue().getRepeatStart() ||
+                    time > editMissionViewModel.getEditMission().getValue().getRepeatEnd()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                        .setTitle("執行日小於重複區間")
+                        .setMessage("將會清除已設置的重複區間")
+                        .setPositiveButton(R.string.dialog_ok+"??", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                editMissionViewModel.updateRepeatStart(-1L);
+                                editMissionViewModel.updateRepeatEnd(-1L);
+                                fragmentEditMissionBinding.itemOperate.updateUI(time);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+                                LogUtil.logD(TAG,"[onOperateChanged] click cancel");
+                            }
+                        });
+                builder.show();
+            }
+        } else {
+            fragmentEditMissionBinding.itemOperate.updateUI(time);
+        }
     }
 
     public class ClickProxy{
