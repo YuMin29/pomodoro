@@ -33,7 +33,7 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     private FragmentRangeCalenderBinding fragmentRangeCalenderBinding;
     private int mCalendarHeight;
     private static final String[] WEEK = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
-    private RangeCalenderViewModel rangeCalenderViewModel;
+//    private RangeCalenderViewModel rangeCalenderViewModel;
     private SharedViewModel sharedViewModel;
     private int startYear;
     private int startMonth;
@@ -61,21 +61,13 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     @Override
     protected void initViewModel() {
-        // TODO: 2021/1/4 需要思考 this fragment取得的START & END 是否要從ADD 或 EDIT MISSION來?
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            latestRepeatStart = bundle.getLong("repeat_start");
-            latestRepeatEnd = bundle.getLong("repeat_end");
-            LogUtil.logD(TAG,"[initViewModel] latestRepeatStart = "+latestRepeatStart+
-                    " ,latestRepeatEnd = "+latestRepeatEnd);
-        }
-        rangeCalenderViewModel = getFragmentScopeViewModel(RangeCalenderViewModel.class);
+//        rangeCalenderViewModel = getFragmentScopeViewModel(RangeCalenderViewModel.class);
         sharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
     }
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_range_calender,BR.viewModel,rangeCalenderViewModel)
+        return new DataBindingConfig(R.layout.fragment_range_calender,BR.viewModel,null)
                 .addBindingParam(BR.clickProxy, new ClickProxy());
     }
 
@@ -97,23 +89,59 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
         mCalendarHeight = dipToPx(getContext(), 46);
 
-        if (missionOperateDay == -1L) {
-            fragmentRangeCalenderBinding.calendarView.setRange(fragmentRangeCalenderBinding.calendarView.getCurYear(), fragmentRangeCalenderBinding.calendarView.getCurMonth(),
-                    fragmentRangeCalenderBinding.calendarView.getCurDay(),2030,12,31
-            );
-        } else {
-            // TODO: 2020/12/29 需要新增獲得即時的執行日期(temp operate day)
-            fragmentRangeCalenderBinding.calendarView.setRange(Integer.valueOf(getYear(missionOperateDay)),
-                    Integer.valueOf(getMonth(missionOperateDay)),
-                    Integer.valueOf(getDay(missionOperateDay)),2030,12,31);
-        }
-
         fragmentRangeCalenderBinding.calendarView.post(new Runnable() {
             @Override
             public void run() {
                 fragmentRangeCalenderBinding.calendarView.scrollToCurrent();
             }
         });
+
+        // TODO: 2021/1/4 需要思考 this fragment取得的START & END 是否要從ADD 或 EDIT MISSION來?
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            latestRepeatStart = bundle.getLong("repeat_start");
+            latestRepeatEnd = bundle.getLong("repeat_end");
+            missionOperateDay = bundle.getLong("mission_operate_day");
+
+            LogUtil.logD(TAG,"[initView] latestRepeatStart = "+latestRepeatStart);
+            LogUtil.logD(TAG,"[initView] latestRepeatEnd = "+latestRepeatEnd);
+            LogUtil.logD(TAG,"[initView] missionOperateDay = "+missionOperateDay);
+
+            if (latestRepeatStart == -1L) {
+                fragmentRangeCalenderBinding.tvLeftWeek.setText(getString(R.string.range_start));
+                fragmentRangeCalenderBinding.tvLeftDate.setText("");
+            }  else {
+                // convert to date
+                fragmentRangeCalenderBinding.tvLeftDate.setText(getMonth(latestRepeatStart)+"/"+getDay(latestRepeatStart));
+                startYear = Integer.valueOf(getYear(latestRepeatStart));
+                startMonth = Integer.valueOf(getMonth(latestRepeatStart));
+                startDay = Integer.valueOf(getDay(latestRepeatStart));
+            }
+
+            if (latestRepeatEnd == -1L) {
+                fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
+                fragmentRangeCalenderBinding.tvRightDate.setText("");
+            } else {
+                // convert to date
+                fragmentRangeCalenderBinding.tvRightDate.setText(getMonth(latestRepeatEnd)+"/"+getDay(latestRepeatEnd));
+                endYear = Integer.valueOf(getYear(latestRepeatEnd));
+                endMonth = Integer.valueOf(getMonth(latestRepeatEnd));
+                endDay = Integer.valueOf(getDay(latestRepeatEnd));
+            }
+            fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
+            fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
+
+            if (missionOperateDay == -1L) {
+                fragmentRangeCalenderBinding.calendarView.setRange(fragmentRangeCalenderBinding.calendarView.getCurYear(), fragmentRangeCalenderBinding.calendarView.getCurMonth(),
+                        fragmentRangeCalenderBinding.calendarView.getCurDay(),2030,12,31
+                );
+            } else {
+                // TODO: 2020/12/29 需要新增獲得即時的執行日期(temp operate day)
+                fragmentRangeCalenderBinding.calendarView.setRange(Integer.valueOf(getYear(missionOperateDay)),
+                        Integer.valueOf(getMonth(missionOperateDay)),
+                        Integer.valueOf(getDay(missionOperateDay)),2030,12,31);
+            }
+        }
     }
     // TODO: 2021/1/3 思考一下....
     //  在選擇範圍時,暫時保存這次點選的範圍 讓再次進入選擇範圍的頁面能即時更新狀態
@@ -121,68 +149,61 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     //  用flag紀錄尚未儲存的狀態 便於區分暫存的值?
 
     private void initObserve() {
-        rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
-            @Override
-            public void onChanged(Long start) {
-                if (start != null) {
-                    LogUtil.logD(TAG,"[initObserve] start = "+start);
-                    if (start == -1L) {
-                        fragmentRangeCalenderBinding.tvLeftWeek.setText(getString(R.string.range_start));
-                        fragmentRangeCalenderBinding.tvLeftDate.setText("");
-                    } else {
-                        // convert to date
-                        fragmentRangeCalenderBinding.tvLeftDate.setText(getMonth(start)+"/"+getDay(start));
-                        startYear = Integer.valueOf(getYear(start));
-                        startMonth = Integer.valueOf(getMonth(start));
-                        startDay = Integer.valueOf(getDay(start));
-                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
-                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
-                    }
-                    sharedViewModel.setRepeatStart(start);
-                }
-            }
-        });
+//        rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
+//            @Override
+//            public void onChanged(Long start) {
+//                if (start != null) {
+//                    LogUtil.logD(TAG,"[initObserve] start = "+start);
+//                    if (start == -1L) {
+//                        fragmentRangeCalenderBinding.tvLeftWeek.setText(getString(R.string.range_start));
+//                        fragmentRangeCalenderBinding.tvLeftDate.setText("");
+//                    } else {
+//                        // convert to date
+//                        fragmentRangeCalenderBinding.tvLeftDate.setText(getMonth(start)+"/"+getDay(start));
+//                        startYear = Integer.valueOf(getYear(start));
+//                        startMonth = Integer.valueOf(getMonth(start));
+//                        startDay = Integer.valueOf(getDay(start));
+//                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
+//                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
+//                    }
+//                    sharedViewModel.setRepeatStart(start);
+//                }
+//            }
+//        });
 
-        rangeCalenderViewModel.getRepeatEnd().observe(getViewLifecycleOwner(), new Observer<Long>() {
-            @Override
-            public void onChanged(Long end) {
-                if (end != null) {
-                    LogUtil.logD(TAG,"[initObserve] end = "+end);
-                    if (end == -1L) {
-                        fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
-                        fragmentRangeCalenderBinding.tvRightDate.setText("");
-                    } else {
-                        // convert to date
-                        fragmentRangeCalenderBinding.tvRightDate.setText(getMonth(end)+"/"+getDay(end));
-                        endYear = Integer.valueOf(getYear(end));
-                        endMonth = Integer.valueOf(getMonth(end));
-                        endDay = Integer.valueOf(getDay(end));
-                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
-                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
-                    }
-                    sharedViewModel.setRepeatEnd(end);
-                }
-            }
-        });
+//        rangeCalenderViewModel.getRepeatEnd().observe(getViewLifecycleOwner(), new Observer<Long>() {
+//            @Override
+//            public void onChanged(Long end) {
+//                if (end != null) {
+//                    LogUtil.logD(TAG,"[initObserve] end = "+end);
+//                    if (end == -1L) {
+//                        fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
+//                        fragmentRangeCalenderBinding.tvRightDate.setText("");
+//                    } else {
+//                        // convert to date
+//                        fragmentRangeCalenderBinding.tvRightDate.setText(getMonth(end)+"/"+getDay(end));
+//                        endYear = Integer.valueOf(getYear(end));
+//                        endMonth = Integer.valueOf(getMonth(end));
+//                        endDay = Integer.valueOf(getDay(end));
+//                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
+//                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
+//                    }
+//                    sharedViewModel.setRepeatEnd(end);
+//                }
+//            }
+//        });
 
-        sharedViewModel.getChangedRepeatRange().observeInFragment(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                LogUtil.logD(TAG,"[getChangedRepeatRange] status = "+aBoolean);
-            }
-        });
-
-        rangeCalenderViewModel.getMissionOperateDay().observe(getViewLifecycleOwner(), new Observer<Long>() {
-            @Override
-            public void onChanged(Long operateDay) {
-                if (operateDay != null) {
-                    if (operateDay != -1L) {
-                        LogUtil.logD(TAG,"[initObserve] operateDay = "+operateDay);
-                        missionOperateDay = operateDay;
-                    }
-                }
-            }
-        });
+//        rangeCalenderViewModel.getMissionOperateDay().observe(getViewLifecycleOwner(), new Observer<Long>() {
+//            @Override
+//            public void onChanged(Long operateDay) {
+//                if (operateDay != null) {
+//                    if (operateDay != -1L) {
+//                        LogUtil.logD(TAG,"[initObserve] operateDay = "+operateDay);
+//                        missionOperateDay = operateDay;
+//                    }
+//                }
+//            }
+//        });
     }
 
 
@@ -313,7 +334,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             Log.e(TAG,"SelectCalendarRange , start = " +start);
             sharedViewModel.setRepeatStart(start);
             sharedViewModel.setRepeatEnd(end);
-            sharedViewModel.setChangedRepeatRange(true);
             MainActivity.getNavController().navigateUp(); // back
         }
     }

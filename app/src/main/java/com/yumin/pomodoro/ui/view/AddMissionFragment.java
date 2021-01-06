@@ -1,38 +1,21 @@
 package com.yumin.pomodoro.ui.view;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
 import androidx.databinding.library.baseAdapters.BR;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
-import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
-import com.yumin.pomodoro.data.model.AdjustMissionItem;
-import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
@@ -40,9 +23,7 @@ import com.yumin.pomodoro.utils.base.DataBindingFragment;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class AddMissionFragment extends DataBindingFragment implements ItemListView.OnCalenderListener,ItemDateView.OnOperateDayChanged {
     private static final String TAG = "[AddMissionFragment]";
@@ -53,6 +34,9 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
     private static final int REPEAT_EVERYDAY = 1;
     private static final int REPEAT_DEFINE = 2;
     private Mission mMission = null;
+    private long latestRepeatStart = -1L;
+    private long latestRepeatEnd = -1L;
+    private long operateDay = -1L;
     private long repeatStart = -1L;
     private long repeatEnd = -1L;
 
@@ -93,7 +77,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             public void onChanged(Long time) {
                 LogUtil.logD(TAG,"[Observe][getRepeatStart] time = "+time);
                 mAddMissionViewModel.updateRepeatStart(time);
-                repeatStart = time;
+                latestRepeatStart = time;
             }
         });
 
@@ -102,7 +86,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             public void onChanged(Long time) {
                 LogUtil.logD(TAG,"[Observe][getRepeatEnd] time = "+time);
                 mAddMissionViewModel.updateRepeatEnd(time);
-                repeatEnd = time;
+                latestRepeatEnd = time;
             }
         });
 
@@ -112,6 +96,9 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                 LogUtil.logD(TAG,"[Observe][getMission] mission = "+mission);
                 if (mMission == null || mMission != mission) {
                     mMission = mission;
+                    operateDay = mission.getOperateDay();
+                    repeatStart = mission.getRepeatStart();
+                    repeatEnd = mission.getRepeatEnd();
                 }
             }
         });
@@ -137,15 +124,11 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
     @Override
     public void onOpened() {
         MissionManager.getInstance().setRangeCalenderId(-1);
-        if (repeatStart != -1L && repeatEnd != -1L) {
-            Bundle bundle = new Bundle();
-            bundle.putLong("repeat_start",repeatStart);
-            bundle.putLong("repeat_end",repeatEnd);
-            MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
-        } else {
-            MainActivity.getNavController().navigate(R.id.fragment_range_calender);
-        }
-
+        Bundle bundle = new Bundle();
+        bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
+        bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);
+        bundle.putLong("mission_operate_day",operateDay);
+        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
     }
 
     @Override
@@ -163,9 +146,13 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                         .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mAddMissionViewModel.updateRepeatStart(-1L);
-                                mAddMissionViewModel.updateRepeatEnd(-1L);
+                                latestRepeatStart = -1L;
+                                latestRepeatEnd = -1L;
+                                repeatStart = -1L;
+                                repeatEnd = -1L;
+
                                 fragmentAddMissionBinding.itemOperate.updateUI(time);
+                                operateDay = time;
                             }
                         })
                         .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
@@ -178,6 +165,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             }
         } else {
             fragmentAddMissionBinding.itemOperate.updateUI(time);
+            operateDay = time;
         }
     }
 

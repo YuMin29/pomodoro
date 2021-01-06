@@ -34,6 +34,11 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
     private static final int REPEAT_NONE = 0;
     private static final int REPEAT_EVERYDAY = 1;
     private static final int REPEAT_DEFINE = 2;
+    private long latestRepeatStart = -1L;
+    private long latestRepeatEnd = -1L;
+    private long operateDay = -1L;
+    private long repeatStart = -1L;
+    private long repeatEnd = -1L;
 
     public EditMissionFragment() {}
 
@@ -83,7 +88,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             @Override
             public void onChanged(Long time) {
                 LogUtil.logD(TAG,"[Observe][getRepeatStart] time = "+time);
-                editMissionViewModel.getEditMission().getValue().setRepeatStart(time);
+                editMissionViewModel.updateRepeatStart(time);
+                latestRepeatStart = time;
             }
         });
 
@@ -91,7 +97,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             @Override
             public void onChanged(Long time) {
                 LogUtil.logD(TAG,"[Observe][getRepeatEnd] time = "+time);
-                editMissionViewModel.getEditMission().getValue().setRepeatEnd(time);
+                editMissionViewModel.updateRepeatEnd(time);
+                latestRepeatEnd = time;
             }
         });
 
@@ -100,6 +107,9 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             public void onChanged(Mission mission) {
                 if (mission != null) {
                     editMission = mission;
+                    operateDay = editMission.getOperateDay();
+                    repeatStart = editMission.getRepeatStart();
+                    repeatEnd = editMission.getRepeatEnd();
                 }
             }
         });
@@ -113,7 +123,11 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
     @Override
     public void onOpened() {
         MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getEditId());
-        MainActivity.getNavController().navigate(R.id.fragment_range_calender);
+        Bundle bundle = new Bundle();
+        bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
+        bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);
+        bundle.putLong("mission_operate_day",operateDay);
+        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
     }
 
     @Override
@@ -132,9 +146,15 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                         .setPositiveButton(R.string.dialog_ok+"??", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                editMissionViewModel.updateRepeatStart(-1L);
-                                editMissionViewModel.updateRepeatEnd(-1L);
+                                // TODO: 2021/1/6
+                                //  update latestRepeat & repeat value in here
+                                latestRepeatStart = -1L;
+                                latestRepeatEnd = -1L;
+                                repeatStart = -1L;
+                                repeatEnd = -1L;
+
                                 fragmentEditMissionBinding.itemOperate.updateUI(time);
+                                operateDay = time;
                             }
                         })
                         .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
@@ -148,6 +168,7 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             }
         } else {
             fragmentEditMissionBinding.itemOperate.updateUI(time);
+            operateDay = time;
         }
     }
 
