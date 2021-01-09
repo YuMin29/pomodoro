@@ -48,4 +48,10 @@ public interface MissionDao {
 
     @Query("SELECT operateDay FROM MyMission WHERE id=:id")
     LiveData<Long> getMissionOperateDay(int id);
+
+    @Query("SELECT * FROM MyMission WHERE isFinished = 1")
+    LiveData<List<Mission>> getFinishedMissions();
+
+    @Query("SELECT * FROM MyMission WHERE isFinished = 0")
+    LiveData<List<Mission>> getUnfinishedMissions();
 }

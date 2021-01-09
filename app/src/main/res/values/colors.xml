@@ -5,7 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="button_selected">#F77062</color>
     <color name="button_normal">#FFFFFF</color>
-    <color name="theme_background">#9cabb8</color>
+    <color name="theme_background">#E57373</color>
     <color name="layout_main_background">#f5f6f7</color>
     <color name="layout_item_background">#FFFFFF</color>
     <color name="timer_progressbar">#FFFFFF</color>
@@ -32,4 +32,20 @@
     </string-array>
 
     <color name="line_color">#e7e7e7</color>
+
+    <!--reds-->
+    <color name="md_red_50">#FFEBEE</color>
+    <color name="md_red_100">#FFCDD2</color>
+    <color name="md_red_200">#EF9A9A</color>
+    <color name="md_red_300">#E57373</color>
+    <color name="md_red_400">#EF5350</color>
+    <color name="md_red_500">#F44336</color>
+    <color name="md_red_600">#E53935</color>
+    <color name="md_red_700">#D32F2F</color>
+    <color name="md_red_800">#C62828</color>
+    <color name="md_red_900">#B71C1C</color>
+    <color name="md_red_A100">#FF8A80</color>
+    <color name="md_red_A200">#FF5252</color>
+    <color name="md_red_A400">#FF1744</color>
+    <color name="md_red_A700">#D50000</color>
 </resources>

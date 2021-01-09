@@ -56,16 +56,11 @@ public class ItemDateView extends LinearLayout {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        // TODO: 2020/12/29 需要新增即時獲得自訂重複區間的日期
-                        //  在選擇執行日時 判斷重複區間是否小於執行日
-                        //  小於->顯示對話框 消除已選擇的自訂區間->消除
-                        //                                  ->返回
                         LogUtil.logD(TAG, "[datePickerDialog][onDateSet]");
                         Calendar chooseDate = Calendar.getInstance();
                         chooseDate.set(year, month, dayOfMonth);
                         Date chooseDateTime = chooseDate.getTime();
                         if (operateDayListener != null ){
-                            // TODO: 2020/12/30 需要確認 點選狀態 交給add/edit mission fragment 定奪
                             operateDayListener.onOperateChanged(chooseDateTime.getTime());
                         }
                     }

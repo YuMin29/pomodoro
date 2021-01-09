@@ -132,12 +132,10 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
 
     @Override
     public void onOperateChanged(long time) {
-        // TODO: 12/29/20 check operate day
         LogUtil.logD(TAG,"[onOperateChanged] = "+getTransferDate(time));
         if (editMission!=null && editMission.getRepeat() == REPEAT_DEFINE &&
                 editMission.getRepeatStart() != -1L &&
                 editMission.getRepeatEnd() != -1L) {
-            // TODO: 12/29/20 compare operate day with defined repeat day
             if (time > editMissionViewModel.getEditMission().getValue().getRepeatStart() ||
                     time > editMissionViewModel.getEditMission().getValue().getRepeatEnd()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
@@ -146,8 +144,6 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                         .setPositiveButton(R.string.dialog_ok+"??", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO: 2021/1/6
-                                //  update latestRepeat & repeat value in here
                                 latestRepeatStart = -1L;
                                 latestRepeatEnd = -1L;
                                 repeatStart = -1L;

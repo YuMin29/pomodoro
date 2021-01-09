@@ -27,13 +27,6 @@ public class CustomRangeMonthView extends RangeMonthView {
     protected boolean onDrawSelected(Canvas canvas, Calendar calendar, int x, int y, boolean hasScheme,
                                      boolean isSelectedPre, boolean isSelectedNext) {
         LogUtil.logD(TAG,"onDrawSelected");
-        // TODO: 2020/12/29
-        //  a.判斷執行日的時間 決定選擇的區間是否有效?
-        //  若選擇區間小於執行日 反灰,
-        //  若區間大於執行日 顯示顏色
-        //  b.或是在選擇執行日時 判斷重複區間是否小於執行日
-        //  小於->顯示對話框 消除已選擇的自訂區間->消除
-        //                                   ->返回
         int cx = x + mItemWidth / 2;
         int cy = y + mItemHeight / 2;
         if (isSelectedPre) {

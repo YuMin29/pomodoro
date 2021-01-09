@@ -48,6 +48,7 @@ public class TimerFragment extends DataBindingFragment {
     private TimerViewModel timerViewModel;
     private boolean enabledVibrate;
     private boolean enabledNotification;
+    private boolean enableKeepScreenOn;
     private int missionCount;
     private CircleTimer missionTimer;
     private int numberOfCompletion;
@@ -206,9 +207,10 @@ public class TimerFragment extends DataBindingFragment {
                     numberOfCompletion = mission.getNumberOfCompletions();
                     enabledVibrate = mission.isEnableVibrate();
                     enabledNotification = mission.isEnableNotification();
+                    enableKeepScreenOn = mission.isKeepScreenOn();
                     missionTitle = mission.getName();
 
-                    if (mission.isKeepScreenOn()) {
+                    if (enableKeepScreenOn) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                             getActivity().setTurnScreenOn(true);
                         } else {

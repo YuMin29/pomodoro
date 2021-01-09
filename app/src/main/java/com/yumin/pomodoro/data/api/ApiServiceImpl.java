@@ -24,6 +24,8 @@ public class ApiServiceImpl implements ApiService {
     private LiveData<Long> missionRepeatStart = new LiveData<Long>() {};
     private LiveData<Long> missionRepeatEnd = new LiveData<Long>() {};
     private LiveData<Long> missionOperateDay = new LiveData<Long>() {};
+    private LiveData<List<Mission>> finishedMissions = new LiveData<List<Mission>>() {};
+    private LiveData<List<Mission>> unfinishedMissions = new LiveData<List<Mission>>() {};
 
     public ApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
@@ -110,6 +112,18 @@ public class ApiServiceImpl implements ApiService {
     public LiveData<Long> getMissionOperateDay(int id) {
         missionOperateDay = missionDao.getMissionOperateDay(id);
         return missionOperateDay;
+    }
+
+    @Override
+    public LiveData<List<Mission>> getFinishedMissions() {
+        finishedMissions = missionDao.getFinishedMissions();
+        return finishedMissions;
+    }
+
+    @Override
+    public LiveData<List<Mission>> getUnFinishedMissions() {
+        unfinishedMissions = missionDao.getUnfinishedMissions();
+        return unfinishedMissions;
     }
 
 

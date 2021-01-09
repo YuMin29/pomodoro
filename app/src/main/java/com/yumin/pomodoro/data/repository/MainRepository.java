@@ -67,4 +67,12 @@ public class MainRepository {
     public LiveData<Long> getMissionOperateDay(int id){
         return apiHelper.getMissionOperateDay(id);
     }
+
+    public LiveData<List<Mission>> getFinishedMissions(){
+        return apiHelper.getFinishedMissions();
+    }
+
+    public LiveData<List<Mission>> getUnfinishedMissions(){
+        return apiHelper.getUnfinishedMissions();
+    }
 }

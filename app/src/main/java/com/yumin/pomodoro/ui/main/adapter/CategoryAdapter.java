@@ -22,10 +22,10 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
     private LayoutInflater mInflater;
     private List<Category> mCategoryList;
 
-    public CategoryAdapter(Context context, List<Category> datas) {
+    public CategoryAdapter(Context context, List<Category> dataList) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
-        this.mCategoryList = datas;
+        this.mCategoryList = dataList;
     }
 
     public void flashCategory(List<Category> categoryList) {

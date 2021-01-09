@@ -137,7 +137,6 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
         if (mMission != null && mMission.getRepeat() == REPEAT_DEFINE &&
                 mMission.getRepeatStart() != -1L &&
                 mMission.getRepeatEnd() != -1L) {
-            // TODO: 12/29/20 compare operate day with defined repeat day
             if (time > mMission.getRepeatStart() ||
                     time > mMission.getRepeatEnd()) {
                 android.app.AlertDialog.Builder builder = new AlertDialog.Builder(getContext())

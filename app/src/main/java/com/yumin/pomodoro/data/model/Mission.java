@@ -42,7 +42,8 @@ public class Mission {
 
     @Ignore
     public Mission(String name, int time, int shortBreakTime, int longBreakTime, int color, long operateDay, int goal,
-                   int repeat, int repeatStart, int repeatEnd, boolean enableNotification, boolean enableSound, boolean enableVibrate, boolean keepScreenOn) {
+                   int repeat, int repeatStart, int repeatEnd, boolean enableNotification, boolean enableSound, boolean enableVibrate,
+                   boolean keepScreenOn, boolean finished) {
 	    this.name = name;
         this.time = time;
         this.shortBreakTime = shortBreakTime;
@@ -57,6 +58,7 @@ public class Mission {
         this.enableSound = enableSound;
         this.enableVibrate = enableVibrate;
         this.keepScreenOn = keepScreenOn;
+        this.isFinished = finished;
     }
 
     @Override
@@ -77,6 +79,7 @@ public class Mission {
                 ", enableSound=" + enableSound + '\'' +
                 ", enableVibrate=" + enableVibrate + '\'' +
                 ", keepScreenOn=" + keepScreenOn + '\'' +
+                ", isFinished =" + isFinished + '\'' +
                 '}';
     }
 

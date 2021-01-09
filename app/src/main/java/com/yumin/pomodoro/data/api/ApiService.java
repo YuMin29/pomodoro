@@ -22,4 +22,6 @@ public interface ApiService {
     public LiveData<Long> getMissionRepeatStart(int id);
     public LiveData<Long> getMissionRepeatEnd(int id);
     public LiveData<Long> getMissionOperateDay(int id);
+    public LiveData<List<Mission>> getFinishedMissions();
+    public LiveData<List<Mission>> getUnFinishedMissions();
 }

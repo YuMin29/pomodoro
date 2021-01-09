@@ -18,7 +18,6 @@ import android.view.View;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -27,7 +26,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.yumin.pomodoro.ui.base.IFragmentListener;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -40,7 +38,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener, IFragmentListener{
+public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener{
     private static final String TAG = "[MainActivity]";
     private AppBarConfiguration mAppBarConfiguration;
     static TextView mToolbarTitle = null;
@@ -107,11 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             window.setBackgroundDrawable(background);
         }
     }
-    
-    @Override
-    public void switchFragment(String fragmentName){
-        mNavController.navigate(R.id.add_mission_fragment);
-	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

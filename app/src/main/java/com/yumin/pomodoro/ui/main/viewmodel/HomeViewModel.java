@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.ListIterator;
 
 public class HomeViewModel extends ViewModel {
     private static final String TAG = "[HomeViewModel]";
@@ -25,6 +26,8 @@ public class HomeViewModel extends ViewModel {
     private LiveData<List<Mission>> missions;
     private LiveData<List<Mission>> todayMissions;
     private LiveData<List<Mission>> comingMissions;
+    private LiveData<List<Mission>> finishedMissions;
+    private LiveData<List<Mission>> unfinishedMissions;
 
     public HomeViewModel(MainRepository mainRepository){
         this.mainRepository = mainRepository;
@@ -36,6 +39,8 @@ public class HomeViewModel extends ViewModel {
         missions = this.mainRepository.getMissions();
         todayMissions = this.mainRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
         comingMissions = this.mainRepository.getComingMissions(getCurrentEndTime());
+        finishedMissions = this.mainRepository.getFinishedMissions();
+        unfinishedMissions = this.mainRepository.getUnfinishedMissions();
         mIsLoading.setValue(false);
     }
 
@@ -59,6 +64,14 @@ public class HomeViewModel extends ViewModel {
 
     public void updateIsFinishedById(int itemId,boolean finished){
         mainRepository.updateIsFinishedById(itemId,finished);
+    }
+
+    public LiveData<List<Mission>> getFinishedMissions(){
+        return finishedMissions;
+    }
+
+    public LiveData<List<Mission>> getUnfinishedMissions(){
+        return unfinishedMissions;
     }
 
     private long getCurrentStartTime(){

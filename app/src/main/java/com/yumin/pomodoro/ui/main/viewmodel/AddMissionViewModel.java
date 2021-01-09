@@ -27,7 +27,6 @@ public class AddMissionViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
 
-    // TODO: 12/29/20 operate day have relationship with repeat day 選的時候應該要監聽值 從init mission賦值
     public AddMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
         this.mainRepository = mainRepository;

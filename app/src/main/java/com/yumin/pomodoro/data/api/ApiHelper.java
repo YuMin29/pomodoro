@@ -67,4 +67,13 @@ public class ApiHelper {
     public LiveData<Long> getMissionOperateDay(int id){
         return apiService.getMissionOperateDay(id);
     }
+
+    public LiveData<List<Mission>> getFinishedMissions(){
+        return apiService.getFinishedMissions();
+    }
+
+
+    public LiveData<List<Mission>> getUnfinishedMissions(){
+        return apiService.getUnFinishedMissions();
+    }
 }

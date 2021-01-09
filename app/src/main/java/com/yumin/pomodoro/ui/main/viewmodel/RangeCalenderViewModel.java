@@ -33,7 +33,6 @@ public class RangeCalenderViewModel extends AndroidViewModel {
 
     private void fetchMission(int id){
         LogUtil.logD(TAG,"[fetchMission]");
-        // TODO: 2020/12/30 需要考慮 重複進入點選區間 必須取得最後一次選的值
         repeatStart = mainRepository.getMissionRepeatStart(id);
         repeatEnd = mainRepository.getMissionRepeatEnd(id);
         missionOperateDay = mainRepository.getMissionOperateDay(id);

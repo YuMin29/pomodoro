@@ -33,7 +33,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     private FragmentRangeCalenderBinding fragmentRangeCalenderBinding;
     private int mCalendarHeight;
     private static final String[] WEEK = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
-//    private RangeCalenderViewModel rangeCalenderViewModel;
     private SharedViewModel sharedViewModel;
     private int startYear;
     private int startMonth;
@@ -61,7 +60,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     @Override
     protected void initViewModel() {
-//        rangeCalenderViewModel = getFragmentScopeViewModel(RangeCalenderViewModel.class);
         sharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
     }
 
@@ -75,7 +73,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         fragmentRangeCalenderBinding = (FragmentRangeCalenderBinding) getBinding();
         initView();
-        initObserve();
     }
 
     private void initView(){
@@ -96,7 +93,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             }
         });
 
-        // TODO: 2021/1/4 需要思考 this fragment取得的START & END 是否要從ADD 或 EDIT MISSION來?
         Bundle bundle = getArguments();
         if (bundle != null) {
             latestRepeatStart = bundle.getLong("repeat_start");
@@ -136,76 +132,12 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
                         fragmentRangeCalenderBinding.calendarView.getCurDay(),2030,12,31
                 );
             } else {
-                // TODO: 2020/12/29 需要新增獲得即時的執行日期(temp operate day)
                 fragmentRangeCalenderBinding.calendarView.setRange(Integer.valueOf(getYear(missionOperateDay)),
                         Integer.valueOf(getMonth(missionOperateDay)),
                         Integer.valueOf(getDay(missionOperateDay)),2030,12,31);
             }
         }
     }
-    // TODO: 2021/1/3 思考一下....
-    //  在選擇範圍時,暫時保存這次點選的範圍 讓再次進入選擇範圍的頁面能即時更新狀態
-    //  這和initObserve有衝突....嗎?
-    //  用flag紀錄尚未儲存的狀態 便於區分暫存的值?
-
-    private void initObserve() {
-//        rangeCalenderViewModel.getRepeatStart().observe(getViewLifecycleOwner(), new Observer<Long>() {
-//            @Override
-//            public void onChanged(Long start) {
-//                if (start != null) {
-//                    LogUtil.logD(TAG,"[initObserve] start = "+start);
-//                    if (start == -1L) {
-//                        fragmentRangeCalenderBinding.tvLeftWeek.setText(getString(R.string.range_start));
-//                        fragmentRangeCalenderBinding.tvLeftDate.setText("");
-//                    } else {
-//                        // convert to date
-//                        fragmentRangeCalenderBinding.tvLeftDate.setText(getMonth(start)+"/"+getDay(start));
-//                        startYear = Integer.valueOf(getYear(start));
-//                        startMonth = Integer.valueOf(getMonth(start));
-//                        startDay = Integer.valueOf(getDay(start));
-//                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
-//                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
-//                    }
-//                    sharedViewModel.setRepeatStart(start);
-//                }
-//            }
-//        });
-
-//        rangeCalenderViewModel.getRepeatEnd().observe(getViewLifecycleOwner(), new Observer<Long>() {
-//            @Override
-//            public void onChanged(Long end) {
-//                if (end != null) {
-//                    LogUtil.logD(TAG,"[initObserve] end = "+end);
-//                    if (end == -1L) {
-//                        fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
-//                        fragmentRangeCalenderBinding.tvRightDate.setText("");
-//                    } else {
-//                        // convert to date
-//                        fragmentRangeCalenderBinding.tvRightDate.setText(getMonth(end)+"/"+getDay(end));
-//                        endYear = Integer.valueOf(getYear(end));
-//                        endMonth = Integer.valueOf(getMonth(end));
-//                        endDay = Integer.valueOf(getDay(end));
-//                        fragmentRangeCalenderBinding.calendarView.setSelectCalendarRange(startYear,startMonth,startDay,endYear,endMonth,endDay);
-//                        fragmentRangeCalenderBinding.calendarView.updateCurrentDate();
-//                    }
-//                    sharedViewModel.setRepeatEnd(end);
-//                }
-//            }
-//        });
-
-//        rangeCalenderViewModel.getMissionOperateDay().observe(getViewLifecycleOwner(), new Observer<Long>() {
-//            @Override
-//            public void onChanged(Long operateDay) {
-//                if (operateDay != null) {
-//                    if (operateDay != -1L) {
-//                        LogUtil.logD(TAG,"[initObserve] operateDay = "+operateDay);
-//                        missionOperateDay = operateDay;
-//                    }
-//                }
-//            }
-//        });
-    }
-
 
     public static String getYear(long milli){
         SimpleDateFormat formatter;
@@ -321,13 +253,10 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
                 return;
             }
             for (Calendar c : calendars) {
-                Log.e(TAG, c.toString()
+                LogUtil.logE(TAG, c.toString()
                         + " -- " + c.getScheme()
                         + "  --  " + c.getLunar());
             }
-            Toast.makeText(getContext(), String.format("选择了%s个日期: %s —— %s", calendars.size(),
-                    calendars.get(0).toString(), calendars.get(calendars.size()-1).toString()),
-                    Toast.LENGTH_SHORT).show();
             long start = calendars.get(0).getTimeInMillis();
             long end = calendars.get(calendars.size()-1).getTimeInMillis();
             Log.e(TAG,"SelectCalendarRange , start = " +start);

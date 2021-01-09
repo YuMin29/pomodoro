@@ -46,7 +46,7 @@
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/roboto_light"
                 android:text="@{mission.name}"
-                android:textColor="#F77062"
+                android:textStyle="bold"
                 android:textSize="16dp"
                 app:layout_constraintStart_toEndOf="@+id/colorView"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -58,6 +58,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/roboto_light"
+                android:background="@drawable/timer_textview"
                 android:text="@{@string/mission_time + Integer.toString(mission.time) + @string/minute}"
                 android:textSize="12dp"
                 app:layout_constraintStart_toEndOf="@+id/colorView"

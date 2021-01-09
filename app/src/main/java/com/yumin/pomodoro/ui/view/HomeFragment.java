@@ -2,31 +2,22 @@ package com.yumin.pomodoro.ui.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
 import androidx.databinding.library.baseAdapters.BR;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.api.ApiServiceImpl;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
-import com.yumin.pomodoro.ui.base.ViewModelFactory;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
 import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
-import com.yumin.pomodoro.ui.base.IFragmentListener;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
@@ -44,7 +35,6 @@ public class HomeFragment extends DataBindingFragment {
     private ExpandableViewAdapter expandableViewAdapter;
     private List<Mission> mMissions = new ArrayList<>();
     private List<Category> mCategory = new ArrayList<>();
-    private IFragmentListener mIFragmentListener;
     FragmentHomeBinding fragmentHomeBinding;
     Category today;
     Category coming;
@@ -97,8 +87,6 @@ public class HomeFragment extends DataBindingFragment {
                 LogUtil.logD(TAG,"[onChildClick] item = "+mission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
                 if (!mission.isFinished()) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt("itemId",mission.getId());
                     MissionManager.getInstance().setOperateId(mission.getId());
                     MainActivity.getNavController().navigate(R.id.fragment_timer);
                 } else {
@@ -122,9 +110,6 @@ public class HomeFragment extends DataBindingFragment {
                     Mission mission = (Mission) expandableViewAdapter.getChild(groupPos,childPos);
                     LogUtil.logD(TAG,"[onItemLongClick] item = "+mission.getName()+
                             " ,groupPosition = "+groupPos+" ,childPosition = "+childPos);
-                    // switch to edit mission fragment
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt("editId",mission.getId());
                     MissionManager.getInstance().setEditId(mission.getId());
                     MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
                     return true;
@@ -132,12 +117,6 @@ public class HomeFragment extends DataBindingFragment {
                 return false;
             }
         });
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mIFragmentListener = (IFragmentListener) context;
     }
 
     private void observeViewModel() {
@@ -149,24 +128,26 @@ public class HomeFragment extends DataBindingFragment {
 
         mHomeViewModel.getTodayMissions().observe(getViewLifecycleOwner(), missions -> {
             LogUtil.logD(TAG,"[observeViewModel] today mission list size = "+missions.size());
-            today = null;
             if (missions.size() > 0) {
                 today = new Category(getString(R.string.category_today));
                for (Mission mission : missions) {
                    today.addMission(mission);
                }
+            } else {
+                today = null;
             }
             updateCategoryList();
         });
 
         mHomeViewModel.getComingMissions().observe(getViewLifecycleOwner(),missions -> {
             LogUtil.logD(TAG,"[observeViewModel] coming mission list size = "+missions.size());
-            coming = null;
             if (missions.size() > 0) {
                 coming = new Category(getString(R.string.category_coming));
                 for (Mission mission : missions) {
                     coming.addMission(mission);
                 }
+            } else {
+                coming = null;
             }
             updateCategoryList();
         });
@@ -174,6 +155,23 @@ public class HomeFragment extends DataBindingFragment {
         mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             fragmentHomeBinding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
         });
+
+        mHomeViewModel.getFinishedMissions().observe(getViewLifecycleOwner(), missions -> {
+            // update finished mission number
+            if (missions == null)
+                fragmentHomeBinding.finishedMission.setText("0");
+            else
+                fragmentHomeBinding.finishedMission.setText(String.valueOf(missions.size()));
+        });
+
+        mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {
+            // update unfinished mission number
+            if (missions == null)
+                fragmentHomeBinding.unfinishedMission.setText("0");
+            else
+                fragmentHomeBinding.unfinishedMission.setText(String.valueOf(missions.size()));
+        });
+
     }
 
     private void updateCategoryList(){
@@ -185,7 +183,7 @@ public class HomeFragment extends DataBindingFragment {
         expandableViewAdapter.flashCategory(mCategory);
 
         int groupCount = expandableViewAdapter.getGroupCount();
-        for (int i=0; i<groupCount; i++) {
+        for (int i = 0; i < groupCount; i++) {
             LogUtil.logD(TAG, "[updateCategoryList] group count = " + groupCount + " , i =" + i);
             fragmentHomeBinding.homeListView.expandGroup(i);
         }

@@ -105,11 +105,11 @@ public class BreakTimerFragment extends DataBindingFragment {
                                     fragmentBreakTimerBinding.breakTimer.onClickReset();
                                     notificationHelper.cancelNotification();
                                 }
-                                MainActivity.getNavController().navigateUp();
                                 // update finish status
                                 if ((missionCount - numberOfCompletion) < 1) {
                                     timerViewModel.updateIsFinishedById(true);
                                 }
+                                MainActivity.getNavController().navigateUp();
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
