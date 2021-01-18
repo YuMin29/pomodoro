@@ -2,6 +2,7 @@ package com.yumin.pomodoro.data.api;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -139,5 +140,10 @@ public class ApiServiceImpl implements ApiService {
     @Override
     public Mission getInitMission() {
         return new Mission();
+    }
+
+    @Override
+    public Mission getQuickMission(int time,int shortBreakTime,int color) {
+        return new Mission(time,shortBreakTime, color);
     }
 }

@@ -78,7 +78,7 @@ public class ItemTextView extends LinearLayout {
         viewBinding.itemLinearlayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"[linear layout][onClick]");
+                Log.d(TAG,"[itemLinearlayout][onClick]");
                 //create dialog to set number
                 View view = LayoutInflater.from(context).inflate(R.layout.dialog_count,null);
                 EditText editText = view.findViewById(R.id.editText);

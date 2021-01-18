@@ -141,7 +141,7 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                         .setTitle("執行日小於重複區間")
                         .setMessage("將會清除已設置的重複區間")
-                        .setPositiveButton(R.string.dialog_ok+"??", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.ok +"??", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 latestRepeatStart = -1L;
@@ -153,7 +153,7 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                                 operateDay = time;
                             }
                         })
-                        .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 //                                dialog.dismiss();

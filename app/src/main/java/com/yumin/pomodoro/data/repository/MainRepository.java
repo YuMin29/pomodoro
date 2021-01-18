@@ -1,6 +1,7 @@
 package com.yumin.pomodoro.data.repository;
 
 import android.content.Context;
+import android.graphics.Color;
 
 import androidx.lifecycle.LiveData;
 
@@ -30,6 +31,10 @@ public class MainRepository {
 
     public Mission getInitMission(){
         return apiHelper.getInitMission();
+    }
+
+    public Mission getQuickMission(){
+        return apiHelper.getQuickMission(25,5, Color.parseColor("#e57373"));
     }
 
     public LiveData<Mission> getMissionById(int id){

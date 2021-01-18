@@ -121,8 +121,10 @@ public class TimerFragment extends DataBindingFragment {
                                 }
                                 MainActivity.getNavController().navigateUp();
                                 // update finish status
-                                if ((missionCount - numberOfCompletion) < 1) {
-                                    timerViewModel.updateIsFinishedById(true);
+                                if (missionCount != -1 && numberOfCompletion != -1) {
+                                    if ((missionCount - numberOfCompletion) < 1) {
+                                        timerViewModel.updateIsFinishedById(true);
+                                    }
                                 }
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -159,10 +161,12 @@ public class TimerFragment extends DataBindingFragment {
             @Override
             public void onFinished() {
                 LogUtil.logD(TAG,"[mission timer][onFinished]");
-                // update finished goal ui
-                numberOfCompletion++;
-                LogUtil.logD(TAG,"[mission timer][onFinish] numberOfCompletion = "+numberOfCompletion);
-                timerViewModel.updateNumberOfCompletionById(numberOfCompletion);
+                if (numberOfCompletion != -1) {
+                    // update finished goal ui
+                    numberOfCompletion++;
+                    LogUtil.logD(TAG, "[mission timer][onFinish] numberOfCompletion = " + numberOfCompletion);
+                    timerViewModel.updateNumberOfCompletionById(numberOfCompletion);
+                }
 
                 // vibrate for remind
                 if (enabledVibrate) {

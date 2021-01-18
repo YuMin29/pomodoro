@@ -1,6 +1,7 @@
 
 package com.yumin.pomodoro;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -27,6 +28,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.base.MissionManager;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -43,23 +45,27 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     private AppBarConfiguration mAppBarConfiguration;
     static TextView mToolbarTitle = null;
     private static NavController mNavController;
+    FloatingActionButton mFab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set status bar color as tool bar color
         setStatusBarGradient(this);
+        setStatusBar(getResources().getColor(R.color.colorPrimary));
         setContentView(R.layout.activity_main);
         // set toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mToolbarTitle = findViewById(R.id.tool_bar_title);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // jump to add mission fragment
-                mNavController.navigate(R.id.add_mission_fragment);
+                // start a quick mission
+                MissionManager.getInstance().setOperateId(-1);
+                MainActivity.getNavController().navigate(R.id.fragment_timer);
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -102,14 +108,23 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
             window.setNavigationBarColor(activity.getResources().getColor(android.R.color.transparent));
-            window.setBackgroundDrawable(background);
+//            window.setBackgroundDrawable(background);
         }
+    }
+
+    protected void setStatusBar(@ColorInt int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // 设置状态栏底色颜色
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().setStatusBarColor(color);
+        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -123,6 +138,12 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     @Override
     public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
         mToolbarTitle.setText(navDestination.getLabel().toString());
+        LogUtil.logD(TAG,"[onDestinationChanged] label = "+navDestination.getLabel().toString());
+        String navHomeLabel = getResources().getString(R.string.menu_home);
+        if (navHomeLabel.equals(navDestination.getLabel().toString()))
+            mFab.setVisibility(View.VISIBLE);
+        else
+            mFab.setVisibility(View.GONE);
     }
 
     public boolean isStoragePermissionGranted() {
@@ -140,9 +161,5 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             LogUtil.logV(TAG, "Permission is granted");
             return true;
         }
-    }
-
-    public static void setToolbarTitle(String tile) {
-        mToolbarTitle.setText(tile);
     }
 }

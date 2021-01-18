@@ -71,7 +71,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     public abstract void onBindGroupLayout(B binding,Category category);
 
     public abstract int getChildLayout();
-    public abstract void onBindChildLayout(M binding, Mission mission,int groupPosition, int childPosition);
+    public abstract void onBindChildLayout(M binding, Mission mission,int groupPosition, int childPosition, View view);
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -101,7 +101,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
         } else {
             binding = (M) convertView.getTag();
         }
-        onBindChildLayout(binding,mDataList.get(groupPosition).getMissionList().get(childPosition),groupPosition,childPosition);
+        onBindChildLayout(binding,mDataList.get(groupPosition).getMissionList().get(childPosition),groupPosition,childPosition,convertView);
         return convertView;
     }
 

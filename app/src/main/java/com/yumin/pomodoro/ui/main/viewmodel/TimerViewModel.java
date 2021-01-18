@@ -1,11 +1,14 @@
 package com.yumin.pomodoro.ui.main.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
@@ -16,7 +19,7 @@ public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = "[TimerViewModel]";
     private MainRepository mainRepository;
     private int missionId;
-    private LiveData<Mission> mission;
+    private MediatorLiveData<Mission> mission = new MediatorLiveData<>();
     private MutableLiveData<String> missionTime = new MutableLiveData<>();
     private MutableLiveData<String> missionBreakTime = new MutableLiveData<>();
 
@@ -28,8 +31,17 @@ public class TimerViewModel extends AndroidViewModel {
     }
 
     private void fetchMission(){
-        LogUtil.logD(TAG,"[fetchMission] ");
-        mission = mainRepository.getMissionById(missionId);
+        if (missionId == -1) {
+            mission.setValue(mainRepository.getQuickMission());
+        } else {
+            LiveData<Mission> fetchMission = mainRepository.getMissionById(missionId);
+            mission.addSource(fetchMission, new Observer<Mission>() {
+                @Override
+                public void onChanged(Mission getmission) {
+                    mission.setValue(getmission);
+                }
+            });
+        }
     }
 
     public LiveData<Mission> getMission(){

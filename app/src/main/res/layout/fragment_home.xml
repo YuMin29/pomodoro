@@ -40,6 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="@string/home_finish_mission"
                     android:layout_weight="1"/>
                 <TextView
@@ -47,6 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="0"
                     android:textSize="32sp"
                     android:layout_weight="4"/>
@@ -64,6 +66,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="@string/home_not_finish_mission"
                     android:layout_weight="1"/>
                 <TextView
@@ -71,6 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="0"
                     android:textSize="32sp"
                     android:layout_weight="4"/>
@@ -86,6 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="@string/home_finish_time"
                     android:layout_weight="1"/>
                 <TextView
@@ -93,6 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="0"
                     android:textSize="32sp"
                     android:layout_weight="4"/>
@@ -106,10 +112,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@color/layout_item_background"
+            android:background="@color/colorPrimaryDark"
             android:stateListAnimator="@null"
             android:text="@string/add_mission"
-            android:textColor="@android:color/tab_indicator_text"
+            android:textColor="@color/button_normal"
+            android:textStyle="bold"
             android:textSize="20sp"
             android:onClick="@{()->click.addMission()}"
             app:layout_constraintEnd_toEndOf="parent"

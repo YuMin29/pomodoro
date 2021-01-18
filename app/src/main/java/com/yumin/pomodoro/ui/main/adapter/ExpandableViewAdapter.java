@@ -45,7 +45,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
 
     @Override
     public void onBindGroupLayout(CategoryItemLayoutBinding binding, Category category) {
-        LogUtil.logD(TAG,"[onBindGroupLayout] CATREGORY NAME = "+category.getCategoryName());
+        LogUtil.logD(TAG,"[onBindGroupLayout] CATEGORY NAME = "+category.getCategoryName());
         binding.setCategory(category);
     }
 
@@ -55,7 +55,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
     }
 
     @Override
-    public void onBindChildLayout(MissionItemLayoutBinding binding, Mission mission,int groupPosition, int childPosition) {
+    public void onBindChildLayout(MissionItemLayoutBinding binding, Mission mission, int groupPosition, int childPosition, View view) {
         binding.setMission(mission);
         binding.delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,9 +66,11 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
             }
         });
 
+        // TODO: 1/18/21  gray out this item and show check icon when finished
         // set delete line if finished
         if (mission.isFinished()) {
             binding.itemName.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+            view.setAlpha(0.5f); // set opacity
         }
     }
 }

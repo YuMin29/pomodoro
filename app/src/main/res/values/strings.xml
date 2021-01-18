@@ -34,6 +34,7 @@
     <string name="mission_notification">顯示通知</string>
     <string name="mission_operate_day">執行日</string>
     <string name="mission_keep_awake">保持亮屏</string>
+    <string name="mission_name">任務名稱</string>
 
     <string name="minute">分鐘</string>
     <string name="default_val">0</string>
@@ -56,8 +57,8 @@
         <item>自訂</item>
     </array>
 
-    <string name="dialog_ok">確認</string>
-    <string name="dialog_cancel">取消</string>
+    <string name="ok">確認</string>
+    <string name="cancel">取消</string>
 
     <string name="range_choose">選擇範圍</string>
     <string name="range_start">開始日期</string>

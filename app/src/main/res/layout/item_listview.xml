@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="4dp"
-            android:fontFamily="@font/roboto_thin"
+            android:textColor="@color/colorPrimary"
             android:gravity="center"
             android:textSize="36sp" />
 
@@ -33,10 +33,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/roboto_thin"
             android:gravity="center"
             android:singleLine="false"
-            android:textColor="#878787"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="14sp" />
     </LinearLayout>
 </layout>

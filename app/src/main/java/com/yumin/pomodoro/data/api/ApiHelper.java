@@ -36,6 +36,10 @@ public class ApiHelper {
         return apiService.getInitMission();
     }
 
+    public Mission getQuickMission(int time,int shortBreakTime,int color){
+        return apiService.getQuickMission(time,shortBreakTime,color);
+    }
+
     public LiveData<Mission> getMissionById(int id){
         return apiService.getMissionById(id);
     }

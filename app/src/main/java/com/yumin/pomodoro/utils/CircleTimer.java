@@ -293,11 +293,13 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void setMissionGoal(int goal){
-        circleTimerBinding.timerGoal.setText(String.valueOf(goal));
+        if (goal != -1)
+            circleTimerBinding.timerGoal.setText("/"+getResources().getString(R.string.mission_goal)+String.valueOf(goal));
     }
 
     public void setMissionFinished(int num){
-        circleTimerBinding.timerFinish.setText(String.valueOf(num));
+        if (num != -1)
+            circleTimerBinding.timerFinish.setText(getResources().getString(R.string.mission_finish_goal)+String.valueOf(num));
     }
 
     public void setMissionEnabledSound(boolean enabled){

@@ -105,10 +105,14 @@ public class BreakTimerFragment extends DataBindingFragment {
                                     fragmentBreakTimerBinding.breakTimer.onClickReset();
                                     notificationHelper.cancelNotification();
                                 }
-                                // update finish status
-                                if ((missionCount - numberOfCompletion) < 1) {
-                                    timerViewModel.updateIsFinishedById(true);
+
+                                if (missionCount != -1 && numberOfCompletion != -1) {
+                                    // update finish status
+                                    if ((missionCount - numberOfCompletion) < 1) {
+                                        timerViewModel.updateIsFinishedById(true);
+                                    }
                                 }
+
                                 MainActivity.getNavController().navigateUp();
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -142,36 +146,38 @@ public class BreakTimerFragment extends DataBindingFragment {
 
             @Override
             public void onFinished() {
-                if ((missionCount - numberOfCompletion) >= 1) {
-                    LogUtil.logD(TAG,"[break timer][onFinished]");
+                if (missionCount != -1 && numberOfCompletion != -1) {
+                    if ((missionCount - numberOfCompletion) >= 1) {
+                        LogUtil.logD(TAG,"[break timer][onFinished]");
 
 
-                    // vibrate for remind
-                    if (enabledVibrate) {
-                        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-                        vibrator.vibrate(1000);
-                    }
+                        // vibrate for remind
+                        if (enabledVibrate) {
+                            Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibrator.vibrate(1000);
+                        }
 
-                    if (enabledNotification) {
-                        notificationBuilder.setContentTitle("執行蕃茄任務！");
-                        notificationBuilder.setContentText("");
-                        notificationHelper.notify(notificationBuilder);
-                    }
+                        if (enabledNotification) {
+                            notificationBuilder.setContentTitle("執行蕃茄任務！");
+                            notificationBuilder.setContentText("");
+                            notificationHelper.notify(notificationBuilder);
+                        }
 
-                    // switch to mission timer
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
-                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_timer,bundle);
+                        // switch to mission timer
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
+                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_timer,bundle);
 
-                } else {
-                    LogUtil.logD(TAG,"[break timer][onFinished] 1");
-                    // finished timer fragment
-                    timerViewModel.updateIsFinishedById(true);
-                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.nav_home,null);
+                    } else {
+                        LogUtil.logD(TAG,"[break timer][onFinished] 1");
+                        // finished timer fragment
+                        timerViewModel.updateIsFinishedById(true);
+                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.nav_home,null);
 
-                    // cancel notification when finish the mission
-                    if (enabledNotification) {
-                        notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                        // cancel notification when finish the mission
+                        if (enabledNotification) {
+                            notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                        }
                     }
                 }
             }

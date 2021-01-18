@@ -23,8 +23,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:background="@color/theme_background"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:background="@color/colorPrimary">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -150,7 +150,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:text="@string/range_start"
-                            android:textColor="#000000"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             tools:ignore="RtlSymmetry" />
@@ -161,7 +161,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:gravity="center_vertical"
-                            android:textColor="#000000"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="26sp"
                             android:textStyle="bold"
                             tools:ignore="RtlSymmetry" />
@@ -185,7 +185,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:text="@string/range_end"
-                            android:textColor="#000000"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             tools:ignore="RtlSymmetry" />
@@ -196,7 +196,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:gravity="center_vertical"
-                            android:textColor="#000000"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="26sp"
                             android:textStyle="bold"
                             tools:ignore="RtlSymmetry" />
@@ -214,7 +214,6 @@
 
         <TextView
             android:id="@+id/tv_commit"
-            android:textColor="#333333"
             android:textStyle="bold"
             android:gravity="center"
             android:paddingTop="12dp"
@@ -226,8 +225,9 @@
             android:layout_marginBottom="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/theme_background"
             android:text="@string/range_commit"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryText"
             android:onClick="@{()->clickProxy.onCommit()}"/>
     </LinearLayout>
 </layout>

@@ -110,9 +110,13 @@ public class HomeFragment extends DataBindingFragment {
                     Mission mission = (Mission) expandableViewAdapter.getChild(groupPos,childPos);
                     LogUtil.logD(TAG,"[onItemLongClick] item = "+mission.getName()+
                             " ,groupPosition = "+groupPos+" ,childPosition = "+childPos);
-                    MissionManager.getInstance().setEditId(mission.getId());
-                    MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
-                    return true;
+                    if (!mission.isFinished()) {
+                        MissionManager.getInstance().setEditId(mission.getId());
+                        MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
+                        return true;
+                    } else {
+                        // TODO: 1/18/21 重新編輯任務？
+                    }
                 }
                 return false;
             }
@@ -158,10 +162,17 @@ public class HomeFragment extends DataBindingFragment {
 
         mHomeViewModel.getFinishedMissions().observe(getViewLifecycleOwner(), missions -> {
             // update finished mission number
-            if (missions == null)
+            if (missions == null) {
                 fragmentHomeBinding.finishedMission.setText("0");
-            else
+            } else {
                 fragmentHomeBinding.finishedMission.setText(String.valueOf(missions.size()));
+
+                int usedTime = 0;
+                for (Mission mission : missions) {
+                    usedTime += mission.getTime();
+                }
+                fragmentHomeBinding.totalFinishedTime.setText(String.valueOf(usedTime));
+            }
         });
 
         mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {

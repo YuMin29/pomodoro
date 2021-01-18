@@ -36,8 +36,17 @@ public class Mission {
     private int numberOfCompletions = 0;
 
 	public Mission(){
-	    // init
-        LogUtil.logD(TAG,"NEW [Mission]");
+        LogUtil.logD(TAG,"init [Mission]");
+    }
+
+    @Ignore
+    public Mission(int time, int shortBreakTime,int color){
+	    this.name = "快速番茄任務";
+        this.time = time;
+        this.shortBreakTime = shortBreakTime;
+        this.color = color;
+        this.goal = -1;
+        this.numberOfCompletions = -1;
     }
 
     @Ignore
