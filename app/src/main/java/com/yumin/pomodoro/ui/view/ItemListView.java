@@ -1,12 +1,10 @@
 package com.yumin.pomodoro.ui.view;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
@@ -16,14 +14,8 @@ import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseBindingMethods;
 
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.ItemListviewBinding;
-import com.yumin.pomodoro.utils.LogUtil;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 @InverseBindingMethods(
         {@InverseBindingMethod(type = ItemListView.class, attribute = "itemListVal", event = "itemListValAttrChanged")})

@@ -12,6 +12,7 @@ import com.yumin.pomodoro.data.repository.MainRepository;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 
@@ -37,6 +38,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new TimerViewModel(application,new MainRepository(apiHelper));
         } else if (modelClass == RangeCalenderViewModel.class) {
             return (T) new RangeCalenderViewModel(application,new MainRepository(apiHelper));
+        } else if (modelClass == LoginViewModel.class) {
+            return (T) new LoginViewModel(application);
         }
         return null;
     }

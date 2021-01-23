@@ -71,4 +71,15 @@
         android:name="com.yumin.pomodoro.ui.view.range_calender.RangeCalenderFragment"
         android:label="@string/fragment_range_calender"
         tools:layout="@layout/fragment_range_calender"/>
+
+    <fragment android:id="@+id/fragment_login"
+        android:name="com.yumin.pomodoro.ui.view.LoginFragment"
+        android:label="@string/login_fragment_label"
+        tools:layout="@layout/fragment_login"/>
+
+
+    <fragment android:id="@+id/fragment_register"
+        android:name="com.yumin.pomodoro.ui.view.RegisterFragment"
+        android:label="@string/register_fragment_label"
+        tools:layout="@layout/fragment_register"/>
 </navigation>

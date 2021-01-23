@@ -1,6 +1,5 @@
 package com.yumin.pomodoro.ui.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +23,7 @@ import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,7 +171,9 @@ public class HomeFragment extends DataBindingFragment {
                 for (Mission mission : missions) {
                     usedTime += mission.getTime();
                 }
-                fragmentHomeBinding.totalFinishedTime.setText(String.valueOf(usedTime));
+                float num = (float)usedTime / 60;
+                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                fragmentHomeBinding.totalFinishedTime.setText(decimalFormat.format(num)+"h");
             }
         });
 

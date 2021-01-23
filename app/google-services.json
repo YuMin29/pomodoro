@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "49252191826",
+    "project_id": "pomodoro-fc04f",
+    "storage_bucket": "pomodoro-fc04f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49252191826:android:72de7d4249fb3cb400998b",
+        "android_client_info": {
+          "package_name": "com.yumin.pomodoro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "49252191826-27t914hhf1qmd939brfm6ehickp32dc1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOgOjFQcg4m_db_clHR6Cixlkqu2YtMQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "49252191826-27t914hhf1qmd939brfm6ehickp32dc1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

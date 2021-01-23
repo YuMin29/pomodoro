@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -16,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
@@ -27,6 +30,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
@@ -46,10 +51,18 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     static TextView mToolbarTitle = null;
     private static NavController mNavController;
     FloatingActionButton mFab;
+    private FirebaseAuth mAuth;
+    NavigationView navigationView;
+    FirebaseAuth.AuthStateListener authStateListener;
+    DrawerLayout mDrawerLayout;
+    FirebaseUser mCurrentFirebaseUser = null;
+    Context mContext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         // set status bar color as tool bar color
         setStatusBarGradient(this);
         setStatusBar(getResources().getColor(R.color.colorPrimary));
@@ -68,20 +81,85 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 MainActivity.getNavController().navigate(R.id.fragment_timer);
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        navigationView = findViewById(R.id.nav_view);
+
+        View navigationHeaderView = navigationView.getHeaderView(0);
+        navigationHeaderView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // click for login , switch to login fragment
+                // current user exist , switch to logout fragment
+                if (mCurrentFirebaseUser == null) {
+                    MainActivity.getNavController().navigate(R.id.fragment_login);
+                } else {
+                    // Showing a dialog to confirm logout or not
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                            .setTitle("登出帳號？")
+                            .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mAuth.signOut();
+                                }
+                            }).setPositiveButton(getString(R.string.cancel), null);
+                    builder.show();
+                }
+                closeDrawerLayout();
+            }
+        });
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home,
                 R.id.nav_backup, R.id.nav_restore, R.id.nav_total,
                 R.id.nav_calender, R.id.nav_save_mission, R.id.nav_settings)
-                .setDrawerLayout(drawer)
+                .setDrawerLayout(mDrawerLayout)
                 .build();
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
         mNavController.addOnDestinationChangedListener(this);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, mNavController);
         isStoragePermissionGranted();
+
+        mAuth = FirebaseAuth.getInstance();
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                // Check if user is signed in (non-null) and update UI accordingly.
+                if (user != null) {
+                    updateNavHeader(user);
+                    mCurrentFirebaseUser = user;
+                }
+            }
+        };
+    }
+
+    private void closeDrawerLayout(){
+        mDrawerLayout.closeDrawers();
+    }
+
+    private void updateNavHeader(FirebaseUser user){
+        View navigationHeaderView = navigationView.getHeaderView(0);
+        TextView userName = navigationHeaderView.findViewById(R.id.nav_header_user);
+        TextView userMail = navigationHeaderView.findViewById(R.id.nav_header_user_mail);
+        userName.setText(user.getDisplayName());
+        userMail.setText(user.getEmail());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (authStateListener != null){
+            mAuth.removeAuthStateListener(authStateListener);
+        }
     }
 
     public static NavController getNavController(){

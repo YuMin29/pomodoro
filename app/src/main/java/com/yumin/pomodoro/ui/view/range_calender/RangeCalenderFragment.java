@@ -4,12 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
@@ -17,7 +15,6 @@ import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.FragmentRangeCalenderBinding;
-import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;

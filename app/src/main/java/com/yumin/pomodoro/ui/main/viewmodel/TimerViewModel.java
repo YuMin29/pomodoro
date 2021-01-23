@@ -1,7 +1,6 @@
 package com.yumin.pomodoro.ui.main.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -12,16 +11,15 @@ import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.MainRepository;
-import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
 public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = "[TimerViewModel]";
     private MainRepository mainRepository;
     private int missionId;
-    private MediatorLiveData<Mission> mission = new MediatorLiveData<>();
-    private MutableLiveData<String> missionTime = new MutableLiveData<>();
-    private MutableLiveData<String> missionBreakTime = new MutableLiveData<>();
+    private MediatorLiveData<Mission> mMission = new MediatorLiveData<>();
+    private MutableLiveData<String> mMissionTime = new MutableLiveData<>();
+    private MutableLiveData<String> mMissionBreakTime = new MutableLiveData<>();
 
     public TimerViewModel(@NonNull Application application, MainRepository mainRepository) {
         super(application);
@@ -32,36 +30,36 @@ public class TimerViewModel extends AndroidViewModel {
 
     private void fetchMission(){
         if (missionId == -1) {
-            mission.setValue(mainRepository.getQuickMission());
+            mMission.setValue(mainRepository.getQuickMission());
         } else {
             LiveData<Mission> fetchMission = mainRepository.getMissionById(missionId);
-            mission.addSource(fetchMission, new Observer<Mission>() {
+            mMission.addSource(fetchMission, new Observer<Mission>() {
                 @Override
                 public void onChanged(Mission getmission) {
-                    mission.setValue(getmission);
+                    mMission.setValue(getmission);
                 }
             });
         }
     }
 
     public LiveData<Mission> getMission(){
-        return this.mission;
+        return this.mMission;
     }
 
     public LiveData<String> getMissionTime(){
-        return this.missionTime;
+        return this.mMissionTime;
     }
 
-    public void setMissionTime(String missionTime){
-        this.missionTime.postValue(missionTime);
+    public void setMissionTime(String mMissionTime){
+        this.mMissionTime.postValue(mMissionTime);
     }
 
     public LiveData<String> getMissionBreakTime(){
-        return this.missionBreakTime;
+        return this.mMissionBreakTime;
     }
 
     public void setMissionBreakTime(String breakTime){
-        this.missionBreakTime.postValue(breakTime);
+        this.mMissionBreakTime.postValue(breakTime);
     }
 
     public void updateNumberOfCompletionById(int num){
