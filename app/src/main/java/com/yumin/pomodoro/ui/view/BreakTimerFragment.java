@@ -57,7 +57,7 @@ public class BreakTimerFragment extends DataBindingFragment {
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         LogUtil.logD(TAG,"[onStop]");
     }
 
@@ -74,7 +74,8 @@ public class BreakTimerFragment extends DataBindingFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         fragmentBreakTimerBinding = (FragmentBreakTimerBinding) getBinding();
-
+        fragmentBreakTimerBinding.breakTimer.setStatusBarColor(
+                getContext().getResources().getColor(R.color.break_timer_background));
         observeViewModel();
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -86,25 +87,30 @@ public class BreakTimerFragment extends DataBindingFragment {
 
                 // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                        .setTitle("結束任務")
-                        .setMessage("確認結束任務？")
+                        .setTitle("結束休息?")
+                        .setMessage("確認結束休息？")
                         .setPositiveButton("確認", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // exit & cancel notification
                                 if (fragmentBreakTimerBinding.breakTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
                                     fragmentBreakTimerBinding.breakTimer.onClickReset();
-                                    notificationHelper.cancelNotification();
+                                    if (enabledNotification)
+                                        notificationHelper.cancelNotification();
                                 }
 
                                 if (missionCount != -1 && numberOfCompletion != -1) {
                                     // update finish status
                                     if ((missionCount - numberOfCompletion) < 1) {
+                                        LogUtil.logD(TAG,"[handleOnBackPressed] updateIsFinishedById");
                                         timerViewModel.updateIsFinishedById(true);
                                     }
                                 }
-
+                                LogUtil.logD(TAG,"確認結束任務？");
+//                                MainActivity.getNavController().popBackStack(R.id.nav_home,true);
                                 MainActivity.getNavController().navigateUp();
+                                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                                undoStatusBarColor();
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
@@ -124,24 +130,25 @@ public class BreakTimerFragment extends DataBindingFragment {
             public void onStarted() {
                 // show notification in here
                 if (enabledNotification) {
-                    notificationHelper = new NotificationHelper(getContext());
+                    // Create an explicit intent for an Activity in your app
                     Intent intent = getContext().getPackageManager()
                             .getLaunchIntentForPackage(getContext().getPackageName())
                             .setPackage(null)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
-                    notificationBuilder = notificationHelper.getNotification("休息一下" + missionTitle,"",pendingIntent);
+
+                    notificationHelper = new NotificationHelper(getContext());
+                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent);
                     notificationHelper.notify(notificationBuilder);
                 }
             }
 
             @Override
             public void onFinished() {
+                LogUtil.logD(TAG,"[onFinished]");
                 if (missionCount != -1 && numberOfCompletion != -1) {
                     if ((missionCount - numberOfCompletion) >= 1) {
                         LogUtil.logD(TAG,"[break timer][onFinished]");
-
-
                         // vibrate for remind
                         if (enabledVibrate) {
                             Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -157,13 +164,15 @@ public class BreakTimerFragment extends DataBindingFragment {
                         // switch to mission timer
                         Bundle bundle = new Bundle();
                         bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
-                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_timer,bundle);
-
+                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_timer,bundle);
                     } else {
                         LogUtil.logD(TAG,"[break timer][onFinished] 1");
                         // finished timer fragment
                         timerViewModel.updateIsFinishedById(true);
-                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.nav_home,null);
+                        MainActivity.getNavController().navigateUp();
+                        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                        undoStatusBarColor();
+//                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_home,null);
 
                         // cancel notification when finish the mission
                         if (enabledNotification) {
@@ -181,6 +190,10 @@ public class BreakTimerFragment extends DataBindingFragment {
                 }
             }
         });
+    }
+
+    private void undoStatusBarColor(){
+        ((MainActivity)getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
     }
 
     private void observeViewModel(){

@@ -1,5 +1,6 @@
 package com.yumin.pomodoro.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.CircleTimerBinding;
 
@@ -222,8 +224,10 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
                     mediaPlayer = null;
                 }
 
-                if (countDownTimerListener != null)
+                if (countDownTimerListener != null) {
                     countDownTimerListener.onFinished();
+                    undoStatusBarColor();
+                }
             }
 
         }.start();
@@ -271,7 +275,17 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void setTimerBackgroundColor(int color) {
+        LogUtil.logD(TAG,"[setTimerBackgroundColor] color = "+color);
         circleTimerBinding.timerRelativelayout.setBackgroundColor(color);
+        setStatusBarColor(color);
+    }
+
+    public void setStatusBarColor(int color){
+        ((MainActivity)context).getWindow().setStatusBarColor(color);
+    }
+
+    private void undoStatusBarColor(){
+        ((MainActivity)context).getWindow().setStatusBarColor(context.getResources().getColor(R.color.colorPrimary));
     }
 
     public void setTimerType(String type){
@@ -282,7 +296,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void setMissionTime(int time){
-        this.timeCountInMilliSeconds = Long.valueOf(time * 60 * 1000);
+        this.timeCountInMilliSeconds = Long.valueOf(time * 1 * 1000);
     }
 
     public void setMissionName(String name){

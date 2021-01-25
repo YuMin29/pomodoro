@@ -60,12 +60,24 @@
     <fragment android:id="@+id/fragment_timer"
         android:name="com.yumin.pomodoro.ui.view.TimerFragment"
         android:label="@string/mission_timer"
-        tools:layout="@layout/fragment_timer"/>
+        tools:layout="@layout/fragment_timer">
+        <action
+            android:id="@+id/action_timer_to_break_timer"
+            app:destination="@id/fragment_break_timer"
+            app:popUpTo="@+id/fragment_timer"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment android:id="@+id/fragment_break_timer"
         android:name="com.yumin.pomodoro.ui.view.BreakTimerFragment"
         android:label="@string/mission_break_timer"
-        tools:layout="@layout/fragment_break_timer"/>
+        tools:layout="@layout/fragment_break_timer">
+        <action
+            android:id="@+id/break_timer_to_timer"
+            app:destination="@id/fragment_timer"
+            app:popUpTo="@+id/fragment_break_timer"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment android:id="@+id/fragment_range_calender"
         android:name="com.yumin.pomodoro.ui.view.range_calender.RangeCalenderFragment"

@@ -71,6 +71,12 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
         if (mission.isFinished()) {
             binding.itemName.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             view.setAlpha(0.5f); // set opacity
+            binding.colorView.setVisibility(View.INVISIBLE);
+            binding.finishedIcon.setVisibility(View.VISIBLE);
+        } else {
+            view.setAlpha(1f); // set opacity
+            binding.colorView.setVisibility(View.VISIBLE);
+            binding.finishedIcon.setVisibility(View.INVISIBLE);
         }
     }
 }

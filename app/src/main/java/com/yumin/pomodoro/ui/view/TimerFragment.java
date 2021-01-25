@@ -58,7 +58,6 @@ public class TimerFragment extends DataBindingFragment {
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         LogUtil.logD(TAG,"[onStop]");
     }
 
@@ -71,6 +70,7 @@ public class TimerFragment extends DataBindingFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         LogUtil.logD(TAG,"[onDestroy]");
     }
 
@@ -111,6 +111,8 @@ public class TimerFragment extends DataBindingFragment {
                                         notificationHelper.cancelNotification();
                                 }
                                 MainActivity.getNavController().navigateUp();
+                                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                                undoStatusBarColor();
                                 // update finish status
                                 if (missionCount != -1 && numberOfCompletion != -1) {
                                     if ((missionCount - numberOfCompletion) < 1) {
@@ -175,7 +177,7 @@ public class TimerFragment extends DataBindingFragment {
                 // switch to break timer
                 Bundle bundle = new Bundle();
                 bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
-                MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.fragment_break_timer,bundle);
+                MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.action_timer_to_break_timer,bundle);
             }
 
             @Override
@@ -188,6 +190,9 @@ public class TimerFragment extends DataBindingFragment {
         });
     }
 
+    private void undoStatusBarColor(){
+        ((MainActivity)getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
+    }
 
     private void observeViewModel(){
         timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {

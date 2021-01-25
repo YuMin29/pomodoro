@@ -14,57 +14,57 @@
         android:layout_height="100dp"
         android:orientation="horizontal">
 
+        <!--delete-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
-            android:background="@drawable/mission_item_shape"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/mission_item_shape"
             android:clickable="false">
 
             <com.yumin.pomodoro.ui.view.ColorView
                 android:id="@+id/colorView"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_weight="1"
+                app:ColorValue="@{mission.color}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/item_name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:ColorValue="@{mission.color}"
-                android:layout_gravity="center_horizontal|center_vertical"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/finishedIcon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                app:srcCompat="@drawable/ic_check_circle_black_24dp"
+                android:layout_weight="1"
                 android:tint="@{mission.color}"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/item_name"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_gravity="center_horizontal|center_vertical"/>
+                app:srcCompat="@drawable/ic_check_circle_black_24dp" />
 
             <TextView
                 android:id="@+id/item_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/colorPrimary"
+                android:layout_marginEnd="32dp"
                 android:text="@{mission.name}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textSize="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/colorView"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,12 +72,14 @@
                 android:id="@+id/item_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:textColor="@color/colorPrimary"
-                android:background="@drawable/timer_textview"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/child_item_textview_shape"
                 android:text="@{@string/mission_time + Integer.toString(mission.time) + @string/minute}"
-                android:textSize="14dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/colorView"
                 app:layout_constraintTop_toBottomOf="@+id/item_name" />
 
@@ -85,18 +87,19 @@
                 android:id="@+id/item_goal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:textColor="@color/colorPrimary"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/child_item_textview_shape"
                 android:text="@{@string/mission_goal + Integer.toString(mission.goal)}"
-                android:textSize="14dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/item_time"
                 app:layout_constraintTop_toBottomOf="@+id/item_name" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!--delete-->
         <TextView
             android:id="@+id/delete"
             android:layout_width="80dp"
