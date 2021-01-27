@@ -11,10 +11,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <!--delete-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
@@ -30,7 +28,6 @@
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="32dp"
-                android:layout_weight="1"
                 app:ColorValue="@{mission.color}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/item_name"
@@ -44,7 +41,6 @@
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="32dp"
-                android:layout_weight="1"
                 android:tint="@{mission.color}"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -60,6 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
+                android:ellipsize="marquee"
+                android:singleLine="true"
                 android:text="@{mission.name}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp"
@@ -68,35 +66,65 @@
                 app:layout_constraintStart_toEndOf="@+id/colorView"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/item_time"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/item_info_1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toEndOf="@+id/colorView"
+                app:layout_constraintTop_toBottomOf="@+id/item_name">
+
+
+                <TextView
+                    android:id="@+id/item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@drawable/child_item_textview_shape"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/item_goal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@drawable/child_item_textview_shape"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/child_item_textview_shape"
-                android:text="@{@string/mission_time + Integer.toString(mission.time) + @string/minute}"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/colorView"
-                app:layout_constraintTop_toBottomOf="@+id/item_name" />
+                app:layout_constraintTop_toBottomOf="@+id/item_info_1">
 
-            <TextView
-                android:id="@+id/item_goal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/child_item_textview_shape"
-                android:text="@{@string/mission_goal + Integer.toString(mission.goal)}"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_time"
-                app:layout_constraintTop_toBottomOf="@+id/item_name" />
+                <TextView
+                    android:id="@+id/item_operate_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:layout_weight="1"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:background="@drawable/child_item_textview_shape"
+                    android:visibility="gone"/>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
