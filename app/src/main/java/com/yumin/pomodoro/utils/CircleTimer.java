@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -290,9 +291,8 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public void setTimerType(String type){
         LogUtil.logD(TAG,"type = "+type);
-        if (!type.isEmpty()) {
+        if (!TextUtils.isEmpty(type))
             this.type = Type.getEnum(type);
-        }
     }
 
     public void setMissionTime(int time){

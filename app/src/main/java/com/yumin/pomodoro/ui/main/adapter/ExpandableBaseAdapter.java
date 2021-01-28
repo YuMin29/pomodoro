@@ -93,8 +93,9 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        M binding = DataBindingUtil.inflate(LayoutInflater.from(this.context),getChildLayout(),parent,false);
+        M binding;
         if (convertView == null) {
+            binding = DataBindingUtil.inflate(LayoutInflater.from(this.context),getChildLayout(),parent,false);
             convertView = binding.getRoot();
             convertView.setPadding(0, 0, 0, 20);
             convertView.setTag(binding);

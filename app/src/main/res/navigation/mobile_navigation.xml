@@ -94,4 +94,9 @@
         android:name="com.yumin.pomodoro.ui.view.RegisterFragment"
         android:label="@string/register_fragment_label"
         tools:layout="@layout/fragment_register"/>
+        
+    <fragment android:id="@+id/fragment_reset_password"
+        android:name="com.yumin.pomodoro.ui.view.ResetPasswordFragment"
+        android:label="@string/reset_password_fragment_label"
+        tools:layout="@layout/fragment_reset_password"/>
 </navigation>

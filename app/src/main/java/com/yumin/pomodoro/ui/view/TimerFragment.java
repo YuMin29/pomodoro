@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
@@ -84,6 +85,10 @@ public class TimerFragment extends DataBindingFragment {
         return new DataBindingConfig(R.layout.fragment_timer, BR.viewmodel,timerViewModel);
     }
 
+    private void navigateUp(){
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         fragmentTimerBinding = (FragmentTimerBinding) getBinding();
@@ -110,7 +115,8 @@ public class TimerFragment extends DataBindingFragment {
                                     if (enabledNotification)
                                         notificationHelper.cancelNotification();
                                 }
-                                MainActivity.getNavController().navigateUp();
+//                                MainActivity.getNavController().navigateUp();
+                                navigateUp();
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
                                 // update finish status

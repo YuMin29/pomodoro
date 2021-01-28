@@ -8,6 +8,7 @@ import android.widget.ExpandableListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.library.baseAdapters.BR;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
@@ -67,6 +68,10 @@ public class HomeFragment extends DataBindingFragment {
                 .addBindingParam(BR.click, new ClickProxy());
     }
 
+    private void navigate(int id){
+        NavHostFragment.findNavController(this).navigate(id);
+    }
+
     private void initUI() {
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
         expandableViewAdapter = new ExpandableViewAdapter(mCategory,getContext());
@@ -88,7 +93,8 @@ public class HomeFragment extends DataBindingFragment {
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
                 if (!mission.isFinished()) {
                     MissionManager.getInstance().setOperateId(mission.getId());
-                    MainActivity.getNavController().navigate(R.id.fragment_timer);
+//                    MainActivity.getNavController().navigate(R.id.fragment_timer);
+                    navigate(R.id.fragment_timer);
                 } else {
                     // TODO: 2020/12/29 重新開始任務？ 清除完成紀錄？
 
@@ -112,7 +118,8 @@ public class HomeFragment extends DataBindingFragment {
                             " ,groupPosition = "+groupPos+" ,childPosition = "+childPos);
                     if (!mission.isFinished()) {
                         MissionManager.getInstance().setEditId(mission.getId());
-                        MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
+//                        MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
+                        navigate(R.id.edit_mission_fragment);
                         return true;
                     } else {
                         // TODO: 1/18/21 重新編輯任務？
@@ -204,7 +211,8 @@ public class HomeFragment extends DataBindingFragment {
 
     public class ClickProxy{
         public void addMission(){
-            MainActivity.getNavController().navigate(R.id.add_mission_fragment);
+//            MainActivity.getNavController().navigate(R.id.add_mission_fragment);
+            navigate(R.id.add_mission_fragment);
         }
     }
 }

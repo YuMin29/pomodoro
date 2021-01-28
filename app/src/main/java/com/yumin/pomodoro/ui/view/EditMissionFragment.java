@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
@@ -54,6 +55,10 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                 .addBindingParam(BR.clickProxy,new ClickProxy());
     }
 
+    private void navigateUp(){
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -69,7 +74,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             public void onChanged(Boolean click) {
                 LogUtil.logD(TAG,"[Observe][getSaveButtonClick] click = "+click);
                 if (click) {
-                    MainActivity.getNavController().navigateUp();
+//                    MainActivity.getNavController().navigateUp();
+                    navigateUp();
                 }
             }
         });
@@ -79,7 +85,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             public void onChanged(Boolean click) {
                 LogUtil.logD(TAG,"[Observe][getCancelButtonClick] click = "+click);
                 if (click) {
-                    MainActivity.getNavController().navigateUp();
+//                    MainActivity.getNavController().navigateUp();
+                    navigateUp();
                 }
             }
         });
@@ -127,7 +134,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
         bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
         bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);
         bundle.putLong("mission_operate_day",operateDay);
-        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
+//        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
+        NavHostFragment.findNavController(this).navigate(R.id.fragment_range_calender,bundle);
     }
 
     @Override

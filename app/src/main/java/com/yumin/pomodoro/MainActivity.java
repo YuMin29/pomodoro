@@ -14,6 +14,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.view.View;
@@ -79,7 +82,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             public void onClick(View view) {
                 // start a quick mission
                 MissionManager.getInstance().setOperateId(-1);
-                MainActivity.getNavController().navigate(R.id.fragment_timer);
+                mNavController.navigate(R.id.fragment_timer);
+//                MainActivity.getNavController().navigate(R.id.fragment_timer);
             }
         });
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -93,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // click for login , switch to login fragment
                 // current user exist , switch to logout fragment
                 if (mCurrentFirebaseUser == null) {
-                    MainActivity.getNavController().navigate(R.id.fragment_login);
+                    mNavController.navigate(R.id.fragment_login);
+//                    MainActivity.getNavController().navigate(R.id.fragment_login);
                 } else {
                     // Showing a dialog to confirm logout or not
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
@@ -129,10 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 // Check if user is signed in (non-null) and update UI accordingly.
-                if (user != null) {
-                    updateNavHeader(user);
-                    mCurrentFirebaseUser = user;
-                }
+                updateNavHeader(user);
+                mCurrentFirebaseUser = user;
             }
         };
     }
@@ -145,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         View navigationHeaderView = navigationView.getHeaderView(0);
         TextView userName = navigationHeaderView.findViewById(R.id.nav_header_user);
         TextView userMail = navigationHeaderView.findViewById(R.id.nav_header_user_mail);
-        userName.setText(user.getDisplayName());
-        userMail.setText(user.getEmail());
+        userName.setText(user == null ? getApplicationContext().getString(R.string.nav_header_title_no_user) : user.getDisplayName());
+        userMail.setText(user == null ? "" : user.getEmail());
     }
 
     @Override
@@ -163,9 +166,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         }
     }
 
-    public static NavController getNavController(){
-        return mNavController;
-    }
+//    public static NavController getNavController(){
+//        return mNavController;
+//    }
 
     public static void commitWhenLifecycleStarted(Lifecycle lifecycle, int destination, Bundle bundle) {
         lifecycle.addObserver(new LifecycleEventObserver() {

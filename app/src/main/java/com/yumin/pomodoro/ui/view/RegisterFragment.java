@@ -1,12 +1,14 @@
 package com.yumin.pomodoro.ui.view;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -48,13 +50,17 @@ public class RegisterFragment extends DataBindingFragment {
                 .addBindingParam(BR.clickProxy, new RegisterFragment.ClickProxy());
     }
 
+    private void navigate(int id){
+        NavHostFragment.findNavController(this).navigate(id);
+    }
+
     private void createAccount(){
         mFragmentRegisterBinding.progressBar.setVisibility(View.VISIBLE);
 
         String email = mFragmentRegisterBinding.registerEmail.getText().toString();
         String password = mFragmentRegisterBinding.registerPassword.getText().toString();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(getContext(),getString(R.string.create_account_error),Toast.LENGTH_SHORT).show();
             return;
         }
@@ -69,7 +75,8 @@ public class RegisterFragment extends DataBindingFragment {
                             if (user != null) {
                                 mFragmentRegisterBinding.progressBar.setVisibility(View.GONE);
                                 mFragmentRegisterBinding.createAccount.setEnabled(true);
-                                MainActivity.getNavController().navigate(R.id.nav_home);
+//                                MainActivity.getNavController().navigate(R.id.nav_home);
+                                navigate(R.id.nav_home);
                             }
                         } else {
                             // If sign in fails, display a message to the user.
@@ -84,12 +91,21 @@ public class RegisterFragment extends DataBindingFragment {
     }
 
     private void verifiedAccount(){
+        // TODO: 1/28/21 check email is available or not?
+    }
 
+    private void back(){
+        // TODO: 1/28/21 add navigate up here
+        NavHostFragment.findNavController(this).navigateUp();
     }
 
     public class ClickProxy{
         public void createAccount(){
             RegisterFragment.this.createAccount();
+        };
+
+        public void registerBack(){
+           back();
         };
     }
 }

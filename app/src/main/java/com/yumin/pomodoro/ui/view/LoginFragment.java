@@ -2,6 +2,7 @@ package com.yumin.pomodoro.ui.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -9,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.library.baseAdapters.BR;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -117,12 +120,16 @@ public class LoginFragment extends DataBindingFragment {
                 });
     }
 
+    private void navigate(int id){
+        NavHostFragment.findNavController(this).navigate(id);
+    }
+
     public void loginAccount(){
         // check email and password
         String email = mFragmentLoginBinding.loginEmail.getText().toString();
         String password = mFragmentLoginBinding.loginPassword.getText().toString();
 
-        if (email.isEmpty() || password.isEmpty()){
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
             Toast.makeText(getContext(),getString(R.string.create_account_error),Toast.LENGTH_SHORT).show();
             return;
         }
@@ -136,7 +143,8 @@ public class LoginFragment extends DataBindingFragment {
                     Log.d(TAG, "createUserWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
                     if (user != null) {
-                        MainActivity.getNavController().navigate(R.id.nav_home);
+//                        MainActivity.getNavController().navigate(R.id.nav_home);
+                        navigate(R.id.nav_home);
                         mFragmentLoginBinding.login.setEnabled(true);
                     }
                 } else {
@@ -147,6 +155,14 @@ public class LoginFragment extends DataBindingFragment {
                 }
             }
         });
+    }
+
+    private void goToResetPassword(){
+        navigate(R.id.fragment_reset_password);
+    }
+
+    private void goToRegisterAccount(){
+        navigate(R.id.fragment_register);
     }
 
 
@@ -170,11 +186,11 @@ public class LoginFragment extends DataBindingFragment {
 
         public void register(){
             // switch to register fragment
-            MainActivity.getNavController().navigate(R.id.fragment_register);
+            goToRegisterAccount();
         };
 
         public void forgetPassword(){
-
+            goToResetPassword();
         }
     }
 }

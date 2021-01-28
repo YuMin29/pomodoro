@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,7 +120,7 @@ public class ItemTextView extends LinearLayout {
 
     public int getItemContent(){
         LogUtil.logD(TAG,"[getItemContent] RETURN = "+viewBinding.numTextview.getText().toString());
-        if (viewBinding.numTextview.getText().toString().isEmpty())
+        if (TextUtils.isEmpty(viewBinding.numTextview.getText().toString()))
             return 0;
         return Integer.parseInt(viewBinding.numTextview.getText().toString());
     }

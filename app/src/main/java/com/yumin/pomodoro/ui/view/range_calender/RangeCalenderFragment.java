@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
@@ -218,6 +219,10 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     }
 
+    private void navigateUp(){
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
     public class ClickProxy {
         public void onIncrease() {
             mCalendarHeight += dipToPx(getContext(), 8);
@@ -241,7 +246,8 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
             fragmentRangeCalenderBinding.tvLeftDate.setText("");
             fragmentRangeCalenderBinding.tvRightDate.setText("");
-            MainActivity.getNavController().navigateUp(); // back
+//            MainActivity.getNavController().navigateUp(); // back
+            navigateUp();
         }
 
         public void onCommit() {
@@ -260,7 +266,8 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             Log.e(TAG,"SelectCalendarRange , start = " +start);
             sharedViewModel.setRepeatStart(start);
             sharedViewModel.setRepeatEnd(end);
-            MainActivity.getNavController().navigateUp(); // back
+//            MainActivity.getNavController().navigateUp(); // back
+            navigateUp();
         }
     }
 }

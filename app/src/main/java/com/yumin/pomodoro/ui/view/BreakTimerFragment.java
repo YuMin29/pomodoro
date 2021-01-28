@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.Observer;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
@@ -71,6 +72,10 @@ public class BreakTimerFragment extends DataBindingFragment {
         return new DataBindingConfig(R.layout.fragment_break_timer, BR.viewmodel, timerViewModel);
     }
 
+    private void navigateUp(){
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         fragmentBreakTimerBinding = (FragmentBreakTimerBinding) getBinding();
@@ -108,7 +113,8 @@ public class BreakTimerFragment extends DataBindingFragment {
                                 }
                                 LogUtil.logD(TAG,"確認結束任務？");
 //                                MainActivity.getNavController().popBackStack(R.id.nav_home,true);
-                                MainActivity.getNavController().navigateUp();
+//                                MainActivity.getNavController().navigateUp();
+                                navigateUp();
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
                             }
@@ -169,7 +175,8 @@ public class BreakTimerFragment extends DataBindingFragment {
                         LogUtil.logD(TAG,"[break timer][onFinished] 1");
                         // finished timer fragment
                         timerViewModel.updateIsFinishedById(true);
-                        MainActivity.getNavController().navigateUp();
+//                        MainActivity.getNavController().navigateUp();
+                        navigateUp();
                         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                         undoStatusBarColor();
 //                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_home,null);
