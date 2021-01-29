@@ -17,6 +17,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.ui.auth.AuthUI;
@@ -34,6 +35,7 @@ import com.yumin.pomodoro.databinding.FragmentLoginBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
+import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
 
@@ -60,18 +62,22 @@ public class LoginFragment extends DataBindingFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.logD(TAG,"[onCreate]");
         mAuth = FirebaseAuth.getInstance();
+        FacebookSdk.sdkInitialize(getContext());
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        LogUtil.logD(TAG, "[onViewCreated]");
         mFragmentLoginBinding = (FragmentLoginBinding) getBinding();
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
         // FB login action
         LoginButton loginButton = mFragmentLoginBinding.fbLoginButton;
+        loginButton.setFragment(this);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -110,6 +116,10 @@ public class LoginFragment extends DataBindingFragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                // redirect to home fragment
+                                navigate(R.id.nav_home);
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());

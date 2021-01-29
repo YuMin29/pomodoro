@@ -64,6 +64,7 @@
             android:layout_marginEnd="50dp"
             android:layout_marginTop="18dp"
             android:hint="@string/create_account_password_tint"
+            android:inputType="textPassword"
             android:textColorHint="@color/colorPrimaryLight"
             android:textColor="@color/colorPrimary"
             android:backgroundTint="@color/colorPrimaryDark"

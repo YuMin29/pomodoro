@@ -58,6 +58,7 @@ public class ResetPasswordFragment extends DataBindingFragment {
                     // change reset button color
                     mFragmentResetPasswordBinding.resetPassword
                             .setBackgroundColor(Color.parseColor("#00FF00")); // color green
+                    mFragmentResetPasswordBinding.resetPassword.setText(R.string.reset_email_success);
                 }
             }
         });

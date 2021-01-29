@@ -88,4 +88,5 @@
     <string name="back">返回</string>
     <string name="reset_password">重設密碼</string>
     <string name="reset_email_title">請輸入信箱地址,將會發送重設密碼的連結</string>
+    <string name="reset_email_success">已經發送</string>
 </resources>
