@@ -67,6 +67,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     // Firebase Auth UI (第三方登入畫面模組)
     implementation 'com.firebaseui:firebase-ui-auth:4.2.1'
-    // Facebook軟體開發套件
-//    implementation 'com.facebook.android:facebook-android-sdk:4.40.0'
+
+    //Add Google Play services
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 }
