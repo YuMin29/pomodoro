@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
@@ -33,8 +34,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.data.model.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -142,6 +147,7 @@ public class LoginFragment extends DataBindingFragment {
                             if (user != null) {
                                 // redirect to home fragment
                                 navigate(R.id.nav_home);
+                                addUserToFirebase(user);
                             }
                         } else {
                             // If sign in fails, display a message to the user.
@@ -179,6 +185,7 @@ public class LoginFragment extends DataBindingFragment {
 //                        MainActivity.getNavController().navigate(R.id.nav_home);
                         navigate(R.id.nav_home);
                         mFragmentLoginBinding.login.setEnabled(true);
+                        addUserToFirebase(user);
                     }
                 } else {
                     // If sign in fails, display a message to the user.
@@ -238,6 +245,7 @@ public class LoginFragment extends DataBindingFragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            addUserToFirebase(user);
                             // navigate to home
                             navigate(R.id.nav_home);
                         } else {
@@ -248,6 +256,20 @@ public class LoginFragment extends DataBindingFragment {
                     }
                 });
     }
+
+    private void addUserToFirebase(FirebaseUser firebaseUser){
+        User user = new User(firebaseUser.getDisplayName(), firebaseUser.getEmail());
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        firebaseUser.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult getTokenResult) {
+                LogUtil.logE(TAG,"[addUserToFirebase] getTokenResult = "+getTokenResult.getToken());
+                database.getReference().child("users").child(getTokenResult.getToken()).setValue(user);
+            }
+        });
+    }
+
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {

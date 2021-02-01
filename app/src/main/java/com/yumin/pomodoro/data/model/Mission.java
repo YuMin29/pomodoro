@@ -35,6 +35,8 @@ public class Mission {
     private boolean isFinished = false;
     private int numberOfCompletions = 0;
 
+    // TODO: 2/1/21 add user token for firebase in here?
+
 	public Mission(){
         LogUtil.logD(TAG,"init [Mission]");
     }
