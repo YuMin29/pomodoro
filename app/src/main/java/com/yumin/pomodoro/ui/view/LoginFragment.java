@@ -26,7 +26,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
@@ -34,19 +33,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.model.User;
+import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
-
-import java.util.concurrent.Executor;
 
 public class LoginFragment extends DataBindingFragment {
     private static final String TAG = "[LoginFragment]";
@@ -259,15 +254,11 @@ public class LoginFragment extends DataBindingFragment {
 
     private void addUserToFirebase(FirebaseUser firebaseUser){
         User user = new User(firebaseUser.getDisplayName(), firebaseUser.getEmail());
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        firebaseUser.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
-            @Override
-            public void onSuccess(GetTokenResult getTokenResult) {
-                LogUtil.logE(TAG,"[addUserToFirebase] getTokenResult = "+getTokenResult.getToken());
-                database.getReference().child("users").child(getTokenResult.getToken()).setValue(user);
-            }
-        });
+        firebaseUser.getUid();
+        LogUtil.logE(TAG,"[addUserToFirebase] getUid = "+firebaseUser.getUid());
+        database.getReference().child("users").setValue(firebaseUser.getUid());
+        database.getReference().child("users").child(firebaseUser.getUid()).setValue(user);
     }
 
 

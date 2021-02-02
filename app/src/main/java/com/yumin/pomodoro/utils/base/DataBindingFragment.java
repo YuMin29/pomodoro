@@ -17,10 +17,8 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.api.ApiServiceImpl;
+import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.ui.base.ViewModelFactory;
 
 public abstract class DataBindingFragment extends Fragment {
@@ -75,7 +73,7 @@ public abstract class DataBindingFragment extends Fragment {
     protected <T extends ViewModel> T getFragmentScopeViewModel(@NonNull Class<T> modelClass) {
         if (mFragmentProvider == null) {
             mFragmentProvider = new ViewModelProvider(this,
-                    new ViewModelFactory(mActivity.getApplication(),new ApiHelper(new ApiServiceImpl(mActivity.getApplication()))));
+                    new ViewModelFactory(mActivity.getApplication(),new RoomApiServiceImpl(mActivity.getApplication())));
         }
         return mFragmentProvider.get(modelClass);
     }

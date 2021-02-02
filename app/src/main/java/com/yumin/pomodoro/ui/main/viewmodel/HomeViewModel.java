@@ -1,46 +1,39 @@
 package com.yumin.pomodoro.ui.main.viewmodel;
 
-import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.api.ApiServiceImpl;
-import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.MainRepository;
+import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.ListIterator;
 
 public class HomeViewModel extends ViewModel {
     private static final String TAG = "[HomeViewModel]";
     private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();;
-    private MainRepository mainRepository;
+    private RoomRepository roomRepository;
     private LiveData<List<Mission>> missions;
     private LiveData<List<Mission>> todayMissions;
     private LiveData<List<Mission>> comingMissions;
     private LiveData<List<Mission>> finishedMissions;
     private LiveData<List<Mission>> unfinishedMissions;
 
-    public HomeViewModel(MainRepository mainRepository){
-        this.mainRepository = mainRepository;
+    public HomeViewModel(RoomRepository roomRepository){
+        this.roomRepository = roomRepository;
         fetchData();
     }
 
     private void fetchData() {
         mIsLoading.setValue(true);
-        missions = this.mainRepository.getMissions();
-        todayMissions = this.mainRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
-        comingMissions = this.mainRepository.getComingMissions(getCurrentEndTime());
-        finishedMissions = this.mainRepository.getFinishedMissions();
-        unfinishedMissions = this.mainRepository.getUnfinishedMissions();
+        missions = this.roomRepository.getMissions();
+        todayMissions = this.roomRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
+        comingMissions = this.roomRepository.getComingMissions(getCurrentEndTime());
+        finishedMissions = this.roomRepository.getFinishedMissions();
+        unfinishedMissions = this.roomRepository.getUnfinishedMissions();
         mIsLoading.setValue(false);
     }
 
@@ -63,7 +56,7 @@ public class HomeViewModel extends ViewModel {
 	}
 
     public void updateIsFinishedById(int itemId,boolean finished){
-        mainRepository.updateIsFinishedById(itemId,finished);
+        roomRepository.updateIsFinishedById(itemId,finished);
     }
 
     public LiveData<List<Mission>> getFinishedMissions(){
@@ -91,6 +84,6 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void deleteMission(Mission mission){
-        this.mainRepository.deleteMission(mission);
+        this.roomRepository.deleteMission(mission);
     }
 }

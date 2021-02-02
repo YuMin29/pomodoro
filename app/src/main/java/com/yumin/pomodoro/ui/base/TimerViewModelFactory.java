@@ -6,18 +6,17 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.yumin.pomodoro.data.api.ApiHelper;
-import com.yumin.pomodoro.data.repository.MainRepository;
-import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
+import com.yumin.pomodoro.data.api.ApiService;
+import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 
 public class TimerViewModelFactory implements ViewModelProvider.Factory {
-    private ApiHelper apiHelper;
+    private ApiService apiService;
     private Application application;
     private int itemId;
 
-    public TimerViewModelFactory(Application application, ApiHelper apiHelper, int itemId) {
-        this.apiHelper = apiHelper;
+    public TimerViewModelFactory(Application application, ApiService apiService, int itemId) {
+        this.apiService = apiService;
         this.application = application;
         this.itemId = itemId;
     }
@@ -25,6 +24,6 @@ public class TimerViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new TimerViewModel(application,new MainRepository(apiHelper));
+        return (T) new TimerViewModel(application,new RoomRepository(apiService));
     }
 }

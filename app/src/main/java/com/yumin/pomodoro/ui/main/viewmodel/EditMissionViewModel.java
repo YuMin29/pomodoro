@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.MainRepository;
+import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
@@ -17,15 +17,15 @@ import java.util.Date;
 
 public class EditMissionViewModel extends AndroidViewModel {
     private static final String TAG = "[EditMissionViewModel]";
-    private MainRepository mainRepository;
+    private RoomRepository roomRepository;
     private LiveData<Mission> editMission;
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
     private int missionId;
 
-    public EditMissionViewModel(@NonNull Application application, MainRepository mainRepository) {
+    public EditMissionViewModel(@NonNull Application application, RoomRepository roomRepository) {
         super(application);
-        this.mainRepository = mainRepository;
+        this.roomRepository = roomRepository;
         this.missionId = MissionManager.getInstance().getEditId();
         LogUtil.logD(TAG,"missionId = "+missionId);
         saveButtonClick.postValue(false);
@@ -35,7 +35,7 @@ public class EditMissionViewModel extends AndroidViewModel {
 
     private void fetchMission(){
         LogUtil.logD(TAG,"[fetchMission] ");
-        editMission = mainRepository.getMissionById(missionId);
+        editMission = roomRepository.getMissionById(missionId);
     }
 
     public LiveData<Mission> getEditMission(){
@@ -57,7 +57,7 @@ public class EditMissionViewModel extends AndroidViewModel {
 
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+ editMission.getValue().toString());
-        mainRepository.updateMission(editMission.getValue());
+        roomRepository.updateMission(editMission.getValue());
         saveButtonClick.postValue(true);
     }
 

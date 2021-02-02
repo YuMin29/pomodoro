@@ -1,18 +1,21 @@
-package com.yumin.pomodoro.data.api;
+package com.yumin.pomodoro.data.repository.room;
 
-import android.content.Context;
+import android.graphics.Color;
 
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 
 import java.util.List;
 
-public class ApiHelper {
-    private ApiService apiService;
+public class RoomRepository {
+    private RoomApiServiceImpl apiService;
 
-    public ApiHelper(ApiService apiService){
-        this.apiService = apiService;
+    public RoomRepository(ApiService apiService){
+        this.apiService = (RoomApiServiceImpl) apiService;
     }
 
     public LiveData<List<Mission>> getMissions(){
@@ -27,21 +30,21 @@ public class ApiHelper {
         return apiService.getComingMissions(today);
     }
 
-
-    public void addMission(Mission mission){
-        apiService.addMission(mission);
-    }
-
     public Mission getInitMission(){
         return apiService.getInitMission();
     }
 
-    public Mission getQuickMission(int time,int shortBreakTime,int color){
-        return apiService.getQuickMission(time,shortBreakTime,color);
+    public Mission getQuickMission(){
+        return apiService.getQuickMission(25,5, Color.parseColor("#e57373"));
     }
 
     public LiveData<Mission> getMissionById(int id){
         return apiService.getMissionById(id);
+    }
+
+    public void addMission(Mission mission){
+        apiService.addMission(mission);
+        new FirebaseApiServiceImpl().addMission(new UserMission(mission.getTime(),mission.getShortBreakTime(),mission.getColor()));
     }
 
     public void updateMission(Mission mission){
@@ -75,7 +78,6 @@ public class ApiHelper {
     public LiveData<List<Mission>> getFinishedMissions(){
         return apiService.getFinishedMissions();
     }
-
 
     public LiveData<List<Mission>> getUnfinishedMissions(){
         return apiService.getUnFinishedMissions();

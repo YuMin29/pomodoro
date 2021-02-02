@@ -10,29 +10,29 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.MainRepository;
+import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
 public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = "[TimerViewModel]";
-    private MainRepository mainRepository;
+    private RoomRepository roomRepository;
     private int missionId;
     private MediatorLiveData<Mission> mMission = new MediatorLiveData<>();
     private MutableLiveData<String> mMissionTime = new MutableLiveData<>();
     private MutableLiveData<String> mMissionBreakTime = new MutableLiveData<>();
 
-    public TimerViewModel(@NonNull Application application, MainRepository mainRepository) {
+    public TimerViewModel(@NonNull Application application, RoomRepository roomRepository) {
         super(application);
-        this.mainRepository = mainRepository;
+        this.roomRepository = roomRepository;
         this.missionId = MissionManager.getInstance().getOperateId();
         fetchMission();
     }
 
     private void fetchMission(){
         if (missionId == -1) {
-            mMission.setValue(mainRepository.getQuickMission());
+            mMission.setValue(roomRepository.getQuickMission());
         } else {
-            LiveData<Mission> fetchMission = mainRepository.getMissionById(missionId);
+            LiveData<Mission> fetchMission = roomRepository.getMissionById(missionId);
             mMission.addSource(fetchMission, new Observer<Mission>() {
                 @Override
                 public void onChanged(Mission getmission) {
@@ -63,10 +63,10 @@ public class TimerViewModel extends AndroidViewModel {
     }
 
     public void updateNumberOfCompletionById(int num){
-        mainRepository.updateNumberOfCompletionById(missionId,num);
+        roomRepository.updateNumberOfCompletionById(missionId,num);
     }
 
     public void updateIsFinishedById(boolean finished){
-        mainRepository.updateIsFinishedById(missionId,finished);
+        roomRepository.updateIsFinishedById(missionId,finished);
     }
 }

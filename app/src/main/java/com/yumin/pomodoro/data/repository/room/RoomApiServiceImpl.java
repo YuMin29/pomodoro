@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.data.api;
+package com.yumin.pomodoro.data.repository.room;
 
 import android.app.Application;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.room.MissionDBManager;
 import com.yumin.pomodoro.data.repository.room.MissionDao;
@@ -14,7 +15,7 @@ import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
-public class ApiServiceImpl implements ApiService {
+public class RoomApiServiceImpl implements ApiService<Mission> {
     private static final String TAG = "[ApiServiceImpl]";
     private List<Mission> missions;
     private MissionDao missionDao;
@@ -28,7 +29,7 @@ public class ApiServiceImpl implements ApiService {
     private LiveData<List<Mission>> finishedMissions = new LiveData<List<Mission>>() {};
     private LiveData<List<Mission>> unfinishedMissions = new LiveData<List<Mission>>() {};
 
-    public ApiServiceImpl(Application application){
+    public RoomApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
         MissionDBManager missionDBManager = MissionDBManager.getInstance(application);
         missionDao = missionDBManager.getMissionDao();
