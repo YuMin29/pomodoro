@@ -156,13 +156,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             }
         };
         getHashKey();
-
-        testFirebase();
-    }
-    private void testFirebase() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-        myRef.setValue("Hello, World!");
     }
 
     private void getHashKey() {

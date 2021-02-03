@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 
@@ -17,7 +19,7 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();;
     private RoomRepository roomRepository;
     private LiveData<List<Mission>> missions;
-    private LiveData<List<Mission>> todayMissions;
+    private LiveData<List<UserMission>> todayMissions;
     private LiveData<List<Mission>> comingMissions;
     private LiveData<List<Mission>> finishedMissions;
     private LiveData<List<Mission>> unfinishedMissions;
@@ -30,7 +32,8 @@ public class HomeViewModel extends ViewModel {
     private void fetchData() {
         mIsLoading.setValue(true);
         missions = this.roomRepository.getMissions();
-        todayMissions = this.roomRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
+//        todayMissions = this.roomRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
+        todayMissions =  new FirebaseApiServiceImpl().getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
         comingMissions = this.roomRepository.getComingMissions(getCurrentEndTime());
         finishedMissions = this.roomRepository.getFinishedMissions();
         unfinishedMissions = this.roomRepository.getUnfinishedMissions();
@@ -42,7 +45,7 @@ public class HomeViewModel extends ViewModel {
         return missions;
     }
 
-    public LiveData<List<Mission>> getTodayMissions(){
+    public LiveData<List<UserMission>> getTodayMissions(){
         return todayMissions;
     }
 
