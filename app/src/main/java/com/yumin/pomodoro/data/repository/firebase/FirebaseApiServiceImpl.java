@@ -72,8 +72,8 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
                     LogUtil.logE(TAG,"[getTodayMissions] queryOperateDay EXIST");
                     for (DataSnapshot mission : dataSnapshot.getChildren()) {
                         missionList.add(mission.getValue(UserMission.class));
-                        mutableLiveData.postValue(missionList);
                     }
+                    mutableLiveData.postValue(missionList);
                 }
             }
 
@@ -90,11 +90,11 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
                 if (dataSnapshot.exists()) {
                     LogUtil.logE(TAG,"[getTodayMissions] queryRepeatType EXIST");
                     for (DataSnapshot mission : dataSnapshot.getChildren()) {
-                        if (mission.getValue(UserMission.class).getOperateDay() <= end) {
+                        if (mission.getValue(UserMission.class).getOperateDay() <= start) {
                             missionList.add(mission.getValue(UserMission.class));
-                            mutableLiveData.postValue(missionList);
                         }
                     }
+                    mutableLiveData.postValue(missionList);
                 }
             }
 
@@ -111,11 +111,12 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
                 if (dataSnapshot.exists()) {
                     LogUtil.logE(TAG,"[getTodayMissions] queryRepeatDay EXIST");
                     for (DataSnapshot mission : dataSnapshot.getChildren()) {
-                        if (mission.getValue(UserMission.class).getRepeatEnd() <= end) {
+                        if (mission.getValue(UserMission.class).getRepeatEnd() <= end &&
+                            mission.getValue(UserMission.class).getOperateDay() <= start) {
                             missionList.add(mission.getValue(UserMission.class));
-                            mutableLiveData.postValue(missionList);
                         }
                     }
+                    mutableLiveData.postValue(missionList);
                 }
             }
 
@@ -131,8 +132,71 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public LiveData<List<UserMission>> getComingMissions(long today) {
+        MutableLiveData<List<UserMission>> listMutableLiveData = new MutableLiveData<>();
+        List<UserMission> userMissionList = new ArrayList<>();
 
-        return null;
+        Query queryOperate = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("operateDay");
+        queryOperate.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    LogUtil.logE(TAG,"[getComingMissions] queryOperate EXIST");
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        if (dataSnapshot.getValue(UserMission.class).getOperateDay() > today) {
+                            userMissionList.add(dataSnapshot.getValue(UserMission.class));
+                        }
+                    }
+                    listMutableLiveData.postValue(userMissionList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                LogUtil.logE(TAG,"[getComingMissions] queryOperate ERROR"+error.getDetails());
+            }
+        });
+
+        Query queryRepeatType = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("repeat").equalTo(1);
+        queryRepeatType.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    LogUtil.logE(TAG,"[getComingMissions] queryRepeatType EXIST");
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        userMissionList.add(dataSnapshot.getValue(UserMission.class));
+                    }
+                    listMutableLiveData.postValue(userMissionList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                LogUtil.logE(TAG,"[getComingMissions] queryRepeatType ERROR:"+error.getDetails());
+            }
+        });
+
+        Query queryRepeatRange = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("repeatEnd");
+        queryRepeatRange.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    LogUtil.logE(TAG,"[getComingMissions] queryRepeatRange EXIST");
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today) {
+                            userMissionList.add(dataSnapshot.getValue(UserMission.class));
+                        }
+                    }
+                    listMutableLiveData.postValue(userMissionList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                LogUtil.logE(TAG,"[getComingMissions] queryRepeatRange ERROR:"+error.getDetails());
+            }
+        });
+
+        return listMutableLiveData;
     }
 
     @Override
