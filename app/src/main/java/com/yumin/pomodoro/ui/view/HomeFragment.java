@@ -8,12 +8,14 @@ import android.widget.ExpandableListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.library.baseAdapters.BR;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
 import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
@@ -137,31 +139,64 @@ public class HomeFragment extends DataBindingFragment {
                 mHomeViewModel.getLoading().postValue(false);
         });
 
-        mHomeViewModel.getTodayMissions().observe(getViewLifecycleOwner(), missions -> {
-            LogUtil.logD(TAG,"[observeViewModel] today mission list size = "+missions.size());
-            if (missions.size() > 0) {
+//        mHomeViewModel.getTodayMissionsByOperateDay().observe(getViewLifecycleOwner(), missions -> {
+//            LogUtil.logD(TAG,"[observeViewModel] today mission list size = "+missions.size());
+//            if (missions.size() > 0) {
+//                today = new Category(getString(R.string.category_today));
+//               for (Mission mission : missions) {
+//                   today.addMission(mission);
+//               }
+//            } else {
+//                today = null;
+//            }
+//            updateCategoryList();
+//        });
+        // observe today missions
+        MediatorLiveData<List<UserMission>> todayMissions = new MediatorLiveData<>();
+        Observer<List<UserMission>> todayObserver = new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                LogUtil.logE(TAG,"[observeViewModel][todayObserver] onChanged");
                 today = new Category(getString(R.string.category_today));
-               for (Mission mission : missions) {
-                   today.addMission(mission);
-               }
-            } else {
-                today = null;
+                for (UserMission mission : userMissions) {
+                    today.addMission(mission);
+                }
+                updateCategoryList();
             }
-            updateCategoryList();
-        });
+        };
+        todayMissions.addSource(mHomeViewModel.getTodayMissionsByOperateDay(), todayObserver);
+        todayMissions.addSource(mHomeViewModel.getTodayMissionsByRepeatType(), todayObserver);
+        todayMissions.addSource(mHomeViewModel.getTodayMissionsByRepeatRange(), todayObserver);
 
-        mHomeViewModel.getComingMissions().observe(getViewLifecycleOwner(),missions -> {
-            LogUtil.logD(TAG,"[observeViewModel] coming mission list size = "+missions.size());
-            if (missions.size() > 0) {
+        // observe coming missions
+        MediatorLiveData<List<UserMission>> comingMissions = new MediatorLiveData<>();
+        Observer<List<UserMission>> comingObserver = new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                LogUtil.logE(TAG,"[observeViewModel][comingObserver] onChanged");
                 coming = new Category(getString(R.string.category_coming));
-                for (Mission mission : missions) {
+                for (UserMission mission : userMissions) {
                     coming.addMission(mission);
                 }
-            } else {
-                coming = null;
+                updateCategoryList();
             }
-            updateCategoryList();
-        });
+        };
+        comingMissions.addSource(mHomeViewModel.getComingMissionsByOperateDay(), comingObserver);
+        comingMissions.addSource(mHomeViewModel.getComingMissionsByRepeatType(), comingObserver);
+        comingMissions.addSource(mHomeViewModel.getComingMissionsByRepeatRange(), comingObserver);
+
+//        mHomeViewModel.getComingMissionsByRepeatRange().observe(getViewLifecycleOwner(), missions -> {
+//            LogUtil.logD(TAG,"[observeViewModel] coming mission list size = "+missions.size());
+//            if (missions.size() > 0) {
+//                coming = new Category(getString(R.string.category_coming));
+//                for (Mission mission : missions) {
+//                    coming.addMission(mission);
+//                }
+//            } else {
+//                coming = null;
+//            }
+//            updateCategoryList();
+//        });
 
         mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             fragmentHomeBinding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);

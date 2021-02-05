@@ -1,16 +1,12 @@
 package com.yumin.pomodoro.data.repository.room;
 
 import android.app.Application;
-import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.room.MissionDBManager;
-import com.yumin.pomodoro.data.repository.room.MissionDao;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
@@ -20,8 +16,12 @@ public class RoomApiServiceImpl implements ApiService<Mission> {
     private List<Mission> missions;
     private MissionDao missionDao;
     private LiveData<List<Mission>> allMissions;
-    private LiveData<List<Mission>> todayMissions = new LiveData<List<Mission>>(){};
-    private LiveData<List<Mission>> comingMissions = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> todayMissionsByOperateDay = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> todayMissionsByRepeatType = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> todayMissionsByRepeatRange = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> comingMissionsByOperateDay = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> comingMissionsByRepeatType = new LiveData<List<Mission>>(){};
+    private LiveData<List<Mission>> comingMissionsByRepeatRange = new LiveData<List<Mission>>(){};
     private LiveData<Mission> missionById = new LiveData<Mission>(){};
     private LiveData<Long> missionRepeatStart = new LiveData<Long>() {};
     private LiveData<Long> missionRepeatEnd = new LiveData<Long>() {};
@@ -37,16 +37,40 @@ public class RoomApiServiceImpl implements ApiService<Mission> {
     }
 
     @Override
-    public LiveData<List<Mission>> getTodayMissions(long start, long end) {
-        todayMissions = missionDao.getTodayMissions(start,end);
-        return todayMissions;
+    public LiveData<List<Mission>> getTodayMissionsByOperateDay(long start, long end) {
+        todayMissionsByOperateDay = missionDao.getTodayMissionsByOperateDay(start,end);
+        return todayMissionsByOperateDay;
+    }
+
+    @Override
+    public LiveData<List<Mission>> getTodayMissionsByRepeatType(long start, long end) {
+        todayMissionsByRepeatType = missionDao.getTodayMissionsByRepeatType(start);
+        return todayMissionsByRepeatType;
+    }
+
+    @Override
+    public LiveData<List<Mission>> getTodayMissionsByRepeatRange(long start, long end) {
+        todayMissionsByRepeatRange = missionDao.getTodayMissionsByRepeatRange(start);
+        return todayMissionsByRepeatRange;
     }
 
 
     @Override
-    public LiveData<List<Mission>> getComingMissions(long today) {
-        comingMissions = missionDao.getComingMissions(today);
-        return comingMissions;
+    public LiveData<List<Mission>> getComingMissionsByOperateDay(long today) {
+        comingMissionsByOperateDay = missionDao.getComingMissionsByOperateDay(today);
+        return comingMissionsByOperateDay;
+    }
+
+    @Override
+    public LiveData<List<Mission>> getComingMissionsByRepeatType(long today) {
+        comingMissionsByRepeatType = missionDao.getComingMissionsByRepeatType();
+        return comingMissionsByRepeatType;
+    }
+
+    @Override
+    public LiveData<List<Mission>> getComingMissionsByRepeatRange(long today) {
+        comingMissionsByRepeatRange = missionDao.getComingMissionsByRepeatRange(today);
+        return comingMissionsByRepeatRange;
     }
 
     @Override
@@ -127,7 +151,6 @@ public class RoomApiServiceImpl implements ApiService<Mission> {
         unfinishedMissions = missionDao.getUnfinishedMissions();
         return unfinishedMissions;
     }
-
 
     public void deleteMission(Mission mission){
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {

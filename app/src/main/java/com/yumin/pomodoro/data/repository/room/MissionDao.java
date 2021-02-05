@@ -16,11 +16,23 @@ public interface MissionDao {
     @Query("SELECT * FROM MyMission")
     LiveData<List<Mission>> getAllMissions();
 
-    @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet OR ( repeat = 1 AND operateDay <= :dayst ) OR repeatStart <= :dayst <= repeatEnd")
-    LiveData<List<Mission>> getTodayMissions(long dayst, long dayet);
+    @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet")
+    LiveData<List<Mission>> getTodayMissionsByOperateDay(long dayst, long dayet);
+
+    @Query("SELECT * FROM MyMission WHERE repeat = 1 AND operateDay < :dayst")
+    LiveData<List<Mission>> getTodayMissionsByRepeatType(long dayst);
+
+    @Query("SELECT * FROM MyMission WHERE repeatStart <= :dayst AND repeatEnd >= :dayst")
+    LiveData<List<Mission>> getTodayMissionsByRepeatRange(long dayst);
 
     @Query("SELECT * FROM MyMission WHERE operateDay > :current OR repeat = 1 OR :current <= repeatEnd")
-    LiveData<List<Mission>> getComingMissions(long current);
+    LiveData<List<Mission>> getComingMissionsByOperateDay(long current);
+
+    @Query("SELECT * FROM MyMission WHERE repeat = 1")
+    LiveData<List<Mission>> getComingMissionsByRepeatType();
+
+    @Query("SELECT * FROM MyMission WHERE repeatEnd >= :current")
+    LiveData<List<Mission>> getComingMissionsByRepeatRange(long current);
 
     @Query("SELECT * FROM MyMission WHERE id=:id")
     LiveData<Mission> getMissionById(int id);

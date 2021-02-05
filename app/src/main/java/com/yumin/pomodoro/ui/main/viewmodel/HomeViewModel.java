@@ -19,8 +19,15 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();;
     private RoomRepository roomRepository;
     private LiveData<List<Mission>> missions;
-    private LiveData<List<UserMission>> todayMissions;
-    private LiveData<List<Mission>> comingMissions;
+    // get for today
+    private LiveData<List<UserMission>> todayMissionsByOperateDay;
+    private LiveData<List<UserMission>> todayMissionsByRepeatType;
+    private LiveData<List<UserMission>> todayMissionsByRepeatRange;
+    // get for coming
+    private LiveData<List<UserMission>> comingMissionsByOperateDay;
+    private LiveData<List<UserMission>> comingMissionsByRepeatType;
+    private LiveData<List<UserMission>> comingMissionsByRepeatRange;
+
     private LiveData<List<Mission>> finishedMissions;
     private LiveData<List<Mission>> unfinishedMissions;
 
@@ -33,8 +40,14 @@ public class HomeViewModel extends ViewModel {
         mIsLoading.setValue(true);
         missions = this.roomRepository.getMissions();
 //        todayMissions = this.roomRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
-        todayMissions =  new FirebaseApiServiceImpl().getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
-        comingMissions = this.roomRepository.getComingMissions(getCurrentEndTime());
+        todayMissionsByOperateDay =  new FirebaseApiServiceImpl().getTodayMissionsByOperateDay(getCurrentStartTime(),getCurrentEndTime());
+        todayMissionsByRepeatType = new FirebaseApiServiceImpl().getTodayMissionsByRepeatType(getCurrentStartTime(),getCurrentEndTime());
+        todayMissionsByRepeatRange = new FirebaseApiServiceImpl().getTodayMissionsByRepeatRange(getCurrentStartTime(),getCurrentEndTime());
+
+        comingMissionsByOperateDay = new FirebaseApiServiceImpl().getComingMissionsByOperateDay(getCurrentEndTime());
+        comingMissionsByRepeatType = new FirebaseApiServiceImpl().getComingMissionsByRepeatType(getCurrentEndTime());
+        comingMissionsByRepeatRange = new FirebaseApiServiceImpl().getComingMissionsByRepeatRange(getCurrentEndTime());
+
         finishedMissions = this.roomRepository.getFinishedMissions();
         unfinishedMissions = this.roomRepository.getUnfinishedMissions();
         mIsLoading.setValue(false);
@@ -45,12 +58,28 @@ public class HomeViewModel extends ViewModel {
         return missions;
     }
 
-    public LiveData<List<UserMission>> getTodayMissions(){
-        return todayMissions;
+    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(){
+        return todayMissionsByOperateDay;
     }
 
-    public LiveData<List<Mission>> getComingMissions(){
-        return comingMissions;
+    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(){
+        return todayMissionsByRepeatType;
+    }
+
+    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(){
+        return todayMissionsByRepeatRange;
+    }
+
+    public LiveData<List<UserMission>> getComingMissionsByOperateDay(){
+        return comingMissionsByOperateDay;
+    }
+
+    public LiveData<List<UserMission>> getComingMissionsByRepeatType(){
+        return comingMissionsByRepeatType;
+    }
+
+    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(){
+        return comingMissionsByRepeatRange;
     }
     
     public MutableLiveData<Boolean> getLoading(){

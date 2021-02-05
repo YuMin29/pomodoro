@@ -60,143 +60,85 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     }
 
     @Override
-    public LiveData<List<UserMission>> getTodayMissions(long start, long end) {
-        MutableLiveData<List<UserMission>> mutableLiveData = new MutableLiveData<>();
-        List<UserMission> missionList = new ArrayList<>();
-
-        Query queryOperateDay = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("operateDay").startAt(start).endAt(end);
-        queryOperateDay.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    LogUtil.logE(TAG,"[getTodayMissions] queryOperateDay EXIST");
-                    for (DataSnapshot mission : dataSnapshot.getChildren()) {
-                        missionList.add(mission.getValue(UserMission.class));
-                    }
-                    mutableLiveData.postValue(missionList);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                LogUtil.logE(TAG,"[getTodayMissions] queryOperateDay ERROR"+databaseError.getDetails());
-            }
-        });
-
-        Query queryRepeatType = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("repeat").equalTo(1);
-        queryRepeatType.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    LogUtil.logE(TAG,"[getTodayMissions] queryRepeatType EXIST");
-                    for (DataSnapshot mission : dataSnapshot.getChildren()) {
-                        if (mission.getValue(UserMission.class).getOperateDay() <= start) {
-                            missionList.add(mission.getValue(UserMission.class));
-                        }
-                    }
-                    mutableLiveData.postValue(missionList);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                LogUtil.logE(TAG,"[getTodayMissions] queryRepeatType ERROR"+databaseError.getDetails());
-            }
-        });
-
-        Query queryRepeatDay = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("repeatStart").startAt(start);
-        queryRepeatDay.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    LogUtil.logE(TAG,"[getTodayMissions] queryRepeatDay EXIST");
-                    for (DataSnapshot mission : dataSnapshot.getChildren()) {
-                        if (mission.getValue(UserMission.class).getRepeatEnd() <= end &&
-                            mission.getValue(UserMission.class).getOperateDay() <= start) {
-                            missionList.add(mission.getValue(UserMission.class));
-                        }
-                    }
-                    mutableLiveData.postValue(missionList);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                LogUtil.logE(TAG,"[getTodayMissions] queryRepeatDay ERROR"+databaseError.getDetails());
-            }
-        });
-
-        LogUtil.logE(TAG,"[getTodayMissions] missionList SIZE = "+missionList.size());
-        return mutableLiveData;
+    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
+        FirebaseQueryListLiveData listLiveData =
+                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                        .orderByChild("operateDay").startAt(start).endAt(end));
+        return listLiveData;
     }
 
     @Override
-    public LiveData<List<UserMission>> getComingMissions(long today) {
-        MutableLiveData<List<UserMission>> listMutableLiveData = new MutableLiveData<>();
-        List<UserMission> userMissionList = new ArrayList<>();
-
-        Query queryOperate = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("operateDay");
-        queryOperate.addListenerForSingleValueEvent(new ValueEventListener() {
+    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
+        FirebaseQueryListLiveData listLiveData =
+                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                        .orderByChild("repeat").equalTo(1));
+        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    LogUtil.logE(TAG,"[getComingMissions] queryOperate EXIST");
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (dataSnapshot.getValue(UserMission.class).getOperateDay() > today) {
-                            userMissionList.add(dataSnapshot.getValue(UserMission.class));
-                        }
-                    }
-                    listMutableLiveData.postValue(userMissionList);
+            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(UserMission.class).getOperateDay() < start) {
+                    return dataSnapshot.getValue(UserMission.class);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                LogUtil.logE(TAG,"[getComingMissions] queryOperate ERROR"+error.getDetails());
+                return null;
             }
         });
+        return listLiveData;
+    }
 
-        Query queryRepeatType = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("repeat").equalTo(1);
-        queryRepeatType.addValueEventListener(new ValueEventListener() {
+    @Override
+    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
+        FirebaseQueryListLiveData listLiveData =
+                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                        .orderByChild("repeatStart").startAt(start));
+        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    LogUtil.logE(TAG,"[getComingMissions] queryRepeatType EXIST");
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        userMissionList.add(dataSnapshot.getValue(UserMission.class));
-                    }
-                    listMutableLiveData.postValue(userMissionList);
+            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() <= end &&
+                        dataSnapshot.getValue(UserMission.class).getOperateDay() <= start) {
+                    return dataSnapshot.getValue(UserMission.class);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                LogUtil.logE(TAG,"[getComingMissions] queryRepeatType ERROR:"+error.getDetails());
+                return null;
             }
         });
+        return listLiveData;
+    }
 
-        Query queryRepeatRange = databaseReference.child("usermissions").child(getCurrentUserUid()).orderByChild("repeatEnd");
-        queryRepeatRange.addValueEventListener(new ValueEventListener() {
+    @Override
+    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
+        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                .orderByChild("operateDay"));
+        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    LogUtil.logE(TAG,"[getComingMissions] queryRepeatRange EXIST");
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today) {
-                            userMissionList.add(dataSnapshot.getValue(UserMission.class));
-                        }
-                    }
-                    listMutableLiveData.postValue(userMissionList);
+            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(UserMission.class).getOperateDay() > today) {
+                    return dataSnapshot.getValue(UserMission.class);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                LogUtil.logE(TAG,"[getComingMissions] queryRepeatRange ERROR:"+error.getDetails());
+                return null;
             }
         });
+        return listLiveData;
+    }
 
-        return listMutableLiveData;
+    @Override
+    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
+        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                .orderByChild("repeat").equalTo(1));
+        return listLiveData;
+    }
+
+    @Override
+    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
+        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                .orderByChild("repeatEnd"));
+        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+            @Override
+            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today) {
+                    return dataSnapshot.getValue(UserMission.class);
+                }
+                return null;
+            }
+        });
+        return listLiveData;
     }
 
     @Override

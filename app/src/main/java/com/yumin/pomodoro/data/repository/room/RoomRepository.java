@@ -23,11 +23,11 @@ public class RoomRepository {
     }
 
     public LiveData<List<Mission>> getTodayMissions(long start, long end){
-        return apiService.getTodayMissions(start,end);
+        return apiService.getTodayMissionsByOperateDay(start,end);
     }
 
     public LiveData<List<Mission>> getComingMissions(long today){
-        return apiService.getComingMissions(today);
+        return apiService.getComingMissionsByOperateDay(today);
     }
 
     public Mission getInitMission(){
