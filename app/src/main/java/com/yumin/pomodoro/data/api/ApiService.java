@@ -20,6 +20,7 @@ public interface ApiService<T> {
     public LiveData<List<T>> getComingMissionsByRepeatType(long today);
     public LiveData<List<T>> getComingMissionsByRepeatRange(long today);
     public LiveData<T> getMissionById(int id);
+    public LiveData<T> getMissionById(String id);
     public void updateMission(T mission);
     public void deleteMission(T mission);
     public void updateNumberOfCompletionById(int id, int num);

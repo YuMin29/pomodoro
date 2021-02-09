@@ -20,6 +20,7 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
     private final MyValueEventListener myValueEventListener = new MyValueEventListener();
 
     public FirebaseQueryListLiveData(Query query) {
+        LogUtil.logE(TAG,"[query] "+query.toString());
         this.query = query;
     }
 
@@ -33,11 +34,13 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
 
     @Override
     protected void onActive() {
+        LogUtil.logE(TAG,"[onActive]");
         query.addValueEventListener(myValueEventListener);
     }
 
     @Override
     protected void onInactive() {
+        LogUtil.logE(TAG,"[onInactive]");
         query.removeEventListener(myValueEventListener);
     }
 
@@ -49,6 +52,7 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
+            LogUtil.logE(TAG,"[MyValueEventListener]");
             List<UserMission> userMissionList = new ArrayList<>();
             if (snapshot.exists()) {
                 LogUtil.logE(TAG,"[MyValueEventListener] snapshot EXIST");

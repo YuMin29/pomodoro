@@ -4,23 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-    enum Priority{
-        LOW,
-        MEDIUM,
-        HIGH
+    public enum Index{
+        TODAY,
+        COMING
     }
 
     private String mCategoryName;
-    private List<Mission> mMissionList;
-    private Priority mPriority = Priority.MEDIUM;
+    private List<Mission> mMissionList = new ArrayList<>();
+    private Index mIndex;
 
-    public Category(String name){
+    public Category(String name, Index index){
         mCategoryName = name;
+        mIndex = index;
     }
 
     public void addMission(Mission mission){
-        if (mMissionList == null)
-            mMissionList = new ArrayList<>();
         mMissionList.add(mission);
     }
 
@@ -30,5 +28,9 @@ public class Category {
 
     public String getCategoryName(){
         return mCategoryName;
+    }
+
+    public Index getIndex(){
+        return this.mIndex;
     }
 }

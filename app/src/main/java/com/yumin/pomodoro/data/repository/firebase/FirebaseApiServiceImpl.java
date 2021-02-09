@@ -31,7 +31,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null)
             return user.getUid();
-        return null;
+        return "";
     }
 
     @Override
@@ -43,9 +43,10 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     public void addMission(UserMission mission) {
         LogUtil.logD(TAG,"[addMission]");
         if (getCurrentUserUid() != null) {
-            mission.setUid(getCurrentUserUid());
+            String id = databaseReference.child("usermissions").child(getCurrentUserUid()).push().getKey();
+            mission.setStrId(id);
             // add mission to firebase
-            databaseReference.child("usermissions").child(getCurrentUserUid()).push().setValue(mission);
+            databaseReference.child("usermissions").child(getCurrentUserUid()).child(id).setValue(mission);
         }
     }
 
@@ -147,8 +148,16 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     }
 
     @Override
-    public void updateMission(UserMission mission) {
+    public LiveData<UserMission> getMissionById(String strId) {
+        FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(databaseReference.child("usermissions")
+                .child(getCurrentUserUid()).orderByKey().equalTo(strId));
+        return liveData;
+    }
 
+    @Override
+    public void updateMission(UserMission mission) {
+        databaseReference.child("usermissions").child(getCurrentUserUid())
+                .child(mission.getStrId()).setValue(mission);
     }
 
     @Override

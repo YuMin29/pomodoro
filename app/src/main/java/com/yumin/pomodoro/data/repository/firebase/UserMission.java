@@ -4,7 +4,7 @@ import com.yumin.pomodoro.data.model.Mission;
 
 public class UserMission extends Mission {
     private static final String TAG = "[UserMission]";
-    private String uid;
+    private String stringId;
 
     public UserMission() {
         super();
@@ -19,21 +19,23 @@ public class UserMission extends Mission {
                        int goal, int repeat, int repeatStart, int repeatEnd,
                        boolean enableNotification, boolean enableSound,
                        boolean enableVibrate, boolean keepScreenOn,
-                       boolean finished,String uid) {
+                       boolean finished, String stringId) {
         super(name, time, shortBreakTime, longBreakTime, color, operateDay, goal, repeat, repeatStart, repeatEnd, enableNotification, enableSound, enableVibrate, keepScreenOn, finished);
-        this.uid = uid;
+        this.stringId = stringId;
     }
 
     @Override
     public String toString() {
-        return super.toString()+", uis = "+uid;
+        return super.toString()+", stringId = "+stringId;
     }
 
-    public String getUid() {
-        return uid;
+    public String getStrId() {
+        return stringId;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setStrId(String id) {
+        this.stringId = id;
     }
+
+
 }

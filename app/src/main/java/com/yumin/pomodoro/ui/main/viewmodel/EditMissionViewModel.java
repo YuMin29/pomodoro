@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
@@ -18,16 +20,18 @@ import java.util.Date;
 public class EditMissionViewModel extends AndroidViewModel {
     private static final String TAG = "[EditMissionViewModel]";
     private RoomRepository roomRepository;
-    private LiveData<Mission> editMission;
+    private LiveData<UserMission> editMission;
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
     private int missionId;
+    private String missionStrId;
 
     public EditMissionViewModel(@NonNull Application application, RoomRepository roomRepository) {
         super(application);
         this.roomRepository = roomRepository;
         this.missionId = MissionManager.getInstance().getEditId();
-        LogUtil.logD(TAG,"missionId = "+missionId);
+        this.missionStrId = MissionManager.getInstance().getEditStrId();
+        LogUtil.logD(TAG,"missionStrId = "+missionStrId);
         saveButtonClick.postValue(false);
         cancelButtonClick.postValue(false);
         fetchMission();
@@ -35,10 +39,11 @@ public class EditMissionViewModel extends AndroidViewModel {
 
     private void fetchMission(){
         LogUtil.logD(TAG,"[fetchMission] ");
-        editMission = roomRepository.getMissionById(missionId);
+//        editMission = roomRepository.getMissionById(missionId);
+        editMission = new FirebaseApiServiceImpl().getMissionById(missionStrId);
     }
 
-    public LiveData<Mission> getEditMission(){
+    public LiveData<UserMission> getEditMission(){
         return this.editMission;
     }
 
@@ -57,7 +62,8 @@ public class EditMissionViewModel extends AndroidViewModel {
 
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+ editMission.getValue().toString());
-        roomRepository.updateMission(editMission.getValue());
+//        roomRepository.updateMission(editMission.getValue());
+        new FirebaseApiServiceImpl().updateMission(editMission.getValue());
         saveButtonClick.postValue(true);
     }
 

@@ -169,7 +169,8 @@ public class BreakTimerFragment extends DataBindingFragment {
 
                         // switch to mission timer
                         Bundle bundle = new Bundle();
-                        bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
+                        bundle.putString("itemId", MissionManager.getInstance().getOperateStrId());
+//                        bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                         MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_timer,bundle);
                     } else {
                         LogUtil.logD(TAG,"[break timer][onFinished] 1");
@@ -204,6 +205,7 @@ public class BreakTimerFragment extends DataBindingFragment {
     }
 
     private void observeViewModel(){
+        // TODO: 2/8/21 Use Mediator to observe mission from view model
         timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {
             @Override
             public void onChanged(Mission mission) {

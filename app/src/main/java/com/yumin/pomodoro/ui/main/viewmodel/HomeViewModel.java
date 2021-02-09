@@ -16,7 +16,7 @@ import java.util.List;
 
 public class HomeViewModel extends ViewModel {
     private static final String TAG = "[HomeViewModel]";
-    private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();;
+    private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();
     private RoomRepository roomRepository;
     private LiveData<List<Mission>> missions;
     // get for today

@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
@@ -109,9 +110,10 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             }
         });
 
-        editMissionViewModel.getEditMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {
+        editMissionViewModel.getEditMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
-            public void onChanged(Mission mission) {
+            public void onChanged(UserMission mission) {
+                LogUtil.logE(TAG,"[onChanged] MISSION = "+mission.toString());
                 if (mission != null) {
                     editMission = mission;
                     operateDay = editMission.getOperateDay();

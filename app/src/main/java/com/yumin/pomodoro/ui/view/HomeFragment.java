@@ -28,6 +28,7 @@ import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class HomeFragment extends DataBindingFragment {
@@ -90,12 +91,13 @@ public class HomeFragment extends DataBindingFragment {
         fragmentHomeBinding.homeListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Mission mission = (Mission) expandableViewAdapter.getChild(groupPosition,childPosition);
-                LogUtil.logD(TAG,"[onChildClick] item = "+mission.getName()+
+                UserMission userMission = (UserMission) expandableViewAdapter.getChild(groupPosition,childPosition);
+                LogUtil.logD(TAG,"[onChildClick] item = "+userMission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
-                if (!mission.isFinished()) {
-                    MissionManager.getInstance().setOperateId(mission.getId());
+                if (!userMission.isFinished()) {
+//                    MissionManager.getInstance().setOperateId(userMission.getId());
 //                    MainActivity.getNavController().navigate(R.id.fragment_timer);
+                    MissionManager.getInstance().setOperateId(userMission.getStrId());
                     navigate(R.id.fragment_timer);
                 } else {
                     // TODO: 2020/12/29 重新開始任務？ 清除完成紀錄？
@@ -115,11 +117,12 @@ public class HomeFragment extends DataBindingFragment {
                 int childPos = ExpandableListView.getPackedPositionChild(pos);
 
                 if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    Mission mission = (Mission) expandableViewAdapter.getChild(groupPos,childPos);
+                    UserMission mission = (UserMission) expandableViewAdapter.getChild(groupPos,childPos);
                     LogUtil.logD(TAG,"[onItemLongClick] item = "+mission.getName()+
                             " ,groupPosition = "+groupPos+" ,childPosition = "+childPos);
                     if (!mission.isFinished()) {
-                        MissionManager.getInstance().setEditId(mission.getId());
+//                        MissionManager.getInstance().setEditId(mission.getId());
+                        MissionManager.getInstance().setEditStrId(mission.getStrId());
 //                        MainActivity.getNavController().navigate(R.id.edit_mission_fragment);
                         navigate(R.id.edit_mission_fragment);
                         return true;
@@ -157,16 +160,19 @@ public class HomeFragment extends DataBindingFragment {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 LogUtil.logE(TAG,"[observeViewModel][todayObserver] onChanged");
-                today = new Category(getString(R.string.category_today));
-                for (UserMission mission : userMissions) {
-                    today.addMission(mission);
+                if (!userMissions.isEmpty()) {
+                    today = new Category(getString(R.string.category_today), Category.Index.TODAY);
+                    for (UserMission mission : userMissions) {
+                        today.addMission(mission);
+                    }
+                    expandCategoryList();
                 }
-                updateCategoryList();
             }
         };
         todayMissions.addSource(mHomeViewModel.getTodayMissionsByOperateDay(), todayObserver);
         todayMissions.addSource(mHomeViewModel.getTodayMissionsByRepeatType(), todayObserver);
         todayMissions.addSource(mHomeViewModel.getTodayMissionsByRepeatRange(), todayObserver);
+        todayMissions.observe(getViewLifecycleOwner(),todayObserver);
 
         // observe coming missions
         MediatorLiveData<List<UserMission>> comingMissions = new MediatorLiveData<>();
@@ -174,16 +180,19 @@ public class HomeFragment extends DataBindingFragment {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 LogUtil.logE(TAG,"[observeViewModel][comingObserver] onChanged");
-                coming = new Category(getString(R.string.category_coming));
-                for (UserMission mission : userMissions) {
-                    coming.addMission(mission);
+                if (!userMissions.isEmpty()){
+                    coming = new Category(getString(R.string.category_coming), Category.Index.COMING);
+                    for (UserMission mission : userMissions) {
+                        coming.addMission(mission);
+                    }
+                    updateCategoryValue(coming);
                 }
-                updateCategoryList();
             }
         };
         comingMissions.addSource(mHomeViewModel.getComingMissionsByOperateDay(), comingObserver);
         comingMissions.addSource(mHomeViewModel.getComingMissionsByRepeatType(), comingObserver);
         comingMissions.addSource(mHomeViewModel.getComingMissionsByRepeatRange(), comingObserver);
+        comingMissions.observe(getViewLifecycleOwner(), comingObserver);
 
 //        mHomeViewModel.getComingMissionsByRepeatRange().observe(getViewLifecycleOwner(), missions -> {
 //            LogUtil.logD(TAG,"[observeViewModel] coming mission list size = "+missions.size());
@@ -229,11 +238,27 @@ public class HomeFragment extends DataBindingFragment {
 
     }
 
-    private void updateCategoryList(){
+    public static <T> boolean IsNullOrEmpty(Collection<T> list) {
+        return null == list || list.isEmpty();
+    }
+
+    private void updateCategoryValue(Category category) {
+        int index = category.getIndex().ordinal();
+        LogUtil.logE(TAG,"[updateCategory] index = "+index);
+
+        if (mCategory.size() > index && mCategory.get(index) != null) {
+            mCategory.remove(index);
+        }
+        mCategory.add(category);
+
+        expandCategoryList();
+    }
+
+    private void expandCategoryList(){
         mCategory.clear();
-        if (today != null)
+        if (!IsNullOrEmpty(today.getMissionList()))
             mCategory.add(today);
-        if (coming != null )
+        if (!IsNullOrEmpty(coming.getMissionList()))
             mCategory.add(coming);
         expandableViewAdapter.flashCategory(mCategory);
 

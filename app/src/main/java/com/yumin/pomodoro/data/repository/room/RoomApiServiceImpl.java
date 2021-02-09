@@ -80,6 +80,11 @@ public class RoomApiServiceImpl implements ApiService<Mission> {
     }
 
     @Override
+    public LiveData<Mission> getMissionById(String id) {
+        return null;
+    }
+
+    @Override
     public LiveData<List<Mission>> getMissions() {
         Log.d("[ApiServiceImpl]","[getMissions]");
         return allMissions;

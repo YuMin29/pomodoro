@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.model.AdjustMissionItem;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 
@@ -22,7 +24,7 @@ public class AddMissionViewModel extends AndroidViewModel {
     public static final String TAG = "[AddMissionViewModel]";
     private RoomRepository roomRepository;
     private MutableLiveData<List<AdjustMissionItem>> adjustMissionItems = new MutableLiveData<>();
-    private MutableLiveData<Mission> mission = new MutableLiveData<>();
+    private MutableLiveData<UserMission> mission = new MutableLiveData<>();
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
 
@@ -36,7 +38,7 @@ public class AddMissionViewModel extends AndroidViewModel {
 
     private void fetchMission(){
         // init adjust item
-        mission.setValue(roomRepository.getInitMission());
+        mission.setValue(new FirebaseApiServiceImpl().getInitMission());
     }
     public void setMissionOperateDay(long operateDay){
         LogUtil.logD(TAG,"[setTmpMissionOperateDay] operateDay ="+getTransferDate(operateDay));
@@ -47,7 +49,7 @@ public class AddMissionViewModel extends AndroidViewModel {
         return this.mission.getValue().getOperateDay();
     }
 
-    public LiveData<Mission> getMission(){
+    public LiveData<UserMission> getMission(){
         return this.mission;
     }
 
@@ -61,7 +63,8 @@ public class AddMissionViewModel extends AndroidViewModel {
 
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+mission.getValue().toString());
-        roomRepository.addMission(mission.getValue());
+//        roomRepository.addMission(mission.getValue());
+        new FirebaseApiServiceImpl().addMission(mission.getValue());
         saveButtonClick.postValue(true);
     }
 

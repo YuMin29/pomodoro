@@ -11,7 +11,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.utils.LogUtil;
 
-public class FirebaseQueryLiveData extends LiveData<DataSnapshot> {
+public class FirebaseQueryLiveData extends LiveData<UserMission> {
     private static final String TAG = "[FirebaseQueryLiveData]";
     private final Query query;
     private final MyValueEventListener myValueEventListener = new MyValueEventListener();
@@ -41,12 +41,16 @@ public class FirebaseQueryLiveData extends LiveData<DataSnapshot> {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            setValue(snapshot);
+            if (snapshot.exists()) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    setValue(dataSnapshot.getValue(UserMission.class));
+                }
+            }
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            LogUtil.logE(TAG,"Can't listen to query :" + query + error.toException());
+            LogUtil.logE(TAG,"[MyValueEventListener][onCancelled] error = "+error);
         }
     }
 }
