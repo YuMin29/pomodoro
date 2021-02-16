@@ -131,7 +131,8 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
 
     @Override
     public void onOpened() {
-        MissionManager.getInstance().setRangeCalenderId(-1);
+//        MissionManager.getInstance().setRangeCalenderId(-1);
+        MissionManager.getInstance().setRangeCalenderId("-1");
         Bundle bundle = new Bundle();
         bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
         bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);

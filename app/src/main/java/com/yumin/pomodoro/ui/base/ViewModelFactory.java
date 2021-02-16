@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.yumin.pomodoro.data.api.ApiService;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
@@ -29,15 +30,15 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass == AddMissionViewModel.class) {
-            return (T) new AddMissionViewModel(application,new RoomRepository(apiService));
+            return (T) new AddMissionViewModel(application,new FirebaseRepository(apiService));
         } else if (modelClass == HomeViewModel.class) {
-            return (T) new HomeViewModel(new RoomRepository(apiService));
+            return (T) new HomeViewModel(new FirebaseRepository(apiService));
         } else if (modelClass == EditMissionViewModel.class) {
-            return (T) new EditMissionViewModel(application,new RoomRepository(apiService));
+            return (T) new EditMissionViewModel(application,new FirebaseRepository(apiService));
         } else if (modelClass == TimerViewModel.class) {
-            return (T) new TimerViewModel(application,new RoomRepository(apiService));
+            return (T) new TimerViewModel(application,new FirebaseRepository(apiService));
         } else if (modelClass == RangeCalenderViewModel.class) {
-            return (T) new RangeCalenderViewModel(application,new RoomRepository(apiService));
+            return (T) new RangeCalenderViewModel(application,new FirebaseRepository(apiService));
         } else if (modelClass == LoginViewModel.class) {
             return (T) new LoginViewModel(application);
         }

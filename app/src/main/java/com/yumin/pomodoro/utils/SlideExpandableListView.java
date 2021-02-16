@@ -64,7 +64,8 @@ public class SlideExpandableListView extends ExpandableListView {
         if (mPointChild == null)
             return;
         // 获取删除按钮的宽度
-        mDeleteBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;
+        if (mPointChild.getChildAt(1) != null)
+            mDeleteBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;
         LogUtil.logD(TAG,"[performActionDown] mDeleteBtnWidth = "+mDeleteBtnWidth);
         mLayoutParams = (LinearLayout.LayoutParams) mPointChild.getChildAt(0)
                 .getLayoutParams();

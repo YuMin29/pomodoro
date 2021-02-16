@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
@@ -13,28 +14,30 @@ import com.yumin.pomodoro.utils.base.MissionManager;
 // shared view model between AddMissionFragment/EditMissionFragment/RangeCalenderViewFragment
 public class RangeCalenderViewModel extends AndroidViewModel {
     private static final String TAG = "[RangeCalenderViewModel]";
-    private RoomRepository roomRepository;
-    private int mMissionId;
+//    private RoomRepository roomRepository;
+    private FirebaseRepository firebaseRepository;
+//    private int mMissionId;
+    private String mStrMissionId;
     private LiveData<Long> repeatStart = new LiveData<Long>(-1L){};
     private LiveData<Long> repeatEnd = new LiveData<Long>(-1L) {};
     private LiveData<Long> missionOperateDay = new LiveData<Long>(-1L) {};
 
-    public RangeCalenderViewModel(@NonNull Application application, RoomRepository roomRepository) {
+    public RangeCalenderViewModel(@NonNull Application application, FirebaseRepository firebaseRepository) {
         super(application);
-        this.roomRepository = roomRepository;
-        this.mMissionId = MissionManager.getInstance().getRangeCalenderId();
-        LogUtil.logD(TAG,"missionId = "+ mMissionId);
+        this.firebaseRepository = firebaseRepository;
+        this.mStrMissionId = MissionManager.getInstance().getStrRangeCalenderId();
+        LogUtil.logD(TAG,"missionId = "+ mStrMissionId);
 
-        if (mMissionId != -1) {
-            fetchMission(mMissionId);
+        if (!mStrMissionId.equals("-1")) {
+            fetchMission(mStrMissionId);
         }
     }
 
-    private void fetchMission(int id){
+    private void fetchMission(String id){
         LogUtil.logD(TAG,"[fetchMission]");
-        repeatStart = roomRepository.getMissionRepeatStart(id);
-        repeatEnd = roomRepository.getMissionRepeatEnd(id);
-        missionOperateDay = roomRepository.getMissionOperateDay(id);
+        repeatStart = firebaseRepository.getMissionRepeatStart(id);
+        repeatEnd = firebaseRepository.getMissionRepeatEnd(id);
+        missionOperateDay = firebaseRepository.getMissionOperateDay(id);
     }
 
     public LiveData<Long> getRepeatStart(){

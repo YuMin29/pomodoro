@@ -151,10 +151,11 @@ public class BreakTimerFragment extends DataBindingFragment {
 
             @Override
             public void onFinished() {
-                LogUtil.logD(TAG,"[onFinished]");
+                LogUtil.logD(TAG,"[break timer][onFinished] 1");
+                LogUtil.logD(TAG,"[break timer][onFinished] missionCount = "+missionCount+" ,numberOfCompletion = "+numberOfCompletion);
                 if (missionCount != -1 && numberOfCompletion != -1) {
                     if ((missionCount - numberOfCompletion) >= 1) {
-                        LogUtil.logD(TAG,"[break timer][onFinished]");
+                        LogUtil.logD(TAG,"[break timer][onFinished] 2");
                         // vibrate for remind
                         if (enabledVibrate) {
                             Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -169,11 +170,11 @@ public class BreakTimerFragment extends DataBindingFragment {
 
                         // switch to mission timer
                         Bundle bundle = new Bundle();
-                        bundle.putString("itemId", MissionManager.getInstance().getOperateStrId());
+                        bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
 //                        bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                         MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_timer,bundle);
                     } else {
-                        LogUtil.logD(TAG,"[break timer][onFinished] 1");
+                        LogUtil.logD(TAG,"[break timer][onFinished] 3");
                         // finished timer fragment
                         timerViewModel.updateIsFinishedById(true);
 //                        MainActivity.getNavController().navigateUp();
@@ -187,6 +188,10 @@ public class BreakTimerFragment extends DataBindingFragment {
                             notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
                         }
                     }
+                } else {
+                    navigateUp();
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                    undoStatusBarColor();
                 }
             }
 

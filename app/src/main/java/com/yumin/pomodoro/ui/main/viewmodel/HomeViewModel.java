@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -17,8 +18,9 @@ import java.util.List;
 public class HomeViewModel extends ViewModel {
     private static final String TAG = "[HomeViewModel]";
     private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();
-    private RoomRepository roomRepository;
-    private LiveData<List<Mission>> missions;
+//    private RoomRepository roomRepository;
+    private FirebaseRepository firebaseRepository;
+    private LiveData<List<UserMission>> missions;
     // get for today
     private LiveData<List<UserMission>> todayMissionsByOperateDay;
     private LiveData<List<UserMission>> todayMissionsByRepeatType;
@@ -28,32 +30,32 @@ public class HomeViewModel extends ViewModel {
     private LiveData<List<UserMission>> comingMissionsByRepeatType;
     private LiveData<List<UserMission>> comingMissionsByRepeatRange;
 
-    private LiveData<List<Mission>> finishedMissions;
-    private LiveData<List<Mission>> unfinishedMissions;
+    private LiveData<List<UserMission>> finishedMissions;
+    private LiveData<List<UserMission>> unfinishedMissions;
 
-    public HomeViewModel(RoomRepository roomRepository){
-        this.roomRepository = roomRepository;
+    public HomeViewModel(FirebaseRepository firebaseRepository){
+        this.firebaseRepository = firebaseRepository;
         fetchData();
     }
 
     private void fetchData() {
         mIsLoading.setValue(true);
-        missions = this.roomRepository.getMissions();
+        missions = this.firebaseRepository.getMissions();
 //        todayMissions = this.roomRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
-        todayMissionsByOperateDay =  new FirebaseApiServiceImpl().getTodayMissionsByOperateDay(getCurrentStartTime(),getCurrentEndTime());
-        todayMissionsByRepeatType = new FirebaseApiServiceImpl().getTodayMissionsByRepeatType(getCurrentStartTime(),getCurrentEndTime());
-        todayMissionsByRepeatRange = new FirebaseApiServiceImpl().getTodayMissionsByRepeatRange(getCurrentStartTime(),getCurrentEndTime());
+        todayMissionsByOperateDay =  firebaseRepository.getTodayMissionsByOperateDay(getCurrentStartTime(),getCurrentEndTime());
+        todayMissionsByRepeatType = firebaseRepository.getTodayMissionsByRepeatType(getCurrentStartTime(),getCurrentEndTime());
+        todayMissionsByRepeatRange = firebaseRepository.getTodayMissionsByRepeatRange(getCurrentStartTime(),getCurrentEndTime());
 
-        comingMissionsByOperateDay = new FirebaseApiServiceImpl().getComingMissionsByOperateDay(getCurrentEndTime());
-        comingMissionsByRepeatType = new FirebaseApiServiceImpl().getComingMissionsByRepeatType(getCurrentEndTime());
-        comingMissionsByRepeatRange = new FirebaseApiServiceImpl().getComingMissionsByRepeatRange(getCurrentEndTime());
+        comingMissionsByOperateDay = firebaseRepository.getComingMissionsByOperateDay(getCurrentEndTime());
+        comingMissionsByRepeatType = firebaseRepository.getComingMissionsByRepeatType(getCurrentEndTime());
+        comingMissionsByRepeatRange = firebaseRepository.getComingMissionsByRepeatRange(getCurrentEndTime());
 
-        finishedMissions = this.roomRepository.getFinishedMissions();
-        unfinishedMissions = this.roomRepository.getUnfinishedMissions();
+        finishedMissions = this.firebaseRepository.getFinishedMissions();
+        unfinishedMissions = this.firebaseRepository.getUnfinishedMissions();
         mIsLoading.setValue(false);
     }
 
-    public LiveData<List<Mission>> getMissions(){
+    public LiveData<List<UserMission>> getMissions(){
         LogUtil.logD(TAG,"getMissionList");
         return missions;
     }
@@ -87,15 +89,16 @@ public class HomeViewModel extends ViewModel {
 		return mIsLoading;
 	}
 
-    public void updateIsFinishedById(int itemId,boolean finished){
-        roomRepository.updateIsFinishedById(itemId,finished);
+    public void updateIsFinishedById(String itemId,boolean finished){
+//        roomRepository.updateIsFinishedById(itemId,finished);
+        firebaseRepository.updateIsFinishedById(itemId,finished);
     }
 
-    public LiveData<List<Mission>> getFinishedMissions(){
+    public LiveData<List<UserMission>> getFinishedMissions(){
         return finishedMissions;
     }
 
-    public LiveData<List<Mission>> getUnfinishedMissions(){
+    public LiveData<List<UserMission>> getUnfinishedMissions(){
         return unfinishedMissions;
     }
 
@@ -116,6 +119,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void deleteMission(Mission mission){
-        this.roomRepository.deleteMission(mission);
+//        this.roomRepository.deleteMission(mission);
+        firebaseRepository.deleteMission((UserMission) mission);
     }
 }

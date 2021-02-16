@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.model.AdjustMissionItem;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -23,14 +24,16 @@ import java.util.List;
 public class AddMissionViewModel extends AndroidViewModel {
     public static final String TAG = "[AddMissionViewModel]";
     private RoomRepository roomRepository;
+    private FirebaseRepository firebaseRepository;
     private MutableLiveData<List<AdjustMissionItem>> adjustMissionItems = new MutableLiveData<>();
     private MutableLiveData<UserMission> mission = new MutableLiveData<>();
     private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
     private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
 
-    public AddMissionViewModel(@NonNull Application application, RoomRepository roomRepository) {
+    public AddMissionViewModel(@NonNull Application application, FirebaseRepository firebaseRepository) {
         super(application);
-        this.roomRepository = roomRepository;
+//        this.roomRepository = roomRepository;
+        this.firebaseRepository = firebaseRepository;
         fetchMission();
         saveButtonClick.postValue(false);
         cancelButtonClick.postValue(false);
@@ -38,7 +41,7 @@ public class AddMissionViewModel extends AndroidViewModel {
 
     private void fetchMission(){
         // init adjust item
-        mission.setValue(new FirebaseApiServiceImpl().getInitMission());
+        mission.setValue(firebaseRepository.getInitMission());
     }
     public void setMissionOperateDay(long operateDay){
         LogUtil.logD(TAG,"[setTmpMissionOperateDay] operateDay ="+getTransferDate(operateDay));
@@ -64,7 +67,7 @@ public class AddMissionViewModel extends AndroidViewModel {
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+mission.getValue().toString());
 //        roomRepository.addMission(mission.getValue());
-        new FirebaseApiServiceImpl().addMission(mission.getValue());
+        firebaseRepository.addMission(mission.getValue());
         saveButtonClick.postValue(true);
     }
 

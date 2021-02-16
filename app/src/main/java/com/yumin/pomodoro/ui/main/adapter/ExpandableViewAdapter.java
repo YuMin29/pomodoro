@@ -19,6 +19,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
     private static final String TAG = "[TestExpandableAdapter]";
     private OnClickListenerEditOrDelete onClickListenerEditOrDelete;
     private static final int GROUP_COMING_POSITION = 1;
+    private static final int GROUP_TODAY_POSITION = 0;
     private Context mContext;
 
     public interface OnClickListenerEditOrDelete{
@@ -80,7 +81,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
 
         // TODO: 1/18/21  gray out this item and show check icon when finished
         // set delete line if finished
-        if (mission.isFinished()) {
+        if (groupPosition == GROUP_TODAY_POSITION && mission.isFinished()) {
 //            binding.itemName.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             view.setAlpha(0.5f); // set opacity
             binding.colorView.setVisibility(View.INVISIBLE);

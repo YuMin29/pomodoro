@@ -44,7 +44,7 @@ public class RoomRepository {
 
     public void addMission(Mission mission){
         apiService.addMission(mission);
-        new FirebaseApiServiceImpl().addMission(new UserMission(mission.getTime(),mission.getShortBreakTime(),mission.getColor()));
+//        new FirebaseApiServiceImpl().addMission(new UserMission(mission.getTime(),mission.getShortBreakTime(),mission.getColor()));
     }
 
     public void updateMission(Mission mission){

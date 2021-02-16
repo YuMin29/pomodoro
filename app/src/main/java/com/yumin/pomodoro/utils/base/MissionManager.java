@@ -5,8 +5,9 @@ public class MissionManager {
     private int editId = -1;
     private int operateId = -1;
     private int rangeCalenderId = -1;
-    private String operateStrId = "";
-    private String editStrId = "";
+    private String strOperateId = "";
+    private String strEditId = "";
+    private String strRangeCalenderId = "";
 
     private MissionManager(){}
 
@@ -22,12 +23,12 @@ public class MissionManager {
         return this.editId;
     }
 
-    public void setEditStrId(String editStrId){
-        this.editStrId = editStrId;
+    public void setStrEditId(String strEditId){
+        this.strEditId = strEditId;
     }
 
-    public String getEditStrId(){
-        return this.editStrId;
+    public String getStrEditId(){
+        return this.strEditId;
     }
 
     public int getRangeCalenderId() {
@@ -36,6 +37,14 @@ public class MissionManager {
 
     public void setRangeCalenderId(int rangeCalenderId) {
         this.rangeCalenderId = rangeCalenderId;
+    }
+
+    public void setRangeCalenderId(String rangeCalenderId){
+        this.strRangeCalenderId = rangeCalenderId;
+    }
+
+    public String getStrRangeCalenderId(){
+        return this.strRangeCalenderId;
     }
 
     public int getOperateId() {
@@ -47,10 +56,10 @@ public class MissionManager {
     }
 
     public void setOperateId(String operateId){
-        this.operateStrId = operateId;
+        this.strOperateId = operateId;
     }
 
-    public String getOperateStrId(){
-        return this.operateStrId;
+    public String getStrOperateId(){
+        return this.strOperateId;
     }
 }

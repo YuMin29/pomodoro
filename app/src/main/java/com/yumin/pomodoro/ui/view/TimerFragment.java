@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.databinding.library.baseAdapters.BR;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -183,7 +182,7 @@ public class TimerFragment extends DataBindingFragment {
 
                 // switch to break timer
                 Bundle bundle = new Bundle();
-                bundle.putString("itemId", MissionManager.getInstance().getOperateStrId());
+                bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
 //                bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                 MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.action_timer_to_break_timer,bundle);
             }

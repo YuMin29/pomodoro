@@ -1,8 +1,11 @@
 package com.yumin.pomodoro.data.repository.firebase;
 
+import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.room.Query;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -10,19 +13,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.data.api.ApiService;
+import com.yumin.pomodoro.data.api.FireBaseApiService;
+import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.room.MissionDao;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirebaseApiServiceImpl implements ApiService<UserMission> {
+public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     private static final String TAG = "[FirebaseApiServiceImpl]";
     DatabaseReference databaseReference;
 
-    public FirebaseApiServiceImpl(){
+    public FirebaseApiServiceImpl(Application application){
         LogUtil.logE(TAG,"constructor");
         databaseReference = FirebaseDatabase.getInstance().getReference();
     }
@@ -36,7 +41,9 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public LiveData<List<UserMission>> getMissions() {
-        return null;
+        FirebaseQueryListLiveData listLiveData =
+                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid()));
+        return listLiveData;
     }
 
     @Override
@@ -123,6 +130,16 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
         FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
                 .orderByChild("repeat").equalTo(1));
+        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+            @Override
+            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+                // 過濾 執行日< TODAY
+                if (dataSnapshot.getValue(UserMission.class).getOperateDay() < today) {
+                    return dataSnapshot.getValue(UserMission.class);
+                }
+                return null;
+            }
+        });
         return listLiveData;
     }
 
@@ -133,7 +150,8 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
             public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today) {
+                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today &&
+                        dataSnapshot.getValue(UserMission.class).getOperateDay() < today) {
                     return dataSnapshot.getValue(UserMission.class);
                 }
                 return null;
@@ -142,16 +160,84 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
         return listLiveData;
     }
 
-    @Override
-    public LiveData<UserMission> getMissionById(int id) {
-        return null;
-    }
 
     @Override
     public LiveData<UserMission> getMissionById(String strId) {
         FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(databaseReference.child("usermissions")
                 .child(getCurrentUserUid()).orderByKey().equalTo(strId));
         return liveData;
+    }
+
+    @Override
+    public void updateNumberOfCompletionById(String id, int num) {
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
+                .child("numberOfCompletions").setValue(num);
+    }
+
+    @Override
+    public void updateIsFinishedById(String id, boolean finished) {
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
+                .child("finished").setValue(finished);
+    }
+
+    @Override
+    public LiveData<Long> getMissionRepeatStart(String id) {
+        MutableLiveData<Long> repeatStart = new MutableLiveData<>();
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id).child("repeatStart")
+                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    repeatStart.setValue(snapshot.getValue(Long.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                LogUtil.logE(TAG,"[getMissionRepeatStart][onCancelled] ERROR = "+error.getDetails());
+            }
+        });
+        return repeatStart;
+    }
+
+    @Override
+    public LiveData<Long> getMissionRepeatEnd(String id) {
+        MutableLiveData<Long> repeatEnd = new MutableLiveData<>();
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id).child("repeatEnd")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            repeatEnd.setValue(snapshot.getValue(Long.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        LogUtil.logE(TAG,"[getMissionRepeatEnd][onCancelled] ERROR = "+error.getDetails());
+                    }
+                });
+        return repeatEnd;
+    }
+
+    @Override
+    public LiveData<Long> getMissionOperateDay(String id) {
+        MutableLiveData<Long> operateDay = new MutableLiveData<>();
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id).child("operateDay")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            operateDay.setValue(snapshot.getValue(Long.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        LogUtil.logE(TAG,"[getMissionOperateDay][onCancelled] ERROR = "+error.getDetails());
+                    }
+                });
+        return operateDay;
     }
 
     @Override
@@ -162,41 +248,23 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public void deleteMission(UserMission mission) {
-
-    }
-
-    @Override
-    public void updateNumberOfCompletionById(int id, int num) {
-
-    }
-
-    @Override
-    public void updateIsFinishedById(int id, boolean finished) {
-
-    }
-
-    @Override
-    public LiveData<Long> getMissionRepeatStart(int id) {
-        return null;
-    }
-
-    @Override
-    public LiveData<Long> getMissionRepeatEnd(int id) {
-        return null;
-    }
-
-    @Override
-    public LiveData<Long> getMissionOperateDay(int id) {
-        return null;
+        databaseReference.child("usermissions").child(getCurrentUserUid())
+                .child(mission.getStrId()).removeValue();
     }
 
     @Override
     public LiveData<List<UserMission>> getFinishedMissions() {
-        return null;
+        FirebaseQueryListLiveData listLiveData =
+                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                        .orderByChild("finished").equalTo(true));
+        return listLiveData;
     }
 
     @Override
     public LiveData<List<UserMission>> getUnFinishedMissions() {
-        return null;
+        FirebaseQueryListLiveData listLiveData =
+                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                .orderByChild("finished").equalTo(false));
+        return listLiveData;
     }
 }

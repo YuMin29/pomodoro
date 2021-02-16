@@ -131,7 +131,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
 
     @Override
     public void onOpened() {
-        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getEditId());
+//        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getEditId());
+        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getStrEditId());
         Bundle bundle = new Bundle();
         bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
         bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);

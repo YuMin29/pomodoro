@@ -6,12 +6,13 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import com.yumin.pomodoro.data.api.ApiService;
+import com.yumin.pomodoro.data.api.RoomApiService;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
-public class RoomApiServiceImpl implements ApiService<Mission> {
+public class RoomApiServiceImpl implements RoomApiService<Mission> {
     private static final String TAG = "[ApiServiceImpl]";
     private List<Mission> missions;
     private MissionDao missionDao;
@@ -77,11 +78,6 @@ public class RoomApiServiceImpl implements ApiService<Mission> {
     public LiveData<Mission> getMissionById(int id) {
         missionById = missionDao.getMissionById(id);
         return missionById;
-    }
-
-    @Override
-    public LiveData<Mission> getMissionById(String id) {
-        return null;
     }
 
     @Override
