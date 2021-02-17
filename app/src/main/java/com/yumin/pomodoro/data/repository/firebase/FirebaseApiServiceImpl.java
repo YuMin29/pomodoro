@@ -21,6 +21,7 @@ import com.yumin.pomodoro.data.repository.room.MissionDao;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
@@ -177,7 +178,7 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     @Override
     public void updateIsFinishedById(String id, boolean finished) {
         databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
-                .child("finished").setValue(finished);
+                .child("finishedDay").setValue(new Date().getTime());
     }
 
     @Override
@@ -253,18 +254,28 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissions() {
+    public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
         FirebaseQueryListLiveData listLiveData =
                 new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                        .orderByChild("finished").equalTo(true));
+                        .orderByChild("finishedDay").startAt(start).endAt(end));
         return listLiveData;
     }
 
     @Override
-    public LiveData<List<UserMission>> getUnFinishedMissions() {
-        FirebaseQueryListLiveData listLiveData =
-                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                .orderByChild("finished").equalTo(false));
+    public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
+        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
+                .orderByChild("finishedDay"));
+        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+            @Override
+            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+                if ((dataSnapshot.getValue(UserMission.class).getFinishedDay() > end &&
+                        dataSnapshot.getValue(UserMission.class).getFinishedDay() < start) ||
+                    dataSnapshot.getValue(UserMission.class).getFinishedDay() == -1){
+                    return dataSnapshot.getValue(UserMission.class);
+                }
+                return null;
+            }
+        });
         return listLiveData;
     }
 }

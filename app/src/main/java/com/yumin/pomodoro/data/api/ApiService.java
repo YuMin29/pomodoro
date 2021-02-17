@@ -21,6 +21,4 @@ public interface ApiService<T> {
     public LiveData<List<T>> getComingMissionsByRepeatRange(long today);
     public void updateMission(T mission);
     public void deleteMission(T mission);
-    public LiveData<List<T>> getFinishedMissions();
-    public LiveData<List<T>> getUnFinishedMissions();
 }

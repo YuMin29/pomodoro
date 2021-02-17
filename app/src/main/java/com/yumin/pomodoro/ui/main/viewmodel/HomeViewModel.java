@@ -50,8 +50,8 @@ public class HomeViewModel extends ViewModel {
         comingMissionsByRepeatType = firebaseRepository.getComingMissionsByRepeatType(getCurrentEndTime());
         comingMissionsByRepeatRange = firebaseRepository.getComingMissionsByRepeatRange(getCurrentEndTime());
 
-        finishedMissions = this.firebaseRepository.getFinishedMissions();
-        unfinishedMissions = this.firebaseRepository.getUnfinishedMissions();
+        finishedMissions = this.firebaseRepository.getFinishedMissions(getCurrentStartTime(),getCurrentEndTime());
+        unfinishedMissions = this.firebaseRepository.getUnfinishedMissions(getCurrentStartTime(),getCurrentEndTime());
         mIsLoading.setValue(false);
     }
 

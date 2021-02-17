@@ -200,7 +200,7 @@ public class HomeFragment extends DataBindingFragment {
 
                 int usedTime = 0;
                 for (Mission mission : missions) {
-                    usedTime += mission.getTime();
+                    usedTime += (mission.getTime()*mission.getGoal());
                 }
                 float num = (float)usedTime / 60;
                 DecimalFormat decimalFormat = new DecimalFormat("0.00");

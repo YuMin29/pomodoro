@@ -88,11 +88,11 @@ public class FirebaseRepository {
         return firebaseRepository.getMissionOperateDay(id);
     }
 
-    public LiveData<List<UserMission>> getFinishedMissions(){
-        return firebaseRepository.getFinishedMissions();
+    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
+        return firebaseRepository.getFinishedMissions(start, end);
     }
 
-    public LiveData<List<UserMission>> getUnfinishedMissions(){
-        return firebaseRepository.getUnFinishedMissions();
+    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
+        return firebaseRepository.getUnFinishedMissions(start, end);
     }
 }
