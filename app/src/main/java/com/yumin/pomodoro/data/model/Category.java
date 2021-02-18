@@ -12,7 +12,7 @@ public class Category {
     }
 
     private String mCategoryName;
-    private List<Mission> mMissionList = new ArrayList<>();
+    private List<UserMission> mMissionList = new ArrayList<>();
     private Index mIndex;
 
     public Category(String name, Index index){
@@ -20,7 +20,7 @@ public class Category {
         mIndex = index;
     }
 
-    public void addMission(Mission mission){
+    public void addMission(UserMission mission){
         mMissionList.add(mission);
     }
 
@@ -28,7 +28,7 @@ public class Category {
         mMissionList.addAll(list);
     }
 
-    public List<Mission> getMissionList() {
+    public List<UserMission> getMissionList() {
         return mMissionList;
     }
 

@@ -28,7 +28,9 @@ import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class HomeFragment extends DataBindingFragment {
@@ -146,6 +148,7 @@ public class HomeFragment extends DataBindingFragment {
             public void onChanged(Result result) {
                 if (result == null || !result.isComplete()) {
                     // Ignore, this means only one of the queries has fininshed
+                    updateUnfinishedUi(null);
                     return;
                 }
 
@@ -156,6 +159,7 @@ public class HomeFragment extends DataBindingFragment {
                 expandCategoryList();
                 LogUtil.logE(TAG,"[observeViewModel][todayObserver] today size = "
                         +today.getMissionList().size());
+                updateUnfinishedUi(today.getMissionList());
             }
         });
 
@@ -199,7 +203,7 @@ public class HomeFragment extends DataBindingFragment {
                 fragmentHomeBinding.finishedMission.setText(String.valueOf(missions.size()));
 
                 int usedTime = 0;
-                for (Mission mission : missions) {
+                for (UserMission mission : missions) {
                     usedTime += (mission.getTime()*mission.getGoal());
                 }
                 float num = (float)usedTime / 60;
@@ -209,21 +213,41 @@ public class HomeFragment extends DataBindingFragment {
         });
 
         mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {
-            // update unfinished mission number
-            if (missions == null) {
-                fragmentHomeBinding.unfinishedMission.setText("0");
-            } else {
-                fragmentHomeBinding.unfinishedMission.setText(String.valueOf(missions.size()));
-
-                for (UserMission userMission : missions) {
-                    if (userMission.getNumberOfCompletions() != 0) {
-                        // init complete number to 0
-                        mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
-                    }
-                }
-            }
+//            // update unfinished mission number
+//            if (missions == null) {
+//                fragmentHomeBinding.unfinishedMission.setText("0");
+//            } else {
+//                fragmentHomeBinding.unfinishedMission.setText(String.valueOf(missions.size()));
+//
+//                for (UserMission userMission : missions) {
+//                    if (userMission.getNumberOfCompletions() != 0) {
+//                        // init complete number to 0
+//                        mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
+//                    }
+//                }
+//            }
         });
+    }
 
+    private void updateUnfinishedUi(List<UserMission> userMissions){
+        // update unfinished mission number
+        if (userMissions == null) {
+            fragmentHomeBinding.unfinishedMission.setText("0");
+            return;
+        }
+
+        List<UserMission> unfinishedMission = new ArrayList<>();
+        for (UserMission userMission : userMissions) {
+            if ((userMission.getFinishedDay() == -1) ||
+                    (userMission.getFinishedDay() > getCurrentEndTime() && userMission.getFinishedDay() < getCurrentStartTime())) {
+                if (userMission.getNumberOfCompletions() != 0) {
+                    // init complete number to 0
+                    mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
+                }
+                unfinishedMission.add(userMission);
+            }
+        }
+        fragmentHomeBinding.unfinishedMission.setText(String.valueOf(unfinishedMission.size()));
     }
 
     private MediatorLiveData<Result> getComingMediatorLiveData(){
@@ -329,6 +353,22 @@ public class HomeFragment extends DataBindingFragment {
             LogUtil.logD(TAG, "[updateCategoryList] group count = " + groupCount + " , i =" + i);
             fragmentHomeBinding.homeListView.expandGroup(i);
         }
+    }
+
+    private long getCurrentStartTime(){
+        Calendar currentDate = new GregorianCalendar();
+        currentDate.set(Calendar.HOUR_OF_DAY, 0);
+        currentDate.set(Calendar.MINUTE, 0);
+        currentDate.set(Calendar.SECOND, 0);
+        return currentDate.getTimeInMillis();
+    }
+
+    private long getCurrentEndTime(){
+        Calendar currentDate = new GregorianCalendar();
+        currentDate.set(Calendar.HOUR_OF_DAY, 23);
+        currentDate.set(Calendar.MINUTE, 59);
+        currentDate.set(Calendar.SECOND, 59);
+        return currentDate.getTimeInMillis();
     }
 
     public class ClickProxy{

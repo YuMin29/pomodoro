@@ -258,8 +258,6 @@ public class LoginFragment extends DataBindingFragment {
 
     private void addUserToFirebase(FirebaseUser firebaseUser){
         User user = new User(firebaseUser.getDisplayName(), firebaseUser.getEmail());
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        firebaseUser.getUid();
         LogUtil.logE(TAG,"[addUserToFirebase] getUid = "+firebaseUser.getUid());
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
@@ -271,7 +269,7 @@ public class LoginFragment extends DataBindingFragment {
                     LogUtil.logE(TAG,"[addUserToFirebase] set value name = "+user.getUserName() + " ,mail = "+user.getUserMail());
                     // The child doesn't exist
                     databaseReference.setValue(firebaseUser.getUid());
-                    databaseReference.child(firebaseUser.getUid()).setValue(user);
+//                    databaseReference.child(firebaseUser.getUid()).setValue(user);
                 }
             }
 

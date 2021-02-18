@@ -179,6 +179,12 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     public void updateIsFinishedById(String id, boolean finished) {
         databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
                 .child("finishedDay").setValue(new Date().getTime());
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
+                .child("finished").setValue(finished);
+    }
+
+    private void recordFinishDayByMission(String id){
+
     }
 
     @Override
