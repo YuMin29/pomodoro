@@ -210,10 +210,18 @@ public class HomeFragment extends DataBindingFragment {
 
         mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {
             // update unfinished mission number
-            if (missions == null)
+            if (missions == null) {
                 fragmentHomeBinding.unfinishedMission.setText("0");
-            else
+            } else {
                 fragmentHomeBinding.unfinishedMission.setText(String.valueOf(missions.size()));
+
+                for (UserMission userMission : missions) {
+                    if (userMission.getNumberOfCompletions() != 0) {
+                        // init complete number to 0
+                        mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
+                    }
+                }
+            }
         });
 
     }

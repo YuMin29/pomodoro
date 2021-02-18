@@ -122,4 +122,9 @@ public class HomeViewModel extends ViewModel {
 //        this.roomRepository.deleteMission(mission);
         firebaseRepository.deleteMission((UserMission) mission);
     }
+
+    public void initNumberOfCompletions(String uid){
+        LogUtil.logD(TAG,"[initNumberOfCompletions] uid = "+uid);
+        firebaseRepository.updateNumberOfCompletionById(uid,0);
+    }
 }
