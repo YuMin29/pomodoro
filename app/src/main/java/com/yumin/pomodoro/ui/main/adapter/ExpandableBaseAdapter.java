@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
-import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.ui.main.viewholder.CategoryViewHolder;
 import com.yumin.pomodoro.ui.main.viewmodel.MissionViewHolder;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -71,7 +71,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     public abstract void onBindGroupLayout(B binding,Category category);
 
     public abstract int getChildLayout();
-    public abstract void onBindChildLayout(M binding, Mission mission,int groupPosition, int childPosition, View view);
+    public abstract void onBindChildLayout(M binding, UserMission userMission, int groupPosition, int childPosition, View view);
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {

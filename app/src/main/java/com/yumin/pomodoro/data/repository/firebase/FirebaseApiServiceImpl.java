@@ -19,6 +19,7 @@ import com.yumin.pomodoro.data.api.FireBaseApiService;
 import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.room.MissionDao;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.TimeMilli;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,10 +182,27 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
                 .child("finishedDay").setValue(new Date().getTime());
         databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
                 .child("finished").setValue(finished);
+        recordFinishDayByMission(id);
     }
 
     private void recordFinishDayByMission(String id){
+        String todayMilli = String.valueOf(TimeMilli.getTodayStartTime());
+        databaseReference.child("record_calender").child(todayMilli).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.hasChild(id)) {
+                    LogUtil.logE(TAG,"[recordFinishDayByMission] todayMilli = "+todayMilli+" doesn't exist!");
+                    // The child doesn't exist , set value
+                    databaseReference.child("record_calender").setValue(todayMilli);
+                }
+                databaseReference.child("record_calender").child(todayMilli).setValue(id);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override

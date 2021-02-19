@@ -128,16 +128,24 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/delete"
+        <ImageView
+            android:id="@+id/edit"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:background="#FFC20E23"
+            android:background="@color/colorPrimary"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="删除"
-            android:textColor="#FFFFFF"
-            tools:layout_editor_absoluteX="315dp" />
+            android:src="@drawable/ic_baseline_edit_24" />
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:src="@drawable/ic_baseline_delete_24" />
     </LinearLayout>
 </layout>

@@ -5,14 +5,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
-import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.TimeMilli;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class HomeViewModel extends ViewModel {
@@ -40,18 +37,20 @@ public class HomeViewModel extends ViewModel {
 
     private void fetchData() {
         mIsLoading.setValue(true);
+        long todayStartTime = TimeMilli.getTodayStartTime();
+        long todayEndTime = TimeMilli.getTodayEndTime();
         missions = this.firebaseRepository.getMissions();
-//        todayMissions = this.roomRepository.getTodayMissions(getCurrentStartTime(),getCurrentEndTime());
-        todayMissionsByOperateDay =  firebaseRepository.getTodayMissionsByOperateDay(getCurrentStartTime(),getCurrentEndTime());
-        todayMissionsByRepeatType = firebaseRepository.getTodayMissionsByRepeatType(getCurrentStartTime(),getCurrentEndTime());
-        todayMissionsByRepeatRange = firebaseRepository.getTodayMissionsByRepeatRange(getCurrentStartTime(),getCurrentEndTime());
+//        todayMissions = this.roomRepository.getTodayMissions(todayStartTime, todayEndTime);
+        todayMissionsByOperateDay =  firebaseRepository.getTodayMissionsByOperateDay(todayStartTime, todayEndTime);
+        todayMissionsByRepeatType = firebaseRepository.getTodayMissionsByRepeatType(todayStartTime, todayEndTime);
+        todayMissionsByRepeatRange = firebaseRepository.getTodayMissionsByRepeatRange(todayStartTime, todayEndTime);
 
-        comingMissionsByOperateDay = firebaseRepository.getComingMissionsByOperateDay(getCurrentEndTime());
-        comingMissionsByRepeatType = firebaseRepository.getComingMissionsByRepeatType(getCurrentEndTime());
-        comingMissionsByRepeatRange = firebaseRepository.getComingMissionsByRepeatRange(getCurrentEndTime());
+        comingMissionsByOperateDay = firebaseRepository.getComingMissionsByOperateDay(todayEndTime);
+        comingMissionsByRepeatType = firebaseRepository.getComingMissionsByRepeatType(todayEndTime);
+        comingMissionsByRepeatRange = firebaseRepository.getComingMissionsByRepeatRange(todayEndTime);
 
-        finishedMissions = this.firebaseRepository.getFinishedMissions(getCurrentStartTime(),getCurrentEndTime());
-        unfinishedMissions = this.firebaseRepository.getUnfinishedMissions(getCurrentStartTime(),getCurrentEndTime());
+        finishedMissions = this.firebaseRepository.getFinishedMissions(todayStartTime, todayEndTime);
+        unfinishedMissions = this.firebaseRepository.getUnfinishedMissions(todayStartTime, todayEndTime);
         mIsLoading.setValue(false);
     }
 
@@ -100,22 +99,6 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<List<UserMission>> getUnfinishedMissions(){
         return unfinishedMissions;
-    }
-
-    private long getCurrentStartTime(){
-        Calendar currentDate = new GregorianCalendar();
-        currentDate.set(Calendar.HOUR_OF_DAY, 0);
-        currentDate.set(Calendar.MINUTE, 0);
-        currentDate.set(Calendar.SECOND, 0);
-        return currentDate.getTimeInMillis();
-    }
-
-    private long getCurrentEndTime(){
-        Calendar currentDate = new GregorianCalendar();
-        currentDate.set(Calendar.HOUR_OF_DAY, 23);
-        currentDate.set(Calendar.MINUTE, 59);
-        currentDate.set(Calendar.SECOND, 59);
-        return currentDate.getTimeInMillis();
     }
 
     public void deleteMission(Mission mission){

@@ -1,12 +1,13 @@
 package com.yumin.pomodoro.ui.main.adapter;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.view.View;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.User;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.CategoryItemLayoutBinding;
 import com.yumin.pomodoro.databinding.MissionItemLayoutBinding;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -15,19 +16,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLayoutBinding, MissionItemLayoutBinding> {
+public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLayoutBinding, MissionItemLayoutBinding> implements GroupIndex{
     private static final String TAG = "[TestExpandableAdapter]";
-    private OnClickListenerEditOrDelete onClickListenerEditOrDelete;
-    private static final int GROUP_COMING_POSITION = 1;
-    private static final int GROUP_TODAY_POSITION = 0;
+    private OnExpandableItemClickListener onExpandableItemClickListener;
     private Context mContext;
 
-    public interface OnClickListenerEditOrDelete{
-        void OnClickListenerDelete(Mission mission,int groupPosition,int childPosition);
+    public interface OnExpandableItemClickListener {
+        void onDelete(UserMission mission, int groupPosition, int childPosition);
+        void onEdit(UserMission mission, int groupPosition, int childPosition);
     }
 
-    public void setOnClickListenerEditOrDelete(OnClickListenerEditOrDelete onClickListenerEditOrDelete){
-        this.onClickListenerEditOrDelete = onClickListenerEditOrDelete;
+    public void setOnExpandableItemClickListener(OnExpandableItemClickListener onExpandableItemClickListener){
+        this.onExpandableItemClickListener = onExpandableItemClickListener;
     }
 
     public ExpandableViewAdapter(List<Category> dataList, Context context){
@@ -61,27 +61,36 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
     }
 
     @Override
-    public void onBindChildLayout(MissionItemLayoutBinding binding, Mission mission, int groupPosition, int childPosition, View view) {
+    public void onBindChildLayout(MissionItemLayoutBinding binding, UserMission userMission, int groupPosition, int childPosition, View view) {
         LogUtil.logE(TAG,"[onBindChildLayout] groupPosition = "+groupPosition+" , childPosition = "+childPosition);
-        binding.setMission(mission);
+        binding.setMission(userMission);
         binding.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onClickListenerEditOrDelete != null) {
-                    onClickListenerEditOrDelete.OnClickListenerDelete(mission,groupPosition,childPosition);
+                if (onExpandableItemClickListener != null) {
+                    onExpandableItemClickListener.onDelete(userMission,groupPosition,childPosition);
+                }
+            }
+        });
+
+        binding.edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onExpandableItemClickListener != null) {
+                    onExpandableItemClickListener.onEdit(userMission,groupPosition,childPosition);
                 }
             }
         });
 
         binding.itemTime.setText(mContext.getString(R.string.mission_time) +
-                Integer.toString(mission.getTime()) + mContext.getString(R.string.minute));
+                Integer.toString(userMission.getTime()) + mContext.getString(R.string.minute));
 
         binding.itemGoal.setText(mContext.getString(R.string.mission_goal) +
-                Integer.toString(mission.getGoal()));
+                Integer.toString(userMission.getGoal()));
 
         // TODO: 1/18/21  gray out this item and show check icon when finished
         // set delete line if finished
-        if (groupPosition == GROUP_TODAY_POSITION && mission.isFinished()) {
+        if (groupPosition == GROUP_TODAY_POSITION && userMission.isFinished()) {
 //            binding.itemName.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             view.setAlpha(0.5f); // set opacity
             binding.colorView.setVisibility(View.INVISIBLE);
@@ -95,7 +104,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
         if (groupPosition == GROUP_COMING_POSITION) {
             binding.itemOperateDay.setVisibility(View.VISIBLE);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd");
-            Date date = new Date(mission.getOperateDay());
+            Date date = new Date(userMission.getOperateDay());
             String dateStr = simpleDateFormat.format(date);
             binding.itemOperateDay.setText(mContext.getString(R.string.mission_operate_day)+dateStr);
         }  else {

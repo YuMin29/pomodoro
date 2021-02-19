@@ -19,9 +19,11 @@ import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
 import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
+import com.yumin.pomodoro.ui.main.adapter.GroupIndex;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.TimeMilli;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
 import com.yumin.pomodoro.utils.base.MissionManager;
@@ -80,12 +82,20 @@ public class HomeFragment extends DataBindingFragment {
     private void initUI() {
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
         expandableViewAdapter = new ExpandableViewAdapter(mCategory,getContext());
-        expandableViewAdapter.setOnClickListenerEditOrDelete(new ExpandableViewAdapter.OnClickListenerEditOrDelete() {
+        expandableViewAdapter.setOnExpandableItemClickListener(new ExpandableViewAdapter.OnExpandableItemClickListener() {
             @Override
-            public void OnClickListenerDelete(Mission mission,int groupPosition, int childPosition) {
-                LogUtil.logD(TAG,"[item delete] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
-                mHomeViewModel.deleteMission(mission);
+            public void onDelete(UserMission userMission, int groupPosition, int childPosition) {
+                LogUtil.logD(TAG,"[item onDelete] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
+                mHomeViewModel.deleteMission(userMission);
                 fragmentHomeBinding.homeListView.turnToNormal();
+            }
+
+            @Override
+            public void onEdit(UserMission userMission, int groupPosition, int childPosition) {
+                LogUtil.logD(TAG,"[item onEdit] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
+//                  MissionManager.getInstance().setEditId(mission.getId());
+                  MissionManager.getInstance().setStrEditId(userMission.getStrId());
+                  navigate(R.id.edit_mission_fragment);
             }
         });
         fragmentHomeBinding.homeListView.setAdapter(expandableViewAdapter);
@@ -96,7 +106,7 @@ public class HomeFragment extends DataBindingFragment {
                 UserMission userMission = (UserMission) expandableViewAdapter.getChild(groupPosition,childPosition);
                 LogUtil.logD(TAG,"[onChildClick] item = "+userMission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
-                if (!userMission.isFinished()) {
+                if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!userMission.isFinished())) {
 //                    MissionManager.getInstance().setOperateId(userMission.getId());
                     MissionManager.getInstance().setOperateId(userMission.getStrId());
                     navigate(R.id.fragment_timer);
@@ -105,32 +115,6 @@ public class HomeFragment extends DataBindingFragment {
 
                 }
                 return true;
-            }
-        });
-
-        fragmentHomeBinding.homeListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                ExpandableListView listView = (ExpandableListView) parent;
-                long pos = listView.getExpandableListPosition(position);
-                int itemType = ExpandableListView.getPackedPositionType(pos);
-                int groupPos = ExpandableListView.getPackedPositionGroup(pos);
-                int childPos = ExpandableListView.getPackedPositionChild(pos);
-
-                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    UserMission mission = (UserMission) expandableViewAdapter.getChild(groupPos,childPos);
-                    LogUtil.logD(TAG,"[onItemLongClick] item = "+mission.getName()+
-                            " ,groupPosition = "+groupPos+" ,childPosition = "+childPos);
-                    if (!mission.isFinished()) {
-//                        MissionManager.getInstance().setEditId(mission.getId());
-                        MissionManager.getInstance().setStrEditId(mission.getStrId());
-                        navigate(R.id.edit_mission_fragment);
-                        return true;
-                    } else {
-                        // TODO: 1/18/21 重新編輯任務？
-                    }
-                }
-                return false;
             }
         });
     }
@@ -151,7 +135,6 @@ public class HomeFragment extends DataBindingFragment {
                     updateUnfinishedUi(null);
                     return;
                 }
-
                 today = new Category(getString(R.string.category_today), Category.Index.TODAY);
                 today.addAllMission(result.missionsByOperateDay);
                 today.addAllMission(result.missionsByRepeatType);
@@ -212,7 +195,7 @@ public class HomeFragment extends DataBindingFragment {
             }
         });
 
-        mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {
+//        mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {
 //            // update unfinished mission number
 //            if (missions == null) {
 //                fragmentHomeBinding.unfinishedMission.setText("0");
@@ -226,7 +209,7 @@ public class HomeFragment extends DataBindingFragment {
 //                    }
 //                }
 //            }
-        });
+//        });
     }
 
     private void updateUnfinishedUi(List<UserMission> userMissions){
@@ -239,10 +222,11 @@ public class HomeFragment extends DataBindingFragment {
         List<UserMission> unfinishedMission = new ArrayList<>();
         for (UserMission userMission : userMissions) {
             if ((userMission.getFinishedDay() == -1) ||
-                    (userMission.getFinishedDay() > getCurrentEndTime() && userMission.getFinishedDay() < getCurrentStartTime())) {
+                    (userMission.getFinishedDay() > TimeMilli.getTodayEndTime() && userMission.getFinishedDay() < TimeMilli.getTodayStartTime())) {
                 if (userMission.getNumberOfCompletions() != 0) {
                     // init complete number to 0
                     mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
+                    mHomeViewModel.updateIsFinishedById(userMission.getStrId(),false);
                 }
                 unfinishedMission.add(userMission);
             }
@@ -294,7 +278,7 @@ public class HomeFragment extends DataBindingFragment {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 LogUtil.logD(TAG,"getTodayMissionsByRepeatType [onChanged] SIZE = "+userMissions.size());
-                current.setMissionsByRepeatType(userMissions);;
+                current.setMissionsByRepeatType(userMissions);
                 todayMissions.setValue(current);
             }
         });
@@ -353,22 +337,6 @@ public class HomeFragment extends DataBindingFragment {
             LogUtil.logD(TAG, "[updateCategoryList] group count = " + groupCount + " , i =" + i);
             fragmentHomeBinding.homeListView.expandGroup(i);
         }
-    }
-
-    private long getCurrentStartTime(){
-        Calendar currentDate = new GregorianCalendar();
-        currentDate.set(Calendar.HOUR_OF_DAY, 0);
-        currentDate.set(Calendar.MINUTE, 0);
-        currentDate.set(Calendar.SECOND, 0);
-        return currentDate.getTimeInMillis();
-    }
-
-    private long getCurrentEndTime(){
-        Calendar currentDate = new GregorianCalendar();
-        currentDate.set(Calendar.HOUR_OF_DAY, 23);
-        currentDate.set(Calendar.MINUTE, 59);
-        currentDate.set(Calendar.SECOND, 59);
-        return currentDate.getTimeInMillis();
     }
 
     public class ClickProxy{
