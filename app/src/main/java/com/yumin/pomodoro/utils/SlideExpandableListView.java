@@ -15,6 +15,7 @@ public class SlideExpandableListView extends ExpandableListView {
     private int mDownX;         // 按下点的x值
     private int mDownY;         // 按下点的y值
     private int mDeleteBtnWidth;// 删除按钮的宽度
+    private int mEditBtnWidth; // 編輯按鈕的寬度
 
     private boolean isDeleteShown;  // 删除按钮是否正在显示
 
@@ -63,10 +64,16 @@ public class SlideExpandableListView extends ExpandableListView {
                 - getFirstVisiblePosition());
         if (mPointChild == null)
             return;
-        // 获取删除按钮的宽度
+
         if (mPointChild.getChildAt(1) != null)
-            mDeleteBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;
+            mEditBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;
+        LogUtil.logD(TAG,"[performActionDown] mEditBtnWidth = "+mEditBtnWidth);
+
+        // 获取删除按钮的宽度
+        if (mPointChild.getChildAt(2) != null)
+            mDeleteBtnWidth = mPointChild.getChildAt(2).getLayoutParams().width;
         LogUtil.logD(TAG,"[performActionDown] mDeleteBtnWidth = "+mDeleteBtnWidth);
+
         mLayoutParams = (LinearLayout.LayoutParams) mPointChild.getChildAt(0)
                 .getLayoutParams();
         mLayoutParams.width = mScreenWidth;
@@ -83,8 +90,8 @@ public class SlideExpandableListView extends ExpandableListView {
                 // 计算要偏移的距离
                 int scroll = (nowX - mDownX) / 2;
                 // 如果大于了删除按钮的宽度， 则最大为删除按钮的宽度
-                if(-scroll >= mDeleteBtnWidth) {
-                    scroll = -mDeleteBtnWidth;
+                if(-scroll >= mEditBtnWidth) {
+                    scroll = -mDeleteBtnWidth-mEditBtnWidth;
                 }
                 if (mPointChild == null)
                     return false;
@@ -104,8 +111,8 @@ public class SlideExpandableListView extends ExpandableListView {
         // 否则恢复默认
         if (mPointChild == null)
             return;
-        if(-mLayoutParams.leftMargin >= mDeleteBtnWidth / 2) {
-            mLayoutParams.leftMargin = -mDeleteBtnWidth - 100;
+        if(-mLayoutParams.leftMargin >= mEditBtnWidth / 2) {
+            mLayoutParams.leftMargin = -mDeleteBtnWidth-mEditBtnWidth - 100;
             isDeleteShown = true;
         }else {
             turnToNormal();

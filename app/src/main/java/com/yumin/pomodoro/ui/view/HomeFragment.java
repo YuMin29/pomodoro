@@ -2,7 +2,6 @@ package com.yumin.pomodoro.ui.view;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
@@ -24,15 +23,15 @@ import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeMilli;
+import com.yumin.pomodoro.utils.TimeSort;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.GregorianCalendar;
+import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends DataBindingFragment {
@@ -60,7 +59,6 @@ public class HomeFragment extends DataBindingFragment {
         initUI();
         observeViewModel();
     }
-
 
     @Override
     protected void initViewModel() {
@@ -120,44 +118,23 @@ public class HomeFragment extends DataBindingFragment {
     }
 
     private void observeViewModel() {
-        mHomeViewModel.getMissions().observe(getViewLifecycleOwner(), missions -> {
+        mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            fragmentHomeBinding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
+        });
+
+        mHomeViewModel.getAllMissions().observe(getViewLifecycleOwner(), missions -> {
             LogUtil.logD(TAG,"[observeViewModel] mission list size = "+missions.size());
-            if (missions != null)
-                mHomeViewModel.getLoading().postValue(false);
-        });
-
-        MediatorLiveData<Result> todayMission = getTodayMediatorLiveData();
-        todayMission.observe(getViewLifecycleOwner(), new Observer<Result>() {
-            @Override
-            public void onChanged(Result result) {
-                if (result == null || !result.isComplete()) {
-                    // Ignore, this means only one of the queries has fininshed
-                    updateUnfinishedUi(null);
-                    return;
-                }
-                today = new Category(getString(R.string.category_today), Category.Index.TODAY);
-                today.addAllMission(result.missionsByOperateDay);
-                today.addAllMission(result.missionsByRepeatType);
-                today.addAllMission(result.missionsByRepeatRange);
-                expandCategoryList();
-                LogUtil.logE(TAG,"[observeViewModel][todayObserver] today size = "
-                        +today.getMissionList().size());
-                updateUnfinishedUi(today.getMissionList());
+            if (missions != null) {
+                updateTodayList();
+                updateComingList();
+                updateFinishedUI();
             }
+            mHomeViewModel.getLoading().postValue(false);
         });
+    }
 
+    private void updateComingList() {
         MediatorLiveData<Result> comingMissions = getComingMediatorLiveData();
-        Observer<List<UserMission>> comingObserver = new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logE(TAG,"[observeViewModel][comingObserver] onChanged");
-                coming = new Category(getString(R.string.category_coming), Category.Index.COMING);
-                for (UserMission mission : userMissions) {
-                    coming.addMission(mission);
-                }
-                expandCategoryList();
-            }
-        };
         comingMissions.observe(getViewLifecycleOwner(), new Observer<Result>() {
             @Override
             public void onChanged(Result result) {
@@ -173,16 +150,40 @@ public class HomeFragment extends DataBindingFragment {
                         +coming.getMissionList().size());
             }
         });
+    }
 
-        mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            fragmentHomeBinding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
+    private void updateTodayList() {
+        MediatorLiveData<Result> todayMission = getTodayMediatorLiveData();
+        todayMission.observe(getViewLifecycleOwner(), new Observer<Result>() {
+            @Override
+            public void onChanged(Result result) {
+                if (result == null || !result.isComplete()) {
+                    // Ignore, this means only one of the queries has fininshed
+                    updateUnfinishedUi(null);
+                    return;
+                }
+                today = new Category(getString(R.string.category_today), Category.Index.TODAY);
+                today.addAllMission(result.missionsByOperateDay);
+                today.addAllMission(result.missionsByRepeatType);
+                today.addAllMission(result.missionsByRepeatRange);
+                Collections.sort(today.getMissionList(), new TimeSort());
+                expandCategoryList();
+                LogUtil.logE(TAG,"[observeViewModel][todayObserver] today size = "
+                        +today.getMissionList().size());
+                updateUnfinishedUi(today.getMissionList());
+            }
         });
+    }
 
+    private void updateFinishedUI() {
         mHomeViewModel.getFinishedMissions().observe(getViewLifecycleOwner(), missions -> {
+            LogUtil.logE(TAG,"[getFinishedMissions] 000");
             // update finished mission number
             if (missions == null) {
+                LogUtil.logE(TAG,"[getFinishedMissions] 111");
                 fragmentHomeBinding.finishedMission.setText("0");
             } else {
+                LogUtil.logE(TAG,"[getFinishedMissions] 222");
                 fragmentHomeBinding.finishedMission.setText(String.valueOf(missions.size()));
 
                 int usedTime = 0;
@@ -194,22 +195,6 @@ public class HomeFragment extends DataBindingFragment {
                 fragmentHomeBinding.totalFinishedTime.setText(decimalFormat.format(num)+"h");
             }
         });
-
-//        mHomeViewModel.getUnfinishedMissions().observe(getViewLifecycleOwner(), missions -> {
-//            // update unfinished mission number
-//            if (missions == null) {
-//                fragmentHomeBinding.unfinishedMission.setText("0");
-//            } else {
-//                fragmentHomeBinding.unfinishedMission.setText(String.valueOf(missions.size()));
-//
-//                for (UserMission userMission : missions) {
-//                    if (userMission.getNumberOfCompletions() != 0) {
-//                        // init complete number to 0
-//                        mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
-//                    }
-//                }
-//            }
-//        });
     }
 
     private void updateUnfinishedUi(List<UserMission> userMissions){
@@ -222,7 +207,7 @@ public class HomeFragment extends DataBindingFragment {
         List<UserMission> unfinishedMission = new ArrayList<>();
         for (UserMission userMission : userMissions) {
             if ((userMission.getFinishedDay() == -1) ||
-                    (userMission.getFinishedDay() > TimeMilli.getTodayEndTime() && userMission.getFinishedDay() < TimeMilli.getTodayStartTime())) {
+                    (userMission.getFinishedDay() < TimeMilli.getTodayStartTime())) {
                 if (userMission.getNumberOfCompletions() != 0) {
                     // init complete number to 0
                     mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
@@ -238,21 +223,21 @@ public class HomeFragment extends DataBindingFragment {
         // observe coming missions
         MediatorLiveData<Result> comingMissions = new MediatorLiveData<>();
         final Result current = new Result();
-        comingMissions.addSource(mHomeViewModel.getComingMissionsByOperateDay(), new Observer<List<UserMission>>() {
+        comingMissions.addSource(mHomeViewModel.getComingNoneRepeatMissions(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 current.setMissionsByOperateDay(userMissions);
                 comingMissions.setValue(current);
             }
         });
-        comingMissions.addSource(mHomeViewModel.getComingMissionsByRepeatType(), new Observer<List<UserMission>>() {
+        comingMissions.addSource(mHomeViewModel.getComingRepeatEverydayMissions(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 current.setMissionsByRepeatType(userMissions);
                 comingMissions.setValue(current);
             }
         });
-        comingMissions.addSource(mHomeViewModel.getComingMissionsByRepeatRange(), new Observer<List<UserMission>>() {
+        comingMissions.addSource(mHomeViewModel.getComingRepeatDefineMissions(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 current.setMissionsByRepeatRange(userMissions);
@@ -266,7 +251,7 @@ public class HomeFragment extends DataBindingFragment {
         // observe today missions
         MediatorLiveData<Result> todayMissions = new MediatorLiveData<Result>();
         final Result current = new Result();
-        todayMissions.addSource(mHomeViewModel.getTodayMissionsByOperateDay(), new Observer<List<UserMission>>() {
+        todayMissions.addSource(mHomeViewModel.getTodayNoneRepeatMissions(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 LogUtil.logD(TAG,"getTodayMissionsByOperateDay [onChanged] SIZE = "+userMissions.size());
@@ -274,7 +259,7 @@ public class HomeFragment extends DataBindingFragment {
                 todayMissions.setValue(current);
             }
         });
-        todayMissions.addSource(mHomeViewModel.getTodayMissionsByRepeatType(), new Observer<List<UserMission>>() {
+        todayMissions.addSource(mHomeViewModel.getTodayRepeatEverydayMissions(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 LogUtil.logD(TAG,"getTodayMissionsByRepeatType [onChanged] SIZE = "+userMissions.size());
@@ -282,7 +267,7 @@ public class HomeFragment extends DataBindingFragment {
                 todayMissions.setValue(current);
             }
         });
-        todayMissions.addSource(mHomeViewModel.getTodayMissionsByRepeatRange(), new Observer<List<UserMission>>() {
+        todayMissions.addSource(mHomeViewModel.getTodayRepeatDefineMissions(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 LogUtil.logD(TAG,"getTodayMissionsByRepeatRange [onChanged] SIZE = "+userMissions.size());

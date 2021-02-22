@@ -54,6 +54,7 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         if (getCurrentUserUid() != null) {
             String id = databaseReference.child("usermissions").child(getCurrentUserUid()).push().getKey();
             mission.setStrId(id);
+            mission.setCreatedTime(new Date().getTime());
             // add mission to firebase
             databaseReference.child("usermissions").child(getCurrentUserUid()).child(id).setValue(mission);
         }
@@ -178,31 +179,24 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
 
     @Override
     public void updateIsFinishedById(String id, boolean finished) {
-        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
-                .child("finishedDay").setValue(new Date().getTime());
+        LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+finished);
         databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
                 .child("finished").setValue(finished);
-        recordFinishDayByMission(id);
+
+        databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
+                .child("finishedDay").setValue(finished ? new Date().getTime() : -1);
+
+        if (finished)
+            recordFinishDayByMission(id);
     }
 
     private void recordFinishDayByMission(String id){
-        String todayMilli = String.valueOf(TimeMilli.getTodayStartTime());
-        databaseReference.child("record_calender").child(todayMilli).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.hasChild(id)) {
-                    LogUtil.logE(TAG,"[recordFinishDayByMission] todayMilli = "+todayMilli+" doesn't exist!");
-                    // The child doesn't exist , set value
-                    databaseReference.child("record_calender").setValue(todayMilli);
-                }
-                databaseReference.child("record_calender").child(todayMilli).setValue(id);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        LogUtil.logE(TAG,"[recordFinishDayByMission] 111");
+        String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
+        DatabaseReference databaseReference =
+                FirebaseDatabase.getInstance().getReference().child("record_calender").child(getCurrentUserUid()).child(todayMilli);
+        String pushId = databaseReference.push().getKey();
+        databaseReference.child(pushId).setValue(id);
     }
 
     @Override
@@ -279,6 +273,9 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
 
     @Override
     public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
+        LogUtil.logE(TAG,"[getFinishedMissions] start = "+start+" ,end = "+end);
+        start = TimeMilli.getTodayStartTime();
+        end = TimeMilli.getTodayEndTime();
         FirebaseQueryListLiveData listLiveData =
                 new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
                         .orderByChild("finishedDay").startAt(start).endAt(end));

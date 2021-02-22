@@ -12,8 +12,8 @@ public class User {
 
     public User(String userName, String userMail) {
         LogUtil.logD(TAG,"New User => userName = "+userName+", userMail = "+userMail);
-        this.userName = userName;
-        this.userMail = userMail;
+        this.userName = userName == null ? "null" : userName;
+        this.userMail = userMail == null ? "null" : userMail;
     }
 
     public String getUserName() {

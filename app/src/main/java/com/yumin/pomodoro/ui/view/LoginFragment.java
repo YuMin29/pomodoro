@@ -260,22 +260,21 @@ public class LoginFragment extends DataBindingFragment {
         User user = new User(firebaseUser.getDisplayName(), firebaseUser.getEmail());
         LogUtil.logE(TAG,"[addUserToFirebase] getUid = "+firebaseUser.getUid());
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(firebaseUser.getUid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.hasChild(firebaseUser.getUid())) {
+                if (!snapshot.exists()) {
                     LogUtil.logE(TAG,"[addUserToFirebase] getUid = "+firebaseUser.getUid()+" doesn't exist!");
                     LogUtil.logE(TAG,"[addUserToFirebase] set value name = "+user.getUserName() + " ,mail = "+user.getUserMail());
                     // The child doesn't exist
-                    databaseReference.setValue(firebaseUser.getUid());
-                    databaseReference.child(firebaseUser.getUid()).setValue(user);
+                    databaseReference.setValue(user);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                LogUtil.logE(TAG,"[addUserToFirebase]  222 ");
             }
         });
     }

@@ -6,6 +6,7 @@ public class UserMission extends Mission {
     private static final String TAG = "[UserMission]";
     private String stringId;
     private long finishedDay = -1;
+    private long createdTime;
 
     public UserMission() {
         super();
@@ -20,15 +21,17 @@ public class UserMission extends Mission {
                        int goal, int repeat, int repeatStart, int repeatEnd,
                        boolean enableNotification, boolean enableSound,
                        boolean enableVibrate, boolean keepScreenOn,
-                       boolean finished, String stringId, long finishedDay) {
+                       boolean finished, String stringId, long finishedDay, long createdTime) {
         super(name, time, shortBreakTime, longBreakTime, color, operateDay, goal, repeat, repeatStart, repeatEnd, enableNotification, enableSound, enableVibrate, keepScreenOn, finished);
         this.stringId = stringId;
         this.finishedDay = finishedDay;
+        this.createdTime = createdTime;
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", stringId = "+stringId + ", finishedDay = "+finishedDay;
+        return super.toString() + ", stringId = " + stringId + ", finishedDay = " + finishedDay +
+                ", createdTime = "+createdTime;
     }
 
     public String getStrId() {
@@ -45,5 +48,13 @@ public class UserMission extends Mission {
 
     public void setFinishedDay(long finishedDay){
         this.finishedDay = finishedDay;
+    }
+
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
     }
 }
