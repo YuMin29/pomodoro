@@ -178,7 +178,7 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     }
 
     @Override
-    public void updateIsFinishedById(String id, boolean finished) {
+    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber) {
         LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+finished);
         databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
                 .child("finished").setValue(finished);
@@ -186,17 +186,18 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         databaseReference.child("usermissions").child(getCurrentUserUid()).child(id)
                 .child("finishedDay").setValue(finished ? new Date().getTime() : -1);
 
-        if (finished)
-            recordFinishDayByMission(id);
+        recordFinishDayByMission(id, completeOfNumber, finished);
     }
 
-    private void recordFinishDayByMission(String id){
-        LogUtil.logE(TAG,"[recordFinishDayByMission] 111");
+    private void recordFinishDayByMission(String id,int completeOfNumber, boolean isFinish){
+        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+id
+                +" ,completeOfNumber = "+completeOfNumber
+                +" ,isFinish = "+isFinish);
         String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
         DatabaseReference databaseReference =
                 FirebaseDatabase.getInstance().getReference().child("record_calender").child(getCurrentUserUid()).child(todayMilli);
-        String pushId = databaseReference.push().getKey();
-        databaseReference.child(pushId).setValue(id);
+        databaseReference.push();
+        databaseReference.child(id).setValue(new MissionState(completeOfNumber,isFinish));
     }
 
     @Override

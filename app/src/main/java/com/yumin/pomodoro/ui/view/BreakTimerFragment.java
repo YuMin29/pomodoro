@@ -108,7 +108,7 @@ public class BreakTimerFragment extends DataBindingFragment {
                                     // update finish status
                                     if ((missionCount - numberOfCompletion) < 1) {
                                         LogUtil.logD(TAG,"[handleOnBackPressed] updateIsFinishedById");
-                                        timerViewModel.updateIsFinishedById(true);
+                                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
                                     }
                                 }
                                 LogUtil.logD(TAG,"確認結束任務？");
@@ -176,7 +176,7 @@ public class BreakTimerFragment extends DataBindingFragment {
                     } else {
                         LogUtil.logD(TAG,"[break timer][onFinished] 3");
                         // finished timer fragment
-                        timerViewModel.updateIsFinishedById(true);
+                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
 //                        MainActivity.getNavController().navigateUp();
                         navigateUp();
                         ((AppCompatActivity)getActivity()).getSupportActionBar().show();

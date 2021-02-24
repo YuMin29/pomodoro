@@ -69,7 +69,7 @@ public class TimerViewModel extends AndroidViewModel {
         firebaseRepository.updateNumberOfCompletionById(missionStrId,num);
     }
 
-    public void updateIsFinishedById(boolean finished){
-        firebaseRepository.updateIsFinishedById(missionStrId,finished);
+    public void updateIsFinishedById(boolean finished,int completeOfNumber){
+        firebaseRepository.updateIsFinishedById(missionStrId,finished,completeOfNumber);
     }
 }

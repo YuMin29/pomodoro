@@ -122,7 +122,7 @@ public class TimerFragment extends DataBindingFragment {
                                 // update finish status
                                 if (missionCount != -1 && numberOfCompletion != -1) {
                                     if ((missionCount - numberOfCompletion) < 1) {
-                                        timerViewModel.updateIsFinishedById(true);
+                                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
                                     }
                                 }
                             }

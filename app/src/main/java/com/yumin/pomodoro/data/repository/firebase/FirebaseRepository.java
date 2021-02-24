@@ -68,8 +68,8 @@ public class FirebaseRepository {
         firebaseRepository.updateNumberOfCompletionById(id,num);
     }
 
-    public void updateIsFinishedById(String id, boolean finished){
-        firebaseRepository.updateIsFinishedById(id,finished);
+    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber){
+        firebaseRepository.updateIsFinishedById(id,finished,completeOfNumber);
     }
 
     public void deleteMission(UserMission mission){

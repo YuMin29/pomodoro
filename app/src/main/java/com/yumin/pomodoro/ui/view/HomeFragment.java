@@ -211,7 +211,7 @@ public class HomeFragment extends DataBindingFragment {
                 if (userMission.getNumberOfCompletions() != 0) {
                     // init complete number to 0
                     mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
-                    mHomeViewModel.updateIsFinishedById(userMission.getStrId(),false);
+                    mHomeViewModel.updateIsFinishedById(userMission.getStrId(),false,0);
                 }
                 unfinishedMission.add(userMission);
             }

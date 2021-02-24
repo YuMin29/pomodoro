@@ -168,9 +168,9 @@ public class HomeViewModel extends ViewModel {
 		return mIsLoading;
 	}
 
-    public void updateIsFinishedById(String itemId,boolean finished){
+    public void updateIsFinishedById(String itemId,boolean finished,int completeOfNumber){
 //        roomRepository.updateIsFinishedById(itemId,finished);
-        firebaseRepository.updateIsFinishedById(itemId,finished);
+        firebaseRepository.updateIsFinishedById(itemId,finished,completeOfNumber);
     }
 
     public LiveData<List<UserMission>> getFinishedMissions(){
