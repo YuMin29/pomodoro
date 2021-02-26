@@ -64,7 +64,6 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                 LogUtil.logD(TAG,"[Observe][getSaveButtonClick] click = "+click);
                 if (click) {
                     navigateUp();
-//                    MainActivity.getNavController().navigateUp();
                 }
             }
         });
@@ -75,7 +74,6 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                 LogUtil.logD(TAG,"[Observe][getCancelButtonClick] click = "+click);
                 if (click) {
                     navigateUp();
-//                    MainActivity.getNavController().navigateUp();
                 }
             }
         });

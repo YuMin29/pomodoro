@@ -19,6 +19,8 @@ import android.os.Bundle;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
@@ -38,6 +40,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -56,6 +59,7 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -78,6 +82,12 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        if (mCurrentFirebaseUser == null)
+            FirebaseDatabase.getInstance().goOffline();
+
         // set status bar color as tool bar color
         setStatusBarGradient(this);
         setStatusBar(getResources().getColor(R.color.colorPrimary));
@@ -110,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // current user exist , switch to logout fragment
                 if (mCurrentFirebaseUser == null) {
                     mNavController.navigate(R.id.fragment_login);
-//                    MainActivity.getNavController().navigate(R.id.fragment_login);
                 } else {
                     // Showing a dialog to confirm logout or not
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
@@ -146,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         NavigationUI.setupWithNavController(navigationView, mNavController);
         isStoragePermissionGranted();
 
-        mAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -154,9 +162,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // Check if user is signed in (non-null) and update UI accordingly.
                 updateNavHeader(user);
                 mCurrentFirebaseUser = user;
+                FirebaseDatabase.getInstance().goOnline();
             }
         };
-        getHashKey();
     }
 
     private void getHashKey() {
