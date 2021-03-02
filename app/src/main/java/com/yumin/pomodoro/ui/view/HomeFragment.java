@@ -159,6 +159,7 @@ public class HomeFragment extends DataBindingFragment {
             public void onChanged(Result result) {
                 if (result == null || !result.isComplete()) {
                     // Ignore, this means only one of the queries has fininshed
+                    LogUtil.logE(TAG,"[observeViewModel][todayObserver] today null ");
                     updateUnfinishedUi(null);
                     return;
                 }

@@ -69,8 +69,20 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
 
     @Override
     public LiveData<List<UserMission>> getMissions() {
-        FirebaseQueryListLiveData listLiveData =
-                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid()));
+//        FirebaseQueryListLiveData listLiveData =
+//                new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid()));
+
+        FirebaseQueryListLiveData listLiveData;
+        if (!getCurrentUserUid().isEmpty()) {
+            String id = databaseReference.child("usermissions").child(getCurrentUserUid()).push().getKey();
+            listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid()),false);
+        } else {
+            // write to /local_usermissions
+            String id = databaseReference.child("local_usermissions").child(getLocalUserUid()).push().getKey();
+            // add mission to firebase
+            listLiveData = new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid()),true);
+        }
+
         return listLiveData;
     }
 
@@ -107,13 +119,15 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
         FirebaseQueryListLiveData listLiveData;
         if (!getCurrentUserUid().isEmpty()) {
+            LogUtil.logE("[Stella]","[getTodayMissionsByOperateDay] 1");
             listLiveData =
                     new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                            .orderByChild("operateDay").startAt(start).endAt(end));
+                            .orderByChild("operateDay").startAt(start).endAt(end),false);
         } else {
+            LogUtil.logE("[Stella]","[getTodayMissionsByOperateDay] 2");
             listLiveData =
                     new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid())
-                            .orderByChild("operateDay").startAt(start).endAt(end));
+                            .orderByChild("operateDay").startAt(start).endAt(end),true);
         }
         return listLiveData;
     }
@@ -124,11 +138,11 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         if (!getCurrentUserUid().isEmpty()) {
             listLiveData =
                     new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                            .orderByChild("repeat").equalTo(1));
+                            .orderByChild("repeat").equalTo(1),false);
         } else {
             listLiveData =
                     new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid())
-                            .orderByChild("repeat").equalTo(1));
+                            .orderByChild("repeat").equalTo(1),true);
         }
 
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
@@ -149,11 +163,11 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         if (!getCurrentUserUid().isEmpty()) {
             listLiveData =
                     new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                            .orderByChild("repeatStart").startAt(start));
+                            .orderByChild("repeatStart").startAt(start),false);
         } else {
             listLiveData =
                     new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid())
-                            .orderByChild("repeatStart").startAt(start));
+                            .orderByChild("repeatStart").startAt(start),true);
         }
 
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
@@ -174,10 +188,10 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         FirebaseQueryListLiveData listLiveData;
         if (!getCurrentUserUid().isEmpty()) {
             listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                    .orderByChild("operateDay"));
+                    .orderByChild("operateDay"),false);
         } else {
             listLiveData = new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid())
-                    .orderByChild("operateDay"));
+                    .orderByChild("operateDay"),true);
         }
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
@@ -196,10 +210,10 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         FirebaseQueryListLiveData listLiveData;
         if (!getCurrentUserUid().isEmpty()) {
             listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                    .orderByChild("repeat").equalTo(1));
+                    .orderByChild("repeat").equalTo(1),false);
         } else {
             listLiveData = new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid())
-                    .orderByChild("repeat").equalTo(1));
+                    .orderByChild("repeat").equalTo(1),true);
         }
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
@@ -219,10 +233,10 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         FirebaseQueryListLiveData listLiveData;
         if (!getCurrentUserUid().isEmpty()) {
             listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                    .orderByChild("repeatEnd"));
+                    .orderByChild("repeatEnd"),false);
         } else {
             listLiveData = new FirebaseQueryListLiveData(databaseReference.child("local_usermissions").child(getLocalUserUid())
-                    .orderByChild("repeatEnd"));
+                    .orderByChild("repeatEnd"),true);
         }
 
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
@@ -244,10 +258,10 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         FirebaseQueryLiveData liveData;
         if (!getCurrentUserUid().isEmpty()) {
             liveData = new FirebaseQueryLiveData(databaseReference.child("usermissions")
-                    .child(getCurrentUserUid()).orderByKey().equalTo(strId));
+                    .child(getCurrentUserUid()).orderByKey().equalTo(strId),false);
         } else {
             liveData = new FirebaseQueryLiveData(databaseReference.child("local_usermissions")
-                    .child(getLocalUserUid()).orderByKey().equalTo(strId));
+                    .child(getLocalUserUid()).orderByKey().equalTo(strId),true);
         }
         return liveData;
     }
@@ -365,14 +379,14 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         end = TimeMilli.getTodayEndTime();
         FirebaseQueryListLiveData listLiveData =
                 new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                        .orderByChild("finishedDay").startAt(start).endAt(end));
+                        .orderByChild("finishedDay").startAt(start).endAt(end),false);
         return listLiveData;
     }
 
     @Override
     public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
         FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(databaseReference.child("usermissions").child(getCurrentUserUid())
-                .orderByChild("finishedDay"));
+                .orderByChild("finishedDay"),false);
         listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
             @Override
             public UserMission onSecondQuery(DataSnapshot dataSnapshot) {

@@ -20,14 +20,18 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
     private OnQueryListener onQueryListener;
     private final Query query;
     private final MyValueEventListener myValueEventListener = new MyValueEventListener();
+    private boolean mIsOffline = false;
+    private final MyChildListener myChildListener = new MyChildListener();
 
-    public FirebaseQueryListLiveData(Query query) {
+    public FirebaseQueryListLiveData(Query query, boolean isOffline) {
         LogUtil.logE(TAG,"[query] "+query.toString());
         this.query = query;
+        this.mIsOffline = isOffline;
     }
 
-    public FirebaseQueryListLiveData(DatabaseReference databaseReference) {
+    public FirebaseQueryListLiveData(DatabaseReference databaseReference, boolean isOffline) {
         this.query = databaseReference;
+        this.mIsOffline = isOffline;
     }
 
     public void setOnQueryListener(OnQueryListener onQueryListener){
@@ -37,21 +41,69 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
     @Override
     protected void onActive() {
         LogUtil.logE(TAG,"[onActive]");
-        query.addValueEventListener(myValueEventListener);
+        if (mIsOffline)
+            query.limitToFirst(1000).addChildEventListener(myChildListener);
+        else
+            query.addValueEventListener(myValueEventListener);
     }
 
     @Override
     protected void onInactive() {
         LogUtil.logE(TAG,"[onInactive]");
-        query.removeEventListener(myValueEventListener);
+        if (mIsOffline)
+            query.removeEventListener(myChildListener);
+        else
+            query.removeEventListener(myValueEventListener);
     }
 
     interface OnQueryListener{
         public UserMission onSecondQuery(DataSnapshot dataSnapshot);
     }
 
-    class MyValueEventListener implements ValueEventListener{
+    class MyChildListener implements ChildEventListener {
+        List<UserMission> userMissionList = new ArrayList<>();
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            LogUtil.logE(TAG,"[MyChildListener] [onChildAdded]");
+            if (snapshot.exists()) {
+                LogUtil.logE(TAG,"[MyChildListener] [onChildAdded] snapshot EXIST");
+                LogUtil.logE(TAG,"[MyChildListener] [onChildAdded] snapshot count = "
+                        +snapshot.getChildrenCount());
 
+                    if (onQueryListener != null) {
+                        // operate second query
+                        UserMission userMission = onQueryListener.onSecondQuery(snapshot);
+                        if (userMission != null)
+                            userMissionList.add(userMission);
+                    } else {
+                        userMissionList.add(snapshot.getValue(UserMission.class));
+                    }
+            }
+            setValue(userMissionList);
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    }
+
+    class MyValueEventListener implements ValueEventListener{
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             LogUtil.logE(TAG,"[MyValueEventListener]");
