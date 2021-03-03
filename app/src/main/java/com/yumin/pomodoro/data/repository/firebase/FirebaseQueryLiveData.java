@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,22 +23,26 @@ public class FirebaseQueryLiveData extends LiveData<UserMission> {
     private final Query query;
     private final MyValueEventListener myValueEventListener = new MyValueEventListener();
     private final MyChildListener myChildListener = new MyChildListener();
-    private boolean mIsOffline = false;
 
-    public FirebaseQueryLiveData(Query query, boolean isOffline) {
+    public FirebaseQueryLiveData(Query query) {
         this.query = query;
-        this.mIsOffline = isOffline;
     }
 
-    public FirebaseQueryLiveData(DatabaseReference databaseReference, boolean isOffline){
+    public FirebaseQueryLiveData(DatabaseReference databaseReference){
         this.query  = databaseReference;
-        mIsOffline = isOffline;
+    }
+
+
+    private boolean isLoginAsUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        LogUtil.logE(TAG,"[isLoginAsUser] RETURN :" + String.valueOf(user != null));
+        return user != null;
     }
 
     @Override
     protected void onActive() {
         LogUtil.logE(TAG,"[onActive]");
-        if (mIsOffline)
+        if (isLoginAsUser())
             query.addChildEventListener(myChildListener);
         else
             query.addValueEventListener(myValueEventListener);
@@ -45,7 +51,7 @@ public class FirebaseQueryLiveData extends LiveData<UserMission> {
     @Override
     protected void onInactive() {
         LogUtil.logE(TAG,"[onInactive]");
-        if (mIsOffline)
+        if (isLoginAsUser())
             query.removeEventListener(myChildListener);
         else
             query.removeEventListener(myValueEventListener);

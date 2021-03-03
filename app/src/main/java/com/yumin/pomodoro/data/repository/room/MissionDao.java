@@ -7,41 +7,41 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 
 import java.util.List;
 
 @Dao
 public interface MissionDao {
     @Query("SELECT * FROM MyMission")
-    LiveData<List<Mission>> getAllMissions();
+    LiveData<List<UserMission>> getAllMissions();
 
     @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet")
-    LiveData<List<Mission>> getTodayMissionsByOperateDay(long dayst, long dayet);
+    LiveData<List<UserMission>> getTodayMissionsByOperateDay(long dayst, long dayet);
 
     @Query("SELECT * FROM MyMission WHERE repeat = 1 AND operateDay < :dayst")
-    LiveData<List<Mission>> getTodayMissionsByRepeatType(long dayst);
+    LiveData<List<UserMission>> getTodayMissionsByRepeatType(long dayst);
 
     @Query("SELECT * FROM MyMission WHERE repeatStart <= :dayst AND repeatEnd >= :dayst")
-    LiveData<List<Mission>> getTodayMissionsByRepeatRange(long dayst);
+    LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long dayst);
 
     @Query("SELECT * FROM MyMission WHERE operateDay > :current OR repeat = 1 OR :current <= repeatEnd")
-    LiveData<List<Mission>> getComingMissionsByOperateDay(long current);
+    LiveData<List<UserMission>> getComingMissionsByOperateDay(long current);
 
     @Query("SELECT * FROM MyMission WHERE repeat = 1")
-    LiveData<List<Mission>> getComingMissionsByRepeatType();
+    LiveData<List<UserMission>> getComingMissionsByRepeatType();
 
     @Query("SELECT * FROM MyMission WHERE repeatEnd >= :current")
-    LiveData<List<Mission>> getComingMissionsByRepeatRange(long current);
+    LiveData<List<UserMission>> getComingMissionsByRepeatRange(long current);
 
     @Query("SELECT * FROM MyMission WHERE id=:id")
-    LiveData<Mission> getMissionById(int id);
+    LiveData<UserMission> getMissionById(int id);
 
     @Insert
-    void insert(Mission... missions);
+    void insert(UserMission... missions);
 
     @Update
-    void update(Mission... missions);
+    void update(UserMission... missions);
 
     @Query("UPDATE MyMission SET numberOfCompletions=:num WHERE id=:id")
     void updateNumberOfCompletionsById(int id, int num);
@@ -50,7 +50,7 @@ public interface MissionDao {
     void updateIsFinishedById(int id, boolean finished);
 
     @Delete
-    void delete(Mission... missions);
+    void delete(UserMission... missions);
 
     @Query("SELECT repeatStart FROM MyMission WHERE id=:id")
     LiveData<Long> getMissionRepeatStart(int id);
@@ -62,8 +62,8 @@ public interface MissionDao {
     LiveData<Long> getMissionOperateDay(int id);
 
     @Query("SELECT * FROM MyMission WHERE isFinished = 1")
-    LiveData<List<Mission>> getFinishedMissions();
+    LiveData<List<UserMission>> getFinishedMissions();
 
     @Query("SELECT * FROM MyMission WHERE isFinished = 0")
-    LiveData<List<Mission>> getUnfinishedMissions();
+    LiveData<List<UserMission>> getUnfinishedMissions();
 }

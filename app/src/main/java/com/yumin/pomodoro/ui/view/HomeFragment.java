@@ -13,7 +13,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
-import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
@@ -40,7 +39,7 @@ public class HomeFragment extends DataBindingFragment {
     private SharedViewModel mSharedViewModel;
     private CategoryAdapter mCategoryAdapter;
     private ExpandableViewAdapter expandableViewAdapter;
-    private List<Mission> mMissions = new ArrayList<>();
+    private List<UserMission> mMissions = new ArrayList<>();
     private List<Category> mCategory = new ArrayList<>();
     FragmentHomeBinding fragmentHomeBinding;
     Category today = null;

@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.firebase.FirebaseQueryListLiveData;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -58,7 +56,7 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == Mission.TYPE_NONE &&
+            if (userMission.getRepeat() == UserMission.TYPE_NONE &&
                     TimeMilli.getTodayStartTime() <= userMission.getOperateDay() &&
                     userMission.getOperateDay() <= TimeMilli.getTodayEndTime()) {
                 missionList.add(userMission);
@@ -78,7 +76,7 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == Mission.TYPE_EVERYDAY &&
+            if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY &&
                     userMission.getOperateDay() <= TimeMilli.getTodayEndTime())
                 missionList.add(userMission);
         }
@@ -96,7 +94,7 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == Mission.TYPE_DEFINE &&
+            if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
                 TimeMilli.getTodayStartTime() >= userMission.getRepeatStart() &&
                 TimeMilli.getTodayEndTime() <= userMission.getRepeatEnd())
                 missionList.add(userMission);
@@ -132,7 +130,7 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == Mission.TYPE_EVERYDAY)
+            if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY)
                 missionList.add(userMission);
         }
         comingRepeatEverydayMissions.setValue(missionList);
@@ -154,7 +152,7 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == Mission.TYPE_DEFINE &&
+            if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
                     (userMission.getRepeatStart() > TimeMilli.getTodayEndTime() ||
                             userMission.getRepeatEnd() >= TimeMilli.getTodayEndTime()))
                 missionList.add(userMission);
@@ -188,9 +186,9 @@ public class HomeViewModel extends ViewModel {
         return unfinishedMissions;
     }
 
-    public void deleteMission(Mission mission){
+    public void deleteMission(UserMission mission){
 //        this.roomRepository.deleteMission(mission);
-        firebaseRepository.deleteMission((UserMission) mission);
+        firebaseRepository.deleteMission(mission);
     }
 
     public void initNumberOfCompletions(String uid){

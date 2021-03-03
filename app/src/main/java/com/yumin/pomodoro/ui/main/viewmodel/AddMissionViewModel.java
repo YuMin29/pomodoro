@@ -7,9 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.model.AdjustMissionItem;
-import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;

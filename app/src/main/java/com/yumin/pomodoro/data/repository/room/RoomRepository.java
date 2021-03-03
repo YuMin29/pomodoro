@@ -5,8 +5,6 @@ import android.graphics.Color;
 import androidx.lifecycle.LiveData;
 
 import com.yumin.pomodoro.data.api.ApiService;
-import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 
 import java.util.List;
@@ -18,37 +16,37 @@ public class RoomRepository {
         this.apiService = (RoomApiServiceImpl) apiService;
     }
 
-    public LiveData<List<Mission>> getMissions(){
+    public LiveData<List<UserMission>> getMissions(){
         return apiService.getMissions();
     }
 
-    public LiveData<List<Mission>> getTodayMissions(long start, long end){
+    public LiveData<List<UserMission>> getTodayMissions(long start, long end){
         return apiService.getTodayMissionsByOperateDay(start,end);
     }
 
-    public LiveData<List<Mission>> getComingMissions(long today){
+    public LiveData<List<UserMission>> getComingMissions(long today){
         return apiService.getComingMissionsByOperateDay(today);
     }
 
-    public Mission getInitMission(){
+    public UserMission getInitMission(){
         return apiService.getInitMission();
     }
 
-    public Mission getQuickMission(){
+    public UserMission getQuickMission(){
         return apiService.getQuickMission(25,5, Color.parseColor("#e57373"));
     }
 
-    public LiveData<Mission> getMissionById(int id){
+    public LiveData<UserMission> getMissionById(String id){
         return apiService.getMissionById(id);
     }
 
-    public void addMission(Mission mission){
-        apiService.addMission(mission);
-//        new FirebaseApiServiceImpl().addMission(new UserMission(mission.getTime(),mission.getShortBreakTime(),mission.getColor()));
+    public void addMission(UserMission userMission){
+        apiService.addMission(userMission);
+//        new FirebaseApiServiceImpl().addMission(new UserMission(userMission.getTime(),userMission.getShortBreakTime(),userMission.getColor()));
     }
 
-    public void updateMission(Mission mission){
-        apiService.updateMission(mission);
+    public void updateMission(UserMission userMission){
+        apiService.updateMission(userMission);
     }
 
     public void updateNumberOfCompletionById(int id, int num){
@@ -59,27 +57,27 @@ public class RoomRepository {
         apiService.updateIsFinishedById(id,finished);
     }
 
-    public void deleteMission(Mission mission){
-        apiService.deleteMission(mission);
+    public void deleteMission(UserMission userMission){
+        apiService.deleteMission(userMission);
     }
 
-    public LiveData<Long> getMissionRepeatStart(int id){
+    public LiveData<Long> getMissionRepeatStart(String id){
         return apiService.getMissionRepeatStart(id);
     }
 
-    public LiveData<Long> getMissionRepeatEnd(int id){
+    public LiveData<Long> getMissionRepeatEnd(String id){
         return apiService.getMissionRepeatEnd(id);
     }
 
-    public LiveData<Long> getMissionOperateDay(int id){
+    public LiveData<Long> getMissionOperateDay(String id){
         return apiService.getMissionOperateDay(id);
     }
 
-    public LiveData<List<Mission>> getFinishedMissions(){
+    public LiveData<List<UserMission>> getFinishedMissions(){
         return apiService.getFinishedMissions();
     }
 
-    public LiveData<List<Mission>> getUnfinishedMissions(){
+    public LiveData<List<UserMission>> getUnfinishedMissions(){
         return apiService.getUnFinishedMissions();
     }
 }

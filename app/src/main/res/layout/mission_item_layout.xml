@@ -6,7 +6,7 @@
     <data>
         <variable
             name="mission"
-            type="com.yumin.pomodoro.data.model.Mission" />
+            type="com.yumin.pomodoro.data.repository.firebase.UserMission" />
     </data>
 
     <LinearLayout

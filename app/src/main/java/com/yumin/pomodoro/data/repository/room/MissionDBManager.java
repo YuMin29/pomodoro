@@ -1,11 +1,8 @@
 package com.yumin.pomodoro.data.repository.room;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.room.Database;
 import androidx.room.DatabaseConfiguration;
 import androidx.room.InvalidationTracker;
@@ -13,13 +10,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
-import com.yumin.pomodoro.data.model.Mission;
-import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Mission.class}, version = 1, exportSchema = false)
+@Database(entities = {UserMission.class}, version = 1, exportSchema = false)
 public abstract class MissionDBManager extends RoomDatabase {
     private final static String TAG = "[MissionDBManager]";
     private final static String DB_NAME = "mysql.db";

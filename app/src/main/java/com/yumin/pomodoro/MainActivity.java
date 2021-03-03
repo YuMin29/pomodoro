@@ -77,16 +77,16 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     FirebaseUser mCurrentFirebaseUser = null;
     Context mContext;
 
+    static {
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
-        if (mCurrentFirebaseUser == null)
-            FirebaseDatabase.getInstance().goOffline();
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         // set status bar color as tool bar color
         setStatusBarGradient(this);
@@ -162,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // Check if user is signed in (non-null) and update UI accordingly.
                 updateNavHeader(user);
                 mCurrentFirebaseUser = user;
-                FirebaseDatabase.getInstance().goOnline();
             }
         };
     }
@@ -250,7 +249,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().setStatusBarColor(color);
         }
-
     }
 
     @Override

@@ -11,9 +11,7 @@ import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.model.Mission;
 import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
@@ -32,7 +30,7 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
     SharedViewModel sharedViewModel;
     FragmentEditMissionBinding fragmentEditMissionBinding;
 //    RangeCalenderViewModel rangeCalenderViewModel;
-    Mission editMission;
+    UserMission editMission;
     private static final int REPEAT_NONE = 0;
     private static final int REPEAT_EVERYDAY = 1;
     private static final int REPEAT_DEFINE = 2;

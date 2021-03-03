@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,28 +22,31 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
     private OnQueryListener onQueryListener;
     private final Query query;
     private final MyValueEventListener myValueEventListener = new MyValueEventListener();
-    private boolean mIsOffline = false;
     private final MyChildListener myChildListener = new MyChildListener();
 
-    public FirebaseQueryListLiveData(Query query, boolean isOffline) {
+    public FirebaseQueryListLiveData(Query query) {
         LogUtil.logE(TAG,"[query] "+query.toString());
         this.query = query;
-        this.mIsOffline = isOffline;
     }
 
-    public FirebaseQueryListLiveData(DatabaseReference databaseReference, boolean isOffline) {
+    public FirebaseQueryListLiveData(DatabaseReference databaseReference) {
         this.query = databaseReference;
-        this.mIsOffline = isOffline;
     }
 
     public void setOnQueryListener(OnQueryListener onQueryListener){
         this.onQueryListener = onQueryListener;
     }
 
+    private boolean isLoginAsUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        LogUtil.logE(TAG,"[isLoginAsUser] RETURN :" + String.valueOf(user != null));
+        return user != null;
+    }
+
     @Override
     protected void onActive() {
         LogUtil.logE(TAG,"[onActive]");
-        if (mIsOffline)
+        if (isLoginAsUser())
             query.limitToFirst(1000).addChildEventListener(myChildListener);
         else
             query.addValueEventListener(myValueEventListener);
@@ -50,7 +55,7 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
     @Override
     protected void onInactive() {
         LogUtil.logE(TAG,"[onInactive]");
-        if (mIsOffline)
+        if (isLoginAsUser())
             query.removeEventListener(myChildListener);
         else
             query.removeEventListener(myValueEventListener);

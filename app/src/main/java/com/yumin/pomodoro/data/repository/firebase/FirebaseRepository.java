@@ -19,29 +19,29 @@ public class FirebaseRepository {
         return firebaseRepository.getMissions();
     }
 
-    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end){
-        return firebaseRepository.getTodayMissionsByOperateDay(start,end);
-    }
-
-    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end){
-        return firebaseRepository.getTodayMissionsByRepeatType(start,end);
-    }
-
-    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end){
-        return firebaseRepository.getTodayMissionsByRepeatRange(start,end);
-    }
-
-    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today){
-        return firebaseRepository.getComingMissionsByOperateDay(today);
-    }
-
-    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today){
-        return firebaseRepository.getComingMissionsByRepeatType(today);
-    }
-
-    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today){
-        return firebaseRepository.getComingMissionsByRepeatRange(today);
-    }
+//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end){
+//        return firebaseRepository.getTodayMissionsByOperateDay(start,end);
+//    }
+//
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end){
+//        return firebaseRepository.getTodayMissionsByRepeatType(start,end);
+//    }
+//
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end){
+//        return firebaseRepository.getTodayMissionsByRepeatRange(start,end);
+//    }
+//
+//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today){
+//        return firebaseRepository.getComingMissionsByOperateDay(today);
+//    }
+//
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today){
+//        return firebaseRepository.getComingMissionsByRepeatType(today);
+//    }
+//
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today){
+//        return firebaseRepository.getComingMissionsByRepeatRange(today);
+//    }
 
 
     public UserMission getInitMission(){
@@ -88,11 +88,11 @@ public class FirebaseRepository {
         return firebaseRepository.getMissionOperateDay(id);
     }
 
-    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
-        return firebaseRepository.getFinishedMissions(start, end);
-    }
-
-    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
-        return firebaseRepository.getUnFinishedMissions(start, end);
-    }
+//    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
+//        return firebaseRepository.getFinishedMissions(start, end);
+//    }
+//
+//    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
+//        return firebaseRepository.getUnFinishedMissions(start, end);
+//    }
 }

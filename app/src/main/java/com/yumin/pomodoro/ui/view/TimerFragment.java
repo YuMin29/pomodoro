@@ -22,7 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.CircleTimer;
@@ -203,9 +203,9 @@ public class TimerFragment extends DataBindingFragment {
 
     private void observeViewModel(){
         // TODO: 2/8/21 Use Mediator to observe mission from view model
-        timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {
+        timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
-            public void onChanged(Mission mission) {
+            public void onChanged(UserMission mission) {
                 if (mission != null) {
                     // format
                     long missionTime = Long.valueOf(mission.getTime() * 60 * 1000);

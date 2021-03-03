@@ -10,12 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.model.Mission;
+import com.yumin.pomodoro.data.repository.firebase.User;
+import com.yumin.pomodoro.data.repository.firebase.UserMission;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
@@ -35,7 +34,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
     private static final int REPEAT_NONE = 0;
     private static final int REPEAT_EVERYDAY = 1;
     private static final int REPEAT_DEFINE = 2;
-    private Mission mMission = null;
+    private UserMission mMission = null;
     private long latestRepeatStart = -1L;
     private long latestRepeatEnd = -1L;
     private long operateDay = -1L;
@@ -96,9 +95,9 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             }
         });
 
-        mAddMissionViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<Mission>() {
+        mAddMissionViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
-            public void onChanged(Mission mission) {
+            public void onChanged(UserMission mission) {
                 LogUtil.logD(TAG,"[Observe][getMission] mission = "+mission);
                 if (mMission == null || mMission != mission) {
                     mMission = mission;
