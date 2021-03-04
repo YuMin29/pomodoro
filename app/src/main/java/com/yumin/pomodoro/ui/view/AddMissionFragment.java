@@ -13,8 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.repository.firebase.User;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;

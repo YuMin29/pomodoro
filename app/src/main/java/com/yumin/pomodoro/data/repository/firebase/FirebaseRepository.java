@@ -4,19 +4,66 @@ import android.graphics.Color;
 
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.api.ApiService;
+import com.yumin.pomodoro.data.api.DataRepository;
 
 import java.util.List;
 
-public class FirebaseRepository {
-    private FirebaseApiServiceImpl firebaseRepository;
+public class FirebaseRepository implements DataRepository {
+
+    private FirebaseApiServiceImpl firebaseApiService;
 
     public FirebaseRepository(ApiService apiService){
-        this.firebaseRepository = (FirebaseApiServiceImpl) apiService;
+        this.firebaseApiService = (FirebaseApiServiceImpl) apiService;
     }
 
     public LiveData<List<UserMission>> getMissions(){
-        return firebaseRepository.getMissions();
+        return firebaseApiService.getMissions();
+    }
+
+    public UserMission getInitMission(){
+        return firebaseApiService.getInitMission();
+    }
+
+    public UserMission getQuickMission(){
+        return firebaseApiService.getQuickMission(25,5, Color.parseColor("#e57373"));
+    }
+
+    public LiveData<UserMission> getMissionById(String id){
+        return firebaseApiService.getMissionById(id);
+    }
+
+    public void addMission(UserMission mission){
+        firebaseApiService.addMission(mission);
+    }
+
+    public void updateMission(UserMission mission){
+        firebaseApiService.updateMission(mission);
+    }
+
+    public void updateNumberOfCompletionById(String id, int num){
+        firebaseApiService.updateNumberOfCompletionById(id,num);
+    }
+
+    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber){
+        firebaseApiService.updateIsFinishedById(id,finished,completeOfNumber);
+    }
+
+    public void deleteMission(UserMission mission){
+        firebaseApiService.deleteMission(mission);
+    }
+
+    public LiveData<Long> getMissionRepeatStart(String id){
+        return firebaseApiService.getMissionRepeatStart(id);
+    }
+
+    public LiveData<Long> getMissionRepeatEnd(String id){
+        return firebaseApiService.getMissionRepeatEnd(id);
+    }
+
+    public LiveData<Long> getMissionOperateDay(String id){
+        return firebaseApiService.getMissionOperateDay(id);
     }
 
 //    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end){
@@ -42,52 +89,7 @@ public class FirebaseRepository {
 //    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today){
 //        return firebaseRepository.getComingMissionsByRepeatRange(today);
 //    }
-
-
-    public UserMission getInitMission(){
-        return firebaseRepository.getInitMission();
-    }
-
-    public UserMission getQuickMission(){
-        return firebaseRepository.getQuickMission(25,5, Color.parseColor("#e57373"));
-    }
-
-    public LiveData<UserMission> getMissionById(String id){
-        return firebaseRepository.getMissionById(id);
-    }
-
-    public void addMission(UserMission mission){
-        firebaseRepository.addMission(mission);
-    }
-
-    public void updateMission(UserMission mission){
-        firebaseRepository.updateMission(mission);
-    }
-
-    public void updateNumberOfCompletionById(String id, int num){
-        firebaseRepository.updateNumberOfCompletionById(id,num);
-    }
-
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber){
-        firebaseRepository.updateIsFinishedById(id,finished,completeOfNumber);
-    }
-
-    public void deleteMission(UserMission mission){
-        firebaseRepository.deleteMission(mission);
-    }
-
-    public LiveData<Long> getMissionRepeatStart(String id){
-        return firebaseRepository.getMissionRepeatStart(id);
-    }
-
-    public LiveData<Long> getMissionRepeatEnd(String id){
-        return firebaseRepository.getMissionRepeatEnd(id);
-    }
-
-    public LiveData<Long> getMissionOperateDay(String id){
-        return firebaseRepository.getMissionOperateDay(id);
-    }
-
+//
 //    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
 //        return firebaseRepository.getFinishedMissions(start, end);
 //    }

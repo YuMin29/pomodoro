@@ -5,14 +5,15 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
-import com.yumin.pomodoro.data.api.RoomApiService;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.api.ApiService;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
 
+import java.util.Date;
 import java.util.List;
 
 // TODO: 3/3/21 Use Firebase getCurrentUser to distinguish use Room or Firebase
-public class RoomApiServiceImpl implements RoomApiService<UserMission> {
+public class RoomApiServiceImpl implements ApiService<UserMission> {
     private static final String TAG = "[ApiServiceImpl]";
     private List<UserMission> missions;
     private MissionDao missionDao;
@@ -37,42 +38,7 @@ public class RoomApiServiceImpl implements RoomApiService<UserMission> {
         allMissions = missionDao.getAllMissions();
     }
 
-    @Override
-    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
-        todayMissionsByOperateDay = missionDao.getTodayMissionsByOperateDay(start,end);
-        return todayMissionsByOperateDay;
-    }
 
-    @Override
-    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
-        todayMissionsByRepeatType = missionDao.getTodayMissionsByRepeatType(start);
-        return todayMissionsByRepeatType;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
-        todayMissionsByRepeatRange = missionDao.getTodayMissionsByRepeatRange(start);
-        return todayMissionsByRepeatRange;
-    }
-
-
-    @Override
-    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
-        comingMissionsByOperateDay = missionDao.getComingMissionsByOperateDay(today);
-        return comingMissionsByOperateDay;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
-        comingMissionsByRepeatType = missionDao.getComingMissionsByRepeatType();
-        return comingMissionsByRepeatType;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
-        comingMissionsByRepeatRange = missionDao.getComingMissionsByRepeatRange(today);
-        return comingMissionsByRepeatRange;
-    }
 
     @Override
     public LiveData<UserMission> getMissionById(String id) {
@@ -82,8 +48,39 @@ public class RoomApiServiceImpl implements RoomApiService<UserMission> {
 
     @Override
     public void updateNumberOfCompletionById(String id, int num) {
-
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                missionDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
+            }
+        });
     }
+
+    @Override
+    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber) {
+        LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+finished);
+
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                missionDao.updateIsFinishedById(Integer.valueOf(id), finished);
+                missionDao.updateFinishedDayById(Integer.valueOf(id), finished ? new Date().getTime() : -1);
+            }
+        });
+
+        recordFinishDayByMission(id, completeOfNumber, finished);
+    }
+
+    private void recordFinishDayByMission(String id,int completeOfNumber, boolean isFinish){
+        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+id
+                +" ,completeOfNumber = "+completeOfNumber
+                +" ,isFinish = "+isFinish);
+//        String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
+//        DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
+//        databaseReference.push();
+//        databaseReference.child(id).setValue(new MissionState(completeOfNumber,isFinish));
+    }
+
 
     @Override
     public LiveData<List<UserMission>> getMissions() {
@@ -96,6 +93,7 @@ public class RoomApiServiceImpl implements RoomApiService<UserMission> {
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
+                userMission.setCreatedTime(new Date().getTime());
                 missionDao.insert(userMission);
             }
         });
@@ -106,24 +104,6 @@ public class RoomApiServiceImpl implements RoomApiService<UserMission> {
             @Override
             public void run() {
                 missionDao.update(userMission);
-            }
-        });
-    }
-
-    public void updateNumberOfCompletionById(int id, int num){
-        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                missionDao.updateNumberOfCompletionsById(id,num);
-            }
-        });
-    }
-
-    public void updateIsFinishedById(int id, boolean finished){
-        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                missionDao.updateIsFinishedById(id,finished);
             }
         });
     }
@@ -147,13 +127,13 @@ public class RoomApiServiceImpl implements RoomApiService<UserMission> {
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissions() {
+    public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
         finishedMissions = missionDao.getFinishedMissions();
         return finishedMissions;
     }
 
     @Override
-    public LiveData<List<UserMission>> getUnFinishedMissions() {
+    public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
         unfinishedMissions = missionDao.getUnfinishedMissions();
         return unfinishedMissions;
     }
@@ -176,4 +156,41 @@ public class RoomApiServiceImpl implements RoomApiService<UserMission> {
     public UserMission getQuickMission(int time,int shortBreakTime,int color) {
         return new UserMission(time,shortBreakTime, color);
     }
+
+//    @Override
+//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
+//        todayMissionsByOperateDay = missionDao.getTodayMissionsByOperateDay(start,end);
+//        return todayMissionsByOperateDay;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
+//        todayMissionsByRepeatType = missionDao.getTodayMissionsByRepeatType(start);
+//        return todayMissionsByRepeatType;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
+//        todayMissionsByRepeatRange = missionDao.getTodayMissionsByRepeatRange(start);
+//        return todayMissionsByRepeatRange;
+//    }
+//
+//
+//    @Override
+//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
+//        comingMissionsByOperateDay = missionDao.getComingMissionsByOperateDay(today);
+//        return comingMissionsByOperateDay;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
+//        comingMissionsByRepeatType = missionDao.getComingMissionsByRepeatType();
+//        return comingMissionsByRepeatType;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
+//        comingMissionsByRepeatRange = missionDao.getComingMissionsByRepeatRange(today);
+//        return comingMissionsByRepeatRange;
+//    }
 }

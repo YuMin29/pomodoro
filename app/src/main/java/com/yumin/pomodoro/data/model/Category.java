@@ -1,6 +1,6 @@
 package com.yumin.pomodoro.data.model;
 
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.ArrayList;
 import java.util.List;

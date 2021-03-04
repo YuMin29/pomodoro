@@ -7,7 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.List;
 
@@ -15,24 +15,6 @@ import java.util.List;
 public interface MissionDao {
     @Query("SELECT * FROM MyMission")
     LiveData<List<UserMission>> getAllMissions();
-
-    @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet")
-    LiveData<List<UserMission>> getTodayMissionsByOperateDay(long dayst, long dayet);
-
-    @Query("SELECT * FROM MyMission WHERE repeat = 1 AND operateDay < :dayst")
-    LiveData<List<UserMission>> getTodayMissionsByRepeatType(long dayst);
-
-    @Query("SELECT * FROM MyMission WHERE repeatStart <= :dayst AND repeatEnd >= :dayst")
-    LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long dayst);
-
-    @Query("SELECT * FROM MyMission WHERE operateDay > :current OR repeat = 1 OR :current <= repeatEnd")
-    LiveData<List<UserMission>> getComingMissionsByOperateDay(long current);
-
-    @Query("SELECT * FROM MyMission WHERE repeat = 1")
-    LiveData<List<UserMission>> getComingMissionsByRepeatType();
-
-    @Query("SELECT * FROM MyMission WHERE repeatEnd >= :current")
-    LiveData<List<UserMission>> getComingMissionsByRepeatRange(long current);
 
     @Query("SELECT * FROM MyMission WHERE id=:id")
     LiveData<UserMission> getMissionById(int id);
@@ -48,6 +30,9 @@ public interface MissionDao {
 
     @Query("UPDATE MyMission SET isFinished=:finished WHERE id=:id")
     void updateIsFinishedById(int id, boolean finished);
+
+    @Query("UPDATE MyMission SET finishedDay=:finishedDay WHERE id=:id")
+    void updateFinishedDayById(int id, long finishedDay);
 
     @Delete
     void delete(UserMission... missions);
@@ -66,4 +51,22 @@ public interface MissionDao {
 
     @Query("SELECT * FROM MyMission WHERE isFinished = 0")
     LiveData<List<UserMission>> getUnfinishedMissions();
+
+    @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet")
+    LiveData<List<UserMission>> getTodayMissionsByOperateDay(long dayst, long dayet);
+
+    @Query("SELECT * FROM MyMission WHERE repeat = 1 AND operateDay < :dayst")
+    LiveData<List<UserMission>> getTodayMissionsByRepeatType(long dayst);
+
+    @Query("SELECT * FROM MyMission WHERE repeatStart <= :dayst AND repeatEnd >= :dayst")
+    LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long dayst);
+
+    @Query("SELECT * FROM MyMission WHERE operateDay > :current OR repeat = 1 OR :current <= repeatEnd")
+    LiveData<List<UserMission>> getComingMissionsByOperateDay(long current);
+
+    @Query("SELECT * FROM MyMission WHERE repeat = 1")
+    LiveData<List<UserMission>> getComingMissionsByRepeatType();
+
+    @Query("SELECT * FROM MyMission WHERE repeatEnd >= :current")
+    LiveData<List<UserMission>> getComingMissionsByRepeatRange(long current);
 }

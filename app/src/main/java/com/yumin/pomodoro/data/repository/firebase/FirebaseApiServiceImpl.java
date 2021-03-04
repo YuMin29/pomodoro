@@ -1,8 +1,6 @@
 package com.yumin.pomodoro.data.repository.firebase;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -15,14 +13,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.yumin.pomodoro.data.api.FireBaseApiService;
+import com.yumin.pomodoro.data.RecordMissionState;
+import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeMilli;
 
 import java.util.Date;
 import java.util.List;
 
-public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
+public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     private static final String TAG = "[FirebaseApiServiceImpl]";
     DatabaseReference databaseReference;
     Application mApplication;
@@ -40,38 +40,12 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         return "";
     }
 
-    private String getLocalUserUid(){
-        // read from shared preference
-        String userId = mApplication.getApplicationContext().getSharedPreferences("user_data",Context.MODE_PRIVATE)
-                .getString("user_id","");
-
-        if (userId.isEmpty()) {
-            // create a unique uid and save in shared preference
-            String id = databaseReference.child("usermissions").push().getKey();
-            LogUtil.logE(TAG,"[getCurrentUserUid] CREATE ID:"+id);
-            SharedPreferences preferences = mApplication.getApplicationContext()
-                    .getSharedPreferences("user_data", Context.MODE_PRIVATE);
-            preferences.edit().putString("user_id",id).commit();
-
-            return id;
-        }
-
-        LogUtil.logE(TAG,"[getCurrentUserUid] GET ID:"+userId);
-        return userId;
-    }
-
     private DatabaseReference getUserMissionPath(){
-        if (!getCurrentUserUid().isEmpty())
-            return databaseReference.child("usermissions").child(getCurrentUserUid());
-        else
-            return databaseReference.child("local_usermissions").child(getLocalUserUid());
+        return databaseReference.child("usermissions").child(getCurrentUserUid());
     }
 
     private DatabaseReference getCalendarPath(){
-        if (!getCurrentUserUid().isEmpty())
-            return databaseReference.child("record_calender").child(getCurrentUserUid());
-        else
-            return databaseReference.child("local_record_calender").child(getLocalUserUid());
+        return databaseReference.child("record_calender").child(getCurrentUserUid());
     }
 
     @Override
@@ -83,7 +57,7 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     public void addMission(UserMission mission) {
         LogUtil.logD(TAG,"[addMission]");
         String id = getUserMissionPath().push().getKey();
-        mission.setStrId(id);
+        mission.setFirebaseMissionId(id);
         mission.setCreatedTime(new Date().getTime());
         // add mission to firebase
         getUserMissionPath().child(id).setValue(mission);
@@ -98,104 +72,6 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
     public UserMission getQuickMission(int time, int shortBreakTime, int color) {
         return new UserMission(time,shortBreakTime,color);
     }
-
-    @Override
-    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
-        LogUtil.logE("[Stella]","[getTodayMissionsByOperateDay]");
-        return new FirebaseQueryListLiveData(getUserMissionPath()
-                .orderByChild("operateDay").startAt(start).endAt(end));
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
-        FirebaseQueryListLiveData listLiveData =
-                    new FirebaseQueryListLiveData(getUserMissionPath()
-                            .orderByChild("repeat").equalTo(1));
-
-        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
-            @Override
-            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(UserMission.class).getOperateDay() < start) {
-                    return dataSnapshot.getValue(UserMission.class);
-                }
-                return null;
-            }
-        });
-        return listLiveData;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
-        FirebaseQueryListLiveData listLiveData =
-                    new FirebaseQueryListLiveData(getUserMissionPath()
-                            .orderByChild("repeatStart").startAt(start));
-
-        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
-            @Override
-            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() <= end &&
-                        dataSnapshot.getValue(UserMission.class).getOperateDay() <= start) {
-                    return dataSnapshot.getValue(UserMission.class);
-                }
-                return null;
-            }
-        });
-        return listLiveData;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
-        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
-                    .orderByChild("operateDay"));
-
-        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
-            @Override
-            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(UserMission.class).getOperateDay() > today) {
-                    return dataSnapshot.getValue(UserMission.class);
-                }
-                return null;
-            }
-        });
-        return listLiveData;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
-        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
-                    .orderByChild("repeat").equalTo(1));
-
-        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
-            @Override
-            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                // 過濾 執行日< TODAY
-                if (dataSnapshot.getValue(UserMission.class).getOperateDay() < today) {
-                    return dataSnapshot.getValue(UserMission.class);
-                }
-                return null;
-            }
-        });
-        return listLiveData;
-    }
-
-    @Override
-    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
-        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
-                    .orderByChild("repeatEnd"));
-
-        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
-            @Override
-            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today &&
-                        dataSnapshot.getValue(UserMission.class).getOperateDay() < today) {
-                    return dataSnapshot.getValue(UserMission.class);
-                }
-                return null;
-            }
-        });
-        return listLiveData;
-    }
-
 
     @Override
     public LiveData<UserMission> getMissionById(String strId) {
@@ -228,7 +104,7 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
         DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
         databaseReference.push();
-        databaseReference.child(id).setValue(new MissionState(completeOfNumber,isFinish));
+        databaseReference.child(id).setValue(new RecordMissionState(completeOfNumber,isFinish));
     }
 
     @Override
@@ -293,12 +169,12 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
 
     @Override
     public void updateMission(UserMission mission) {
-        getUserMissionPath().child(mission.getStrId()).setValue(mission);
+        getUserMissionPath().child(mission.getFirebaseMissionId()).setValue(mission);
     }
 
     @Override
     public void deleteMission(UserMission mission) {
-        getUserMissionPath().child(mission.getStrId()).removeValue();
+        getUserMissionPath().child(mission.getFirebaseMissionId()).removeValue();
     }
 
     @Override
@@ -327,4 +203,101 @@ public class FirebaseApiServiceImpl implements FireBaseApiService<UserMission> {
         });
         return listLiveData;
     }
+
+//    @Override
+//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
+//        LogUtil.logE("[Stella]","[getTodayMissionsByOperateDay]");
+//        return new FirebaseQueryListLiveData(getUserMissionPath()
+//                .orderByChild("operateDay").startAt(start).endAt(end));
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
+//        FirebaseQueryListLiveData listLiveData =
+//                new FirebaseQueryListLiveData(getUserMissionPath()
+//                        .orderByChild("repeat").equalTo(1));
+//
+//        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+//            @Override
+//            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue(UserMission.class).getOperateDay() < start) {
+//                    return dataSnapshot.getValue(UserMission.class);
+//                }
+//                return null;
+//            }
+//        });
+//        return listLiveData;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
+//        FirebaseQueryListLiveData listLiveData =
+//                new FirebaseQueryListLiveData(getUserMissionPath()
+//                        .orderByChild("repeatStart").startAt(start));
+//
+//        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+//            @Override
+//            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() <= end &&
+//                        dataSnapshot.getValue(UserMission.class).getOperateDay() <= start) {
+//                    return dataSnapshot.getValue(UserMission.class);
+//                }
+//                return null;
+//            }
+//        });
+//        return listLiveData;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
+//        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
+//                .orderByChild("operateDay"));
+//
+//        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+//            @Override
+//            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue(UserMission.class).getOperateDay() > today) {
+//                    return dataSnapshot.getValue(UserMission.class);
+//                }
+//                return null;
+//            }
+//        });
+//        return listLiveData;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
+//        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
+//                .orderByChild("repeat").equalTo(1));
+//
+//        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+//            @Override
+//            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+//                // 過濾 執行日< TODAY
+//                if (dataSnapshot.getValue(UserMission.class).getOperateDay() < today) {
+//                    return dataSnapshot.getValue(UserMission.class);
+//                }
+//                return null;
+//            }
+//        });
+//        return listLiveData;
+//    }
+//
+//    @Override
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
+//        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
+//                .orderByChild("repeatEnd"));
+//
+//        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+//            @Override
+//            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue(UserMission.class).getRepeatEnd() >= today &&
+//                        dataSnapshot.getValue(UserMission.class).getOperateDay() < today) {
+//                    return dataSnapshot.getValue(UserMission.class);
+//                }
+//                return null;
+//            }
+//        });
+//        return listLiveData;
+//    }
 }

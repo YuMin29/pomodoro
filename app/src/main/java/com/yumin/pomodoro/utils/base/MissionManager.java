@@ -1,9 +1,12 @@
 package com.yumin.pomodoro.utils.base;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.utils.LogUtil;
+
 public class MissionManager {
+    private static final String TAG = "[MissionManager]";
     private static final MissionManager mMissionManager =  new MissionManager();
-    private int editId = -1;
-    private int operateId = -1;
     private int rangeCalenderId = -1;
     private String strOperateId = "";
     private String strEditId = "";
@@ -15,16 +18,14 @@ public class MissionManager {
         return mMissionManager;
     }
 
-    public void setEditId(int editId){
-        this.editId = editId;
-    }
-
-    public int getEditId(){
-        return this.editId;
-    }
-
-    public void setStrEditId(String strEditId){
-        this.strEditId = strEditId;
+    public void setStrEditId(UserMission userMission){
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            LogUtil.logE(TAG,"setStrEditId = "+userMission.getFirebaseMissionId());
+            this.strEditId = userMission.getFirebaseMissionId();
+        } else {
+            LogUtil.logE(TAG,"setStrEditId = "+userMission.getId());
+            this.strEditId = String.valueOf(userMission.getId());
+        }
     }
 
     public String getStrEditId(){
@@ -47,16 +48,17 @@ public class MissionManager {
         return this.strRangeCalenderId;
     }
 
-    public int getOperateId() {
-        return operateId;
-    }
+    public void setOperateId(UserMission userMission){
+        if (userMission == null) {
+            this.strOperateId = "quick_mission";
+            return;
+        }
 
-    public void setOperateId(int operateId) {
-        this.operateId = operateId;
-    }
 
-    public void setOperateId(String operateId){
-        this.strOperateId = operateId;
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            this.strOperateId = userMission.getFirebaseMissionId();
+        else
+            this.strOperateId = String.valueOf(userMission.getId());
     }
 
     public String getStrOperateId(){

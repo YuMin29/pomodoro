@@ -18,27 +18,27 @@ import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
-    private ApiService apiService;
+//    private ApiService apiService;
     private Application application;
 
-    public ViewModelFactory(Application application, ApiService apiService){
-        this.apiService = apiService;
+    public ViewModelFactory(Application application){
         this.application = application;
+//        this.apiService = apiService;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass == AddMissionViewModel.class) {
-            return (T) new AddMissionViewModel(application,new FirebaseRepository(apiService));
+            return (T) new AddMissionViewModel(application);
         } else if (modelClass == HomeViewModel.class) {
-            return (T) new HomeViewModel(new FirebaseRepository(apiService));
+            return (T) new HomeViewModel(application);
         } else if (modelClass == EditMissionViewModel.class) {
-            return (T) new EditMissionViewModel(application,new FirebaseRepository(apiService));
+            return (T) new EditMissionViewModel(application);
         } else if (modelClass == TimerViewModel.class) {
-            return (T) new TimerViewModel(application,new FirebaseRepository(apiService));
+            return (T) new TimerViewModel(application);
         } else if (modelClass == RangeCalenderViewModel.class) {
-            return (T) new RangeCalenderViewModel(application,new FirebaseRepository(apiService));
+            return (T) new RangeCalenderViewModel(application);
         } else if (modelClass == LoginViewModel.class) {
             return (T) new LoginViewModel(application);
         }

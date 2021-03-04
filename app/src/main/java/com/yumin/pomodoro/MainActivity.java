@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             public void onClick(View view) {
                 // start a quick mission
 //                MissionManager.getInstance().setOperateId(-1);
-                MissionManager.getInstance().setOperateId("quick_mission");
+                MissionManager.getInstance().setOperateId(null);
                 mNavController.navigate(R.id.fragment_timer);
 //                MainActivity.getNavController().navigate(R.id.fragment_timer);
             }

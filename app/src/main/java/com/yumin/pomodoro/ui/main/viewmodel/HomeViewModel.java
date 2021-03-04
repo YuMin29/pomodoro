@@ -1,11 +1,18 @@
 package com.yumin.pomodoro.ui.main.viewmodel;
 
+import android.app.Application;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.data.api.DataRepository;
+import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
+import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeMilli;
 
@@ -16,7 +23,7 @@ public class HomeViewModel extends ViewModel {
     private static final String TAG = "[HomeViewModel]";
     private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();
 //    private RoomRepository roomRepository;
-    private FirebaseRepository firebaseRepository;
+    private DataRepository dataRepository;
     private LiveData<List<UserMission>> allMissions;
     MutableLiveData<List<UserMission>> todayNoneRepeatMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> todayRepeatEverydayMissions = new MutableLiveData<>();
@@ -29,15 +36,20 @@ public class HomeViewModel extends ViewModel {
     MutableLiveData<List<UserMission>> finishedMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> unfinishedMissions = new MutableLiveData<>();
 
-    public HomeViewModel(FirebaseRepository firebaseRepository){
-        this.firebaseRepository = firebaseRepository;
+    public HomeViewModel(Application application){
+        LogUtil.logE(TAG,"[HomeViewModel] Constructor");
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
+        else
+            this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
+
         fetchData();
     }
 
     private void fetchData() {
         LogUtil.logE(TAG,"[fetchData]");
         mIsLoading.setValue(true);
-        allMissions = this.firebaseRepository.getMissions();
+        allMissions = this.dataRepository.getMissions();
         mIsLoading.setValue(false);
     }
 
@@ -168,7 +180,7 @@ public class HomeViewModel extends ViewModel {
 
     public void updateIsFinishedById(String itemId,boolean finished,int completeOfNumber){
 //        roomRepository.updateIsFinishedById(itemId,finished);
-        firebaseRepository.updateIsFinishedById(itemId,finished,completeOfNumber);
+        this.dataRepository.updateIsFinishedById(itemId,finished,completeOfNumber);
     }
 
     public LiveData<List<UserMission>> getFinishedMissions(){
@@ -188,11 +200,11 @@ public class HomeViewModel extends ViewModel {
 
     public void deleteMission(UserMission mission){
 //        this.roomRepository.deleteMission(mission);
-        firebaseRepository.deleteMission(mission);
+        this.dataRepository.deleteMission(mission);
     }
 
     public void initNumberOfCompletions(String uid){
         LogUtil.logD(TAG,"[initNumberOfCompletions] uid = "+uid);
-        firebaseRepository.updateNumberOfCompletionById(uid,0);
+        this.dataRepository.updateNumberOfCompletionById(uid,0);
     }
 }

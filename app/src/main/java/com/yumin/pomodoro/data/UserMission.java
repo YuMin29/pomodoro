@@ -1,8 +1,9 @@
-package com.yumin.pomodoro.data.repository.firebase;
+package com.yumin.pomodoro.data;
 
 import android.graphics.Color;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "MyMission")
@@ -31,23 +32,14 @@ public class UserMission {
     // TODO: 2021/2/17 考慮重複的情況 只留判斷今日完成?
     private boolean isFinished = false;
     private int numberOfCompletions = 0;
-
-    public String getStringId() {
-        return stringId;
-    }
-
-    public void setStringId(String stringId) {
-        this.stringId = stringId;
-    }
-
-    private String stringId;
+    private String firebaseMissionId = "";
     private long finishedDay = -1;
     private long createdTime;
 
-    public UserMission() {
-        super();
-    }
 
+    public UserMission(){}
+
+    @Ignore
     public UserMission(int time, int shortBreakTime, int color) {
         this.name = "快速番茄任務";
         this.time = time;
@@ -57,12 +49,13 @@ public class UserMission {
         this.numberOfCompletions = -1;
     }
 
+    @Ignore
     public UserMission(String name, int time, int shortBreakTime,
                        int longBreakTime, int color, long operateDay,
                        int goal, int repeat, int repeatStart, int repeatEnd,
                        boolean enableNotification, boolean enableSound,
                        boolean enableVibrate, boolean keepScreenOn,
-                       boolean finished, String stringId, long finishedDay, long createdTime) {
+                       boolean finished, String firebaseMissionId, long finishedDay, long createdTime) {
         this.name = name;
         this.time = time;
         this.shortBreakTime = shortBreakTime;
@@ -78,14 +71,14 @@ public class UserMission {
         this.enableVibrate = enableVibrate;
         this.keepScreenOn = keepScreenOn;
         this.isFinished = finished;
-        this.stringId = stringId;
+        this.firebaseMissionId = firebaseMissionId;
         this.finishedDay = finishedDay;
         this.createdTime = createdTime;
     }
 
     @Override
     public String toString() {
-        return "UserMission{" +
+        return "UserMission { " +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", time=" + time + '\'' +
@@ -102,34 +95,10 @@ public class UserMission {
                 ", enableVibrate=" + enableVibrate + '\'' +
                 ", keepScreenOn=" + keepScreenOn + '\'' +
                 ", isFinished =" + isFinished + '\'' +
-                ", stringId = " + stringId +
+                ", firebaseId = " + firebaseMissionId +
                 ", finishedDay = " + finishedDay +
                 ", createdTime = "+createdTime
-                + " }";
-    }
-
-    public String getStrId() {
-        return stringId;
-    }
-
-    public void setStrId(String id) {
-        this.stringId = id;
-    }
-
-    public long getFinishedDay(){
-        return this.finishedDay;
-    }
-
-    public void setFinishedDay(long finishedDay){
-        this.finishedDay = finishedDay;
-    }
-
-    public long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
+                + " } ";
     }
 
     public int getId() {
@@ -266,5 +235,29 @@ public class UserMission {
 
     public void setNumberOfCompletions(int numberOfCompletions) {
         this.numberOfCompletions = numberOfCompletions;
+    }
+
+    public String getFirebaseMissionId() {
+        return firebaseMissionId;
+    }
+
+    public void setFirebaseMissionId(String firebaseMissionId) {
+        this.firebaseMissionId = firebaseMissionId;
+    }
+
+    public long getFinishedDay(){
+        return this.finishedDay;
+    }
+
+    public void setFinishedDay(long finishedDay){
+        this.finishedDay = finishedDay;
+    }
+
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
     }
 }

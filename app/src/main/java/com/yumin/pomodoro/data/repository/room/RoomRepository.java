@@ -5,79 +5,98 @@ import android.graphics.Color;
 import androidx.lifecycle.LiveData;
 
 import com.yumin.pomodoro.data.api.ApiService;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.api.DataRepository;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.List;
 
-public class RoomRepository {
-    private RoomApiServiceImpl apiService;
+public class RoomRepository implements DataRepository {
+    private RoomApiServiceImpl roomApiService;
 
     public RoomRepository(ApiService apiService){
-        this.apiService = (RoomApiServiceImpl) apiService;
+        this.roomApiService = (RoomApiServiceImpl) apiService;
     }
 
     public LiveData<List<UserMission>> getMissions(){
-        return apiService.getMissions();
-    }
-
-    public LiveData<List<UserMission>> getTodayMissions(long start, long end){
-        return apiService.getTodayMissionsByOperateDay(start,end);
-    }
-
-    public LiveData<List<UserMission>> getComingMissions(long today){
-        return apiService.getComingMissionsByOperateDay(today);
+        return roomApiService.getMissions();
     }
 
     public UserMission getInitMission(){
-        return apiService.getInitMission();
+        return roomApiService.getInitMission();
     }
 
     public UserMission getQuickMission(){
-        return apiService.getQuickMission(25,5, Color.parseColor("#e57373"));
+        return roomApiService.getQuickMission(25,5, Color.parseColor("#e57373"));
     }
 
     public LiveData<UserMission> getMissionById(String id){
-        return apiService.getMissionById(id);
+        return roomApiService.getMissionById(id);
     }
 
     public void addMission(UserMission userMission){
-        apiService.addMission(userMission);
-//        new FirebaseApiServiceImpl().addMission(new UserMission(userMission.getTime(),userMission.getShortBreakTime(),userMission.getColor()));
+        roomApiService.addMission(userMission);
     }
 
     public void updateMission(UserMission userMission){
-        apiService.updateMission(userMission);
+        roomApiService.updateMission(userMission);
     }
 
-    public void updateNumberOfCompletionById(int id, int num){
-        apiService.updateNumberOfCompletionById(id,num);
+    @Override
+    public void updateNumberOfCompletionById(String id, int num) {
+        roomApiService.updateNumberOfCompletionById(id,num);
     }
 
-    public void updateIsFinishedById(int id, boolean finished){
-        apiService.updateIsFinishedById(id,finished);
+    @Override
+    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber) {
+        roomApiService.updateIsFinishedById(id,finished,completeOfNumber);
     }
+
 
     public void deleteMission(UserMission userMission){
-        apiService.deleteMission(userMission);
+        roomApiService.deleteMission(userMission);
     }
 
     public LiveData<Long> getMissionRepeatStart(String id){
-        return apiService.getMissionRepeatStart(id);
+        return roomApiService.getMissionRepeatStart(id);
     }
 
     public LiveData<Long> getMissionRepeatEnd(String id){
-        return apiService.getMissionRepeatEnd(id);
+        return roomApiService.getMissionRepeatEnd(id);
     }
 
     public LiveData<Long> getMissionOperateDay(String id){
-        return apiService.getMissionOperateDay(id);
+        return roomApiService.getMissionOperateDay(id);
     }
 
-    public LiveData<List<UserMission>> getFinishedMissions(){
-        return apiService.getFinishedMissions();
-    }
-
-    public LiveData<List<UserMission>> getUnfinishedMissions(){
-        return apiService.getUnFinishedMissions();
-    }
+//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
+//        return null;
+//    }
+//
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
+//        return null;
+//    }
+//
+//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
+//        return null;
+//    }
+//
+//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
+//        return null;
+//    }
+//
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
+//        return null;
+//    }
+//
+//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
+//        return null;
+//    }
+//
+//    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
+//        return apiService.getFinishedMissions(start, end);
+//    }
+//
+//    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
+//        return apiService.getUnFinishedMissions(start, end);
+//    }
 }

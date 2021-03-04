@@ -1,6 +1,6 @@
 package com.yumin.pomodoro.utils;
 
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.Comparator;
 

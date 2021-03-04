@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.CategoryItemLayoutBinding;
 import com.yumin.pomodoro.databinding.MissionItemLayoutBinding;
 import com.yumin.pomodoro.utils.LogUtil;

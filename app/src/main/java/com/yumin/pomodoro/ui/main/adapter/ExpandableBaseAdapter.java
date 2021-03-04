@@ -5,19 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
-import com.yumin.pomodoro.ui.main.viewholder.CategoryViewHolder;
-import com.yumin.pomodoro.ui.main.viewmodel.MissionViewHolder;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;

@@ -22,7 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.CircleTimer;

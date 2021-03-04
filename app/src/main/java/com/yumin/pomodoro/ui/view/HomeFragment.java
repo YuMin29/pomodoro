@@ -11,9 +11,10 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
 import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
@@ -91,7 +92,7 @@ public class HomeFragment extends DataBindingFragment {
             public void onEdit(UserMission userMission, int groupPosition, int childPosition) {
                 LogUtil.logD(TAG,"[item onEdit] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
 //                  MissionManager.getInstance().setEditId(mission.getId());
-                  MissionManager.getInstance().setStrEditId(userMission.getStrId());
+                  MissionManager.getInstance().setStrEditId(userMission);
                   navigate(R.id.edit_mission_fragment);
             }
         });
@@ -104,8 +105,7 @@ public class HomeFragment extends DataBindingFragment {
                 LogUtil.logD(TAG,"[onChildClick] item = "+userMission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
                 if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!userMission.isFinished())) {
-//                    MissionManager.getInstance().setOperateId(userMission.getId());
-                    MissionManager.getInstance().setOperateId(userMission.getStrId());
+                    MissionManager.getInstance().setOperateId(userMission);
                     navigate(R.id.fragment_timer);
                 } else {
                     // TODO: 2020/12/29 重新開始任務？ 清除完成紀錄？
@@ -210,8 +210,15 @@ public class HomeFragment extends DataBindingFragment {
                     (userMission.getFinishedDay() < TimeMilli.getTodayStartTime())) {
                 if (userMission.getNumberOfCompletions() != 0) {
                     // init complete number to 0
-                    mHomeViewModel.initNumberOfCompletions(userMission.getStrId());
-                    mHomeViewModel.updateIsFinishedById(userMission.getStrId(),false,0);
+                    String missionId;
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        missionId = userMission.getFirebaseMissionId();
+                    } else {
+                        missionId = String.valueOf(userMission.getId());
+                    }
+
+                    mHomeViewModel.initNumberOfCompletions(missionId);
+                    mHomeViewModel.updateIsFinishedById(missionId,false,0);
                 }
                 unfinishedMission.add(userMission);
             }

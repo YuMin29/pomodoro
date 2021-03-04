@@ -73,8 +73,7 @@ public abstract class DataBindingFragment extends Fragment {
 
     protected <T extends ViewModel> T getFragmentScopeViewModel(@NonNull Class<T> modelClass) {
         if (mFragmentProvider == null) {
-            mFragmentProvider = new ViewModelProvider(this,
-                    new ViewModelFactory(mActivity.getApplication(),new FirebaseApiServiceImpl(mActivity.getApplication())));
+            mFragmentProvider = new ViewModelProvider(this, new ViewModelFactory(mActivity.getApplication()));
         }
         return mFragmentProvider.get(modelClass);
     }

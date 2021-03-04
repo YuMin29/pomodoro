@@ -10,12 +10,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
-import com.yumin.pomodoro.data.repository.firebase.UserMission;
+import com.yumin.pomodoro.data.RecordMissionState;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {UserMission.class}, version = 1, exportSchema = false)
+@Database(entities = {UserMission.class, RecordMissionState.class}, version = 2, exportSchema = false)
 public abstract class MissionDBManager extends RoomDatabase {
     private final static String TAG = "[MissionDBManager]";
     private final static String DB_NAME = "mysql.db";
@@ -37,10 +38,13 @@ public abstract class MissionDBManager extends RoomDatabase {
         return Room.databaseBuilder(
                 context,
                 MissionDBManager.class,
-                DB_NAME).build();
+                DB_NAME).allowMainThreadQueries().build();
     }
 
     public abstract MissionDao getMissionDao();
+
+    public abstract RecordMissionDao getRecordMissionDao();
+
 
     @NonNull
     @Override
