@@ -22,6 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
@@ -43,7 +44,7 @@ public class TimerFragment extends DataBindingFragment {
     private boolean enableKeepScreenOn;
     private int missionCount;
     private CircleTimer missionTimer;
-    private int numberOfCompletion;
+    private int mNumberOfCompletion;
     private NotificationCompat.Builder notificationBuilder;
     private NotificationHelper notificationHelper;
     private static final int NOTIFICATION_ID = 1000;
@@ -120,9 +121,9 @@ public class TimerFragment extends DataBindingFragment {
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
                                 // update finish status
-                                if (missionCount != -1 && numberOfCompletion != -1) {
-                                    if ((missionCount - numberOfCompletion) < 1) {
-                                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
+                                if (missionCount != -1 && mNumberOfCompletion != -1) {
+                                    if ((missionCount - mNumberOfCompletion) < 1) {
+                                        timerViewModel.updateIsFinishedById(true, mNumberOfCompletion);
                                     }
                                 }
                             }
@@ -155,16 +156,19 @@ public class TimerFragment extends DataBindingFragment {
                     notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent);
                     notificationHelper.notify(notificationBuilder);
                 }
+
+                // create mission state
+                // or save mission state
             }
 
             @Override
             public void onFinished() {
                 LogUtil.logD(TAG,"[mission timer][onFinished]");
-                if (numberOfCompletion != -1) {
+                if (mNumberOfCompletion != -1) {
                     // update finished goal ui
-                    numberOfCompletion++;
-                    LogUtil.logD(TAG, "[mission timer][onFinish] numberOfCompletion = " + numberOfCompletion);
-                    timerViewModel.updateNumberOfCompletionById(numberOfCompletion);
+                    mNumberOfCompletion++;
+                    LogUtil.logD(TAG, "[mission timer][onFinish] numberOfCompletion = " + mNumberOfCompletion);
+                    timerViewModel.updateNumberOfCompletionById(mNumberOfCompletion);
                 }
 
                 // vibrate for remind
@@ -212,7 +216,7 @@ public class TimerFragment extends DataBindingFragment {
                     long missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
                     missionCount = mission.getGoal();
-                    numberOfCompletion = mission.getNumberOfCompletions();
+//                    mNumberOfCompletion = mission.getNumberOfCompletions();
                     enabledVibrate = mission.isEnableVibrate();
                     enabledNotification = mission.isEnableNotification();
                     enableKeepScreenOn = mission.isKeepScreenOn();
@@ -234,6 +238,25 @@ public class TimerFragment extends DataBindingFragment {
                     // post value back to view model
                     timerViewModel.setMissionTime(msTimeFormatter(missionTime));
                     timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
+                }
+            }
+        });
+
+        timerViewModel.getNumberOfCompletionById().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer value) {
+                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletionById = "+value);
+                if (null != value)
+                    mNumberOfCompletion = value;
+            }
+        });
+
+        timerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
+            @Override
+            public void onChanged(MissionState missionState) {
+                LogUtil.logE(TAG,"[OBSERVE] getMissionState = "+missionState);
+                if (null == missionState) {
+                    timerViewModel.initMissionState();
                 }
             }
         });

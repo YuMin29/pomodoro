@@ -10,12 +10,16 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.data.repository.room.MissionDBManager;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
+import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.TimeMilli;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
 public class TimerViewModel extends AndroidViewModel {
@@ -28,6 +32,8 @@ public class TimerViewModel extends AndroidViewModel {
     private MediatorLiveData<UserMission> mMission = new MediatorLiveData<>();
     private MutableLiveData<String> mMissionTime = new MutableLiveData<>();
     private MutableLiveData<String> mMissionBreakTime = new MutableLiveData<>();
+    private LiveData<Integer> mNumberOfCompletion;
+    private LiveData<MissionState> mMissionState;
 
     public TimerViewModel(@NonNull Application application) {
         super(application);
@@ -44,6 +50,7 @@ public class TimerViewModel extends AndroidViewModel {
     private void fetchMission(){
         if (missionStrId.equals("quick_mission")) {
             mMission.setValue(dataRepository.getQuickMission());
+//            mNumberOfCompletion.setValue(-1);
         } else {
             LiveData<UserMission> fetchMission = dataRepository.getMissionById(missionStrId);
             mMission.addSource(fetchMission, new Observer<UserMission>() {
@@ -52,6 +59,18 @@ public class TimerViewModel extends AndroidViewModel {
                     mMission.setValue(getmission);
                 }
             });
+            mNumberOfCompletion = dataRepository.getNumberOfCompletionById(missionStrId,TimeMilli.getTodayStartTime());
+            mMissionState = dataRepository.getMissionStateById(missionStrId,TimeMilli.getTodayStartTime());
+//            LiveData<MissionState> missionState = dataRepository.getMissionStateById(missionStrId,TimeMilli.getTodayStartTime());
+//            mMissionState.addSource(missionState, new Observer<MissionState>() {
+//                @Override
+//                public void onChanged(MissionState missionState) {
+//                    if (null != missionState)
+//                        mMissionState.setValue(missionState);
+//                    else
+//                        mMissionState.setValue(null);
+//                }
+//            });
         }
     }
 
@@ -81,5 +100,17 @@ public class TimerViewModel extends AndroidViewModel {
 
     public void updateIsFinishedById(boolean finished,int completeOfNumber){
         dataRepository.updateIsFinishedById(missionStrId,finished,completeOfNumber);
+    }
+
+    public LiveData<Integer> getNumberOfCompletionById(){
+        return mNumberOfCompletion;
+    }
+
+    public LiveData<MissionState> getMissionState(){
+        return mMissionState;
+    }
+
+    public void initMissionState(){
+        dataRepository.initMissionState(missionStrId);
     }
 }

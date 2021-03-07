@@ -25,14 +25,14 @@ public interface MissionDao {
     @Update
     void update(UserMission... missions);
 
-    @Query("UPDATE MyMission SET numberOfCompletions=:num WHERE id=:id")
-    void updateNumberOfCompletionsById(int id, int num);
-
-    @Query("UPDATE MyMission SET isFinished=:finished WHERE id=:id")
-    void updateIsFinishedById(int id, boolean finished);
-
-    @Query("UPDATE MyMission SET finishedDay=:finishedDay WHERE id=:id")
-    void updateFinishedDayById(int id, long finishedDay);
+//    @Query("UPDATE MyMission SET numberOfCompletions=:num WHERE id=:id")
+//    void updateNumberOfCompletionsById(int id, int num);
+//
+//    @Query("UPDATE MyMission SET isFinished=:finished WHERE id=:id")
+//    void updateIsFinishedById(int id, boolean finished);
+//
+//    @Query("UPDATE MyMission SET finishedDay=:finishedDay WHERE id=:id")
+//    void updateFinishedDayById(int id, long finishedDay);
 
     @Delete
     void delete(UserMission... missions);
@@ -46,11 +46,11 @@ public interface MissionDao {
     @Query("SELECT operateDay FROM MyMission WHERE id=:id")
     LiveData<Long> getMissionOperateDay(int id);
 
-    @Query("SELECT * FROM MyMission WHERE isFinished = 1")
-    LiveData<List<UserMission>> getFinishedMissions();
-
-    @Query("SELECT * FROM MyMission WHERE isFinished = 0")
-    LiveData<List<UserMission>> getUnfinishedMissions();
+//    @Query("SELECT * FROM MyMission WHERE isFinished = 1")
+//    LiveData<List<UserMission>> getFinishedMissions();
+//
+//    @Query("SELECT * FROM MyMission WHERE isFinished = 0")
+//    LiveData<List<UserMission>> getUnfinishedMissions();
 
     @Query("SELECT * FROM MyMission WHERE operateDay BETWEEN :dayst AND :dayet")
     LiveData<List<UserMission>> getTodayMissionsByOperateDay(long dayst, long dayet);

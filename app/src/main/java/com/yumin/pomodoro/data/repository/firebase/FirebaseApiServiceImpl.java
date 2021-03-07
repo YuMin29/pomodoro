@@ -13,7 +13,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.yumin.pomodoro.data.RecordMissionState;
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -85,26 +85,26 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     }
 
     @Override
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber) {
-        LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+finished);
+    public void updateIsFinishedById(String id, boolean isFinished, int completeOfNumber) {
+        LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+isFinished);
 
         getUserMissionPath().child(id)
-                .child("finished").setValue(finished);
+                .child("finished").setValue(isFinished);
 
         getUserMissionPath().child(id)
-                .child("finishedDay").setValue(finished ? new Date().getTime() : -1);
+                .child("finishedDay").setValue(isFinished ? new Date().getTime() : -1);
 
-        recordFinishDayByMission(id, completeOfNumber, finished);
+        saveMissionState(id, completeOfNumber, isFinished);
     }
 
-    private void recordFinishDayByMission(String id,int completeOfNumber, boolean isFinish){
-        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+id
+    private void saveMissionState(String missionId, int completeOfNumber, boolean isFinish){
+        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionId
                 +" ,completeOfNumber = "+completeOfNumber
                 +" ,isFinish = "+isFinish);
         String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
         DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
         databaseReference.push();
-        databaseReference.child(id).setValue(new RecordMissionState(completeOfNumber,isFinish));
+        databaseReference.child(missionId).setValue(new MissionState(completeOfNumber,isFinish));
     }
 
     @Override
@@ -187,22 +187,37 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
     }
 
     @Override
-    public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
-        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
-                .orderByChild("finishedDay"));
-        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
-            @Override
-            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
-                if ((dataSnapshot.getValue(UserMission.class).getFinishedDay() > end &&
-                        dataSnapshot.getValue(UserMission.class).getFinishedDay() < start) ||
-                    dataSnapshot.getValue(UserMission.class).getFinishedDay() == -1){
-                    return dataSnapshot.getValue(UserMission.class);
-                }
-                return null;
-            }
-        });
-        return listLiveData;
+    public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
+        return null;
     }
+
+    @Override
+    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
+        return null;
+    }
+
+    @Override
+    public void initMissionState(String id) {
+
+    }
+
+//    @Override
+//    public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
+//        FirebaseQueryListLiveData listLiveData = new FirebaseQueryListLiveData(getUserMissionPath()
+//                .orderByChild("finishedDay"));
+//        listLiveData.setOnQueryListener(new FirebaseQueryListLiveData.OnQueryListener() {
+//            @Override
+//            public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
+//                if ((dataSnapshot.getValue(UserMission.class).getFinishedDay() > end &&
+//                        dataSnapshot.getValue(UserMission.class).getFinishedDay() < start) ||
+//                    dataSnapshot.getValue(UserMission.class).getFinishedDay() == -1){
+//                    return dataSnapshot.getValue(UserMission.class);
+//                }
+//                return null;
+//            }
+//        });
+//        return listLiveData;
+//    }
 
 //    @Override
 //    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {

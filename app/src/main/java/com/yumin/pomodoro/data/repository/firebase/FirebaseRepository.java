@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.api.DataRepository;
@@ -64,6 +65,26 @@ public class FirebaseRepository implements DataRepository {
 
     public LiveData<Long> getMissionOperateDay(String id){
         return firebaseApiService.getMissionOperateDay(id);
+    }
+
+    @Override
+    public void initMissionState(String id) {
+
+    }
+
+    @Override
+    public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
+        return null;
+    }
+
+    @Override
+    public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
+        return null;
+    }
+
+    @Override
+    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
+        return null;
     }
 
 //    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end){

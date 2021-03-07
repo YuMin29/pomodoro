@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.UserMission;
@@ -68,7 +69,12 @@ public class RoomRepository implements DataRepository {
         return roomApiService.getMissionOperateDay(id);
     }
 
-//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
+    @Override
+    public void initMissionState(String id) {
+        roomApiService.initMissionState(id);
+    }
+
+    //    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
 //        return null;
 //    }
 //
@@ -92,11 +98,21 @@ public class RoomRepository implements DataRepository {
 //        return null;
 //    }
 //
-//    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
-//        return apiService.getFinishedMissions(start, end);
-//    }
-//
+    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
+        return roomApiService.getFinishedMissions(start, end);
+    }
+
+    @Override
+    public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
+        return roomApiService.getNumberOfCompletionById(id,todayStart);
+    }
+
+    @Override
+    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
+        return roomApiService.getMissionStateById(id,todayStart);
+    }
+
 //    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
-//        return apiService.getUnFinishedMissions(start, end);
+//        return roomApiService.getUnFinishedMissions(start, end);
 //    }
 }

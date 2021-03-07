@@ -184,14 +184,16 @@ public class HomeViewModel extends ViewModel {
     }
 
     public LiveData<List<UserMission>> getFinishedMissions(){
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (TimeMilli.getTodayStartTime() <= userMission.getFinishedDay() &&
-                    userMission.getFinishedDay() <= TimeMilli.getTodayEndTime())
-                missionList.add(userMission);
-        }
-        finishedMissions.setValue(missionList);
-        return finishedMissions;
+//        List<UserMission> missionList = new ArrayList<>();
+//        for (UserMission userMission : allMissions.getValue()) {
+//            if (TimeMilli.getTodayStartTime() <= userMission.getFinishedDay() &&
+//                    userMission.getFinishedDay() <= TimeMilli.getTodayEndTime())
+//                missionList.add(userMission);
+//        }
+//        finishedMissions.setValue(missionList);
+//        return finishedMissions;
+        return this.dataRepository.getFinishedMissions(TimeMilli.getTodayStartTime(),
+                TimeMilli.getTodayEndTime());
     }
 
     public LiveData<List<UserMission>> getUnfinishedMissions(){

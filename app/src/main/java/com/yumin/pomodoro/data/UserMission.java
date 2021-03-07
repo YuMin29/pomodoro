@@ -30,12 +30,11 @@ public class UserMission {
     private boolean enableVibrate = true;
     private boolean keepScreenOn = true;
     // TODO: 2021/2/17 考慮重複的情況 只留判斷今日完成?
-    private boolean isFinished = false;
-    private int numberOfCompletions = 0;
-    private String firebaseMissionId = "";
-    private long finishedDay = -1;
+//    private boolean isFinished = false;
+//    private int numberOfCompletions = 0;
+//    private long finishedDay = -1;
     private long createdTime;
-
+    private String firebaseMissionId = "";
 
     public UserMission(){}
 
@@ -46,7 +45,7 @@ public class UserMission {
         this.shortBreakTime = shortBreakTime;
         this.color = color;
         this.goal = -1;
-        this.numberOfCompletions = -1;
+//        this.numberOfCompletions = -1;
     }
 
     @Ignore
@@ -70,10 +69,10 @@ public class UserMission {
         this.enableSound = enableSound;
         this.enableVibrate = enableVibrate;
         this.keepScreenOn = keepScreenOn;
-        this.isFinished = finished;
         this.firebaseMissionId = firebaseMissionId;
-        this.finishedDay = finishedDay;
         this.createdTime = createdTime;
+//        this.isFinished = finished;
+//        this.finishedDay = finishedDay;
     }
 
     @Override
@@ -94,9 +93,9 @@ public class UserMission {
                 ", enableSound=" + enableSound + '\'' +
                 ", enableVibrate=" + enableVibrate + '\'' +
                 ", keepScreenOn=" + keepScreenOn + '\'' +
-                ", isFinished =" + isFinished + '\'' +
+//                ", isFinished =" + isFinished + '\'' +
                 ", firebaseId = " + firebaseMissionId +
-                ", finishedDay = " + finishedDay +
+//                ", finishedDay = " + finishedDay +
                 ", createdTime = "+createdTime
                 + " } ";
     }
@@ -221,21 +220,21 @@ public class UserMission {
         this.keepScreenOn = keepScreenOn;
     }
 
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    public void setFinished(boolean finished) {
-        isFinished = finished;
-    }
-
-    public int getNumberOfCompletions() {
-        return numberOfCompletions;
-    }
-
-    public void setNumberOfCompletions(int numberOfCompletions) {
-        this.numberOfCompletions = numberOfCompletions;
-    }
+//    public boolean isFinished() {
+//        return isFinished;
+//    }
+//
+//    public void setFinished(boolean finished) {
+//        isFinished = finished;
+//    }
+//
+//    public int getNumberOfCompletions() {
+//        return numberOfCompletions;
+//    }
+//
+//    public void setNumberOfCompletions(int numberOfCompletions) {
+//        this.numberOfCompletions = numberOfCompletions;
+//    }
 
     public String getFirebaseMissionId() {
         return firebaseMissionId;
@@ -245,13 +244,13 @@ public class UserMission {
         this.firebaseMissionId = firebaseMissionId;
     }
 
-    public long getFinishedDay(){
-        return this.finishedDay;
-    }
-
-    public void setFinishedDay(long finishedDay){
-        this.finishedDay = finishedDay;
-    }
+//    public long getFinishedDay(){
+//        return this.finishedDay;
+//    }
+//
+//    public void setFinishedDay(long finishedDay){
+//        this.finishedDay = finishedDay;
+//    }
 
     public long getCreatedTime() {
         return createdTime;

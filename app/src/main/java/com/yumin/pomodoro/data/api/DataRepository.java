@@ -2,6 +2,7 @@ package com.yumin.pomodoro.data.api;
 
 import androidx.lifecycle.LiveData;
 
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 
 import java.util.List;
@@ -32,6 +33,8 @@ public interface DataRepository {
 
     public LiveData<Long> getMissionOperateDay(String id);
 
+    public void initMissionState(String id);
+
 //    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end);
 //
 //    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end);
@@ -44,7 +47,11 @@ public interface DataRepository {
 //
 //    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today);
 //
-//    public LiveData<List<UserMission>> getFinishedMissions(long start, long end);
-//
+    public LiveData<List<UserMission>> getFinishedMissions(long start, long end);
+
 //    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end);
+
+    public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
+
+    public LiveData<MissionState> getMissionStateById(String id, long todayStart);
 }

@@ -42,6 +42,7 @@ public class HomeFragment extends DataBindingFragment {
     private ExpandableViewAdapter expandableViewAdapter;
     private List<UserMission> mMissions = new ArrayList<>();
     private List<Category> mCategory = new ArrayList<>();
+    private List<UserMission> mFinishedMissions = new ArrayList<>();
     FragmentHomeBinding fragmentHomeBinding;
     Category today = null;
     Category coming = null;
@@ -79,7 +80,7 @@ public class HomeFragment extends DataBindingFragment {
 
     private void initUI() {
         mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-        expandableViewAdapter = new ExpandableViewAdapter(mCategory,getContext());
+        expandableViewAdapter = new ExpandableViewAdapter(getContext(),mCategory,mFinishedMissions);
         expandableViewAdapter.setOnExpandableItemClickListener(new ExpandableViewAdapter.OnExpandableItemClickListener() {
             @Override
             public void onDelete(UserMission userMission, int groupPosition, int childPosition) {
@@ -104,7 +105,8 @@ public class HomeFragment extends DataBindingFragment {
                 UserMission userMission = (UserMission) expandableViewAdapter.getChild(groupPosition,childPosition);
                 LogUtil.logD(TAG,"[onChildClick] item = "+userMission.getName()+
                         " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
-                if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!userMission.isFinished())) {
+                boolean isFinished = mFinishedMissions.contains(userMission.getId());
+                if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!isFinished)) {
                     MissionManager.getInstance().setOperateId(userMission);
                     navigate(R.id.fragment_timer);
                 } else {
@@ -178,6 +180,7 @@ public class HomeFragment extends DataBindingFragment {
     private void updateFinishedUI() {
         mHomeViewModel.getFinishedMissions().observe(getViewLifecycleOwner(), missions -> {
             LogUtil.logE(TAG,"[getFinishedMissions] 000");
+            mFinishedMissions = missions;
             // update finished mission number
             if (missions == null) {
                 LogUtil.logE(TAG,"[getFinishedMissions] 111");
@@ -204,26 +207,26 @@ public class HomeFragment extends DataBindingFragment {
             return;
         }
 
-        List<UserMission> unfinishedMission = new ArrayList<>();
-        for (UserMission userMission : userMissions) {
-            if ((userMission.getFinishedDay() == -1) ||
-                    (userMission.getFinishedDay() < TimeMilli.getTodayStartTime())) {
-                if (userMission.getNumberOfCompletions() != 0) {
-                    // init complete number to 0
-                    String missionId;
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                        missionId = userMission.getFirebaseMissionId();
-                    } else {
-                        missionId = String.valueOf(userMission.getId());
-                    }
-
-                    mHomeViewModel.initNumberOfCompletions(missionId);
-                    mHomeViewModel.updateIsFinishedById(missionId,false,0);
-                }
-                unfinishedMission.add(userMission);
-            }
-        }
-        fragmentHomeBinding.unfinishedMission.setText(String.valueOf(unfinishedMission.size()));
+//        List<UserMission> unfinishedMission = new ArrayList<>();
+//        for (UserMission userMission : userMissions) {
+//            if ((userMission.getFinishedDay() == -1) ||
+//                    (userMission.getFinishedDay() < TimeMilli.getTodayStartTime())) {
+//                if (userMission.getNumberOfCompletions() != 0) {
+//                    // init complete number to 0
+//                    String missionId;
+//                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//                        missionId = userMission.getFirebaseMissionId();
+//                    } else {
+//                        missionId = String.valueOf(userMission.getId());
+//                    }
+//
+//                    mHomeViewModel.initNumberOfCompletions(missionId);
+//                    mHomeViewModel.updateIsFinishedById(missionId,false,0);
+//                }
+//                unfinishedMission.add(userMission);
+//            }
+//        }
+//        fragmentHomeBinding.unfinishedMission.setText(String.valueOf(unfinishedMission.size()));
     }
 
     private MediatorLiveData<Result> getComingMediatorLiveData(){

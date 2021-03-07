@@ -28,8 +28,8 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
         this.onExpandableItemClickListener = onExpandableItemClickListener;
     }
 
-    public ExpandableViewAdapter(List<Category> dataList, Context context){
-        super(dataList,context);
+    public ExpandableViewAdapter(Context context,List<Category> dataList,List<UserMission> finishedMissions){
+        super(context,dataList,finishedMissions);
         mContext = context;
     }
 
@@ -59,7 +59,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
     }
 
     @Override
-    public void onBindChildLayout(MissionItemLayoutBinding binding, UserMission userMission, int groupPosition, int childPosition, View view) {
+    public void onBindChildLayout(MissionItemLayoutBinding binding, UserMission userMission, int groupPosition, int childPosition, View view, boolean isFinished) {
         LogUtil.logE(TAG,"[onBindChildLayout] groupPosition = "+groupPosition+" , childPosition = "+childPosition);
         binding.setMission(userMission);
         binding.delete.setOnClickListener(new View.OnClickListener() {
@@ -86,10 +86,8 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
         binding.itemGoal.setText(mContext.getString(R.string.mission_goal) +
                 Integer.toString(userMission.getGoal()));
 
-        // TODO: 1/18/21  gray out this item and show check icon when finished
-        // set delete line if finished
-        if (groupPosition == GROUP_TODAY_POSITION && userMission.isFinished()) {
-//            binding.itemName.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        // gray out item if it finished
+        if (groupPosition == GROUP_TODAY_POSITION && isFinished) {
             view.setAlpha(0.5f); // set opacity
             binding.colorView.setVisibility(View.INVISIBLE);
             binding.finishedIcon.setVisibility(View.VISIBLE);

@@ -11,6 +11,7 @@ import androidx.databinding.ViewDataBinding;
 
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
@@ -18,11 +19,13 @@ import java.util.List;
 public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends ViewDataBinding > extends BaseExpandableListAdapter {
     private static final String TAG = "[ExpandableBaseAdapter]";
     protected List<Category> mDataList;
+    protected List<UserMission> mFinishedMissions;
     private Context context;
 
-    public ExpandableBaseAdapter(List<Category> list, Context context) {
+    public ExpandableBaseAdapter(Context context, List<Category> list, List<UserMission> finishedMissions) {
         this.mDataList = list;
         this.context = context;
+        this.mFinishedMissions = finishedMissions;
     }
 
     @Override
@@ -64,7 +67,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     public abstract void onBindGroupLayout(B binding,Category category);
 
     public abstract int getChildLayout();
-    public abstract void onBindChildLayout(M binding, UserMission userMission, int groupPosition, int childPosition, View view);
+    public abstract void onBindChildLayout(M binding, UserMission userMission, int groupPosition, int childPosition, View view, boolean isFinished);
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -95,7 +98,10 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
         } else {
             binding = (M) convertView.getTag();
         }
-        onBindChildLayout(binding,mDataList.get(groupPosition).getMissionList().get(childPosition),groupPosition,childPosition,convertView);
+        UserMission userMission = mDataList.get(groupPosition).getMissionList().get(childPosition);
+        boolean isFinished = mFinishedMissions.contains(userMission.getId());
+
+        onBindChildLayout(binding,userMission,groupPosition,childPosition,convertView,isFinished);
         return convertView;
     }
 

@@ -13,14 +13,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
 import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
@@ -39,14 +37,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.MissionManager;
 
@@ -77,20 +70,15 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     FirebaseUser mCurrentFirebaseUser = null;
     Context mContext;
 
-    static {
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         mAuth = FirebaseAuth.getInstance();
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         // set status bar color as tool bar color
         setStatusBarGradient(this);
-        setStatusBar(getResources().getColor(R.color.colorPrimary));
+        setStatusBarColor(getResources().getColor(R.color.colorPrimary));
         setContentView(R.layout.activity_main);
         // set toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -102,10 +90,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             @Override
             public void onClick(View view) {
                 // start a quick mission
-//                MissionManager.getInstance().setOperateId(-1);
                 MissionManager.getInstance().setOperateId(null);
                 mNavController.navigate(R.id.fragment_timer);
-//                MainActivity.getNavController().navigate(R.id.fragment_timer);
             }
         });
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -119,6 +105,12 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // click for login , switch to login fragment
                 // current user exist , switch to logout fragment
                 if (mCurrentFirebaseUser == null) {
+                    // check network state first
+                    if (!isNetworkConnected()) {
+                        // request user need to connect network
+                        Toast.makeText(getApplicationContext(),"請設置網路",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     mNavController.navigate(R.id.fragment_login);
                 } else {
                     // Showing a dialog to confirm logout or not
@@ -153,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mNavController.addOnDestinationChangedListener(this);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, mNavController);
-        isStoragePermissionGranted();
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -162,8 +153,25 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // Check if user is signed in (non-null) and update UI accordingly.
                 updateNavHeader(user);
                 mCurrentFirebaseUser = user;
+                if (null != user) {
+                    // TODO: 2021/3/6
+                    //  sync local ROOM data with firebase in here
+                }
             }
         };
+    }
+
+    private boolean isNetworkConnected(){
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (null != connectivity) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (null != info && info.isConnected()) {
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void getHashKey() {
@@ -238,13 +246,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
             window.setNavigationBarColor(activity.getResources().getColor(android.R.color.transparent));
-//            window.setBackgroundDrawable(background);
         }
     }
 
-    protected void setStatusBar(@ColorInt int color) {
+    protected void setStatusBarColor(@ColorInt int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // 设置状态栏底色颜色
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().setStatusBarColor(color);

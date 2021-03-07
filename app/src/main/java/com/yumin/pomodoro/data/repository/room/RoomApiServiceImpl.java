@@ -4,11 +4,15 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.TimeMilli;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +21,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
     private static final String TAG = "[ApiServiceImpl]";
     private List<UserMission> missions;
     private MissionDao missionDao;
+    private MissionStateDao missionStateDao;
     private LiveData<List<UserMission>> allMissions;
     private LiveData<List<UserMission>> todayMissionsByOperateDay = new LiveData<List<UserMission>>(){};
     private LiveData<List<UserMission>> todayMissionsByRepeatType = new LiveData<List<UserMission>>(){};
@@ -28,13 +33,14 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
     private LiveData<Long> missionRepeatStart = new LiveData<Long>() {};
     private LiveData<Long> missionRepeatEnd = new LiveData<Long>() {};
     private LiveData<Long> missionOperateDay = new LiveData<Long>() {};
-    private LiveData<List<UserMission>> finishedMissions = new LiveData<List<UserMission>>() {};
+    private MutableLiveData<List<UserMission>> finishedMissions = new MutableLiveData<List<UserMission>>() {};
     private LiveData<List<UserMission>> unfinishedMissions = new LiveData<List<UserMission>>() {};
 
     public RoomApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
         MissionDBManager missionDBManager = MissionDBManager.getInstance(application);
         missionDao = missionDBManager.getMissionDao();
+        missionStateDao = missionDBManager.getMissionStateDao();
         allMissions = missionDao.getAllMissions();
     }
 
@@ -51,34 +57,50 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                missionDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
+                missionStateDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
+//                missionDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
             }
         });
     }
 
     @Override
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber) {
-        LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+finished);
+    public void updateIsFinishedById(String id, boolean isFinished, int completeOfNumber) {
+        LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+isFinished);
 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                missionDao.updateIsFinishedById(Integer.valueOf(id), finished);
-                missionDao.updateFinishedDayById(Integer.valueOf(id), finished ? new Date().getTime() : -1);
+                missionStateDao.updateIsFinishedById(Integer.valueOf(id), isFinished);
+                missionStateDao.updateFinishedDayById(Integer.valueOf(id), isFinished ? new Date().getTime() : -1);
+//                missionDao.updateIsFinishedById(Integer.valueOf(id), isFinished);
+//                missionDao.updateFinishedDayById(Integer.valueOf(id), isFinished ? new Date().getTime() : -1);
             }
         });
 
-        recordFinishDayByMission(id, completeOfNumber, finished);
+        saveMissionState(id, completeOfNumber, isFinished);
     }
 
-    private void recordFinishDayByMission(String id,int completeOfNumber, boolean isFinish){
-        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+id
+    private void saveMissionState(String missionId, int completeOfNumber, boolean isFinish){
+        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionId
                 +" ,completeOfNumber = "+completeOfNumber
                 +" ,isFinish = "+isFinish);
-//        String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
-//        DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
-//        databaseReference.push();
-//        databaseReference.child(id).setValue(new MissionState(completeOfNumber,isFinish));
+        long todayMilli = TimeMilli.getTodayInitTime();
+
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                LogUtil.logE(TAG,"INSERT mission state");
+                MissionState missionState = new MissionState(completeOfNumber,isFinish,
+                        todayMilli,-1,Integer.valueOf(missionId));
+                missionStateDao.insert(missionState);
+            }
+        });
+    }
+
+    @Override
+    public void initMissionState(String missionId){
+        Log.d("[RoomApiServiceImpl]","[initMissionState]");
+        saveMissionState(missionId,0,false);
     }
 
 
@@ -128,15 +150,31 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
-        finishedMissions = missionDao.getFinishedMissions();
+        List<MissionState> missionStateList = missionStateDao.getFinishedMissions(start);
+        List<UserMission> missions = new ArrayList<>();
+        for (MissionState missionState : missionStateList) {
+            LogUtil.logE(TAG,"[getFinishedMissions] MISSION ID = "+missionState.missionId);
+            missions.add(missionDao.getMissionById(missionState.missionId).getValue());
+        }
+        finishedMissions.postValue(missions);
         return finishedMissions;
     }
 
     @Override
-    public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
-        unfinishedMissions = missionDao.getUnfinishedMissions();
-        return unfinishedMissions;
+    public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
+        return missionStateDao.getNumberOfCompletionById(Integer.valueOf(id),todayStart);
     }
+
+    @Override
+    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
+        return missionStateDao.getMissionStateById(Integer.valueOf(id),todayStart);
+    }
+
+//    @Override
+//    public LiveData<List<UserMission>> getUnFinishedMissions(long start, long end) {
+//        unfinishedMissions = missionDao.getUnfinishedMissions();
+//        return unfinishedMissions;
+//    }
 
     public void deleteMission(UserMission userMission){
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {

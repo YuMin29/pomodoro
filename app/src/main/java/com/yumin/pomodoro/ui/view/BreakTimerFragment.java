@@ -220,7 +220,7 @@ public class BreakTimerFragment extends DataBindingFragment {
                     long missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
                     missionCount = mission.getGoal();
-                    numberOfCompletion = mission.getNumberOfCompletions();
+//                    numberOfCompletion = mission.getNumberOfCompletions();
                     enabledVibrate = mission.isEnableVibrate();
                     enabledNotification = mission.isEnableNotification();
                     missionTitle = mission.getName();
@@ -243,6 +243,15 @@ public class BreakTimerFragment extends DataBindingFragment {
                     timerViewModel.setMissionTime(msTimeFormatter(missionTime));
                     timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
                 }
+            }
+        });
+
+        timerViewModel.getNumberOfCompletionById().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer value) {
+                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletionById = "+value);
+                if (null != value)
+                    numberOfCompletion = value;
             }
         });
     }
