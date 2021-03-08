@@ -312,6 +312,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void setMissionFinished(int num){
+        LogUtil.logE(TAG,"[setMissionFinished] num = "+num);
         if (num != -1)
             circleTimerBinding.timerFinish.setText(getResources().getString(R.string.mission_finish_goal)+String.valueOf(num));
     }

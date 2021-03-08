@@ -18,6 +18,7 @@ public class TimeMilli {
         currentDate.set(Calendar.HOUR_OF_DAY, 0);
         currentDate.set(Calendar.MINUTE, 0);
         currentDate.set(Calendar.SECOND, 0);
+        currentDate.set(Calendar.MILLISECOND, 0);
         return currentDate.getTimeInMillis();
     }
 

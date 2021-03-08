@@ -29,6 +29,6 @@ public interface MissionStateDao {
     @Query("SELECT numberOfCompletion FROM MissionState WHERE missionId=:id AND recordDay =:today")
     public LiveData<Integer> getNumberOfCompletionById(int id, long today);
 
-    @Query("SELECT * FROM MissionState WHERE recordDay =:today AND missionId=:id")
+    @Query("SELECT * FROM MissionState WHERE missionId=:id AND recordDay =:today")
     public LiveData<MissionState> getMissionStateById(int id, long today);
 }

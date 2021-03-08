@@ -22,7 +22,7 @@ import com.yumin.pomodoro.utils.TimeMilli;
 import java.util.Date;
 import java.util.List;
 
-public class FirebaseApiServiceImpl implements ApiService<UserMission> {
+public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionState> {
     private static final String TAG = "[FirebaseApiServiceImpl]";
     DatabaseReference databaseReference;
     Application mApplication;
@@ -198,7 +198,6 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public void initMissionState(String id) {
-
     }
 
 //    @Override

@@ -246,12 +246,11 @@ public class BreakTimerFragment extends DataBindingFragment {
             }
         });
 
-        timerViewModel.getNumberOfCompletionById().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        timerViewModel.getNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
-            public void onChanged(Integer value) {
-                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletionById = "+value);
-                if (null != value)
-                    numberOfCompletion = value;
+            public void onChanged(Integer integer) {
+                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletion = "+integer);
+                numberOfCompletion = integer;
             }
         });
     }

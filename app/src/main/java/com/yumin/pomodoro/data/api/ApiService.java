@@ -6,7 +6,7 @@ import com.yumin.pomodoro.data.MissionState;
 
 import java.util.List;
 
-public interface ApiService<T> {
+public interface ApiService<T,E> {
     public LiveData<List<T>> getMissions();
     public void addMission(T mission);
     public T getInitMission();
@@ -21,7 +21,7 @@ public interface ApiService<T> {
     public LiveData<Long> getMissionOperateDay(String id);
     public LiveData<List<T>> getFinishedMissions(long start, long end);
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
-    public LiveData<MissionState> getMissionStateById(String id, long todayStart);
+    public LiveData<E> getMissionStateById(String id, long todayStart);
     public void initMissionState(String id);
 //    public LiveData<List<T>> getUnFinishedMissions(long start, long end);
 //    public LiveData<List<T>> getTodayMissionsByOperateDay(long start, long end);

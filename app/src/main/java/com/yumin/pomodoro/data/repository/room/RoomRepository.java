@@ -8,10 +8,12 @@ import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
 public class RoomRepository implements DataRepository {
+    private static final String TAG = "[RoomRepository]";
     private RoomApiServiceImpl roomApiService;
 
     public RoomRepository(ApiService apiService){
@@ -109,6 +111,7 @@ public class RoomRepository implements DataRepository {
 
     @Override
     public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
+        LogUtil.logE(TAG,"[getMissionStateById] ID = "+id+" , TODAYSTART = "+todayStart);
         return roomApiService.getMissionStateById(id,todayStart);
     }
 

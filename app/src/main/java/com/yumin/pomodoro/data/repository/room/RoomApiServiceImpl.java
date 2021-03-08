@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 // TODO: 3/3/21 Use Firebase getCurrentUser to distinguish use Room or Firebase
-public class RoomApiServiceImpl implements ApiService<UserMission> {
+public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> {
     private static final String TAG = "[ApiServiceImpl]";
     private List<UserMission> missions;
     private MissionDao missionDao;
@@ -81,7 +81,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
     }
 
     private void saveMissionState(String missionId, int completeOfNumber, boolean isFinish){
-        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionId
+        LogUtil.logE(TAG,"[saveMissionState] id = "+missionId
                 +" ,completeOfNumber = "+completeOfNumber
                 +" ,isFinish = "+isFinish);
         long todayMilli = TimeMilli.getTodayInitTime();
@@ -99,8 +99,18 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public void initMissionState(String missionId){
-        Log.d("[RoomApiServiceImpl]","[initMissionState]");
-        saveMissionState(missionId,0,false);
+        Log.d("[RoomApiServiceImpl]","[getInitMissionState]");
+        long todayMilli = TimeMilli.getTodayInitTime();
+
+        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                LogUtil.logE(TAG,"INSERT mission state");
+                MissionState missionState = new MissionState(0,false,
+                        todayMilli,-1,Integer.valueOf(missionId));
+                missionStateDao.insert(missionState);
+            }
+        });
     }
 
 
@@ -192,7 +202,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission> {
 
     @Override
     public UserMission getQuickMission(int time,int shortBreakTime,int color) {
-        return new UserMission(time,shortBreakTime, color);
+        return new UserMission(time,shortBreakTime,color);
     }
 
 //    @Override

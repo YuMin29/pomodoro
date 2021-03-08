@@ -22,6 +22,7 @@
             app:timerType="@{@string/type_mission}"
             app:missionName="@{viewmodel.mission.name}"
             app:missionGoal="@{viewmodel.mission.goal}"
+            app:missionFinished="@{viewmodel.numberOfCompletion}"
             app:missionEnabledSound="@{viewmodel.mission.enableSound}"/>
     </FrameLayout>
 </layout>

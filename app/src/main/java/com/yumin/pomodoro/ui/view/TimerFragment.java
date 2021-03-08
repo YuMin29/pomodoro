@@ -93,7 +93,7 @@ public class TimerFragment extends DataBindingFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         fragmentTimerBinding = (FragmentTimerBinding) getBinding();
-
+        LogUtil.logE(TAG,"[onViewCreated]");
         observeViewModel();
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -210,6 +210,7 @@ public class TimerFragment extends DataBindingFragment {
         timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
             public void onChanged(UserMission mission) {
+                LogUtil.logE(TAG,"[OBSERVE] getMission");
                 if (mission != null) {
                     // format
                     long missionTime = Long.valueOf(mission.getTime() * 60 * 1000);
@@ -242,12 +243,11 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
-        timerViewModel.getNumberOfCompletionById().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        timerViewModel.getNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
-            public void onChanged(Integer value) {
-                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletionById = "+value);
-                if (null != value)
-                    mNumberOfCompletion = value;
+            public void onChanged(Integer integer) {
+                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletion = "+integer);
+                mNumberOfCompletion = integer;
             }
         });
 
@@ -255,11 +255,20 @@ public class TimerFragment extends DataBindingFragment {
             @Override
             public void onChanged(MissionState missionState) {
                 LogUtil.logE(TAG,"[OBSERVE] getMissionState = "+missionState);
-                if (null == missionState) {
-                    timerViewModel.initMissionState();
-                }
             }
         });
+
+//        timerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
+//            @Override
+//            public void onChanged(MissionState missionState) {
+//                if (null != missionState) {
+//                    LogUtil.logE(TAG,"[OBSERVE] getMissionState , mNumberOfCompletion= "+missionState.numberOfCompletion);
+//                    mNumberOfCompletion = missionState.numberOfCompletion;
+//                } else {
+//                    LogUtil.logE(TAG,"[OBSERVE] getMissionState = "+missionState);
+//                }
+//            }
+//        });
     }
 
     private String msTimeFormatter(long milliSeconds) {
