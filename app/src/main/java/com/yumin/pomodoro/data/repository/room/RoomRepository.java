@@ -100,7 +100,7 @@ public class RoomRepository implements DataRepository {
 //        return null;
 //    }
 //
-    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
+    public LiveData<List<Integer>> getFinishedMissions(long start, long end){
         return roomApiService.getFinishedMissions(start, end);
     }
 

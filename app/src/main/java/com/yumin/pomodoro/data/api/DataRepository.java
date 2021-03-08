@@ -47,7 +47,7 @@ public interface DataRepository {
 //
 //    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today);
 //
-    public LiveData<List<UserMission>> getFinishedMissions(long start, long end);
+    public LiveData<List<Integer>> getFinishedMissions(long start, long end);
 
 //    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end);
 

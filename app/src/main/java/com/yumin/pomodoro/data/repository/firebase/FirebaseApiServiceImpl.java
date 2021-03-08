@@ -178,12 +178,13 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
+    public LiveData<List<Integer>> getFinishedMissions(long start, long end) {
         LogUtil.logE(TAG,"[getFinishedMissions] start = "+start+" ,end = "+end);
         start = TimeMilli.getTodayStartTime();
         end = TimeMilli.getTodayEndTime();
-        return new FirebaseQueryListLiveData(getUserMissionPath()
-                .orderByChild("finishedDay").startAt(start).endAt(end));
+//        return new FirebaseQueryListLiveData(getUserMissionPath()
+//                .orderByChild("finishedDay").startAt(start).endAt(end));
+        return null;
     }
 
     @Override

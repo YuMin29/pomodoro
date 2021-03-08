@@ -33,7 +33,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     private LiveData<Long> missionRepeatStart = new LiveData<Long>() {};
     private LiveData<Long> missionRepeatEnd = new LiveData<Long>() {};
     private LiveData<Long> missionOperateDay = new LiveData<Long>() {};
-    private MutableLiveData<List<UserMission>> finishedMissions = new MutableLiveData<List<UserMission>>() {};
+    private MutableLiveData<List<Integer>> finishedMissions = new MutableLiveData<List<Integer>>() {};
     private LiveData<List<UserMission>> unfinishedMissions = new LiveData<List<UserMission>>() {};
 
     public RoomApiServiceImpl(Application application){
@@ -72,12 +72,8 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
             public void run() {
                 missionStateDao.updateIsFinishedById(Integer.valueOf(id), isFinished);
                 missionStateDao.updateFinishedDayById(Integer.valueOf(id), isFinished ? new Date().getTime() : -1);
-//                missionDao.updateIsFinishedById(Integer.valueOf(id), isFinished);
-//                missionDao.updateFinishedDayById(Integer.valueOf(id), isFinished ? new Date().getTime() : -1);
             }
         });
-
-        saveMissionState(id, completeOfNumber, isFinished);
     }
 
     private void saveMissionState(String missionId, int completeOfNumber, boolean isFinish){
@@ -159,14 +155,14 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
+    public LiveData<List<Integer>> getFinishedMissions(long start, long end) {
         List<MissionState> missionStateList = missionStateDao.getFinishedMissions(start);
-        List<UserMission> missions = new ArrayList<>();
+        List<Integer> missionIdList = new ArrayList<>();
         for (MissionState missionState : missionStateList) {
             LogUtil.logE(TAG,"[getFinishedMissions] MISSION ID = "+missionState.missionId);
-            missions.add(missionDao.getMissionById(missionState.missionId).getValue());
+            missionIdList.add(missionState.missionId);
         }
-        finishedMissions.postValue(missions);
+        finishedMissions.postValue(missionIdList);
         return finishedMissions;
     }
 

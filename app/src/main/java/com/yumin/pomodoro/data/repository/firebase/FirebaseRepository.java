@@ -73,7 +73,7 @@ public class FirebaseRepository implements DataRepository {
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissions(long start, long end) {
+    public LiveData<List<Integer>> getFinishedMissions(long start, long end) {
         return null;
     }
 

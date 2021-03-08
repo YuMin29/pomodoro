@@ -19,7 +19,7 @@ public interface ApiService<T,E> {
     public LiveData<Long> getMissionRepeatStart(String id);
     public LiveData<Long> getMissionRepeatEnd(String id);
     public LiveData<Long> getMissionOperateDay(String id);
-    public LiveData<List<T>> getFinishedMissions(long start, long end);
+    public LiveData<List<Integer>> getFinishedMissions(long start, long end);
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
     public LiveData<E> getMissionStateById(String id, long todayStart);
     public void initMissionState(String id);

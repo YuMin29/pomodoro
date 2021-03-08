@@ -168,7 +168,12 @@ public class TimerFragment extends DataBindingFragment {
                     // update finished goal ui
                     mNumberOfCompletion++;
                     LogUtil.logD(TAG, "[mission timer][onFinish] numberOfCompletion = " + mNumberOfCompletion);
+
                     timerViewModel.updateNumberOfCompletionById(mNumberOfCompletion);
+                    if (mNumberOfCompletion == missionCount) {
+                        LogUtil.logD(TAG,"[mission timer][onFinished] mNumberOfCompletion == missionCount");
+                        timerViewModel.updateIsFinishedById(true,mNumberOfCompletion);
+                    }
                 }
 
                 // vibrate for remind

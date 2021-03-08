@@ -104,16 +104,13 @@ public class BreakTimerFragment extends DataBindingFragment {
                                         notificationHelper.cancelNotification();
                                 }
 
-                                if (missionCount != -1 && numberOfCompletion != -1) {
-                                    // update finish status
-                                    if ((missionCount - numberOfCompletion) < 1) {
-                                        LogUtil.logD(TAG,"[handleOnBackPressed] updateIsFinishedById");
-                                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
-                                    }
-                                }
-                                LogUtil.logD(TAG,"確認結束任務？");
-//                                MainActivity.getNavController().popBackStack(R.id.nav_home,true);
-//                                MainActivity.getNavController().navigateUp();
+//                                if (missionCount != -1 && numberOfCompletion != -1) {
+//                                    // update finish status
+//                                    if ((missionCount - numberOfCompletion) < 1) {
+//                                        LogUtil.logD(TAG,"[handleOnBackPressed] updateIsFinishedById");
+//                                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
+//                                    }
+//                                }
                                 navigateUp();
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
@@ -171,17 +168,13 @@ public class BreakTimerFragment extends DataBindingFragment {
                         // switch to mission timer
                         Bundle bundle = new Bundle();
                         bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
-//                        bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                         MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_timer,bundle);
                     } else {
                         LogUtil.logD(TAG,"[break timer][onFinished] 3");
-                        // finished timer fragment
-                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
-//                        MainActivity.getNavController().navigateUp();
+//                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
                         navigateUp();
                         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                         undoStatusBarColor();
-//                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_home,null);
 
                         // cancel notification when finish the mission
                         if (enabledNotification) {

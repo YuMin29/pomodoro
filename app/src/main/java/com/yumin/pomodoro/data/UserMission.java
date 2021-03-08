@@ -45,7 +45,6 @@ public class UserMission {
         this.shortBreakTime = shortBreakTime;
         this.color = color;
         this.goal = -1;
-//        this.numberOfCompletions = -1;
     }
 
     @Ignore
@@ -53,8 +52,7 @@ public class UserMission {
                        int longBreakTime, int color, long operateDay,
                        int goal, int repeat, int repeatStart, int repeatEnd,
                        boolean enableNotification, boolean enableSound,
-                       boolean enableVibrate, boolean keepScreenOn,
-                       boolean finished, String firebaseMissionId, long finishedDay, long createdTime) {
+                       boolean enableVibrate, boolean keepScreenOn, String firebaseMissionId, long createdTime) {
         this.name = name;
         this.time = time;
         this.shortBreakTime = shortBreakTime;
@@ -71,8 +69,6 @@ public class UserMission {
         this.keepScreenOn = keepScreenOn;
         this.firebaseMissionId = firebaseMissionId;
         this.createdTime = createdTime;
-//        this.isFinished = finished;
-//        this.finishedDay = finishedDay;
     }
 
     @Override

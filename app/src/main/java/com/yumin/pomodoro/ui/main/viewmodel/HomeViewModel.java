@@ -36,6 +36,8 @@ public class HomeViewModel extends ViewModel {
     MutableLiveData<List<UserMission>> finishedMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> unfinishedMissions = new MutableLiveData<>();
 
+    LiveData<List<Integer>> finishedMissionIdList;
+
     public HomeViewModel(Application application){
         LogUtil.logE(TAG,"[HomeViewModel] Constructor");
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
@@ -51,6 +53,8 @@ public class HomeViewModel extends ViewModel {
         mIsLoading.setValue(true);
         allMissions = this.dataRepository.getMissions();
         mIsLoading.setValue(false);
+        finishedMissionIdList = this.dataRepository.getFinishedMissions(TimeMilli.getTodayStartTime(),
+                TimeMilli.getTodayEndTime());
     }
 
     public LiveData<List<UserMission>> getAllMissions(){
@@ -184,7 +188,11 @@ public class HomeViewModel extends ViewModel {
     }
 
     public LiveData<List<UserMission>> getFinishedMissions(){
-//        List<UserMission> missionList = new ArrayList<>();
+        List<UserMission> missionIdList = new ArrayList<>();
+
+        for (int missionId : finishedMissionIdList.getValue()) {
+            missionIdList.add(allMissions.getValue().get(missionId));
+        }
 //        for (UserMission userMission : allMissions.getValue()) {
 //            if (TimeMilli.getTodayStartTime() <= userMission.getFinishedDay() &&
 //                    userMission.getFinishedDay() <= TimeMilli.getTodayEndTime())
@@ -192,8 +200,7 @@ public class HomeViewModel extends ViewModel {
 //        }
 //        finishedMissions.setValue(missionList);
 //        return finishedMissions;
-        return this.dataRepository.getFinishedMissions(TimeMilli.getTodayStartTime(),
-                TimeMilli.getTodayEndTime());
+        return null;
     }
 
     public LiveData<List<UserMission>> getUnfinishedMissions(){

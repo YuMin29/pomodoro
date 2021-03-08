@@ -186,7 +186,7 @@ public class HomeFragment extends DataBindingFragment {
                 LogUtil.logE(TAG,"[getFinishedMissions] 111");
                 fragmentHomeBinding.finishedMission.setText("0");
             } else {
-                LogUtil.logE(TAG,"[getFinishedMissions] 222");
+                LogUtil.logE(TAG,"[getFinishedMissions] 222 , mission list size = "+missions.size());
                 fragmentHomeBinding.finishedMission.setText(String.valueOf(missions.size()));
 
                 int usedTime = 0;
