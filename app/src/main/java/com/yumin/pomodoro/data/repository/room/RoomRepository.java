@@ -45,13 +45,13 @@ public class RoomRepository implements DataRepository {
     }
 
     @Override
-    public void updateNumberOfCompletionById(String id, int num) {
+    public void updateMissionNumberOfCompletion(String id, int num) {
         roomApiService.updateNumberOfCompletionById(id,num);
     }
 
     @Override
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber) {
-        roomApiService.updateIsFinishedById(id,finished,completeOfNumber);
+    public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber) {
+        roomApiService.updateMissionFinishedState(id,finished,completeOfNumber);
     }
 
 
@@ -100,8 +100,8 @@ public class RoomRepository implements DataRepository {
 //        return null;
 //    }
 //
-    public LiveData<List<Integer>> getFinishedMissions(long start, long end){
-        return roomApiService.getFinishedMissions(start, end);
+    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end){
+        return roomApiService.getFinishedMissionIdList(start, end);
     }
 
     @Override

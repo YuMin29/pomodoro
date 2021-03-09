@@ -19,7 +19,6 @@ public class FirebaseQueryLiveData extends LiveData<UserMission> {
     private static final String TAG = "[FirebaseQueryLiveData]";
     private final Query query;
     private final MyValueEventListener myValueEventListener = new MyValueEventListener();
-    private final MyChildListener myChildListener = new MyChildListener();
 
     public FirebaseQueryLiveData(Query query) {
         this.query = query;
@@ -39,46 +38,13 @@ public class FirebaseQueryLiveData extends LiveData<UserMission> {
     @Override
     protected void onActive() {
         LogUtil.logE(TAG,"[onActive]");
-        if (isLoginAsUser())
-            query.addChildEventListener(myChildListener);
-        else
-            query.addValueEventListener(myValueEventListener);
+        query.addValueEventListener(myValueEventListener);
     }
 
     @Override
     protected void onInactive() {
         LogUtil.logE(TAG,"[onInactive]");
-        if (isLoginAsUser())
-            query.removeEventListener(myChildListener);
-        else
-            query.removeEventListener(myValueEventListener);
-    }
-    class MyChildListener implements ChildEventListener {
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            LogUtil.logE(TAG,"[MyChildListener] [onChildAdded]");
-            setValue(snapshot.getValue(UserMission.class));
-        }
-
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
+        query.removeEventListener(myValueEventListener);
     }
 
     class MyValueEventListener implements ValueEventListener {

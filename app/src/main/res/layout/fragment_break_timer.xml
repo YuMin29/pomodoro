@@ -21,7 +21,7 @@
             app:timerType="@{@string/type_break}"
             app:missionName="@{@string/timer_break}"
             app:missionGoal="@{viewmodel.mission.goal}"
-            app:missionFinished="@{viewmodel.numberOfCompletion}"/>
+            app:missionFinished="@{viewmodel.missionNumberOfCompletion}"/>
 
     </FrameLayout>
 </layout>

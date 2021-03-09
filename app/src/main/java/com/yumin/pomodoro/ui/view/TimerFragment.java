@@ -116,14 +116,13 @@ public class TimerFragment extends DataBindingFragment {
                                     if (enabledNotification)
                                         notificationHelper.cancelNotification();
                                 }
-//                                MainActivity.getNavController().navigateUp();
                                 navigateUp();
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
                                 // update finish status
                                 if (missionCount != -1 && mNumberOfCompletion != -1) {
                                     if ((missionCount - mNumberOfCompletion) < 1) {
-                                        timerViewModel.updateIsFinishedById(true, mNumberOfCompletion);
+                                        timerViewModel.updateMissionFinishedState(true, mNumberOfCompletion);
                                     }
                                 }
                             }
@@ -169,10 +168,10 @@ public class TimerFragment extends DataBindingFragment {
                     mNumberOfCompletion++;
                     LogUtil.logD(TAG, "[mission timer][onFinish] numberOfCompletion = " + mNumberOfCompletion);
 
-                    timerViewModel.updateNumberOfCompletionById(mNumberOfCompletion);
+                    timerViewModel.updateMissionNumberOfCompletion(mNumberOfCompletion);
                     if (mNumberOfCompletion == missionCount) {
                         LogUtil.logD(TAG,"[mission timer][onFinished] mNumberOfCompletion == missionCount");
-                        timerViewModel.updateIsFinishedById(true,mNumberOfCompletion);
+                        timerViewModel.updateMissionFinishedState(true,mNumberOfCompletion);
                     }
                 }
 
@@ -248,7 +247,7 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
-        timerViewModel.getNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        timerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
                 LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletion = "+integer);

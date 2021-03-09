@@ -42,6 +42,10 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
         this.notifyDataSetChanged();
     }
 
+    public void flashFinishedMission(List<UserMission> missions){
+        this.mFinishedMissions = missions;
+    }
+
     @Override
     public int getGroupLayout() {
         return R.layout.category_item_layout;

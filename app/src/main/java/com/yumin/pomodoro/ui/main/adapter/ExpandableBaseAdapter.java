@@ -99,8 +99,14 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
             binding = (M) convertView.getTag();
         }
         UserMission userMission = mDataList.get(groupPosition).getMissionList().get(childPosition);
-        boolean isFinished = mFinishedMissions.contains(userMission.getId());
+        LogUtil.logE(TAG,"[getChildView] mFinishedMissions size = "+mFinishedMissions.size());
 
+        boolean isFinished = false;
+        for (UserMission item : mFinishedMissions) {
+            if (userMission.getId() == item.getId())
+                isFinished = true;
+        }
+        LogUtil.logE(TAG,"[getChildView] mFinishedMissions isFinished = "+isFinished);
         onBindChildLayout(binding,userMission,groupPosition,childPosition,convertView,isFinished);
         return convertView;
     }

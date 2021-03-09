@@ -15,19 +15,12 @@ public interface ApiService<T,E> {
     public void deleteMission(T mission);
     public LiveData<T> getMissionById(String id);
     public void updateNumberOfCompletionById(String id, int num);
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber);
+    public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber);
     public LiveData<Long> getMissionRepeatStart(String id);
     public LiveData<Long> getMissionRepeatEnd(String id);
     public LiveData<Long> getMissionOperateDay(String id);
-    public LiveData<List<Integer>> getFinishedMissions(long start, long end);
+    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end);
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
     public LiveData<E> getMissionStateById(String id, long todayStart);
     public void initMissionState(String id);
-//    public LiveData<List<T>> getUnFinishedMissions(long start, long end);
-//    public LiveData<List<T>> getTodayMissionsByOperateDay(long start, long end);
-//    public LiveData<List<T>> getTodayMissionsByRepeatType(long start, long end);
-//    public LiveData<List<T>> getTodayMissionsByRepeatRange(long start, long end);
-//    public LiveData<List<T>> getComingMissionsByOperateDay(long today);
-//    public LiveData<List<T>> getComingMissionsByRepeatType(long today);
-//    public LiveData<List<T>> getComingMissionsByRepeatRange(long today);
 }

@@ -64,7 +64,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     }
 
     @Override
-    public void updateIsFinishedById(String id, boolean isFinished, int completeOfNumber) {
+    public void updateMissionFinishedState(String id, boolean isFinished, int completeOfNumber) {
         LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+isFinished);
 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
@@ -155,7 +155,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     }
 
     @Override
-    public LiveData<List<Integer>> getFinishedMissions(long start, long end) {
+    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end) {
         List<MissionState> missionStateList = missionStateDao.getFinishedMissions(start);
         List<Integer> missionIdList = new ArrayList<>();
         for (MissionState missionState : missionStateList) {

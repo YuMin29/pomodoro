@@ -3,7 +3,9 @@ package com.yumin.pomodoro.ui.main.viewmodel;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,10 +35,10 @@ public class HomeViewModel extends ViewModel {
     MutableLiveData<List<UserMission>> comingRepeatEverydayMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> comingRepeatDefineMissions = new MutableLiveData<>();
 
-    MutableLiveData<List<UserMission>> finishedMissions = new MutableLiveData<>();
+
     MutableLiveData<List<UserMission>> unfinishedMissions = new MutableLiveData<>();
 
-    LiveData<List<Integer>> finishedMissionIdList;
+    MediatorLiveData<List<UserMission>> finishedMissions = new MediatorLiveData<>();
 
     public HomeViewModel(Application application){
         LogUtil.logE(TAG,"[HomeViewModel] Constructor");
@@ -51,10 +53,27 @@ public class HomeViewModel extends ViewModel {
     private void fetchData() {
         LogUtil.logE(TAG,"[fetchData]");
         mIsLoading.setValue(true);
+
         allMissions = this.dataRepository.getMissions();
+
         mIsLoading.setValue(false);
-        finishedMissionIdList = this.dataRepository.getFinishedMissions(TimeMilli.getTodayStartTime(),
+
+        LiveData<List<Integer>> sourceIdList = this.dataRepository.getFinishedMissionIdList(TimeMilli.getTodayStartTime(),
                 TimeMilli.getTodayEndTime());
+        finishedMissions.addSource(sourceIdList, new Observer<List<Integer>>() {
+            @Override
+            public void onChanged(List<Integer> idList) {
+                List<UserMission> missionList = new ArrayList<>();
+
+                for (int missionId : idList) {
+                    for (UserMission userMission : allMissions.getValue()) {
+                        if (userMission.getId() == missionId)
+                            missionList.add(userMission);
+                    }
+                }
+                finishedMissions.setValue(missionList);
+            }
+        });
     }
 
     public LiveData<List<UserMission>> getAllMissions(){
@@ -178,42 +197,18 @@ public class HomeViewModel extends ViewModel {
     }
     
     public MutableLiveData<Boolean> getLoading(){
-        LogUtil.logD(TAG,"getLoading");
+        LogUtil.logD(TAG,"[getLoading]");
 		return mIsLoading;
 	}
 
-    public void updateIsFinishedById(String itemId,boolean finished,int completeOfNumber){
-//        roomRepository.updateIsFinishedById(itemId,finished);
-        this.dataRepository.updateIsFinishedById(itemId,finished,completeOfNumber);
-    }
-
     public LiveData<List<UserMission>> getFinishedMissions(){
-        List<UserMission> missionIdList = new ArrayList<>();
-
-        for (int missionId : finishedMissionIdList.getValue()) {
-            missionIdList.add(allMissions.getValue().get(missionId));
-        }
-//        for (UserMission userMission : allMissions.getValue()) {
-//            if (TimeMilli.getTodayStartTime() <= userMission.getFinishedDay() &&
-//                    userMission.getFinishedDay() <= TimeMilli.getTodayEndTime())
-//                missionList.add(userMission);
-//        }
-//        finishedMissions.setValue(missionList);
-//        return finishedMissions;
-        return null;
+        LogUtil.logE(TAG,"[getFinishedMissions]");
+        return this.finishedMissions;
     }
 
-    public LiveData<List<UserMission>> getUnfinishedMissions(){
-        return unfinishedMissions;
-    }
 
     public void deleteMission(UserMission mission){
-//        this.roomRepository.deleteMission(mission);
         this.dataRepository.deleteMission(mission);
     }
 
-    public void initNumberOfCompletions(String uid){
-        LogUtil.logD(TAG,"[initNumberOfCompletions] uid = "+uid);
-        this.dataRepository.updateNumberOfCompletionById(uid,0);
-    }
 }

@@ -21,9 +21,9 @@ public interface DataRepository {
 
     public void updateMission(UserMission mission);
 
-    public void updateNumberOfCompletionById(String id, int num);
+    public void updateMissionNumberOfCompletion(String id, int num);
 
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber);
+    public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber);
 
     public void deleteMission(UserMission mission);
 
@@ -35,21 +35,7 @@ public interface DataRepository {
 
     public void initMissionState(String id);
 
-//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end);
-//
-//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end);
-//
-//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end);
-//
-//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today);
-//
-//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today);
-//
-//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today);
-//
-    public LiveData<List<Integer>> getFinishedMissions(long start, long end);
-
-//    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end);
+    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end);
 
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
 

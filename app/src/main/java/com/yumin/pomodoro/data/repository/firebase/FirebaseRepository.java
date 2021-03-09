@@ -43,12 +43,12 @@ public class FirebaseRepository implements DataRepository {
         firebaseApiService.updateMission(mission);
     }
 
-    public void updateNumberOfCompletionById(String id, int num){
+    public void updateMissionNumberOfCompletion(String id, int num){
         firebaseApiService.updateNumberOfCompletionById(id,num);
     }
 
-    public void updateIsFinishedById(String id, boolean finished, int completeOfNumber){
-        firebaseApiService.updateIsFinishedById(id,finished,completeOfNumber);
+    public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber){
+        firebaseApiService.updateMissionFinishedState(id,finished,completeOfNumber);
     }
 
     public void deleteMission(UserMission mission){
@@ -69,53 +69,21 @@ public class FirebaseRepository implements DataRepository {
 
     @Override
     public void initMissionState(String id) {
-
+        firebaseApiService.initMissionState(id);
     }
 
     @Override
-    public LiveData<List<Integer>> getFinishedMissions(long start, long end) {
-        return null;
+    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end) {
+        return firebaseApiService.getFinishedMissionIdList(start, end);
     }
 
     @Override
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
-        return null;
+        return firebaseApiService.getNumberOfCompletionById(id,todayStart);
     }
 
     @Override
     public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
-        return null;
+        return firebaseApiService.getMissionStateById(id, todayStart);
     }
-
-//    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end){
-//        return firebaseRepository.getTodayMissionsByOperateDay(start,end);
-//    }
-//
-//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end){
-//        return firebaseRepository.getTodayMissionsByRepeatType(start,end);
-//    }
-//
-//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end){
-//        return firebaseRepository.getTodayMissionsByRepeatRange(start,end);
-//    }
-//
-//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today){
-//        return firebaseRepository.getComingMissionsByOperateDay(today);
-//    }
-//
-//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today){
-//        return firebaseRepository.getComingMissionsByRepeatType(today);
-//    }
-//
-//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today){
-//        return firebaseRepository.getComingMissionsByRepeatRange(today);
-//    }
-//
-//    public LiveData<List<UserMission>> getFinishedMissions(long start, long end){
-//        return firebaseRepository.getFinishedMissions(start, end);
-//    }
-//
-//    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
-//        return firebaseRepository.getUnFinishedMissions(start, end);
-//    }
 }
