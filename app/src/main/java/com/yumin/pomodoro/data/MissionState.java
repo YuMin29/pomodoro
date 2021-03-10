@@ -18,7 +18,7 @@ public class MissionState {
     public boolean isFinished = false;
     public long recordDay = -1;
     public long finishedDay = -1;
-    public int missionId;
+    public String missionId;
 
 
     public MissionState() {
@@ -39,7 +39,7 @@ public class MissionState {
     }
 
     @Ignore
-    public MissionState(int numberOfCompletion, boolean isFinished, long recordDay, long finishedDay, int missionId) {
+    public MissionState(int numberOfCompletion, boolean isFinished, long recordDay, long finishedDay, String missionId) {
         this.numberOfCompletion = numberOfCompletion;
         this.isFinished = isFinished;
         this.recordDay = recordDay;
@@ -59,11 +59,11 @@ public class MissionState {
                 '}';
     }
 
-    public int getMissionId() {
+    public String getMissionId() {
         return missionId;
     }
 
-    public void setMissionId(int missionId) {
+    public void setMissionId(String missionId) {
         this.missionId = missionId;
     }
 

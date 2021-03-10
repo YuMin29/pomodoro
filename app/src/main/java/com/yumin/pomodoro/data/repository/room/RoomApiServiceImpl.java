@@ -87,7 +87,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
             public void run() {
                 LogUtil.logE(TAG,"INSERT mission state");
                 MissionState missionState = new MissionState(completeOfNumber,isFinish,
-                        todayMilli,-1,Integer.valueOf(missionId));
+                        todayMilli,-1,missionId);
                 missionStateDao.insert(missionState);
             }
         });
@@ -103,7 +103,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
             public void run() {
                 LogUtil.logE(TAG,"INSERT mission state");
                 MissionState missionState = new MissionState(0,false,
-                        todayMilli,-1,Integer.valueOf(missionId));
+                        todayMilli,-1,missionId);
                 missionStateDao.insert(missionState);
             }
         });
@@ -155,15 +155,8 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     }
 
     @Override
-    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end) {
-        List<MissionState> missionStateList = missionStateDao.getFinishedMissions(start);
-        List<Integer> missionIdList = new ArrayList<>();
-        for (MissionState missionState : missionStateList) {
-            LogUtil.logE(TAG,"[getFinishedMissions] MISSION ID = "+missionState.missionId);
-            missionIdList.add(missionState.missionId);
-        }
-        finishedMissions.postValue(missionIdList);
-        return finishedMissions;
+    public LiveData<List<UserMission>> getFinishedMissionList(long start, long end) {
+        return  missionStateDao.getFinishedMissions(start);
     }
 
     @Override

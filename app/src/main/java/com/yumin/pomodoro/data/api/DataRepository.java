@@ -35,7 +35,7 @@ public interface DataRepository {
 
     public void initMissionState(String id);
 
-    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end);
+    public LiveData<List<UserMission>> getFinishedMissionList(long start, long end);
 
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
 

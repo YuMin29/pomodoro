@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.yumin.pomodoro.data.MissionState;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.List;
 
@@ -23,8 +24,9 @@ public interface MissionStateDao {
     @Query("UPDATE MissionState SET finishedDay=:value WHERE missionId=:id")
     public void updateFinishedDayById(int id, long value);
 
-    @Query("SELECT * FROM MissionState WHERE recordDay =:today AND isFinished = 1")
-    public List<MissionState> getFinishedMissions(long today);
+    @Query("SELECT * FROM MyMission INNER JOIN MissionState ON MyMission.id=MissionState.missionId" +
+            " WHERE recordDay =:today AND isFinished = 1")
+    public LiveData<List<UserMission>> getFinishedMissions(long today);
 
     @Query("SELECT numberOfCompletion FROM MissionState WHERE missionId=:id AND recordDay =:today")
     public LiveData<Integer> getNumberOfCompletionById(int id, long today);

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLayoutBinding, MissionItemLayoutBinding> implements GroupIndex{
-    private static final String TAG = "[TestExpandableAdapter]";
+    private static final String TAG = "[ExpandableViewAdapter]";
     private OnExpandableItemClickListener onExpandableItemClickListener;
     private Context mContext;
 
@@ -44,6 +44,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
 
     public void flashFinishedMission(List<UserMission> missions){
         this.mFinishedMissions = missions;
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
 
     @Override
     public void onBindChildLayout(MissionItemLayoutBinding binding, UserMission userMission, int groupPosition, int childPosition, View view, boolean isFinished) {
-        LogUtil.logE(TAG,"[onBindChildLayout] groupPosition = "+groupPosition+" , childPosition = "+childPosition);
+        LogUtil.logE(TAG,"[onBindChildLayout] groupPosition = "+groupPosition+" , childPosition = "+childPosition +" ,isFinished = "+isFinished);
         binding.setMission(userMission);
         binding.delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +92,7 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
                 Integer.toString(userMission.getGoal()));
 
         // gray out item if it finished
-        if (groupPosition == GROUP_TODAY_POSITION && isFinished) {
+        if (isFinished && groupPosition == GROUP_TODAY_POSITION ) {
             view.setAlpha(0.5f); // set opacity
             binding.colorView.setVisibility(View.INVISIBLE);
             binding.finishedIcon.setVisibility(View.VISIBLE);

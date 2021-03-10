@@ -3,9 +3,7 @@ package com.yumin.pomodoro.ui.main.viewmodel;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +36,7 @@ public class HomeViewModel extends ViewModel {
 
     MutableLiveData<List<UserMission>> unfinishedMissions = new MutableLiveData<>();
 
-    MediatorLiveData<List<UserMission>> finishedMissions = new MediatorLiveData<>();
+    LiveData<List<UserMission>> finishedMissions;
 
     public HomeViewModel(Application application){
         LogUtil.logE(TAG,"[HomeViewModel] Constructor");
@@ -56,24 +54,10 @@ public class HomeViewModel extends ViewModel {
 
         allMissions = this.dataRepository.getMissions();
 
-        mIsLoading.setValue(false);
-
-        LiveData<List<Integer>> sourceIdList = this.dataRepository.getFinishedMissionIdList(TimeMilli.getTodayStartTime(),
+        finishedMissions = this.dataRepository.getFinishedMissionList(TimeMilli.getTodayStartTime(),
                 TimeMilli.getTodayEndTime());
-        finishedMissions.addSource(sourceIdList, new Observer<List<Integer>>() {
-            @Override
-            public void onChanged(List<Integer> idList) {
-                List<UserMission> missionList = new ArrayList<>();
 
-                for (int missionId : idList) {
-                    for (UserMission userMission : allMissions.getValue()) {
-                        if (userMission.getId() == missionId)
-                            missionList.add(userMission);
-                    }
-                }
-                finishedMissions.setValue(missionList);
-            }
-        });
+        mIsLoading.setValue(false);
     }
 
     public LiveData<List<UserMission>> getAllMissions(){
@@ -203,7 +187,7 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<List<UserMission>> getFinishedMissions(){
         LogUtil.logE(TAG,"[getFinishedMissions]");
-        return this.finishedMissions;
+        return finishedMissions;
     }
 
 

@@ -3,6 +3,7 @@ package com.yumin.pomodoro.data.api;
 import androidx.lifecycle.LiveData;
 
 import com.yumin.pomodoro.data.MissionState;
+import com.yumin.pomodoro.data.UserMission;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface ApiService<T,E> {
     public LiveData<Long> getMissionRepeatStart(String id);
     public LiveData<Long> getMissionRepeatEnd(String id);
     public LiveData<Long> getMissionOperateDay(String id);
-    public LiveData<List<Integer>> getFinishedMissionIdList(long start, long end);
+    public LiveData<List<UserMission>> getFinishedMissionList(long start, long end);
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
     public LiveData<E> getMissionStateById(String id, long todayStart);
     public void initMissionState(String id);
