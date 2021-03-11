@@ -107,8 +107,13 @@ public class HomeFragment extends DataBindingFragment {
 
                 boolean isFinished = false;
                 for (UserMission item : mFinishedMissions) {
-                    if (userMission.getId() == item.getId())
-                        isFinished = true;
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        if (userMission.getFirebaseMissionId().equals(item.getFirebaseMissionId()))
+                            isFinished = true;
+                    } else {
+                        if (userMission.getId() == item.getId())
+                            isFinished = true;
+                    }
                 }
 
                 if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!isFinished)) {

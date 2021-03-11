@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.library.baseAdapters.BR;
+import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.facebook.AccessToken;
@@ -40,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
@@ -47,24 +49,29 @@ import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
 import com.yumin.pomodoro.utils.base.DataBindingFragment;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
 public class LoginFragment extends DataBindingFragment {
     private static final String TAG = "[LoginFragment]";
-    private static final int RC_SIGN_IN = 123;
+    private static final int RC_SIGN_IN = 1001;
     LoginViewModel mLoginViewModel;
     CallbackManager mCallbackManager;
     FirebaseAuth mAuth;
     FragmentLoginBinding mFragmentLoginBinding;
     GoogleSignInClient mGoogleSignInClient;
 
+    // TODO: 2021/3/11 It's need to refactor especially move some function to view model
     @Override
     protected void initViewModel() {
-//        mLoginViewModel = getFragmentScopeViewModel(LoginViewModel.class);
+        mLoginViewModel = getFragmentScopeViewModel(LoginViewModel.class);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtil.logD(TAG,"[onCreate]");
+        LogUtil.logD(TAG, "[onCreate]");
         mAuth = FirebaseAuth.getInstance();
         FacebookSdk.sdkInitialize(getContext());
 
@@ -119,10 +126,22 @@ public class LoginFragment extends DataBindingFragment {
                 handelGoogleSignIn();
             }
         });
+        initObserver();
     }
 
-    private void handelGoogleSignIn(){
-        LogUtil.logD(TAG,"[handelGoogleSignIn]");
+    private void initObserver() {
+        mLoginViewModel.getRoomMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                LogUtil.logE(TAG, "[initObserver][getRoomMissions] isEmpty = " +
+                        userMissions.isEmpty());
+                mLoginViewModel.setIsRoomMissionsExist(!userMissions.isEmpty());
+            }
+        });
+    }
+
+    private void handelGoogleSignIn() {
+        LogUtil.logD(TAG, "[handelGoogleSignIn]");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -136,45 +155,31 @@ public class LoginFragment extends DataBindingFragment {
         LogUtil.logD(TAG, "handleFacebookAccessToken:" + token);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                // redirect to home fragment
-                                navigate(R.id.nav_home);
-                                addUserToFirebase(user);
-                            }
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                .addOnCompleteListener(getOnCompleteListener());
     }
 
-    private void navigate(int id){
+    private void navigate(int id) {
         NavHostFragment.findNavController(this).navigate(id);
     }
 
-    public void loginAccount(){
+    public void loginAccount() {
         // check email and password
         String email = mFragmentLoginBinding.loginEmail.getText().toString();
         String password = mFragmentLoginBinding.loginPassword.getText().toString();
 
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
-            Toast.makeText(getContext(),getString(R.string.create_account_error),Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(getContext(), getString(R.string.create_account_error), Toast.LENGTH_SHORT).show();
             return;
         }
 
         mFragmentLoginBinding.login.setEnabled(false);
-        mAuth.signInWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(getOnCompleteListener());
+    }
+
+    @NotNull
+    private OnCompleteListener<AuthResult> getOnCompleteListener() {
+        return new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
@@ -193,14 +198,14 @@ public class LoginFragment extends DataBindingFragment {
                             Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        };
     }
 
-    private void goToResetPassword(){
+    private void goToResetPassword() {
         navigate(R.id.fragment_reset_password);
     }
 
-    private void goToRegisterAccount(){
+    private void goToRegisterAccount() {
         navigate(R.id.fragment_register);
     }
 
@@ -237,36 +242,20 @@ public class LoginFragment extends DataBindingFragment {
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            addUserToFirebase(user);
-                            // navigate to home
-                            navigate(R.id.nav_home);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(getView(), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                .addOnCompleteListener(getOnCompleteListener());
     }
 
-    private void addUserToFirebase(FirebaseUser firebaseUser){
+    private void addUserToFirebase(FirebaseUser firebaseUser) {
         User user = new User(firebaseUser.getDisplayName(), firebaseUser.getEmail());
-        LogUtil.logE(TAG,"[addUserToFirebase] getUid = "+firebaseUser.getUid());
+        LogUtil.logE(TAG, "[addUserToFirebase] getUid = " + firebaseUser.getUid());
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(firebaseUser.getUid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                    LogUtil.logE(TAG,"[addUserToFirebase] getUid = "+firebaseUser.getUid()+" doesn't exist!");
-                    LogUtil.logE(TAG,"[addUserToFirebase] set value name = "+user.getUserName() + " ,mail = "+user.getUserMail());
+                    LogUtil.logE(TAG, "[addUserToFirebase] getUid = " + firebaseUser.getUid() + " doesn't exist!");
+                    LogUtil.logE(TAG, "[addUserToFirebase] set value name = " + user.getUserName() + " ,mail = " + user.getUserMail());
                     // The child doesn't exist
                     databaseReference.setValue(user);
                 }
@@ -274,9 +263,15 @@ public class LoginFragment extends DataBindingFragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                LogUtil.logE(TAG,"[addUserToFirebase]  222 ");
+                LogUtil.logE(TAG, "[addUserToFirebase]  222 ");
             }
         });
+    }
+
+    private void syncLocalRoomToFirebase() {
+        // 1. check where if local Room has data
+        // 2. if have, sync data
+        // 3. then clear local room
     }
 
 
@@ -286,17 +281,21 @@ public class LoginFragment extends DataBindingFragment {
                 .addBindingParam(BR.clickProxy, new LoginFragment.ClickProxy());
     }
 
-    public class ClickProxy{
-        public void login(){
+    public class ClickProxy {
+        public void login() {
             loginAccount();
-        };
+        }
 
-        public void register(){
+        ;
+
+        public void register() {
             // switch to register fragment
             goToRegisterAccount();
-        };
+        }
 
-        public void forgetPassword(){
+        ;
+
+        public void forgetPassword() {
             goToResetPassword();
         }
     }

@@ -9,6 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.firebase.User;
@@ -100,11 +101,19 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
         }
         UserMission userMission = mDataList.get(groupPosition).getMissionList().get(childPosition);
         LogUtil.logE(TAG,"[getChildView] mFinishedMissions size = "+mFinishedMissions.size());
-
         boolean isFinished = false;
         for (UserMission item : mFinishedMissions) {
-            if (userMission.getId() == item.getId())
-                isFinished = true;
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                LogUtil.logE(TAG,"[getChildView] ITEM getFirebaseMissionId = "+item.getFirebaseMissionId());
+                LogUtil.logE(TAG,"[getChildView] USER MISSION getFirebaseMissionId = "+userMission.getFirebaseMissionId());
+                if (userMission.getFirebaseMissionId().equals(item.getFirebaseMissionId()))
+                    isFinished = true;
+            } else {
+                LogUtil.logE(TAG,"[getChildView] ITEM ID = "+item.getId());
+                LogUtil.logE(TAG,"[getChildView] USER MISSION ID = "+userMission.getId());
+                if (userMission.getId() == item.getId())
+                    isFinished = true;
+            }
         }
         LogUtil.logE(TAG,"[getChildView] mFinishedMissions isFinished = "+isFinished);
         onBindChildLayout(binding,userMission,groupPosition,childPosition,convertView,isFinished);
