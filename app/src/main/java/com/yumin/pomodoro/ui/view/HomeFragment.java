@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
@@ -34,7 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class HomeFragment extends DataBindingFragment {
+public class HomeFragment extends DataBindingFragment implements MainActivity.OnRefreshHomeFragment {
     private static final String TAG = "[HomeFragment]";
     private HomeViewModel mHomeViewModel;
     private SharedViewModel mSharedViewModel;
@@ -51,6 +52,7 @@ public class HomeFragment extends DataBindingFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MainActivity)getActivity()).setOnRefreshHomeFragment(this);
     }
 
     @Override
@@ -129,19 +131,25 @@ public class HomeFragment extends DataBindingFragment {
     }
 
     private void observeViewModel() {
-        mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            fragmentHomeBinding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
-        });
+        LogUtil.logE(TAG,"[observeViewModel]");
+        mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                LogUtil.logE(TAG,"[observeViewModel][getLoading] onChanged");
+                fragmentHomeBinding.progressBar.setVisibility(aBoolean ? View.VISIBLE : View.INVISIBLE);
+            }});
 
-        mHomeViewModel.getAllMissions().observe(getViewLifecycleOwner(), missions -> {
-            LogUtil.logD(TAG,"[observeViewModel] mission list size = "+missions.size());
-            if (missions != null) {
-                updateTodayList();
-                updateComingList();
-                updateFinishedUI();
-            }
-            mHomeViewModel.getLoading().postValue(false);
-        });
+        mHomeViewModel.getAllMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> missions) {
+                LogUtil.logD(TAG, "[observeViewModel][getAllMissions] size = " + missions.size());
+                if (missions != null) {
+                    updateTodayList();
+                    updateComingList();
+                    updateFinishedUI();
+                }
+                mHomeViewModel.getLoading().postValue(false);
+            }});
     }
 
     private void updateComingList() {
@@ -268,6 +276,12 @@ public class HomeFragment extends DataBindingFragment {
             }
         });
         return todayMissions;
+    }
+
+    @Override
+    public void onRefresh() {
+        mHomeViewModel.refreshDataWhenLogout();
+        observeViewModel();
     }
 
     private class Result {

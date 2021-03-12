@@ -183,18 +183,21 @@ public class LoginFragment extends DataBindingFragment {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "createUserWithEmail:success");
+                    Log.d(TAG, "Sign-in SUCCESS");
                     FirebaseUser user = mAuth.getCurrentUser();
                     if (user != null) {
-//                        MainActivity.getNavController().navigate(R.id.nav_home);
+                        if (mLoginViewModel.getIsRoomMissionsExist()) {
+                            // sync Room to firebase
+                            mLoginViewModel.syncRoomMissionsToFirebase();
+                        }
                         navigate(R.id.nav_home);
                         mFragmentLoginBinding.login.setEnabled(true);
                         addUserToFirebase(user);
                     }
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmailAndPassword:failure", task.getException());
-                    Toast.makeText(getContext(), "Authentication failed.",
+                    Log.w(TAG, "Sign-in FAILURE", task.getException());
+                    Toast.makeText(getContext(), "登入失敗："+task.getException().getMessage(),
                             Toast.LENGTH_SHORT).show();
                 }
             }

@@ -15,6 +15,7 @@ import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeMilli;
+import com.yumin.pomodoro.utils.base.BaseApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,17 @@ public class HomeViewModel extends ViewModel {
         else
             this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
 
+        fetchData();
+    }
+
+    public void refreshDataWhenLogout(){
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            LogUtil.logE(TAG,"[refreshDataWhenLogout] get firebase user");
+            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(BaseApplication.getApplication()));
+        } else {
+            LogUtil.logE(TAG,"[refreshDataWhenLogout] no firebase user");
+            this.dataRepository = new RoomRepository(new RoomApiServiceImpl(BaseApplication.getApplication()));
+        }
         fetchData();
     }
 
