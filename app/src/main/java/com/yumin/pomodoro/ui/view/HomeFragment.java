@@ -197,6 +197,11 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
 
     private void updateFinishedUI() {
         mHomeViewModel.getFinishedMissions().observe(getViewLifecycleOwner(), missions -> {
+
+            for (UserMission mission : missions) {
+                LogUtil.logE(TAG,mission.toString());
+            }
+
             mFinishedMissions = missions;
             expandableViewAdapter.flashFinishedMission(mFinishedMissions);
             // update finished mission number

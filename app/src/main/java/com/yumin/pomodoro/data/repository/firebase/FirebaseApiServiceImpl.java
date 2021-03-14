@@ -57,13 +57,14 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     @Override
-    public void addMission(UserMission mission) {
+    public String addMission(UserMission mission) {
         LogUtil.logD(TAG,"[addMission]");
         String id = getUserMissionPath().push().getKey();
         mission.setFirebaseMissionId(id);
         mission.setCreatedTime(new Date().getTime());
         // add mission to firebase
         getUserMissionPath().child(id).setValue(mission);
+        return id;
     }
 
     @Override
@@ -149,6 +150,24 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     @Override
     public void deleteMission(UserMission mission) {
         getUserMissionPath().child(mission.getFirebaseMissionId()).removeValue();
+        deleteMissionState(mission.getFirebaseMissionId());
+    }
+
+    private void deleteMissionState(String id){
+        getCalendarPath().child(id)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            getCalendarPath().child(id).removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        LogUtil.logE(TAG,"[getMissionRepeatStart][onCancelled] ERROR = "+error.getDetails());
+                    }
+                });
     }
 
     @Override
@@ -264,14 +283,18 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
                 new MissionState(0,false,TimeMilli.getTodayInitTime(),-1,missionId));
     }
 
-    private void saveMissionState(String missionId, int completeOfNumber, boolean isFinish){
-        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionId
-                +" ,completeOfNumber = "+completeOfNumber
-                +" ,isFinish = "+isFinish);
+    public void saveMissionState(String missionId,MissionState missionState){
+        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionState.missionId
+                +" ,completeOfNumber = "+missionState.numberOfCompletion
+                +" ,isFinish = "+missionState.isFinished);
+        missionState.missionId = missionId;
         String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
         DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
-        databaseReference.push();
-        databaseReference.child(missionId).setValue(new MissionState(completeOfNumber,isFinish));
+        databaseReference.child(missionId).setValue(missionState);
     }
 
+    @Override
+    public LiveData<List<MissionState>> getMissionStates() {
+        return null;
+    }
 }

@@ -122,14 +122,19 @@ public class HomeViewModel extends ViewModel {
     public LiveData<List<UserMission>> getTodayRepeatDefineMissions(){
         if (allMissions.getValue() == null)
             return null;
-
+        LogUtil.logE(TAG,"TimeMilli.getTodayStartTime() = "+TimeMilli.getTodayStartTime()+
+                " , TimeMilli.getTodayEndTime() = "+ TimeMilli.getTodayEndTime());
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
             if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
-                TimeMilli.getTodayStartTime() >= userMission.getRepeatStart() &&
-                TimeMilli.getTodayEndTime() <= userMission.getRepeatEnd())
+                TimeMilli.getTodayEndTime() >= userMission.getRepeatStart() &&
+                TimeMilli.getTodayEndTime() <= userMission.getRepeatEnd()) {
                 missionList.add(userMission);
+            }
+            LogUtil.logE(TAG,"userMission.getRepeatStart() = "+userMission.getRepeatStart()+
+                    " ,  userMission.getRepeatEnd() = "+  userMission.getRepeatEnd());
         }
+
         todayRepeatDefineMissions.setValue(missionList);
         return todayRepeatDefineMissions;
     }

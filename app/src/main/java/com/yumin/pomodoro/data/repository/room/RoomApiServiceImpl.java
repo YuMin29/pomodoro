@@ -35,6 +35,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     private LiveData<Long> missionOperateDay = new LiveData<Long>() {};
     private MutableLiveData<List<Integer>> finishedMissions = new MutableLiveData<List<Integer>>() {};
     private LiveData<List<UserMission>> unfinishedMissions = new LiveData<List<UserMission>>() {};
+    private LiveData<List<MissionState>> allMissionState;
 
     public RoomApiServiceImpl(Application application){
         LogUtil.logD(TAG,"[ApiServiceImpl] constructor");
@@ -42,6 +43,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         missionDao = missionDBManager.getMissionDao();
         missionStateDao = missionDBManager.getMissionStateDao();
         allMissions = missionDao.getAllMissions();
+        allMissionState = missionStateDao.getAllMissionStates();
     }
 
 
@@ -109,6 +111,16 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         });
     }
 
+    @Override
+    public void saveMissionState(String missionId,MissionState missionState) {
+
+    }
+
+    @Override
+    public LiveData<List<MissionState>> getMissionStates() {
+        return allMissionState;
+    }
+
 
     @Override
     public LiveData<List<UserMission>> getMissions() {
@@ -117,7 +129,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     }
 
     @Override
-    public void addMission(UserMission userMission) {
+    public String addMission(UserMission userMission) {
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -125,6 +137,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
                 missionDao.insert(userMission);
             }
         });
+        return String.valueOf(userMission.getId());
     }
 
     public void updateMission(UserMission userMission) {

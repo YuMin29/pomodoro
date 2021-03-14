@@ -41,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
@@ -136,6 +137,15 @@ public class LoginFragment extends DataBindingFragment {
                 LogUtil.logE(TAG, "[initObserver][getRoomMissions] isEmpty = " +
                         userMissions.isEmpty());
                 mLoginViewModel.setIsRoomMissionsExist(!userMissions.isEmpty());
+            }
+        });
+
+        mLoginViewModel.getRoomMissionStates().observe(getViewLifecycleOwner(), new Observer<List<MissionState>>() {
+            @Override
+            public void onChanged(List<MissionState> missionStates) {
+                LogUtil.logE(TAG, "[initObserver][getRoomMissionStates] isEmpty = " +
+                        missionStates.isEmpty());
+                mLoginViewModel.setIsRoomMissionStatesExist(!missionStates.isEmpty());
             }
         });
     }

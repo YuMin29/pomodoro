@@ -36,8 +36,8 @@ public class RoomRepository implements DataRepository {
         return roomApiService.getMissionById(id);
     }
 
-    public void addMission(UserMission userMission){
-        roomApiService.addMission(userMission);
+    public String addMission(UserMission userMission){
+        return roomApiService.addMission(userMission);
     }
 
     public void updateMission(UserMission userMission){
@@ -113,6 +113,16 @@ public class RoomRepository implements DataRepository {
     public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
         LogUtil.logE(TAG,"[getMissionStateById] ID = "+id+" , TODAYSTART = "+todayStart);
         return roomApiService.getMissionStateById(id,todayStart);
+    }
+
+    @Override
+    public void saveMissionState(String missionId,MissionState missionState) {
+
+    }
+
+    @Override
+    public LiveData<List<MissionState>> getMissionStates() {
+        return roomApiService.getMissionStates();
     }
 
 //    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){

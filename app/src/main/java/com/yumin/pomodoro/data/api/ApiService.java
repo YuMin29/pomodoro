@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ApiService<T,E> {
     public LiveData<List<T>> getMissions();
-    public void addMission(T mission);
+    public String addMission(T mission);
     public T getInitMission();
     public T getQuickMission(int time, int shortBreakTime, int color);
     public void updateMission(T mission);
@@ -24,4 +24,6 @@ public interface ApiService<T,E> {
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
     public LiveData<E> getMissionStateById(String id, long todayStart);
     public void initMissionState(String id);
+    public void saveMissionState(String missionId,MissionState missionState);
+    public LiveData<List<MissionState>> getMissionStates();
 }

@@ -17,7 +17,7 @@ public interface DataRepository {
 
     public LiveData<UserMission> getMissionById(String id);
 
-    public void addMission(UserMission mission);
+    public String addMission(UserMission mission);
 
     public void updateMission(UserMission mission);
 
@@ -40,4 +40,8 @@ public interface DataRepository {
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
 
     public LiveData<MissionState> getMissionStateById(String id, long todayStart);
+
+    public void saveMissionState(String missionId, MissionState missionState);
+
+    public LiveData<List<MissionState>> getMissionStates();
 }

@@ -35,8 +35,8 @@ public class FirebaseRepository implements DataRepository {
         return firebaseApiService.getMissionById(id);
     }
 
-    public void addMission(UserMission mission){
-        firebaseApiService.addMission(mission);
+    public String addMission(UserMission mission){
+        return firebaseApiService.addMission(mission);
     }
 
     public void updateMission(UserMission mission){
@@ -85,5 +85,15 @@ public class FirebaseRepository implements DataRepository {
     @Override
     public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
         return firebaseApiService.getMissionStateById(id, todayStart);
+    }
+
+    @Override
+    public void saveMissionState(String missionId,MissionState missionState) {
+        firebaseApiService.saveMissionState(missionId,missionState);
+    }
+
+    @Override
+    public LiveData<List<MissionState>> getMissionStates() {
+        return null;
     }
 }
