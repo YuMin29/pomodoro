@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home,
-                R.id.nav_backup, R.id.nav_restore, R.id.nav_total,
                 R.id.nav_calender, R.id.nav_save_mission, R.id.nav_settings)
                 .setDrawerLayout(mDrawerLayout)
                 .build();
@@ -167,10 +166,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 // Check if user is signed in (non-null) and update UI accordingly.
                 updateNavHeader(user);
                 mCurrentFirebaseUser = user;
-                if (null != user) {
-                    // TODO: 2021/3/6
-                    //  sync local ROOM data with firebase in here
-                }
             }
         };
     }

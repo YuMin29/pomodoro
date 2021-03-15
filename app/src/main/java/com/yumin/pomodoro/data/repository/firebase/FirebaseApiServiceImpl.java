@@ -154,25 +154,29 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     private void deleteMissionState(String id){
-        getCalendarPath().child(id)
-                .addValueEventListener(new ValueEventListener() {
+        LogUtil.logE(TAG,"[deleteMissionState] id = "+id);
+        getCalendarPath().addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            getCalendarPath().child(id).removeValue();
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            for (DataSnapshot value : childSnapshot.getChildren()) {
+                                LogUtil.logE(TAG,"[deleteMissionState] value.getKey() = "+value.getKey());
+                                if (value.getKey().equals(id)) {
+                                    value.getRef().removeValue();
+                                }
+                            }
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        LogUtil.logE(TAG,"[getMissionRepeatStart][onCancelled] ERROR = "+error.getDetails());
+                        LogUtil.logE(TAG,"[deleteMissionState] [onCancelled] error" +error.getDetails());
                     }
                 });
     }
 
     @Override
     public void updateNumberOfCompletionById(String id, int num) {
-//        getUserMissionPath().child(id).child("numberOfCompletions").setValue(num);
         getCalendarPath().child(String.valueOf(TimeMilli.getTodayInitTime())).child(id)
                 .child("numberOfCompletion").setValue(num);
 

@@ -48,6 +48,9 @@ public class NotificationHelper extends ContextWrapper {
         builder.setContentText(leftTime);
         builder.setAutoCancel(true);
         builder.setOnlyAlertOnce(true);
+
+        // TODO: 3/15/21 need to implement custom RemoteView in here
+
         return builder;
     }
 

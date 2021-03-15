@@ -58,7 +58,7 @@
 
                     <com.yumin.pomodoro.ui.view.ItemTextView
                         android:id="@+id/item_time"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemContent="@={viewmodel.mission.time}"
@@ -69,23 +69,23 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:weightSum="2">
+                    android:weightSum="1">
 
                     <com.yumin.pomodoro.ui.view.ItemTextView
                         android:id="@+id/item_short_break"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemContent="@={viewmodel.mission.shortBreakTime}"
                         app:itemDescription="@{@string/mission_break}"/>
 
-                    <com.yumin.pomodoro.ui.view.ItemTextView
-                        android:id="@+id/item_long_break"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemContent="@={viewmodel.mission.longBreakTime}"
-                        app:itemDescription="@{@string/mission_long_break}"/>
+<!--                    <com.yumin.pomodoro.ui.view.ItemTextView-->
+<!--                        android:id="@+id/item_long_break"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        app:itemContent="@={viewmodel.mission.longBreakTime}"-->
+<!--                        app:itemDescription="@{@string/mission_long_break}"/>-->
                 </TableRow>
 
                 <TableRow
@@ -95,7 +95,7 @@
 
                     <com.yumin.pomodoro.ui.view.ItemTextView
                         android:id="@+id/item_goal"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemContent="@={viewmodel.mission.goal}"
@@ -103,7 +103,7 @@
 
                     <com.yumin.pomodoro.ui.view.ItemListView
                         android:id="@+id/item_repeat"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemListVal="@={viewmodel.mission.repeat}"
@@ -117,15 +117,15 @@
 
                     <com.yumin.pomodoro.ui.view.ItemDateView
                         android:id="@+id/item_operate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         app:itemDateVal="@={viewmodel.mission.operateDay}"
                         app:itemDescription="@{@string/mission_operate_day}" />
 
                     <com.yumin.pomodoro.ui.view.ItemDialogView
                         android:id="@+id/item_theme"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemValue="@={viewmodel.mission.color}"
@@ -139,7 +139,7 @@
 
                     <com.yumin.pomodoro.ui.view.ItemImageView
                         android:id="@+id/item_notification"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemEnable="@={viewmodel.mission.enableNotification}"
@@ -149,33 +149,33 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:weightSum="1">
+                    android:weightSum="2">
 
                     <com.yumin.pomodoro.ui.view.ItemImageView
                         android:id="@+id/item_sound"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemEnable="@={viewmodel.mission.enableSound}"
                         app:itemDescription="@{@string/mission_sound}"/>
+
+                    <com.yumin.pomodoro.ui.view.ItemImageView
+                        android:id="@+id/item_vibrate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemEnable="@={viewmodel.mission.enableVibrate}"
+                        app:itemDescription="@{@string/mission_vibrate}"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:weightSum="2">
-
-                    <com.yumin.pomodoro.ui.view.ItemImageView
-                        android:id="@+id/item_vibrate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemEnable="@={viewmodel.mission.enableVibrate}"
-                        app:itemDescription="@{@string/mission_vibrate}"/>
+                    android:weightSum="1">
 
                     <com.yumin.pomodoro.ui.view.ItemImageView
                         android:id="@+id/item_keep_screen_on"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         app:itemEnable="@={viewmodel.mission.keepScreenOn}"

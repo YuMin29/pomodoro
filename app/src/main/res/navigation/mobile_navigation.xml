@@ -11,23 +11,23 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home"/>
 
-    <fragment
-        android:id="@+id/nav_backup"
-        android:name="com.yumin.pomodoro.ui.view.BackupFragment"
-        android:label="@string/menu_backup"
-        tools:layout="@layout/fragment_backup" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_backup"-->
+<!--        android:name="com.yumin.pomodoro.ui.view.BackupFragment"-->
+<!--        android:label="@string/menu_backup"-->
+<!--        tools:layout="@layout/fragment_backup" />-->
 
-    <fragment
-        android:id="@+id/nav_restore"
-        android:name="com.yumin.pomodoro.ui.view.RestoreFragment"
-        android:label="@string/menu_restore"
-        tools:layout="@layout/fragment_restore" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_restore"-->
+<!--        android:name="com.yumin.pomodoro.ui.view.RestoreFragment"-->
+<!--        android:label="@string/menu_restore"-->
+<!--        tools:layout="@layout/fragment_restore" />-->
 
-    <fragment
-        android:id="@+id/nav_total"
-        android:name="com.yumin.pomodoro.ui.view.TotalFragment"
-        android:label="@string/menu_total"
-        tools:layout="@layout/fragment_total" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_total"-->
+<!--        android:name="com.yumin.pomodoro.ui.view.TotalFragment"-->
+<!--        android:label="@string/menu_total"-->
+<!--        tools:layout="@layout/fragment_total" />-->
 
     <fragment
         android:id="@+id/nav_calender"

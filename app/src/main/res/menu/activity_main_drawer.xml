@@ -6,14 +6,13 @@
     <group android:id="@+id/group_settings"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_calender"
+            android:icon="@drawable/ic_baseline_calendar_today_24"
+            android:title="@string/menu_calender" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/menu_settings" />
-
-        <item
-            android:id="@+id/nav_total"
-            android:icon="@drawable/ic_baseline_assessment_24"
-            android:title="@string/menu_total" />
     </group>
 
     <group android:id="@+id/group_category"

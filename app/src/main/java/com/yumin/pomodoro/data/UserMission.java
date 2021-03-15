@@ -29,10 +29,6 @@ public class UserMission {
     private boolean enableSound = true;
     private boolean enableVibrate = true;
     private boolean keepScreenOn = true;
-    // TODO: 2021/2/17 考慮重複的情況 只留判斷今日完成?
-//    private boolean isFinished = false;
-//    private int numberOfCompletions = 0;
-//    private long finishedDay = -1;
     private long createdTime;
     private String firebaseMissionId = "";
 
