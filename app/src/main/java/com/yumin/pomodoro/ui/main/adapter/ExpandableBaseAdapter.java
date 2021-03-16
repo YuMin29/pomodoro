@@ -30,6 +30,11 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     }
 
     @Override
+    public void onGroupCollapsed(int groupPosition) {
+        notifyDataSetInvalidated();
+    }
+
+    @Override
     public int getGroupCount() {
         return mDataList.size();
     }
@@ -65,26 +70,28 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     }
 
     public abstract int getGroupLayout();
-    public abstract void onBindGroupLayout(B binding,Category category);
+    public abstract void onBindGroupLayout(B binding,Category category,boolean isExpanded);
 
     public abstract int getChildLayout();
     public abstract void onBindChildLayout(M binding, UserMission userMission, int groupPosition, int childPosition, View view, boolean isFinished);
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        B binding = DataBindingUtil.inflate(LayoutInflater.from(this.context),
-                getGroupLayout(), parent, false);
+        B binding;
         if (convertView == null) {
+            LogUtil.logE(TAG,"[getGroupView] 000");
+            binding = DataBindingUtil.inflate(LayoutInflater.from(this.context),getGroupLayout(), parent, false);
             convertView = binding.getRoot();
             convertView.setPadding(10, 10, 10, 10);
             convertView.setTag(binding);
         } else {
+            LogUtil.logE(TAG,"[getGroupView] 111");
             binding = (B) convertView.getTag();
         }
 
         LogUtil.logD(TAG,"[getGroupView] category name =  "
-                +mDataList.get(groupPosition).getCategoryName());
-        onBindGroupLayout(binding,mDataList.get(groupPosition));
+                +mDataList.get(groupPosition).getCategoryName() +" ,isExpanded"+isExpanded);
+        onBindGroupLayout(binding,mDataList.get(groupPosition),isExpanded);
         return convertView;
     }
 

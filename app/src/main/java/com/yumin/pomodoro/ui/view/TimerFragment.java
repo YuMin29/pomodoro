@@ -49,6 +49,7 @@ public class TimerFragment extends DataBindingFragment {
     private NotificationHelper notificationHelper;
     private static final int NOTIFICATION_ID = 1000;
     private String missionTitle;
+    private int backgroundColor;
 
     @Override
     public void onResume() {
@@ -152,7 +153,7 @@ public class TimerFragment extends DataBindingFragment {
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
                     notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent);
+                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent,backgroundColor);
                     notificationHelper.notify(notificationBuilder);
                 }
 
@@ -183,8 +184,9 @@ public class TimerFragment extends DataBindingFragment {
 
                 // update notification
                 if (enabledNotification) {
-                    notificationBuilder.setContentTitle("休息一下吧！");
-                    notificationBuilder.setContentText("");
+//                    notificationBuilder.setContentTitle("休息一下吧！");
+//                    notificationBuilder.setContentText("");
+                    notificationHelper.changeRemoteContent("休息一下吧！");
                     notificationHelper.notify(notificationBuilder);
                 }
 
@@ -198,7 +200,8 @@ public class TimerFragment extends DataBindingFragment {
             @Override
             public void onTick(long millisecond) {
                 if (enabledNotification) {
-                    notificationBuilder.setContentText(msTimeFormatter(millisecond));
+//                    notificationBuilder.setContentText(msTimeFormatter(millisecond));
+                    notificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
                     notificationHelper.notify(notificationBuilder);
                 }
             }
@@ -226,6 +229,7 @@ public class TimerFragment extends DataBindingFragment {
                     enabledNotification = mission.isEnableNotification();
                     enableKeepScreenOn = mission.isKeepScreenOn();
                     missionTitle = mission.getName();
+                    backgroundColor = mission.getColor();
 
                     if (enableKeepScreenOn) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

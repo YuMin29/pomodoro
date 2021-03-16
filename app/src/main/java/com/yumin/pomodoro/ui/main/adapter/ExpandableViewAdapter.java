@@ -53,9 +53,11 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
     }
 
     @Override
-    public void onBindGroupLayout(CategoryItemLayoutBinding binding, Category category) {
+    public void onBindGroupLayout(CategoryItemLayoutBinding binding, Category category, boolean isExpanded) {
         LogUtil.logD(TAG,"[onBindGroupLayout] CATEGORY NAME = "+category.getCategoryName());
-        binding.setCategory(category);
+        binding.categoryNameTextView.setText(category.getCategoryName());
+        binding.categoryArrow.setImageResource(isExpanded ? R.drawable.ic_baseline_keyboard_arrow_up_24 :
+                R.drawable.ic_baseline_keyboard_arrow_down_24);
     }
 
     @Override

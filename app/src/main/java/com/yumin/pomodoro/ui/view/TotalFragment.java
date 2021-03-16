@@ -8,29 +8,26 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.ui.main.viewmodel.TotalViewModel;
+import com.yumin.pomodoro.utils.base.DataBindingConfig;
+import com.yumin.pomodoro.utils.base.DataBindingFragment;
 
-public class TotalFragment extends Fragment {
+public class TotalFragment extends DataBindingFragment {
+    TotalViewModel mTotalViewModel;
 
-    private TotalViewModel slideshowViewModel;
+    // TODO: 3/16/21 need to implement total calender in here
+    @Override
+    protected void initViewModel() {
+        mTotalViewModel = getFragmentScopeViewModel(TotalViewModel.class);
+    }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                ViewModelProviders.of(this).get(TotalViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_total, container, false);
-        final TextView textView = root.findViewById(R.id.text_total);
-        slideshowViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+    @Override
+    protected DataBindingConfig getDataBindingConfig() {
+        return null;
     }
 }

@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.Settings;
+import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
 
@@ -20,6 +22,7 @@ public class NotificationHelper extends ContextWrapper {
     private static final int NOTIFICATION_ID = 1000;
     private NotificationManager mNotificationManager;
     private NotificationChannel mNotificationChannel;
+    RemoteViews remoteView;
 
     public static final String CHANNEL_ID = "default";
     private static final String CHANNEL_NAME = "Default Channel";
@@ -32,9 +35,11 @@ public class NotificationHelper extends ContextWrapper {
             mNotificationChannel.setDescription(CHANNEL_DESCRIPTION);
             getNotificationManager().createNotificationChannel(mNotificationChannel);
         }
+        remoteView = new RemoteViews(getPackageName(), R.layout.notification_custom);
     }
 
-    public NotificationCompat.Builder getNotification(String title, String leftTime, PendingIntent pendingIntent) {
+    public NotificationCompat.Builder getNotification(String title, String leftTime, PendingIntent pendingIntent,
+                                                      int backgroundColor) {
         NotificationCompat.Builder builder = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder = new NotificationCompat.Builder(this, CHANNEL_ID);
@@ -42,16 +47,20 @@ public class NotificationHelper extends ContextWrapper {
             builder = new NotificationCompat.Builder(this);
             builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         }
-        builder.setSmallIcon(R.drawable.ic_baseline_mood_24);
+        builder.setSmallIcon(R.drawable.ic_tomato_24);
         builder.setContentIntent(pendingIntent);
-        builder.setContentTitle(title);
-        builder.setContentText(leftTime);
+//        builder.setContentTitle(title);
+//        builder.setContentText(leftTime);
+        remoteView.setTextViewText(R.id.left_time_textview,title);
+        remoteView.setInt(R.id.left_time_textview,"setBackgroundColor",backgroundColor);
+        builder.setCustomContentView(remoteView);
         builder.setAutoCancel(true);
         builder.setOnlyAlertOnce(true);
-
-        // TODO: 3/15/21 need to implement custom RemoteView in here
-
         return builder;
+    }
+
+    public void changeRemoteContent(String title){
+        remoteView.setTextViewText(R.id.left_time_textview,title);
     }
 
     public void notify(NotificationCompat.Builder builder) {

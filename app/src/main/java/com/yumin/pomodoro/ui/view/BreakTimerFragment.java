@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -141,7 +143,8 @@ public class BreakTimerFragment extends DataBindingFragment {
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
                     notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent);
+                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent,
+                            ContextCompat.getColor(getContext(),R.color.break_timer_background));
                     notificationHelper.notify(notificationBuilder);
                 }
             }
@@ -160,8 +163,9 @@ public class BreakTimerFragment extends DataBindingFragment {
                         }
 
                         if (enabledNotification) {
-                            notificationBuilder.setContentTitle("執行蕃茄任務！");
-                            notificationBuilder.setContentText("");
+//                            notificationBuilder.setContentTitle("執行蕃茄任務！");
+//                            notificationBuilder.setContentText("");
+                            notificationHelper.changeRemoteContent("執行蕃茄任務！");
                             notificationHelper.notify(notificationBuilder);
                         }
 
@@ -191,7 +195,8 @@ public class BreakTimerFragment extends DataBindingFragment {
             @Override
             public void onTick(long millisecond) {
                 if (enabledNotification) {
-                    notificationBuilder.setContentText(msTimeFormatter(millisecond));
+//                    notificationBuilder.setContentText(msTimeFormatter(millisecond));
+                    notificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
                     notificationHelper.notify(notificationBuilder);
                 }
             }

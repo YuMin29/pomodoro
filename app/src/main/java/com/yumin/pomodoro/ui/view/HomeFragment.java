@@ -81,7 +81,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
     }
 
     private void initUI() {
-        mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
+//        mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
         expandableViewAdapter = new ExpandableViewAdapter(getContext(),mCategory,mFinishedMissions);
         expandableViewAdapter.setOnExpandableItemClickListener(new ExpandableViewAdapter.OnExpandableItemClickListener() {
             @Override

@@ -246,7 +246,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             fragmentRangeCalenderBinding.tvRightWeek.setText(getString(R.string.range_end));
             fragmentRangeCalenderBinding.tvLeftDate.setText("");
             fragmentRangeCalenderBinding.tvRightDate.setText("");
-//            MainActivity.getNavController().navigateUp(); // back
             navigateUp();
         }
 
@@ -266,7 +265,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             Log.e(TAG,"SelectCalendarRange , start = " +start);
             sharedViewModel.setRepeatStart(start);
             sharedViewModel.setRepeatEnd(end);
-//            MainActivity.getNavController().navigateUp(); // back
             navigateUp();
         }
     }
