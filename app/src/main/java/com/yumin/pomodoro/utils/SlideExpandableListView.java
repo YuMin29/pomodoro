@@ -21,6 +21,7 @@ public class SlideExpandableListView extends ExpandableListView {
 
     private ViewGroup mPointChild;  // 当前处理的item
     private LinearLayout.LayoutParams mLayoutParams;    // 当前处理的item的LayoutParams
+    private boolean isChildLayout = false;
 
     public SlideExpandableListView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -42,11 +43,15 @@ public class SlideExpandableListView extends ExpandableListView {
                 performActionDown(ev);
                 break;
             case MotionEvent.ACTION_MOVE://滑动
-                super.onTouchEvent(ev);//调用父类方法，防止滑动时触发点击事件
-                return performActionMove(ev);
+                if (isChildLayout) {
+                    super.onTouchEvent(ev);//调用父类方法，防止滑动时触发点击事件
+                    return performActionMove(ev);
+                }
             case MotionEvent.ACTION_UP://抬起
-                performActionUp();
-                break;
+                if (isChildLayout) {
+                    performActionUp();
+                    break;
+                }
         }
         return super.onTouchEvent(ev);
     }
@@ -62,8 +67,13 @@ public class SlideExpandableListView extends ExpandableListView {
         // 获取当前点的item
         mPointChild = (ViewGroup) getChildAt(pointToPosition(mDownX, mDownY)
                 - getFirstVisiblePosition());
-        if (mPointChild == null)
+
+        if (mPointChild == null || mPointChild.getChildCount() < 3 ) {
+            LogUtil.logD(TAG,"[performActionDown] mPointChild == null");
+            isChildLayout = false;
             return;
+        }
+        isChildLayout = true;
 
         if (mPointChild.getChildAt(1) != null)
             mEditBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;

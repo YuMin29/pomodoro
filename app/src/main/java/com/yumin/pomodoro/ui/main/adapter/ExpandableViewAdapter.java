@@ -2,6 +2,8 @@ package com.yumin.pomodoro.ui.main.adapter;
 
 import android.content.Context;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
@@ -55,9 +57,17 @@ public class ExpandableViewAdapter extends ExpandableBaseAdapter<CategoryItemLay
     @Override
     public void onBindGroupLayout(CategoryItemLayoutBinding binding, Category category, boolean isExpanded) {
         LogUtil.logD(TAG,"[onBindGroupLayout] CATEGORY NAME = "+category.getCategoryName());
-        binding.categoryNameTextView.setText(category.getCategoryName());
-        binding.categoryArrow.setImageResource(isExpanded ? R.drawable.ic_baseline_keyboard_arrow_up_24 :
-                R.drawable.ic_baseline_keyboard_arrow_down_24);
+        binding.setCategory(category);
+        binding.categoryArrow.setImageResource(isExpanded ? R.drawable.ic_baseline_keyboard_arrow_down_24 :
+                R.drawable.ic_baseline_keyboard_arrow_up_24);
+    }
+
+    private Animation arrowAnimation(int fromDegrees , int toDegrees){
+        Animation animation = new RotateAnimation(fromDegrees, toDegrees,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                0.5f);
+        animation.setDuration(500);
+        return animation;
     }
 
     @Override

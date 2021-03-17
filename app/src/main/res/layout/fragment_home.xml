@@ -133,6 +133,7 @@
             android:layout_marginBottom="16dp"
             android:divider="@null"
             android:dividerHeight="5dp"
+            android:listSelector="#00000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

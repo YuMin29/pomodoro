@@ -2,6 +2,8 @@ package com.yumin.pomodoro.ui.view;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.databinding.CategoryItemLayoutBinding;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
 import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
 import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
@@ -82,30 +85,29 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
 
     private void initUI() {
 //        mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-        expandableViewAdapter = new ExpandableViewAdapter(getContext(),mCategory,mFinishedMissions);
+        expandableViewAdapter = new ExpandableViewAdapter(getContext(), mCategory, mFinishedMissions);
         expandableViewAdapter.setOnExpandableItemClickListener(new ExpandableViewAdapter.OnExpandableItemClickListener() {
             @Override
             public void onDelete(UserMission userMission, int groupPosition, int childPosition) {
-                LogUtil.logD(TAG,"[item onDelete] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
+                LogUtil.logD(TAG, "[item onDelete] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
                 mHomeViewModel.deleteMission(userMission);
                 fragmentHomeBinding.homeListView.turnToNormal();
             }
 
             @Override
             public void onEdit(UserMission userMission, int groupPosition, int childPosition) {
-                LogUtil.logD(TAG,"[item onEdit] groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
-                  MissionManager.getInstance().setStrEditId(userMission);
-                  navigate(R.id.edit_mission_fragment);
+                LogUtil.logD(TAG, "[item onEdit] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
+                MissionManager.getInstance().setStrEditId(userMission);
+                navigate(R.id.edit_mission_fragment);
             }
         });
         fragmentHomeBinding.homeListView.setAdapter(expandableViewAdapter);
-        fragmentHomeBinding.homeListView.setGroupIndicator(null);
         fragmentHomeBinding.homeListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                UserMission userMission = (UserMission) expandableViewAdapter.getChild(groupPosition,childPosition);
-                LogUtil.logD(TAG,"[onChildClick] item = "+userMission.getName()+
-                        " ,groupPosition = "+groupPosition+" ,childPosition = "+childPosition);
+                UserMission userMission = (UserMission) expandableViewAdapter.getChild(groupPosition, childPosition);
+                LogUtil.logD(TAG, "[onChildClick] item = " + userMission.getName() +
+                        " ,groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
 
                 boolean isFinished = false;
                 for (UserMission item : mFinishedMissions) {
@@ -128,6 +130,24 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
                 return true;
             }
         });
+
+        fragmentHomeBinding.homeListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                LogUtil.logD(TAG,"[onGroupClick] ");
+                CategoryItemLayoutBinding categoryItemLayoutBinding = (CategoryItemLayoutBinding) v.getTag();
+                categoryItemLayoutBinding.categoryArrow.startAnimation(arrowAnimation(180,0));
+                return false;
+            }
+        });
+    }
+
+    private Animation arrowAnimation(int fromDegrees , int toDegrees){
+        Animation animation = new RotateAnimation(fromDegrees, toDegrees,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                0.5f);
+        animation.setDuration(100);
+        return animation;
     }
 
     private void observeViewModel() {

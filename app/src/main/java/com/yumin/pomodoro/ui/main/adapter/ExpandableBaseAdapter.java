@@ -30,11 +30,6 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     }
 
     @Override
-    public void onGroupCollapsed(int groupPosition) {
-        notifyDataSetInvalidated();
-    }
-
-    @Override
     public int getGroupCount() {
         return mDataList.size();
     }
