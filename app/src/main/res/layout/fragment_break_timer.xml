@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="viewmodel"
+            name="breakTimerViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel" />
     </data>
 
@@ -16,12 +16,12 @@
             android:id="@+id/breakTimer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:timeCountInMilliSeconds="@{viewmodel.missionBreakTime}"
-            app:missionTime="@{viewmodel.mission.shortBreakTime}"
+            app:timeCountInMilliSeconds="@{breakTimerViewModel.missionBreakTime}"
+            app:missionTime="@{breakTimerViewModel.mission.shortBreakTime}"
             app:timerType="@{@string/type_break}"
             app:missionName="@{@string/timer_break}"
-            app:missionGoal="@{viewmodel.mission.goal}"
-            app:missionFinished="@{viewmodel.missionNumberOfCompletion}"/>
+            app:missionGoal="@{breakTimerViewModel.mission.goal}"
+            app:missionFinished="@{breakTimerViewModel.missionNumberOfCompletion}"/>
 
     </FrameLayout>
 </layout>

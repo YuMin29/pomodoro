@@ -47,7 +47,7 @@ public class RegisterFragment extends DataBindingFragment {
     @Override
     protected DataBindingConfig getDataBindingConfig() {
         return new DataBindingConfig(R.layout.fragment_register,-1,null)
-                .addBindingParam(BR.clickProxy, new RegisterFragment.ClickProxy());
+                .addBindingParam(BR.registerClickProxy, new RegisterFragment.ClickProxy());
     }
 
     private void navigate(int id){

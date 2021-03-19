@@ -8,12 +8,12 @@ import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
@@ -75,8 +75,8 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_home, BR.viewModel, mHomeViewModel)
-                .addBindingParam(BR.click, new ClickProxy());
+        return new DataBindingConfig(R.layout.fragment_home, BR.homeViewModel, mHomeViewModel)
+                .addBindingParam(BR.homeClickProxy, new ClickProxy());
     }
 
     private void navigate(int id){
@@ -197,7 +197,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
             @Override
             public void onChanged(Result result) {
                 if (result == null || !result.isComplete()) {
-                    // Ignore, this means only one of the queries has fininshed
+                    // Ignore, this means only one of the queries has finished
                     return;
                 }
                 today = new Category(getString(R.string.category_today), Category.Index.TODAY);

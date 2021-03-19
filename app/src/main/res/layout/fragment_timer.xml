@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="viewmodel"
+            name="timerViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel" />
     </data>
 
@@ -16,13 +16,13 @@
             android:id="@+id/missionTimer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:timeCountInMilliSeconds="@{viewmodel.missionTime}"
-            app:timerBackgroundColor="@{viewmodel.mission.color}"
-            app:missionTime="@{viewmodel.mission.time}"
+            app:timeCountInMilliSeconds="@{timerViewModel.missionTime}"
+            app:timerBackgroundColor="@{timerViewModel.mission.color}"
+            app:missionTime="@{timerViewModel.mission.time}"
             app:timerType="@{@string/type_mission}"
-            app:missionName="@{viewmodel.mission.name}"
-            app:missionGoal="@{viewmodel.mission.goal}"
-            app:missionFinished="@{viewmodel.missionNumberOfCompletion}"
-            app:missionEnabledSound="@{viewmodel.mission.enableSound}"/>
+            app:missionName="@{timerViewModel.mission.name}"
+            app:missionGoal="@{timerViewModel.mission.goal}"
+            app:missionFinished="@{timerViewModel.missionNumberOfCompletion}"
+            app:missionEnabledSound="@{timerViewModel.mission.enableSound}"/>
     </FrameLayout>
 </layout>

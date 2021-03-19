@@ -7,12 +7,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.FragmentResetPasswordBinding;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
@@ -42,7 +42,7 @@ public class ResetPasswordFragment extends DataBindingFragment {
     @Override
     protected DataBindingConfig getDataBindingConfig() {
         return new DataBindingConfig(R.layout.fragment_reset_password, -1, null)
-                .addBindingParam(BR.clickProxy, new ClickProxy());
+                .addBindingParam(BR.resetPasswordClickProxy, new ClickProxy());
     }
 
     private void sendResetPasswordLink() {

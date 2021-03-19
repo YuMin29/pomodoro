@@ -71,7 +71,7 @@ public class BreakTimerFragment extends DataBindingFragment {
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_break_timer, BR.viewmodel, timerViewModel);
+        return new DataBindingConfig(R.layout.fragment_break_timer, BR.breakTimerViewModel, timerViewModel);
     }
 
     private void navigateUp(){

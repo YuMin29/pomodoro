@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="clickProxy"
+            name="registerClickProxy"
             type="com.yumin.pomodoro.ui.view.RegisterFragment.ClickProxy" />
     </data>
 
@@ -82,7 +82,7 @@
             android:text="@string/create_account"
             android:background="@color/colorPrimary"
             android:textColor="@color/colorPrimaryText"
-            android:onClick="@{()->clickProxy.createAccount()}"
+            android:onClick="@{()->registerClickProxy.createAccount()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/register_password"/>
@@ -96,7 +96,7 @@
             android:layout_marginTop="18dp"
             android:textColor="@color/colorPrimaryText"
             android:text="@string/back"
-            android:onClick="@{()->clickProxy.registerBack()}"
+            android:onClick="@{()->registerClickProxy.registerBack()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/create_account"/>

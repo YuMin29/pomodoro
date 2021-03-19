@@ -18,9 +18,6 @@ import com.yumin.pomodoro.utils.base.MissionManager;
 // shared view model between AddMissionFragment/EditMissionFragment/RangeCalenderViewFragment
 public class RangeCalenderViewModel extends AndroidViewModel {
     private static final String TAG = "[RangeCalenderViewModel]";
-//    private RoomRepository roomRepository;
-//    private FirebaseRepository firebaseRepository;
-//    private int mMissionId;
     private DataRepository dataRepository;
     private String mStrMissionId;
     private LiveData<Long> repeatStart = new LiveData<Long>(-1L){};

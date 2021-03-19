@@ -1,6 +1,8 @@
 package com.yumin.pomodoro.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class TimeMilli {
@@ -29,4 +31,26 @@ public class TimeMilli {
         currentDate.set(Calendar.SECOND, 59);
         return currentDate.getTimeInMillis();
     }
+
+    public static String getYear(long milli){
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat ("yyyy");
+        String ctime = formatter.format(new Date(milli));
+        return ctime;
+    }
+
+    public static String getMonth(long milli){
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat ("M");
+        String ctime = formatter.format(new Date(milli));
+        return ctime;
+    }
+
+    public static String getDay(long milli) {
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat("d");
+        String ctime = formatter.format(new Date(milli));
+        return ctime;
+    }
+
 }

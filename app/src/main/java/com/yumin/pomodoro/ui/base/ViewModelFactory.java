@@ -11,6 +11,7 @@ import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.CalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
@@ -41,6 +42,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new RangeCalenderViewModel(application);
         } else if (modelClass == LoginViewModel.class) {
             return (T) new LoginViewModel(application);
+        } else if (modelClass == CalenderViewModel.class) {
+            return (T) new CalenderViewModel(application);
         }
         return null;
     }

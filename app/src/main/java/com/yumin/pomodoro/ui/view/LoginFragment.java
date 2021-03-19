@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -40,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
@@ -291,7 +291,7 @@ public class LoginFragment extends DataBindingFragment {
     @Override
     protected DataBindingConfig getDataBindingConfig() {
         return new DataBindingConfig(R.layout.fragment_login, -1, null)
-                .addBindingParam(BR.clickProxy, new LoginFragment.ClickProxy());
+                .addBindingParam(BR.loginClickProxy, new LoginFragment.ClickProxy());
     }
 
     public class ClickProxy {

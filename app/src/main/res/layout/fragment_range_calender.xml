@@ -5,10 +5,10 @@
 
     <data>
         <variable
-            name="viewModel"
+            name="rangeCalenderViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel" />
         <variable
-            name="clickProxy"
+            name="rangeCalenderClickProxy"
             type="com.yumin.pomodoro.ui.view.range_calender.RangeCalenderFragment.ClickProxy" />
     </data>
 
@@ -50,7 +50,7 @@
                 android:scaleType="centerInside"
                 android:src="@mipmap/ic_clear"
                 android:tint="#333333"
-                android:onClick="@{()->clickProxy.onClear()}"/>
+                android:onClick="@{()->rangeCalenderClickProxy.onClear()}"/>
 
             <ImageView
                 android:id="@+id/iv_reduce"
@@ -63,7 +63,7 @@
                 android:scaleType="centerInside"
                 android:src="@mipmap/ic_reduce"
                 android:tint="#333333"
-                android:onClick="@{()->clickProxy.onReduce()}"/>
+                android:onClick="@{()->rangeCalenderClickProxy.onReduce()}"/>
 
             <ImageView
                 android:id="@+id/iv_increase"
@@ -75,7 +75,7 @@
                 android:src="@mipmap/ic_increase"
                 android:tint="#333333"
                 tools:ignore="ContentDescription"
-                android:onClick="@{()->clickProxy.onIncrease()}"/>
+                android:onClick="@{()->rangeCalenderClickProxy.onIncrease()}"/>
 
         </LinearLayout>
 
@@ -228,6 +228,6 @@
             android:text="@string/range_commit"
             android:background="@color/colorPrimary"
             android:textColor="@color/colorPrimaryText"
-            android:onClick="@{()->clickProxy.onCommit()}"/>
+            android:onClick="@{()->rangeCalenderClickProxy.onCommit()}"/>
     </LinearLayout>
 </layout>

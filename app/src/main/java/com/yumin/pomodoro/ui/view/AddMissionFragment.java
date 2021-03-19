@@ -8,10 +8,10 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
@@ -121,8 +121,8 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_add_mission, BR.viewmodel, mAddMissionViewModel)
-                .addBindingParam(BR.clickProxy, new ClickProxy());
+        return new DataBindingConfig(R.layout.fragment_add_mission, BR.addMissionViewModel, mAddMissionViewModel)
+                .addBindingParam(BR.addMissionClickProxy, new ClickProxy());
     }
 
     @Override

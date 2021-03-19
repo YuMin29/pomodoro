@@ -5,10 +5,10 @@
 
     <data>
         <variable
-            name="clickProxy"
+            name="addMissionClickProxy"
             type="com.yumin.pomodoro.ui.view.AddMissionFragment.ClickProxy" />
         <variable
-            name="viewmodel"
+            name="addMissionViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel" />
     </data>
 
@@ -29,7 +29,7 @@
             android:textColorHint="@color/colorPrimaryLight"
             android:textColor="@color/colorPrimary"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:text="@={viewmodel.mission.name}"
+            android:text="@={addMissionViewModel.mission.name}"
             app:layout_constraintBottom_toTopOf="@+id/scrollview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemContent="@={viewmodel.mission.time}"
+                        app:itemContent="@={addMissionViewModel.mission.time}"
                         app:itemDescription="@{@string/mission_time}"/>
                 </TableRow>
 
@@ -76,7 +76,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemContent="@={viewmodel.mission.shortBreakTime}"
+                        app:itemContent="@={addMissionViewModel.mission.shortBreakTime}"
                         app:itemDescription="@{@string/mission_break}"/>
 
 <!--                    <com.yumin.pomodoro.ui.view.ItemTextView-->
@@ -84,7 +84,7 @@
 <!--                        android:layout_width="match_parent"-->
 <!--                        android:layout_height="wrap_content"-->
 <!--                        android:layout_weight="1"-->
-<!--                        app:itemContent="@={viewmodel.mission.longBreakTime}"-->
+<!--                        app:itemContent="@={addMissionViewModel.mission.longBreakTime}"-->
 <!--                        app:itemDescription="@{@string/mission_long_break}"/>-->
                 </TableRow>
 
@@ -98,7 +98,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemContent="@={viewmodel.mission.goal}"
+                        app:itemContent="@={addMissionViewModel.mission.goal}"
                         app:itemDescription="@{@string/mission_goal}"/>
 
                     <com.yumin.pomodoro.ui.view.ItemListView
@@ -106,7 +106,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemListVal="@={viewmodel.mission.repeat}"
+                        app:itemListVal="@={addMissionViewModel.mission.repeat}"
                         app:itemDescription="@{@string/mission_repeat}" />
                 </TableRow>
 
@@ -120,7 +120,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        app:itemDateVal="@={viewmodel.mission.operateDay}"
+                        app:itemDateVal="@={addMissionViewModel.mission.operateDay}"
                         app:itemDescription="@{@string/mission_operate_day}" />
 
                     <com.yumin.pomodoro.ui.view.ItemDialogView
@@ -128,7 +128,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemValue="@={viewmodel.mission.color}"
+                        app:itemValue="@={addMissionViewModel.mission.color}"
                         app:itemDescription="@{@string/mission_theme}"/>
                 </TableRow>
 
@@ -142,7 +142,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemEnable="@={viewmodel.mission.enableNotification}"
+                        app:itemEnable="@={addMissionViewModel.mission.enableNotification}"
                         app:itemDescription="@{@string/mission_notification}"/>
                 </TableRow>
 
@@ -156,7 +156,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemEnable="@={viewmodel.mission.enableSound}"
+                        app:itemEnable="@={addMissionViewModel.mission.enableSound}"
                         app:itemDescription="@{@string/mission_sound}"/>
 
                     <com.yumin.pomodoro.ui.view.ItemImageView
@@ -164,7 +164,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemEnable="@={viewmodel.mission.enableVibrate}"
+                        app:itemEnable="@={addMissionViewModel.mission.enableVibrate}"
                         app:itemDescription="@{@string/mission_vibrate}"/>
                 </TableRow>
 
@@ -178,7 +178,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemEnable="@={viewmodel.mission.keepScreenOn}"
+                        app:itemEnable="@={addMissionViewModel.mission.keepScreenOn}"
                         app:itemDescription="@{@string/mission_keep_awake}"/>
                 </TableRow>
             </TableLayout>
@@ -195,7 +195,7 @@
             android:background="@color/colorPrimaryDark"
             android:textColor="@color/button_normal"
             android:textStyle="bold"
-            android:onClick="@{()->clickProxy.onSaveButtonClick()}"
+            android:onClick="@{()->addMissionClickProxy.onSaveButtonClick()}"
             android:text="@string/ok"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancel_button"
@@ -213,7 +213,7 @@
             android:background="@color/colorPrimaryDark"
             android:textColor="@color/button_normal"
             android:textStyle="bold"
-            android:onClick="@{()->clickProxy.onCancelButtonClick()}"
+            android:onClick="@{()->addMissionClickProxy.onCancelButtonClick()}"
             android:text="@string/cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -63,8 +63,8 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_range_calender,BR.viewModel,null)
-                .addBindingParam(BR.clickProxy, new ClickProxy());
+        return new DataBindingConfig(R.layout.fragment_range_calender,BR.rangeCalenderViewModel,null)
+                .addBindingParam(BR.rangeCalenderClickProxy, new ClickProxy());
     }
 
     @Override

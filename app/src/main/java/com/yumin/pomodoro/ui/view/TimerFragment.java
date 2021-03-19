@@ -16,10 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.MissionState;
@@ -84,7 +84,7 @@ public class TimerFragment extends DataBindingFragment {
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_timer, BR.viewmodel,timerViewModel);
+        return new DataBindingConfig(R.layout.fragment_timer, BR.timerViewModel,timerViewModel);
     }
 
     private void navigateUp(){

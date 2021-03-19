@@ -5,10 +5,10 @@
 
     <data>
         <variable
-            name="click"
+            name="homeClickProxy"
             type="com.yumin.pomodoro.ui.view.HomeFragment.ClickProxy" />
         <variable
-            name="viewModel"
+            name="homeViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel" />
     </data>
 
@@ -118,7 +118,7 @@
             android:textColor="@color/button_normal"
             android:textStyle="bold"
             android:textSize="20sp"
-            android:onClick="@{()->click.addMission()}"
+            android:onClick="@{()->homeClickProxy.addMission()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linear" />

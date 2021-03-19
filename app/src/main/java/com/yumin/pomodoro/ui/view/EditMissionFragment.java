@@ -7,10 +7,10 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
@@ -50,8 +50,8 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_edit_mission, BR.viewmodel,editMissionViewModel)
-                .addBindingParam(BR.clickProxy,new ClickProxy());
+        return new DataBindingConfig(R.layout.fragment_edit_mission, BR.editMissionViewModel, editMissionViewModel)
+                .addBindingParam(BR.editMissionClickProxy ,new ClickProxy());
     }
 
     private void navigateUp(){
