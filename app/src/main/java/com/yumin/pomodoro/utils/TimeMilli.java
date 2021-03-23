@@ -6,6 +6,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class TimeMilli {
+    public static long getInitTime(int year,int month,int day){
+        Calendar currentDate = new GregorianCalendar();
+        currentDate.set(year,month-1,day);
+        currentDate.set(Calendar.HOUR_OF_DAY, 0);
+        currentDate.set(Calendar.MINUTE, 0);
+        currentDate.set(Calendar.SECOND, 0);
+        currentDate.set(Calendar.MILLISECOND, 0);
+        return currentDate.getTimeInMillis();
+    }
+
     public static long getTodayInitTime(){
         Calendar currentDate = new GregorianCalendar();
         currentDate.set(Calendar.HOUR_OF_DAY, 0);

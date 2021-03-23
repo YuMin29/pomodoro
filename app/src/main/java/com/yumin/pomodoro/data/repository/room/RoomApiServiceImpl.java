@@ -59,7 +59,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                missionStateDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
+                missionStateDao.updateNumberOfCompletionsById(Integer.valueOf(id),num,TimeMilli.getTodayInitTime());
 //                missionDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
             }
         });

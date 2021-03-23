@@ -19,13 +19,13 @@ import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
-//    private ApiService apiService;
     private Application application;
 
     public ViewModelFactory(Application application){
         this.application = application;
-//        this.apiService = apiService;
     }
+
+    // TODO: 2021/3/24 create a repository injector for create view model
 
     @NonNull
     @Override

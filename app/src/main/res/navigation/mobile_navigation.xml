@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/nav_calender"
-        android:name="com.yumin.pomodoro.ui.view.CalenderFragment"
+        android:name="com.yumin.pomodoro.ui.view.calender.CalenderFragment"
         android:label="@string/menu_calender"
         tools:layout="@layout/fragment_calender" />
 

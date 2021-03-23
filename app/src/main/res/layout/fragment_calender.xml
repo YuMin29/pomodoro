@@ -7,9 +7,10 @@
         <variable
             name="calenderViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.CalenderViewModel" />
+
         <variable
             name="calenderClickProxy"
-            type="com.yumin.pomodoro.ui.view.CalenderFragment.ClickProxy" />
+            type="com.yumin.pomodoro.ui.view.calender.CalenderFragment.ClickProxy" />
     </data>
 
     <LinearLayout
@@ -141,19 +142,11 @@
                 app:month_view_show_mode="mode_only_current"
                 app:year_view_scheme_color="#f17706"/>
 
-            <com.yumin.pomodoro.ui.view.calender.GroupRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                app:group_background="@color/layout_item_background"
-                app:group_center="false"
-                app:group_height="42dp"
-                app:group_has_header="false"
-                app:group_padding_left="16dp"
-                app:group_padding_right="16dp"
-                app:group_text_size="14sp"
-                app:group_text_color="#555555"
+                android:background="@color/layout_main_background"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/layout_main_background" />
+                android:layout_height="match_parent"/>
 
         </com.haibin.calendarview.CalendarLayout>
     </LinearLayout>

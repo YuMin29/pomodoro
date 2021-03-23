@@ -67,11 +67,8 @@ public class CalenderWeekView extends WeekView {
         int sw = dipToPx(getContext(), mItemWidth / 10);
         int sh = dipToPx(getContext(), 4);
         for (Calendar.Scheme scheme : schemes) {
-
             mSchemePaint.setColor(scheme.getShcemeColor());
-
             canvas.drawRect(x + mItemWidth - sw -  2 * space,
-
                     indexY - sh, x + mItemWidth - 2 * space, indexY, mSchemePaint);
             indexY = indexY - space -sh;
         }

@@ -15,8 +15,8 @@ public interface MissionStateDao {
     @Insert
     public void insert(MissionState missionState);
 
-    @Query("UPDATE MissionState SET numberOfCompletion=:value WHERE missionId=:id")
-    public void updateNumberOfCompletionsById(int id, int value);
+    @Query("UPDATE MissionState SET numberOfCompletion=:value WHERE missionId=:id AND recordDay=:today")
+    public void updateNumberOfCompletionsById(int id, int value, long today);
 
     @Query("UPDATE MissionState SET isFinished=:value WHERE missionId=:id")
     public void updateIsFinishedById(int id, boolean value);
