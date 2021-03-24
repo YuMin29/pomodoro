@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.haibin.calendarview.Calendar;
@@ -18,13 +19,9 @@ import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
-<<<<<<< Updated upstream:app/src/main/java/com/yumin/pomodoro/ui/view/CalenderFragment.java
-=======
-
->>>>>>> Stashed changes:app/src/main/java/com/yumin/pomodoro/ui/view/calender/CalenderFragment.java
 import com.yumin.pomodoro.databinding.FragmentCalenderBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.CalenderViewModel;
-import com.yumin.pomodoro.ui.view.calender.GroupRecyclerView;
+import com.yumin.pomodoro.ui.view.calender.MissionStateAdapter;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeMilli;
 import com.yumin.pomodoro.utils.base.DataBindingConfig;
@@ -48,15 +45,10 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     private RelativeLayout mRelativeTool;
     private int mCurrentYear;
     private CalendarLayout mCalendarLayout;
-<<<<<<< Updated upstream:app/src/main/java/com/yumin/pomodoro/ui/view/CalenderFragment.java
-    private GroupRecyclerView mRecyclerView;
-    private List<UserMission> mAllUserMissions;
-=======
     private Map<String,List<UserMission>> userMissionMap = new HashMap<>();
     private Map<Long,List<MissionState>> missionStateMap = new HashMap<>();
     private RecyclerView mRecyclerView;
     private MissionStateAdapter mMissionStateAdapter;
->>>>>>> Stashed changes:app/src/main/java/com/yumin/pomodoro/ui/view/calender/CalenderFragment.java
 
     @Override
     protected void initViewModel() {
@@ -178,17 +170,8 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         return mediatorMissions;
     }
 
-<<<<<<< Updated upstream:app/src/main/java/com/yumin/pomodoro/ui/view/CalenderFragment.java
-    private void initRecyclerView() {
-//        mRecyclerView = mFragmentCalenderBinding.recyclerView;
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        mRecyclerView.addItemDecoration(new GroupItemDecoration<String, MissionState>());
-//        mRecyclerView.setAdapter(new ArticleAdapter(this));
-//        mRecyclerView.notifyDataSetChanged();
-=======
     private void initRecyclerView(List<UserMission> userMissionList, List<MissionState> missionStateList) {
         mMissionStateAdapter.setDataList(userMissionList,missionStateList);
->>>>>>> Stashed changes:app/src/main/java/com/yumin/pomodoro/ui/view/calender/CalenderFragment.java
     }
 
     private Calendar getSchemeCalendar(int year, int month, int day) {
@@ -207,15 +190,11 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
         // show missions info when calender click
-<<<<<<< Updated upstream:app/src/main/java/com/yumin/pomodoro/ui/view/CalenderFragment.java
-
-=======
         LogUtil.logE(TAG,"[onCalendarSelect] calendar.getYear() = "+calendar.getYear()+
                         ",calendar.getMonth() = "+calendar.getMonth()+",calendar.getDay() = "+calendar.getDay());
         String currentTime = String.valueOf(TimeMilli.getInitTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
         LogUtil.logE(TAG,"[onCalendarSelect] DAY = " +currentTime);
         initRecyclerView(userMissionMap.get(currentTime),missionStateMap.get(Long.valueOf(currentTime)));
->>>>>>> Stashed changes:app/src/main/java/com/yumin/pomodoro/ui/view/calender/CalenderFragment.java
     }
 
     @Override

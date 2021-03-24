@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -27,27 +28,24 @@ import java.util.Date;
 
 public class AddMissionFragment extends DataBindingFragment implements ItemListView.OnCalenderListener,ItemDateView.OnOperateDayChanged {
     private static final String TAG = "[AddMissionFragment]";
-    AddMissionViewModel mAddMissionViewModel;
-    SharedViewModel mSharedViewModel;
-    FragmentAddMissionBinding fragmentAddMissionBinding;
-    private static final int REPEAT_NONE = 0;
-    private static final int REPEAT_EVERYDAY = 1;
-    private static final int REPEAT_DEFINE = 2;
+    private AddMissionViewModel mAddMissionViewModel;
+    private SharedViewModel mSharedViewModel;
+    private FragmentAddMissionBinding mFragmentAddMissionBinding;
     private UserMission mMission = null;
-    private long latestRepeatStart = -1L;
-    private long latestRepeatEnd = -1L;
-    private long operateDay = -1L;
-    private long repeatStart = -1L;
-    private long repeatEnd = -1L;
+    private long mLatestRepeatStart = -1L;
+    private long mLatestRepeatEnd = -1L;
+    private long mOperateDay = -1L;
+    private long mRepeatStart = -1L;
+    private long mRepeatEnd = -1L;
 
-    public AddMissionFragment() {}
+    public AddMissionFragment(){}
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fragmentAddMissionBinding = (FragmentAddMissionBinding) getBinding();
-        fragmentAddMissionBinding.itemRepeat.setOnCalenderListener(this);
-        fragmentAddMissionBinding.itemOperate.setOperateDayListener(this);
+        mFragmentAddMissionBinding = (FragmentAddMissionBinding) getBinding();
+        mFragmentAddMissionBinding.itemRepeat.setOnCalenderListener(this);
+        mFragmentAddMissionBinding.itemOperate.setOperateDayListener(this);
         initObserver();
     }
 
@@ -56,7 +54,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
     }
 
     private void initObserver() {
-        mAddMissionViewModel.getSaveButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mAddMissionViewModel.getIsSaveButtonClicked().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean click) {
                 LogUtil.logD(TAG,"[Observe][getSaveButtonClick] click = "+click);
@@ -66,7 +64,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             }
         });
 
-        mAddMissionViewModel.getCancelButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mAddMissionViewModel.getIsCancelButtonClicked().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean click) {
                 LogUtil.logD(TAG,"[Observe][getCancelButtonClick] click = "+click);
@@ -81,7 +79,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             public void onChanged(Long time) {
                 LogUtil.logD(TAG,"[Observe][getRepeatStart] time = "+time);
                 mAddMissionViewModel.updateRepeatStart(time);
-                latestRepeatStart = time;
+                mLatestRepeatStart = time;
             }
         });
 
@@ -90,7 +88,7 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
             public void onChanged(Long time) {
                 LogUtil.logD(TAG,"[Observe][getRepeatEnd] time = "+time);
                 mAddMissionViewModel.updateRepeatEnd(time);
-                latestRepeatEnd = time;
+                mLatestRepeatEnd = time;
             }
         });
 
@@ -100,9 +98,9 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                 LogUtil.logD(TAG,"[Observe][getMission] mission = "+mission);
                 if (mMission == null || mMission != mission) {
                     mMission = mission;
-                    operateDay = mission.getOperateDay();
-                    repeatStart = mission.getRepeatStart();
-                    repeatEnd = mission.getRepeatEnd();
+                    mOperateDay = mission.getOperateDay();
+                    mRepeatStart = mission.getRepeatStart();
+                    mRepeatEnd = mission.getRepeatEnd();
                 }
             }
         });
@@ -127,37 +125,33 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
 
     @Override
     public void onOpened() {
-//        MissionManager.getInstance().setRangeCalenderId(-1);
         MissionManager.getInstance().setRangeCalenderId("-1");
         Bundle bundle = new Bundle();
-        bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
-        bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);
-        bundle.putLong("mission_operate_day",operateDay);
+        bundle.putLong("repeat_start", (mLatestRepeatStart != -1L) ? mLatestRepeatStart : mRepeatStart);
+        bundle.putLong("repeat_end", (mLatestRepeatEnd != -1L) ? mLatestRepeatEnd : mRepeatEnd);
+        bundle.putLong("mission_operate_day", mOperateDay);
         NavHostFragment.findNavController(this).navigate(R.id.fragment_range_calender,bundle);
-//        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
     }
 
     @Override
     public void onOperateChanged(long time) {
         LogUtil.logD(TAG,"[onOperateChanged] = "+getTransferDate(time));
-        if (mMission != null && mMission.getRepeat() == REPEAT_DEFINE &&
-                mMission.getRepeatStart() != -1L &&
-                mMission.getRepeatEnd() != -1L) {
-            if (time > mMission.getRepeatStart() ||
-                    time > mMission.getRepeatEnd()) {
+        if (mMission != null && mMission.getRepeat() == UserMission.TYPE_DEFINE &&
+                mMission.getRepeatStart() != -1L && mMission.getRepeatEnd() != -1L) {
+            if (time > mMission.getRepeatStart() || time > mMission.getRepeatEnd()) {
                 android.app.AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                        .setTitle("執行日小於重複區間")
-                        .setMessage("清除已設置的重複區間")
+                        .setTitle(R.string.notice_choose_operate_day)
+                        .setMessage(R.string.notice_clear_repeat_range)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                latestRepeatStart = -1L;
-                                latestRepeatEnd = -1L;
-                                repeatStart = -1L;
-                                repeatEnd = -1L;
+                                mLatestRepeatStart = -1L;
+                                mLatestRepeatEnd = -1L;
+                                mRepeatStart = -1L;
+                                mRepeatEnd = -1L;
 
-                                fragmentAddMissionBinding.itemOperate.updateUI(time);
-                                operateDay = time;
+                                mFragmentAddMissionBinding.itemOperate.updateUI(time);
+                                mOperateDay = time;
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -169,14 +163,21 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                 builder.show();
             }
         } else {
-            fragmentAddMissionBinding.itemOperate.updateUI(time);
-            operateDay = time;
+            mFragmentAddMissionBinding.itemOperate.updateUI(time);
+            mOperateDay = time;
         }
     }
 
     public class ClickProxy{
-        public void onSaveButtonClick(){
-            LogUtil.logD(TAG,"[onSaveButtonClick]");
+        public void onAddMissionButtonClick(){
+            LogUtil.logD(TAG,"[onSaveButtonClick] GET MISSION TITLE = " +
+                    mFragmentAddMissionBinding.missionTitle.getText().toString());
+
+            if (mFragmentAddMissionBinding.missionTitle.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), R.string.notice_set_mission_title, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             mAddMissionViewModel.saveMission();
         }
 

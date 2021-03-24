@@ -177,7 +177,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         return mediatorMissions;
     }
 
-    private void initRecyclerView(List<UserMission> userMissionList, List<MissionState> missionStateList) {
+    private void setUpRecyclerViewAdapter(List<UserMission> userMissionList, List<MissionState> missionStateList) {
         mMissionStateAdapter.setDataList(userMissionList,missionStateList);
     }
 
@@ -201,7 +201,17 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                         ",calendar.getMonth() = "+calendar.getMonth()+",calendar.getDay() = "+calendar.getDay());
         String currentTime = String.valueOf(TimeMilli.getInitTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
         LogUtil.logE(TAG,"[onCalendarSelect] DAY = " +currentTime);
-        initRecyclerView(userMissionMap.get(currentTime),missionStateMap.get(Long.valueOf(currentTime)));
+        List<MissionState> missionStateList = missionStateMap.get(Long.valueOf(currentTime));
+        if (null == missionStateList) {
+            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.VISIBLE);
+            mFragmentCalenderBinding.recyclerView.setVisibility(View.GONE);
+        } else {
+            setUpRecyclerViewAdapter(userMissionMap.get(currentTime),missionStateMap.get(Long.valueOf(currentTime)));
+            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.GONE);
+            mFragmentCalenderBinding.recyclerView.setVisibility(View.VISIBLE);
+        }
+
+//        setUpRecyclerViewAdapter(userMissionMap.get(currentTime),missionStateMap.get(Long.valueOf(currentTime)));
     }
 
     @Override

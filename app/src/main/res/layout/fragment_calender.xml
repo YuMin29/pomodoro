@@ -108,8 +108,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="#fff"
-            app:default_status="expand"
-            app:calendar_content_view_id="@+id/recyclerView">
+            app:calendar_content_view_id="@+id/viewSwitcher">
 
             <com.haibin.calendarview.CalendarView
                 android:id="@+id/calendarView"
@@ -142,11 +141,39 @@
                 app:month_view_show_mode="mode_only_current"
                 app:year_view_scheme_color="#f17706"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:background="@color/layout_main_background"
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/layout_main_background"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/no_mission_state_linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/layout_main_background"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_baseline_announcement_24" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/notice_calender_no_mission_state"
+                        android:textAlignment="center" />
+                </LinearLayout>
+            </ViewSwitcher>
 
         </com.haibin.calendarview.CalendarLayout>
     </LinearLayout>
