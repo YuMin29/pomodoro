@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.utils.base;
+package com.yumin.pomodoro.ui.base;
 
 import android.app.Application;
 import android.content.Context;

@@ -1,20 +1,8 @@
 package com.yumin.pomodoro.ui.view;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
-import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.ui.main.viewmodel.TotalViewModel;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 public class TotalFragment extends DataBindingFragment {
     TotalViewModel mTotalViewModel;

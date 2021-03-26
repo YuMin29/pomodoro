@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -22,17 +21,17 @@ import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.BR;
-import com.yumin.pomodoro.MainActivity;
+import com.yumin.pomodoro.activity.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentBreakTimerBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
-import com.yumin.pomodoro.utils.CircleTimer;
+import com.yumin.pomodoro.ui.view.customize.CircleTimer;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.NotificationHelper;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -60,7 +59,6 @@ public class BreakTimerFragment extends DataBindingFragment {
     @Override
     public void onStop() {
         super.onStop();
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         LogUtil.logD(TAG,"[onStop]");
     }
 
@@ -106,13 +104,6 @@ public class BreakTimerFragment extends DataBindingFragment {
                                         notificationHelper.cancelNotification();
                                 }
 
-//                                if (missionCount != -1 && numberOfCompletion != -1) {
-//                                    // update finish status
-//                                    if ((missionCount - numberOfCompletion) < 1) {
-//                                        LogUtil.logD(TAG,"[handleOnBackPressed] updateIsFinishedById");
-//                                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
-//                                    }
-//                                }
                                 navigateUp();
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
@@ -163,8 +154,6 @@ public class BreakTimerFragment extends DataBindingFragment {
                         }
 
                         if (enabledNotification) {
-//                            notificationBuilder.setContentTitle("執行蕃茄任務！");
-//                            notificationBuilder.setContentText("");
                             notificationHelper.changeRemoteContent("執行蕃茄任務！");
                             notificationHelper.notify(notificationBuilder);
                         }
@@ -175,7 +164,6 @@ public class BreakTimerFragment extends DataBindingFragment {
                         MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_timer,bundle);
                     } else {
                         LogUtil.logD(TAG,"[break timer][onFinished] 3");
-//                        timerViewModel.updateIsFinishedById(true,numberOfCompletion);
                         navigateUp();
                         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                         undoStatusBarColor();
@@ -195,7 +183,6 @@ public class BreakTimerFragment extends DataBindingFragment {
             @Override
             public void onTick(long millisecond) {
                 if (enabledNotification) {
-//                    notificationBuilder.setContentText(msTimeFormatter(millisecond));
                     notificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
                     notificationHelper.notify(notificationBuilder);
                 }
@@ -218,7 +205,6 @@ public class BreakTimerFragment extends DataBindingFragment {
                     long missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
                     missionCount = mission.getGoal();
-//                    numberOfCompletion = mission.getNumberOfCompletions();
                     enabledVibrate = mission.isEnableVibrate();
                     enabledNotification = mission.isEnableNotification();
                     missionTitle = mission.getName();

@@ -6,20 +6,18 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.TimeMilli;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,7 +175,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
     @Override
     public void updateNumberOfCompletionById(String id, int num) {
-        getCalendarPath().child(String.valueOf(TimeMilli.getTodayInitTime())).child(id)
+        getCalendarPath().child(String.valueOf(TimeToMillisecondUtil.getTodayInitTime())).child(id)
                 .child("numberOfCompletion").setValue(num);
 
     }
@@ -186,10 +184,10 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     public void updateMissionFinishedState(String id, boolean isFinished, int completeOfNumber) {
         LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+isFinished);
 
-        getCalendarPath().child(String.valueOf(TimeMilli.getTodayInitTime())).child(id)
+        getCalendarPath().child(String.valueOf(TimeToMillisecondUtil.getTodayInitTime())).child(id)
                 .child("isFinished").setValue(isFinished);
 
-        getCalendarPath().child(String.valueOf(TimeMilli.getTodayInitTime())).child(id)
+        getCalendarPath().child(String.valueOf(TimeToMillisecondUtil.getTodayInitTime())).child(id)
                 .child("finishedDay").setValue(isFinished ? new Date().getTime() : -1);
     }
 
@@ -281,10 +279,10 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     @Override
     public void initMissionState(String missionId) {
         // insert value to calendar
-        String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
+        String todayMilli = String.valueOf(TimeToMillisecondUtil.getTodayInitTime());
         DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
         databaseReference.child(missionId).setValue(
-                new MissionState(0,false,TimeMilli.getTodayInitTime(),-1,missionId));
+                new MissionState(0,false, TimeToMillisecondUtil.getTodayInitTime(),-1,missionId));
     }
 
     public void saveMissionState(String missionId,MissionState missionState){
@@ -292,7 +290,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
                 +" ,completeOfNumber = "+missionState.numberOfCompletion
                 +" ,isFinish = "+missionState.isFinished);
         missionState.missionId = missionId;
-        String todayMilli = String.valueOf(TimeMilli.getTodayInitTime());
+        String todayMilli = String.valueOf(TimeToMillisecondUtil.getTodayInitTime());
         DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
         databaseReference.child(missionId).setValue(missionState);
     }

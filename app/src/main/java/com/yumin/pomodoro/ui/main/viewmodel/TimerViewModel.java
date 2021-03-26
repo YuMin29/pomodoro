@@ -18,8 +18,8 @@ import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.TimeMilli;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = "[TimerViewModel]";
@@ -56,7 +56,7 @@ public class TimerViewModel extends AndroidViewModel {
                 }
             });
 
-            LiveData<Integer> sourceMissionNumberOfCompletion  = dataRepository.getNumberOfCompletionById(missionStrId,TimeMilli.getTodayStartTime());
+            LiveData<Integer> sourceMissionNumberOfCompletion  = dataRepository.getNumberOfCompletionById(missionStrId, TimeToMillisecondUtil.getTodayStartTime());
             mMissionNumberOfCompletion.addSource(sourceMissionNumberOfCompletion, new Observer<Integer>() {
                 @Override
                 public void onChanged(Integer integer) {
@@ -65,7 +65,7 @@ public class TimerViewModel extends AndroidViewModel {
                 }
             });
 
-            LiveData<MissionState> sourceMissionState = dataRepository.getMissionStateById(missionStrId,TimeMilli.getTodayStartTime());
+            LiveData<MissionState> sourceMissionState = dataRepository.getMissionStateById(missionStrId, TimeToMillisecondUtil.getTodayStartTime());
             mMissionState.addSource(sourceMissionState, new Observer<MissionState>() {
                 @Override
                 public void onChanged(MissionState missionState) {

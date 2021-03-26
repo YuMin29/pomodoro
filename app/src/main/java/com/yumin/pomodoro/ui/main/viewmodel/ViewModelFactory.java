@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.ui.base;
+package com.yumin.pomodoro.ui.main.viewmodel;
 
 
 import android.app.Application;
@@ -16,6 +16,7 @@ import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel;
+import com.yumin.pomodoro.ui.main.viewmodel.SettingsViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
@@ -44,6 +45,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new LoginViewModel(application);
         } else if (modelClass == CalenderViewModel.class) {
             return (T) new CalenderViewModel(application);
+        } else if (modelClass == SettingsViewModel.class) {
+            return (T) new SettingsViewModel(application);
         }
         return null;
     }

@@ -13,13 +13,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 import com.yumin.pomodoro.BR;
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.FragmentRangeCalenderBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

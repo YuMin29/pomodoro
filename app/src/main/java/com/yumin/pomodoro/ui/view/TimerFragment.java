@@ -20,18 +20,18 @@ import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.BR;
-import com.yumin.pomodoro.MainActivity;
+import com.yumin.pomodoro.activity.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
-import com.yumin.pomodoro.utils.CircleTimer;
+import com.yumin.pomodoro.ui.view.customize.CircleTimer;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.NotificationHelper;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -184,8 +184,6 @@ public class TimerFragment extends DataBindingFragment {
 
                 // update notification
                 if (enabledNotification) {
-//                    notificationBuilder.setContentTitle("休息一下吧！");
-//                    notificationBuilder.setContentText("");
                     notificationHelper.changeRemoteContent("休息一下吧！");
                     notificationHelper.notify(notificationBuilder);
                 }
@@ -193,7 +191,6 @@ public class TimerFragment extends DataBindingFragment {
                 // switch to break timer
                 Bundle bundle = new Bundle();
                 bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
-//                bundle.putInt("itemId", MissionManager.getInstance().getOperateId());
                 MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.action_timer_to_break_timer,bundle);
             }
 
@@ -266,17 +263,6 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
-//        timerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
-//            @Override
-//            public void onChanged(MissionState missionState) {
-//                if (null != missionState) {
-//                    LogUtil.logE(TAG,"[OBSERVE] getMissionState , mNumberOfCompletion= "+missionState.numberOfCompletion);
-//                    mNumberOfCompletion = missionState.numberOfCompletion;
-//                } else {
-//                    LogUtil.logE(TAG,"[OBSERVE] getMissionState = "+missionState);
-//                }
-//            }
-//        });
     }
 
     private String msTimeFormatter(long milliSeconds) {

@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.utils.base;
+package com.yumin.pomodoro.ui.base;
 
 import android.app.Activity;
 import android.app.Application;
@@ -18,9 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
-import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
-import com.yumin.pomodoro.ui.base.ViewModelFactory;
+import com.yumin.pomodoro.ui.main.viewmodel.ViewModelFactory;
 
 public abstract class DataBindingFragment extends Fragment {
     private AppCompatActivity mActivity;

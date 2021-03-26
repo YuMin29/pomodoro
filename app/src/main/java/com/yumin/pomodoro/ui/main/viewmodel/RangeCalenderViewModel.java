@@ -13,7 +13,7 @@ import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 // shared view model between AddMissionFragment/EditMissionFragment/RangeCalenderViewFragment
 public class RangeCalenderViewModel extends AndroidViewModel {

@@ -1,6 +1,5 @@
-package com.yumin.pomodoro.utils;
+package com.yumin.pomodoro.ui.view.customize;
 
-import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
@@ -17,9 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
-import com.yumin.pomodoro.MainActivity;
+import com.yumin.pomodoro.activity.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.CircleTimerBinding;
+import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -146,7 +146,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         pauseCountDownTimer();
     }
 
-    private void startTimer() {
+    public void startTimer() {
         // call to initialize the timer values
         initTimerValues();
         // call to initialize the progress bar values

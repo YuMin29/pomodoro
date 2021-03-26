@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.utils;
+package com.yumin.pomodoro.ui.view.customize;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.utils.LogUtil;
 
 public class CustomImageButton extends LinearLayout {
     private static final String TAG = "[CustomImageButton]";

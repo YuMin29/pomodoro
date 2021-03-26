@@ -16,11 +16,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.yumin.pomodoro.BR;
-import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.FragmentRegisterBinding;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 public class RegisterFragment extends DataBindingFragment {
     private static final String TAG = "[RegisterFragment]";

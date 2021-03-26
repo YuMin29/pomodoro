@@ -15,7 +15,7 @@ import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

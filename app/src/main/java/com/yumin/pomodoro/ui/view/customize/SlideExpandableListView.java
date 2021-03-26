@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.utils;
+package com.yumin.pomodoro.ui.view.customize;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+
+import com.yumin.pomodoro.utils.LogUtil;
 
 public class SlideExpandableListView extends ExpandableListView {
     private static final String TAG = "[SlideExpandableListView]";

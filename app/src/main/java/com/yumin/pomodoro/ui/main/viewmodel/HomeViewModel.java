@@ -14,8 +14,8 @@ import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.TimeMilli;
-import com.yumin.pomodoro.utils.base.BaseApplication;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
+import com.yumin.pomodoro.ui.base.BaseApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +66,8 @@ public class HomeViewModel extends ViewModel {
 
         allMissions = this.dataRepository.getMissions();
 
-        finishedMissions = this.dataRepository.getFinishedMissionList(TimeMilli.getTodayStartTime(),
-                TimeMilli.getTodayEndTime());
+        finishedMissions = this.dataRepository.getFinishedMissionList(TimeToMillisecondUtil.getTodayStartTime(),
+                TimeToMillisecondUtil.getTodayEndTime());
 
         mIsLoading.setValue(false);
     }
@@ -88,8 +88,8 @@ public class HomeViewModel extends ViewModel {
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
             if (userMission.getRepeat() == UserMission.TYPE_NONE &&
-                    TimeMilli.getTodayStartTime() <= userMission.getOperateDay() &&
-                    userMission.getOperateDay() <= TimeMilli.getTodayEndTime()) {
+                    TimeToMillisecondUtil.getTodayStartTime() <= userMission.getOperateDay() &&
+                    userMission.getOperateDay() <= TimeToMillisecondUtil.getTodayEndTime()) {
                 missionList.add(userMission);
             }
         }
@@ -108,7 +108,7 @@ public class HomeViewModel extends ViewModel {
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
             if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY &&
-                    userMission.getOperateDay() <= TimeMilli.getTodayEndTime())
+                    userMission.getOperateDay() <= TimeToMillisecondUtil.getTodayEndTime())
                 missionList.add(userMission);
         }
         todayRepeatEverydayMissions.setValue(missionList);
@@ -122,13 +122,13 @@ public class HomeViewModel extends ViewModel {
     public LiveData<List<UserMission>> getTodayRepeatDefineMissions(){
         if (allMissions.getValue() == null)
             return null;
-        LogUtil.logE(TAG,"TimeMilli.getTodayStartTime() = "+TimeMilli.getTodayStartTime()+
-                " , TimeMilli.getTodayEndTime() = "+ TimeMilli.getTodayEndTime());
+        LogUtil.logE(TAG,"TimeMilli.getTodayStartTime() = "+ TimeToMillisecondUtil.getTodayStartTime()+
+                " , TimeMilli.getTodayEndTime() = "+ TimeToMillisecondUtil.getTodayEndTime());
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
             if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
-                TimeMilli.getTodayEndTime() >= userMission.getRepeatStart() &&
-                TimeMilli.getTodayEndTime() <= userMission.getRepeatEnd()) {
+                TimeToMillisecondUtil.getTodayEndTime() >= userMission.getRepeatStart() &&
+                TimeToMillisecondUtil.getTodayEndTime() <= userMission.getRepeatEnd()) {
                 missionList.add(userMission);
             }
             LogUtil.logE(TAG,"userMission.getRepeatStart() = "+userMission.getRepeatStart()+
@@ -149,7 +149,7 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getOperateDay() > TimeMilli.getTodayEndTime())
+            if (userMission.getOperateDay() > TimeToMillisecondUtil.getTodayEndTime())
                 missionList.add(userMission);
         }
         comingNoneRepeatMissions.setValue(missionList);
@@ -189,8 +189,8 @@ public class HomeViewModel extends ViewModel {
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
             if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
-                    (userMission.getRepeatStart() > TimeMilli.getTodayEndTime() ||
-                            userMission.getRepeatEnd() >= TimeMilli.getTodayEndTime()))
+                    (userMission.getRepeatStart() > TimeToMillisecondUtil.getTodayEndTime() ||
+                            userMission.getRepeatEnd() >= TimeToMillisecondUtil.getTodayEndTime()))
                 missionList.add(userMission);
         }
         comingRepeatDefineMissions.setValue(missionList);

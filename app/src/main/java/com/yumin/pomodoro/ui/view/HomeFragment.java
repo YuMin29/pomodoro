@@ -14,7 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.BR;
-import com.yumin.pomodoro.MainActivity;
+import com.yumin.pomodoro.activity.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
@@ -26,11 +26,10 @@ import com.yumin.pomodoro.ui.main.adapter.GroupIndex;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.TimeMilli;
-import com.yumin.pomodoro.utils.TimeSort;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.utils.SortTimeUtil;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -204,7 +203,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
                 today.addAllMission(result.missionsByOperateDay);
                 today.addAllMission(result.missionsByRepeatType);
                 today.addAllMission(result.missionsByRepeatRange);
-                Collections.sort(today.getMissionList(), new TimeSort());
+                Collections.sort(today.getMissionList(), new SortTimeUtil());
                 expandCategoryList();
                 LogUtil.logE(TAG,"[observeViewModel][todayObserver] today size = "
                         +today.getMissionList().size());

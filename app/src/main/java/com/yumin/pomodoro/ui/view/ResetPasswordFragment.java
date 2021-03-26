@@ -15,8 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.FragmentResetPasswordBinding;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 public class ResetPasswordFragment extends DataBindingFragment {
     FirebaseAuth mAuth;

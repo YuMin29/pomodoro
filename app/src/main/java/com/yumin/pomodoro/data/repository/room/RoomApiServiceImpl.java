@@ -10,9 +10,8 @@ import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.ApiService;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.TimeMilli;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                missionStateDao.updateNumberOfCompletionsById(Integer.valueOf(id),num,TimeMilli.getTodayInitTime());
+                missionStateDao.updateNumberOfCompletionsById(Integer.valueOf(id),num, TimeToMillisecondUtil.getTodayInitTime());
 //                missionDao.updateNumberOfCompletionsById(Integer.valueOf(id),num);
             }
         });
@@ -82,7 +81,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         LogUtil.logE(TAG,"[saveMissionState] id = "+missionId
                 +" ,completeOfNumber = "+completeOfNumber
                 +" ,isFinish = "+isFinish);
-        long todayMilli = TimeMilli.getTodayInitTime();
+        long todayMilli = TimeToMillisecondUtil.getTodayInitTime();
 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
@@ -98,7 +97,7 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     @Override
     public void initMissionState(String missionId){
         Log.d("[RoomApiServiceImpl]","[getInitMissionState]");
-        long todayMilli = TimeMilli.getTodayInitTime();
+        long todayMilli = TimeToMillisecondUtil.getTodayInitTime();
 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override

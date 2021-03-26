@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class TimeMilli {
+public class TimeToMillisecondUtil {
     public static long getInitTime(int year,int month,int day){
         Calendar currentDate = new GregorianCalendar();
         currentDate.set(year,month-1,day);

@@ -1,36 +1,62 @@
 package com.yumin.pomodoro.ui.view;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.CompoundButton;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.annotation.Nullable;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.ui.main.viewmodel.SettingsViewModel;
+import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends DataBindingFragment {
 
-    private SettingsViewModel sendViewModel;
+    private SettingsViewModel mSettingsViewModel;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        sendViewModel =
-                ViewModelProviders.of(this).get(SettingsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        final TextView textView = root.findViewById(R.id.text_settings);
-        sendViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+    @Override
+    protected void initViewModel() {
+        mSettingsViewModel = getFragmentScopeViewModel(SettingsViewModel.class);
+    }
+
+    @Override
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_settings, BR.settingsViewModel, mSettingsViewModel)
+                .addBindingParam(BR.settingsClickProxy,new ClickProxy());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+    }
+
+    public class ClickProxy{
+        public static final String TAG = "[Settings_ClickProxy]";
+
+        public void onSelectItem(AdapterView<?> parent, View view, int pos, long id) {
+            //pos                                 get selected item position
+            //view.getText()                      get label of selected item
+            //parent.getAdapter().getItem(pos)    get item by pos
+            //parent.getAdapter().getCount()      get item count
+            //parent.getCount()                   get item count
+            //parent.getSelectedItem()            get selected item
+            //and other...
+            LogUtil.logE(TAG,"[onSelectItem] pos = "+pos+" ,val = "
+                    +parent.getSelectedItem().toString());
+        }
+
+        public void onAutoStartMissionSwitchChanged(CompoundButton compoundButton, boolean isChecked){
+            LogUtil.logE(TAG,"[onAutoStartMissionSwitchChanged]");
+        }
+
+        public void onAutoStartBreakSwitchChanged(CompoundButton compoundButton, boolean isChecked){
+            LogUtil.logE(TAG,"[onAutoStartBreakSwitchChanged]");
+        }
     }
 }

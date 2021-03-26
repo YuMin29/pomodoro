@@ -27,7 +27,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -47,8 +46,8 @@ import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 import org.jetbrains.annotations.NotNull;
 

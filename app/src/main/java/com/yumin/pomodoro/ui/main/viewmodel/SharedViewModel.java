@@ -2,8 +2,8 @@ package com.yumin.pomodoro.ui.main.viewmodel;
 
 import androidx.lifecycle.ViewModel;
 
-import com.yumin.pomodoro.utils.base.ProtectedUnPeekLiveData;
-import com.yumin.pomodoro.utils.base.UnPeekLiveData;
+import com.yumin.pomodoro.ui.base.ProtectedUnPeekLiveData;
+import com.yumin.pomodoro.ui.base.UnPeekLiveData;
 
 public class SharedViewModel extends ViewModel {
     private UnPeekLiveData<Long> mRepeatStart = new UnPeekLiveData<>();

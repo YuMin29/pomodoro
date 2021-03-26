@@ -14,7 +14,7 @@
     <string name="menu_backup">備份數據</string>
     <string name="menu_restore">還原數據</string>
     <string name="menu_total">統計</string>
-    <string name="menu_calender">時間流</string>
+    <string name="menu_calender">日曆</string>
     <string name="menu_save_mission">已完成任務</string>
     <string name="menu_settings">設置</string>
     <string name="menu_category">Category</string>
@@ -96,4 +96,15 @@
     <string name="notice_choose_operate_day">執行日小於重複區間</string>
     <string name="notice_clear_repeat_range">清除已設置的重複區間</string>
     <string name="notice_calender_no_mission_state">今日無任務完成紀錄</string>
+
+    <string name="settings_set_mission_background_ringtone">設置任務背景音</string>
+    <string name="settings_set_mission_finished_ringtone">設置任務完成音</string>
+    <string name="settings_auto_start_mission">自動開始下個蕃茄任務</string>
+    <string name="settings_auto_start_break">自動開始休息</string>
+
+    <array name="ringtone_list">
+        <item>無</item>
+        <item>item1</item>
+        <item>item2</item>
+    </array>
 </resources>

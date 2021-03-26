@@ -1,5 +1,5 @@
 
-package com.yumin.pomodoro;
+package com.yumin.pomodoro.activity;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -18,7 +18,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,16 +35,15 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
+import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 

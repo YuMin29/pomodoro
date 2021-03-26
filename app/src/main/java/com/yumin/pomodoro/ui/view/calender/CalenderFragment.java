@@ -24,9 +24,9 @@ import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentCalenderBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.CalenderViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.TimeMilli;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,9 +119,9 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                     LogUtil.logE(TAG, "[initObserver] Entry SET KEY: "+recordDay +
                             " ,VALUE SIZE : "+missionStates.size());
 
-                    int year = Integer.parseInt(TimeMilli.getYear(recordDay));
-                    int month = Integer.parseInt(TimeMilli.getMonth(recordDay));
-                    int day = Integer.parseInt(TimeMilli.getDay(recordDay));
+                    int year = Integer.parseInt(TimeToMillisecondUtil.getYear(recordDay));
+                    int month = Integer.parseInt(TimeToMillisecondUtil.getMonth(recordDay));
+                    int day = Integer.parseInt(TimeToMillisecondUtil.getDay(recordDay));
 
                     // create Calender
                     Calendar calendar = getSchemeCalendar(year,month,day);
@@ -199,7 +199,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         // show missions info when calender click
         LogUtil.logE(TAG,"[onCalendarSelect] calendar.getYear() = "+calendar.getYear()+
                         ",calendar.getMonth() = "+calendar.getMonth()+",calendar.getDay() = "+calendar.getDay());
-        String currentTime = String.valueOf(TimeMilli.getInitTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
+        String currentTime = String.valueOf(TimeToMillisecondUtil.getInitTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
         LogUtil.logE(TAG,"[onCalendarSelect] DAY = " +currentTime);
         List<MissionState> missionStateList = missionStateMap.get(Long.valueOf(currentTime));
         if (null == missionStateList) {

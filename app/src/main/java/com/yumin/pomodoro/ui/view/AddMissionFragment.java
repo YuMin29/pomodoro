@@ -19,9 +19,9 @@ import com.yumin.pomodoro.databinding.FragmentAddMissionBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.base.DataBindingConfig;
-import com.yumin.pomodoro.utils.base.DataBindingFragment;
-import com.yumin.pomodoro.utils.base.MissionManager;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
+import com.yumin.pomodoro.ui.base.MissionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
