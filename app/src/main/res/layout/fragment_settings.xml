@@ -50,7 +50,7 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:entries="@array/ringtone_list"
-                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectItem(parent,view,pos,id)}"/>
+                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionBackgroundRingtone(parent,view,pos,id)}"/>
 
             </LinearLayout>
 
@@ -75,7 +75,7 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:entries="@array/ringtone_list"
-                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectItem(parent,view,pos,id)}"/>
+                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionFinishedRingtone(parent,view,pos,id)}"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -99,7 +99,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="32dp"
                 android:text="@string/settings_auto_start_mission"
-                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartMissionSwitchChanged(view,checked)}"/>
+                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartNextMissionChanged(view,checked)}"/>
 
             <Switch
                 android:id="@+id/auto_start_break_switch"
@@ -108,7 +108,7 @@
                 android:paddingLeft="8dp"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_auto_start_break"
-                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartBreakSwitchChanged(view,checked)}"/>
+                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartBreakChanged(view,checked)}"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

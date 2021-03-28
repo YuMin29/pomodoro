@@ -3,6 +3,7 @@ package com.yumin.pomodoro.ui.view.customize;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     private Type type;
     MediaPlayer mediaPlayer = null;
     private boolean enabledSound;
+    private boolean autoStart;
 
     private enum Type{
         MISSION,
@@ -119,10 +121,13 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public void onClickStartStop() {
         if (timerStatus == TimerStatus.STOPPED) {
+            LogUtil.logE(TAG,"[onClickStartStop] 111");
             startTimer();
         } else if (timerStatus == TimerStatus.STARTED) {
+            LogUtil.logE(TAG,"[onClickStartStop] 222");
             pauseTimer();
         } else if (timerStatus == TimerStatus.PAUSE){
+            LogUtil.logE(TAG,"[onClickStartStop] 333");
             continueTimer();
         }
     }
@@ -176,6 +181,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     private void initTimerValues() {
+        LogUtil.logE(TAG,"[initTimerValues]");
         progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
         missionTime = timeCountInMilliSeconds;
     }
@@ -184,8 +190,10 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
      * method to start count down timer
      */
     private void startCountDownTimer(long timeMilli) {
+        LogUtil.logE(TAG,"[startCountDownTimer] 000 ");
         // init media player
         if (this.type == Type.MISSION && enabledSound) {
+            LogUtil.logE(TAG,"[startCountDownTimer] 111");
             mediaPlayer = MediaPlayer.create(context,R.raw.sound_effect_clock);
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
@@ -198,6 +206,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         countDownTimer = new CountDownTimer(timeMilli, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                LogUtil.logE(TAG,"[startCountDownTimer] 222");
                 missionTimeLeft = millisUntilFinished;
                 textViewTime.setText(msTimeFormatter(millisUntilFinished));
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
@@ -235,37 +244,15 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     /**
-     * method to stop count down timer
-     */
-    private void stopCountDownTimer() {
-        countDownTimer.cancel();
-    }
-
-    /**
      * method to set circular progress bar values
      */
     private void setProgressBarValues(long time) {
+        LogUtil.logE(TAG,"[setProgressBarValues]");
         progressBarCircle.setProgress((int) time / 1000);
     }
 
     private String msTimeFormatter(long milliSeconds) {
         String hms = String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
-                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
-        return hms;
-    }
-
-
-    /**
-     * method to convert millisecond to time format
-     *
-     * @param milliSeconds
-     * @return HH:mm:ss time formatted string
-     */
-    private String hmsTimeFormatter(long milliSeconds) {
-
-        String hms = String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(milliSeconds),
                 TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
                 TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
         return hms;
@@ -296,6 +283,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void setMissionTime(int time){
+        LogUtil.logE(TAG,"[setMissionTime] TIME = "+time);
         this.timeCountInMilliSeconds = Long.valueOf(time * 1 * 1000);
     }
 

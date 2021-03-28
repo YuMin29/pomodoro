@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.WindowManager;
@@ -48,6 +50,8 @@ public class BreakTimerFragment extends DataBindingFragment {
     private NotificationHelper notificationHelper;
     private static final int NOTIFICATION_ID = 1000;
     private String missionTitle;
+    private boolean isAutoStartBreak = false;
+    private Handler handler;
 
     @Override
     public void onResume() {
@@ -81,6 +85,18 @@ public class BreakTimerFragment extends DataBindingFragment {
         fragmentBreakTimerBinding = (FragmentBreakTimerBinding) getBinding();
         fragmentBreakTimerBinding.breakTimer.setStatusBarColor(
                 getContext().getResources().getColor(R.color.break_timer_background));
+
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(@NonNull Message msg) {
+                if (msg.what == 1) {
+                    LogUtil.logE(TAG,"[handleMessage] CALL onClickStartStop()");
+                    fragmentBreakTimerBinding.breakTimer.onClickStartStop();
+                }
+                return true;
+            }
+        });
+
         observeViewModel();
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -226,6 +242,19 @@ public class BreakTimerFragment extends DataBindingFragment {
                     // post value back to view model
                     timerViewModel.setMissionTime(msTimeFormatter(missionTime));
                     timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
+
+                    if (missionTime != 0) {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LogUtil.logE(TAG,"isAutoStartBreak = "+isAutoStartBreak);
+                                if (isAutoStartBreak) {
+                                    handler.sendEmptyMessage(1);
+                                }
+                            }
+                        });
+                        thread.start();
+                    }
                 }
             }
         });
@@ -235,6 +264,13 @@ public class BreakTimerFragment extends DataBindingFragment {
             public void onChanged(Integer integer) {
                 LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletion = "+integer);
                 numberOfCompletion = integer;
+            }
+        });
+
+        timerViewModel.getAutoStartBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isAutoStartBreak = aBoolean;
             }
         });
     }

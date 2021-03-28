@@ -7,6 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.WindowManager;
@@ -50,6 +55,9 @@ public class TimerFragment extends DataBindingFragment {
     private static final int NOTIFICATION_ID = 1000;
     private String missionTitle;
     private int backgroundColor;
+    private boolean isMissionReady = false;
+    private boolean isAutoStartMission = false;
+    Handler handler;
 
     @Override
     public void onResume() {
@@ -95,6 +103,18 @@ public class TimerFragment extends DataBindingFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         fragmentTimerBinding = (FragmentTimerBinding) getBinding();
         LogUtil.logE(TAG,"[onViewCreated]");
+
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(@NonNull Message msg) {
+                if (msg.what == 1) {
+                    LogUtil.logE(TAG,"[handleMessage] CALL onClickStartStop()");
+                    fragmentTimerBinding.missionTimer.onClickStartStop();
+                }
+                return true;
+            }
+        });
+
         observeViewModel();
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -244,6 +264,20 @@ public class TimerFragment extends DataBindingFragment {
                     // post value back to view model
                     timerViewModel.setMissionTime(msTimeFormatter(missionTime));
                     timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
+
+                    // auto start in here ???
+                    if (missionTime != 0){
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LogUtil.logE(TAG,"isAutoStartMission = "+isAutoStartMission);
+                                if (isAutoStartMission) {
+                                    handler.sendEmptyMessage(1);
+                                }
+                            }
+                        });
+                        thread.start();
+                    }
                 }
             }
         });
@@ -263,6 +297,14 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
+        timerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                LogUtil.logE(TAG,"[OBSERVE][getAutoStartNextMission] aBoolean = "+aBoolean+
+                        " ,isMissionReady = "+isMissionReady);
+                isAutoStartMission = aBoolean;
+            }
+        });
     }
 
     private String msTimeFormatter(long milliSeconds) {

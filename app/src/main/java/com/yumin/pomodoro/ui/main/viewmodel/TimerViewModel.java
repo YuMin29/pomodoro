@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.data.MissionSettings;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
@@ -31,6 +32,12 @@ public class TimerViewModel extends AndroidViewModel {
     private MediatorLiveData<Integer> mMissionNumberOfCompletion = new MediatorLiveData<>();
     private MediatorLiveData<MissionState> mMissionState = new MediatorLiveData<>();
 
+    private MissionSettings mMissionSettings;
+    private LiveData<Boolean> mAutoStartNextMission;
+    private LiveData<Boolean> mAutoStartBreak;
+    private LiveData<Integer> mMissionBackgroundRingtone;
+    private LiveData<Integer> mMissionFinishedRingtone;
+
     public TimerViewModel(@NonNull Application application) {
         super(application);
 
@@ -40,6 +47,9 @@ public class TimerViewModel extends AndroidViewModel {
             this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
 
         this.missionStrId = MissionManager.getInstance().getStrOperateId();
+
+        mMissionSettings = new MissionSettings(application);
+
         fetchMission();
     }
 
@@ -74,6 +84,11 @@ public class TimerViewModel extends AndroidViewModel {
                 }
             });
         }
+
+        mAutoStartNextMission = mMissionSettings.getAutoStartNextMission();
+        mAutoStartBreak = mMissionSettings.getAutoStartBreak();
+        mMissionBackgroundRingtone = mMissionSettings.getIndexOfBackgroundRingtone();
+        mMissionFinishedRingtone = mMissionSettings.getIndexOfFinishedRingtone();
     }
 
     public LiveData<UserMission> getMission(){
@@ -115,5 +130,21 @@ public class TimerViewModel extends AndroidViewModel {
 
     public LiveData<MissionState> getMissionState(){
         return this.mMissionState;
+    }
+
+    public LiveData<Integer> getIndexOfMissionBackgroundRingtone(){
+        return mMissionBackgroundRingtone;
+    }
+
+    public LiveData<Integer> getIndexOfFinishedMissionRingtone(){
+        return mMissionFinishedRingtone;
+    }
+
+    public LiveData<Boolean> getAutoStartNextMission(){
+        return this.mAutoStartNextMission;
+    }
+
+    public LiveData<Boolean> getAutoStartBreak(){
+        return this.mAutoStartBreak;
     }
 }
