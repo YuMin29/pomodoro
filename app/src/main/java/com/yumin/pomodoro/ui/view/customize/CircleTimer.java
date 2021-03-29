@@ -194,6 +194,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         // init media player
         if (this.type == Type.MISSION && enabledSound) {
             LogUtil.logE(TAG,"[startCountDownTimer] 111");
+            // TODO: 3/29/21 read spinner value in here
             mediaPlayer = MediaPlayer.create(context,R.raw.sound_effect_clock);
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
@@ -311,5 +312,9 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public void setMissionTimeLeft(long millisecond){
         this.missionTimeLeft = millisecond;
+    }
+
+    public void setBackgroundMusic(int index){
+        LogUtil.logE(TAG,"[setBackgroundMusic] index = "+index);
     }
 }

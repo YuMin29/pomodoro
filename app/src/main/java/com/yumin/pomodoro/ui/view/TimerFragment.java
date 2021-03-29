@@ -8,10 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.WindowManager;
@@ -42,23 +39,23 @@ import java.util.concurrent.TimeUnit;
 
 public class TimerFragment extends DataBindingFragment {
     private static final String TAG = "[TimerFragment]";
-    private FragmentTimerBinding fragmentTimerBinding;
-    private TimerViewModel timerViewModel;
-    private boolean enabledVibrate;
-    private boolean enabledNotification;
-    private boolean enableKeepScreenOn;
-    private int missionCount;
-    private CircleTimer missionTimer;
+    private final int NOTIFICATION_ID = 1000;
+    private FragmentTimerBinding mFragmentTimerBinding;
+    private TimerViewModel mTimerViewModel;
+    private boolean mEnabledVibrate;
+    private boolean mEnabledNotification;
+    private boolean mEnableKeepScreenOn;
+    private int mMissionCount;
+    private CircleTimer mMissionTimer;
     private int mNumberOfCompletion;
-    private NotificationCompat.Builder notificationBuilder;
-    private NotificationHelper notificationHelper;
-    private static final int NOTIFICATION_ID = 1000;
-    private String missionTitle;
-    private int backgroundColor;
-    private boolean isMissionReady = false;
-    private boolean isAutoStartMission = false;
-    Handler handler;
-    private boolean isDisableBreak = false;
+    private NotificationCompat.Builder mNotificationBuilder;
+    private NotificationHelper mNotificationHelper;
+    private String mMissionTitle;
+    private int mBackgroundColor;
+    private boolean mIsAutoStartMission = false;
+    private Handler mHandler;
+    private boolean mIsDisableBreak = false;
+    private int mIndexOfBackgroundMusic = -1;
 
     @Override
     public void onResume() {
@@ -88,12 +85,12 @@ public class TimerFragment extends DataBindingFragment {
 
     @Override
     protected void initViewModel() {
-        timerViewModel = getFragmentScopeViewModel(TimerViewModel.class);
+        mTimerViewModel = getFragmentScopeViewModel(TimerViewModel.class);
     }
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_timer, BR.timerViewModel,timerViewModel);
+        return new DataBindingConfig(R.layout.fragment_timer, BR.timerViewModel, mTimerViewModel);
     }
 
     private void navigateUp(){
@@ -102,15 +99,15 @@ public class TimerFragment extends DataBindingFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        fragmentTimerBinding = (FragmentTimerBinding) getBinding();
+        mFragmentTimerBinding = (FragmentTimerBinding) getBinding();
         LogUtil.logE(TAG,"[onViewCreated]");
 
-        handler = new Handler(new Handler.Callback() {
+        mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
                 if (msg.what == 1) {
                     LogUtil.logE(TAG,"[handleMessage] CALL onClickStartStop()");
-                    fragmentTimerBinding.missionTimer.onClickStartStop();
+                    mFragmentTimerBinding.missionTimer.onClickStartStop();
                 }
                 return true;
             }
@@ -122,8 +119,8 @@ public class TimerFragment extends DataBindingFragment {
             @Override
             public void handleOnBackPressed() {
                 // pause timer if started
-                if (fragmentTimerBinding.missionTimer.getTimerStatus() == CircleTimer.TimerStatus.STARTED)
-                    fragmentTimerBinding.missionTimer.pauseTimer();
+                if (mFragmentTimerBinding.missionTimer.getTimerStatus() == CircleTimer.TimerStatus.STARTED)
+                    mFragmentTimerBinding.missionTimer.pauseTimer();
 
                 // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -133,18 +130,18 @@ public class TimerFragment extends DataBindingFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // exit & cancel notification
-                                if (fragmentTimerBinding.missionTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
-                                    fragmentTimerBinding.missionTimer.onClickReset();
-                                    if (enabledNotification)
-                                        notificationHelper.cancelNotification();
+                                if (mFragmentTimerBinding.missionTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
+                                    mFragmentTimerBinding.missionTimer.onClickReset();
+                                    if (mEnabledNotification)
+                                        mNotificationHelper.cancelNotification();
                                 }
                                 navigateUp();
                                 ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
                                 // update finish status
-                                if (missionCount != -1 && mNumberOfCompletion != -1) {
-                                    if ((missionCount - mNumberOfCompletion) < 1) {
-                                        timerViewModel.updateMissionFinishedState(true, mNumberOfCompletion);
+                                if (mMissionCount != -1 && mNumberOfCompletion != -1) {
+                                    if ((mMissionCount - mNumberOfCompletion) < 1) {
+                                        mTimerViewModel.updateMissionFinishedState(true, mNumberOfCompletion);
                                     }
                                 }
                             }
@@ -152,7 +149,7 @@ public class TimerFragment extends DataBindingFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // resume
-                                fragmentTimerBinding.missionTimer.onClickStartStop();
+                                mFragmentTimerBinding.missionTimer.onClickStartStop();
                             }
                         })
                         .create();
@@ -160,12 +157,12 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
-        missionTimer = fragmentTimerBinding.missionTimer;
-        missionTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
+        mMissionTimer = mFragmentTimerBinding.missionTimer;
+        mMissionTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
             @Override
             public void onStarted() {
                 // show notification in here
-                if (enabledNotification) {
+                if (mEnabledNotification) {
                     // Create an explicit intent for an Activity in your app
                     Intent intent = getContext().getPackageManager()
                             .getLaunchIntentForPackage(getContext().getPackageName())
@@ -173,9 +170,9 @@ public class TimerFragment extends DataBindingFragment {
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
-                    notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent,backgroundColor);
-                    notificationHelper.notify(notificationBuilder);
+                    mNotificationHelper = new NotificationHelper(getContext());
+                    mNotificationBuilder = mNotificationHelper.getNotification("蕃茄任務:" + mMissionTitle,"執行中",pendingIntent, mBackgroundColor);
+                    mNotificationHelper.notify(mNotificationBuilder);
                 }
 
                 // create mission state
@@ -190,19 +187,19 @@ public class TimerFragment extends DataBindingFragment {
                     mNumberOfCompletion++;
                     LogUtil.logD(TAG, "[mission timer][onFinish] numberOfCompletion = " + mNumberOfCompletion);
 
-                    timerViewModel.updateMissionNumberOfCompletion(mNumberOfCompletion);
-                    if (mNumberOfCompletion == missionCount) {
+                    mTimerViewModel.updateMissionNumberOfCompletion(mNumberOfCompletion);
+                    if (mNumberOfCompletion == mMissionCount) {
                         LogUtil.logD(TAG,"[mission timer][onFinished] mNumberOfCompletion == missionCount");
-                        timerViewModel.updateMissionFinishedState(true,mNumberOfCompletion);
+                        mTimerViewModel.updateMissionFinishedState(true,mNumberOfCompletion);
 
-                        if (isDisableBreak) {
+                        if (mIsDisableBreak) {
                             navigateUp();
                             ((AppCompatActivity)getActivity()).getSupportActionBar().show();
                             undoStatusBarColor();
 
                             // cancel notification when finish the mission
-                            if (enabledNotification) {
-                                notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                            if (mEnabledNotification) {
+                                mNotificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
                             }
                             return;
                         }
@@ -210,18 +207,18 @@ public class TimerFragment extends DataBindingFragment {
                 }
 
                 // vibrate for remind
-                if (enabledVibrate) {
+                if (mEnabledVibrate) {
                     Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(1000);
                 }
 
                 // update notification
-                if (enabledNotification) {
-                    notificationHelper.changeRemoteContent("休息一下吧！");
-                    notificationHelper.notify(notificationBuilder);
+                if (mEnabledNotification) {
+                    mNotificationHelper.changeRemoteContent("休息一下吧！");
+                    mNotificationHelper.notify(mNotificationBuilder);
                 }
 
-                if (isDisableBreak) {
+                if (mIsDisableBreak) {
                     // repeat mission timer again
                     Bundle bundle = new Bundle();
                     bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
@@ -236,10 +233,10 @@ public class TimerFragment extends DataBindingFragment {
 
             @Override
             public void onTick(long millisecond) {
-                if (enabledNotification) {
+                if (mEnabledNotification) {
 //                    notificationBuilder.setContentText(msTimeFormatter(millisecond));
-                    notificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
-                    notificationHelper.notify(notificationBuilder);
+                    mNotificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
+                    mNotificationHelper.notify(mNotificationBuilder);
                 }
             }
         });
@@ -251,7 +248,7 @@ public class TimerFragment extends DataBindingFragment {
 
     private void observeViewModel(){
         // TODO: 2/8/21 Use Mediator to observe mission from view model
-        timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
+        mTimerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
             public void onChanged(UserMission mission) {
                 LogUtil.logE(TAG,"[OBSERVE] getMission");
@@ -260,15 +257,15 @@ public class TimerFragment extends DataBindingFragment {
                     long missionTime = Long.valueOf(mission.getTime() * 60 * 1000);
                     long missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
-                    missionCount = mission.getGoal();
+                    mMissionCount = mission.getGoal();
 //                    mNumberOfCompletion = mission.getNumberOfCompletions();
-                    enabledVibrate = mission.isEnableVibrate();
-                    enabledNotification = mission.isEnableNotification();
-                    enableKeepScreenOn = mission.isKeepScreenOn();
-                    missionTitle = mission.getName();
-                    backgroundColor = mission.getColor();
+                    mEnabledVibrate = mission.isEnableVibrate();
+                    mEnabledNotification = mission.isEnableNotification();
+                    mEnableKeepScreenOn = mission.isKeepScreenOn();
+                    mMissionTitle = mission.getName();
+                    mBackgroundColor = mission.getColor();
 
-                    if (enableKeepScreenOn) {
+                    if (mEnableKeepScreenOn) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                             getActivity().setTurnScreenOn(true);
                         } else {
@@ -282,17 +279,17 @@ public class TimerFragment extends DataBindingFragment {
                         }
                     }
                     // post value back to view model
-                    timerViewModel.setMissionTime(msTimeFormatter(missionTime));
-                    timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
+                    mTimerViewModel.setMissionTime(msTimeFormatter(missionTime));
+                    mTimerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
 
                     // auto start in here ???
                     if (missionTime != 0){
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                LogUtil.logE(TAG,"isAutoStartMission = "+isAutoStartMission);
-                                if (isAutoStartMission) {
-                                    handler.sendEmptyMessage(1);
+                                LogUtil.logE(TAG,"isAutoStartMission = "+ mIsAutoStartMission);
+                                if (mIsAutoStartMission && mIndexOfBackgroundMusic != -1) {
+                                    mHandler.sendEmptyMessage(1);
                                 }
                             }
                         });
@@ -302,7 +299,7 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
-        timerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        mTimerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
                 LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletion = "+integer);
@@ -310,26 +307,34 @@ public class TimerFragment extends DataBindingFragment {
             }
         });
 
-        timerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
+        mTimerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
             @Override
             public void onChanged(MissionState missionState) {
                 LogUtil.logE(TAG,"[OBSERVE] getMissionState = "+missionState);
             }
         });
 
-        timerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mTimerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 LogUtil.logE(TAG,"[OBSERVE][getAutoStartNextMission] aBoolean = "+aBoolean);
-                isAutoStartMission = aBoolean;
+                mIsAutoStartMission = aBoolean;
             }
         });
 
-        timerViewModel.getDisableBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mTimerViewModel.getDisableBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 LogUtil.logE(TAG,"[OBSERVE][getDisableBreak] aBoolean = "+aBoolean);
-                isDisableBreak = aBoolean;
+                mIsDisableBreak = aBoolean;
+            }
+        });
+
+        mTimerViewModel.getIndexOfMissionBackgroundRingtone().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                LogUtil.logE(TAG,"[OBSERVE][getIndexOfMissionBackgroundRingtone] INDEX = "+integer);
+                mIndexOfBackgroundMusic = integer;
             }
         });
     }

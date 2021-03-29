@@ -49,7 +49,7 @@
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
-                    android:entries="@array/ringtone_list"
+                    android:entries="@array/background_music_list"
                     android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionBackgroundRingtone(parent,view,pos,id)}"/>
 
             </LinearLayout>

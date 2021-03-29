@@ -92,6 +92,9 @@ public class SettingsFragment extends DataBindingFragment {
             LogUtil.logE(TAG,"[onSelectMissionBackgroundRingtone] pos = "+pos+" ,val = "
                     +parent.getSelectedItem().toString());
             mSettingsViewModel.setMissionBackgroundRingtone(pos);
+
+            int[] backgroundMusic = getContext().getResources().getIntArray(R.array.background_music_name);
+            LogUtil.logE(TAG,"[setBackgroundMusic] id = "+backgroundMusic[pos]);
         }
 
         public void onSelectMissionFinishedRingtone(AdapterView<?> parent, View view, int pos, long id) {

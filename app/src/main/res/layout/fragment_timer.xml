@@ -23,6 +23,7 @@
             app:missionName="@{timerViewModel.mission.name}"
             app:missionGoal="@{timerViewModel.mission.goal}"
             app:missionFinished="@{timerViewModel.missionNumberOfCompletion}"
-            app:missionEnabledSound="@{timerViewModel.mission.enableSound}"/>
+            app:missionEnabledSound="@{timerViewModel.mission.enableSound}"
+            app:backgroundMusic="@{timerViewModel.indexOfMissionBackgroundRingtone}"/>
     </FrameLayout>
 </layout>

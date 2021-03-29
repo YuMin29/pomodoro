@@ -82,7 +82,7 @@
     <string name="logout">登出</string>
     <string name="create_account">建立帳號</string>
     <string name="create_account_error">信箱或密碼為空！</string>
-    <string name="create_account_email_tint">abcd123456@gmail.com</string>
+    <string name="create_account_email_tint">test123@gmail.com</string>
     <string name="create_account_password_tint">至少六位數密碼</string>
     <string name="forget_password">忘記密碼</string>
     <string name="email_title">電子信箱/帳號</string>
@@ -108,4 +108,28 @@
         <item>item1</item>
         <item>item2</item>
     </array>
+
+    <string-array name="ringtone_name">
+        <item></item>
+    </string-array>
+
+    <string-array name="background_music_list">
+        <item>無</item>
+        <item>時鐘聲1</item>
+        <item>時鐘聲2</item>
+        <item>海岸聲1</item>
+        <item>海岸聲2</item>
+        <item>流水聲1</item>
+        <item>流水聲2</item>
+    </string-array>
+
+    <integer-array name="background_music_name">
+        <item>-1</item>
+        <item>@raw/sound_effect_clock</item>
+        <item>@raw/sound_effect_clock2</item>
+        <item>@raw/sound_effect_sea</item>
+        <item>@raw/sound_effect_sea2</item>
+        <item>@raw/sound_effect_water</item>
+        <item>@raw/sound_effect_water2</item>
+    </integer-array>
 </resources>
