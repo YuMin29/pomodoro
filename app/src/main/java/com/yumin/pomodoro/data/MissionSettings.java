@@ -11,6 +11,7 @@ public class MissionSettings {
     private final String KEY_AUTO_STAR_BREAK = "auto_start_break";
     private final String KEY_INDEX_OF_BACKGROUND_RINGTONE = "index_of_background_ringtone";
     private final String KEY_INDEX_OF_FINISHED_RINGTONE = "index_of_finished_ringtone";
+    private final String KEY_DISABLE_BREAK = "disable_break";
 
     public MissionSettings(Context context){
         mSharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
@@ -46,6 +47,14 @@ public class MissionSettings {
 
     public void setIndexOfFinishedRingtone(int value){
         setIntegerValue(KEY_INDEX_OF_FINISHED_RINGTONE,value);
+    }
+
+    public void setDisableBreak(boolean value) {
+        setBooleanValue(KEY_DISABLE_BREAK,value);
+    }
+
+    public LiveSharedPreference<Boolean> getDisableBreak(){
+        return new LiveSharedPreference<Boolean>(mSharedPreferences, KEY_DISABLE_BREAK, false);
     }
 
     private void setBooleanValue(String key, boolean value) {

@@ -37,6 +37,7 @@ public class TimerViewModel extends AndroidViewModel {
     private LiveData<Boolean> mAutoStartBreak;
     private LiveData<Integer> mMissionBackgroundRingtone;
     private LiveData<Integer> mMissionFinishedRingtone;
+    private LiveData<Boolean> mDisableBreak;
 
     public TimerViewModel(@NonNull Application application) {
         super(application);
@@ -89,6 +90,7 @@ public class TimerViewModel extends AndroidViewModel {
         mAutoStartBreak = mMissionSettings.getAutoStartBreak();
         mMissionBackgroundRingtone = mMissionSettings.getIndexOfBackgroundRingtone();
         mMissionFinishedRingtone = mMissionSettings.getIndexOfFinishedRingtone();
+        mDisableBreak = mMissionSettings.getDisableBreak();
     }
 
     public LiveData<UserMission> getMission(){
@@ -146,5 +148,9 @@ public class TimerViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getAutoStartBreak(){
         return this.mAutoStartBreak;
+    }
+
+    public LiveData<Boolean> getDisableBreak(){
+        return this.mDisableBreak;
     }
 }

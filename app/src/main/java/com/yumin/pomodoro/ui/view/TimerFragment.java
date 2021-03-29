@@ -58,6 +58,7 @@ public class TimerFragment extends DataBindingFragment {
     private boolean isMissionReady = false;
     private boolean isAutoStartMission = false;
     Handler handler;
+    private boolean isDisableBreak = false;
 
     @Override
     public void onResume() {
@@ -193,6 +194,18 @@ public class TimerFragment extends DataBindingFragment {
                     if (mNumberOfCompletion == missionCount) {
                         LogUtil.logD(TAG,"[mission timer][onFinished] mNumberOfCompletion == missionCount");
                         timerViewModel.updateMissionFinishedState(true,mNumberOfCompletion);
+
+                        if (isDisableBreak) {
+                            navigateUp();
+                            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                            undoStatusBarColor();
+
+                            // cancel notification when finish the mission
+                            if (enabledNotification) {
+                                notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                            }
+                            return;
+                        }
                     }
                 }
 
@@ -208,10 +221,17 @@ public class TimerFragment extends DataBindingFragment {
                     notificationHelper.notify(notificationBuilder);
                 }
 
-                // switch to break timer
-                Bundle bundle = new Bundle();
-                bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
-                MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.action_timer_to_break_timer,bundle);
+                if (isDisableBreak) {
+                    // repeat mission timer again
+                    Bundle bundle = new Bundle();
+                    bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
+                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.load_timer_again,bundle);
+                } else {
+                    // switch to break timer
+                    Bundle bundle = new Bundle();
+                    bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
+                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.action_timer_to_break_timer,bundle);
+                }
             }
 
             @Override
@@ -300,9 +320,16 @@ public class TimerFragment extends DataBindingFragment {
         timerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                LogUtil.logE(TAG,"[OBSERVE][getAutoStartNextMission] aBoolean = "+aBoolean+
-                        " ,isMissionReady = "+isMissionReady);
+                LogUtil.logE(TAG,"[OBSERVE][getAutoStartNextMission] aBoolean = "+aBoolean);
                 isAutoStartMission = aBoolean;
+            }
+        });
+
+        timerViewModel.getDisableBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                LogUtil.logE(TAG,"[OBSERVE][getDisableBreak] aBoolean = "+aBoolean);
+                isDisableBreak = aBoolean;
             }
         });
     }

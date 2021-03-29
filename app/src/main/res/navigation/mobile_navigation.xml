@@ -66,6 +66,12 @@
             app:destination="@id/fragment_break_timer"
             app:popUpTo="@+id/fragment_timer"
             app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/load_timer_again"
+            app:destination="@+id/fragment_timer"
+            app:popUpTo="@id/fragment_timer"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment android:id="@+id/fragment_break_timer"

@@ -106,9 +106,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="8dp"
-                android:paddingBottom="8dp"
+                android:paddingBottom="32dp"
                 android:text="@string/settings_auto_start_break"
                 android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartBreakChanged(view,checked)}"/>
+
+            <Switch
+                android:id="@+id/disable_break"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingBottom="32dp"
+                android:text="@string/settings_disable_break"
+                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onDisableBreakChanged(view,checked)}"/>
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

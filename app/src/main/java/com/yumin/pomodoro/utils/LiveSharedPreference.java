@@ -24,7 +24,8 @@ public class LiveSharedPreference<T> extends LiveData<T> {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (LiveSharedPreference.this.mKey.equals(key)) {
                 LogUtil.logE(TAG,"[onSharedPreferenceChanged] KEY = "+mKey +" ,VALUE = "+ (T) mSharedPreferences.getAll().get(mKey));
-                setValue((T) sharedPreferences.getAll().get(key));
+                T value = (T) mSharedPreferences.getAll().get(mKey);
+                setValue(value == null ? mDefaultValue : value);
             }
         }
     };
@@ -33,7 +34,8 @@ public class LiveSharedPreference<T> extends LiveData<T> {
     protected void onActive() {
         super.onActive();
         LogUtil.logE(TAG,"[onActive] KEY = "+mKey +" ,VALUE = "+ (T) mSharedPreferences.getAll().get(mKey));
-        setValue((T) mSharedPreferences.getAll().get(mKey));
+        T value = (T) mSharedPreferences.getAll().get(mKey);
+        setValue(value == null ? mDefaultValue : value);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
     }
 

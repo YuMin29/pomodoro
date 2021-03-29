@@ -101,6 +101,7 @@
     <string name="settings_set_mission_finished_ringtone">設置任務完成音</string>
     <string name="settings_auto_start_mission">自動開始下個蕃茄任務</string>
     <string name="settings_auto_start_break">自動開始休息</string>
+    <string name="settings_disable_break">禁用休息</string>
 
     <array name="ringtone_list">
         <item>無</item>

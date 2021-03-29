@@ -69,6 +69,13 @@ public class SettingsFragment extends DataBindingFragment {
                     mFragmentSettingsBinding.missionFinishMusic.setSelection(integer);
             }
         });
+
+        mSettingsViewModel.getDisableBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                mFragmentSettingsBinding.disableBreak.setChecked(aBoolean);
+            }
+        });
     }
 
     public class ClickProxy{
@@ -108,6 +115,11 @@ public class SettingsFragment extends DataBindingFragment {
         public void onAutoStartBreakChanged(CompoundButton compoundButton, boolean isChecked){
             LogUtil.logE(TAG,"[onAutoStartBreakSwitchChanged] isChecked = "+isChecked);
             mSettingsViewModel.setAutoStartBreak(isChecked);
+        }
+
+        public void onDisableBreakChanged(CompoundButton compoundButton, boolean isChecked){
+            LogUtil.logE(TAG,"[onDisableBreak] isChecked = "+isChecked);
+            mSettingsViewModel.setDisableBreak(isChecked);
         }
     }
 }

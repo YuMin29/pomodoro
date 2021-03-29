@@ -13,6 +13,7 @@ public class SettingsViewModel extends ViewModel {
     private LiveData<Boolean> mAutoStartBreak;
     private LiveData<Integer> mMissionBackgroundRingtone;
     private LiveData<Integer> mMissionFinishedRingtone;
+    private LiveData<Boolean> mDisableBreak;
     private MissionSettings mMissionSettings;
 
     public SettingsViewModel(Application application) {
@@ -26,6 +27,7 @@ public class SettingsViewModel extends ViewModel {
         mAutoStartBreak = mMissionSettings.getAutoStartBreak();
         mMissionBackgroundRingtone = mMissionSettings.getIndexOfBackgroundRingtone();
         mMissionFinishedRingtone = mMissionSettings.getIndexOfFinishedRingtone();
+        mDisableBreak = mMissionSettings.getDisableBreak();
     }
 
     public LiveData<Boolean> getAutoStartNextMission(){
@@ -58,5 +60,13 @@ public class SettingsViewModel extends ViewModel {
 
     public void setFinishedMissionRingtone(int index){
         mMissionSettings.setIndexOfFinishedRingtone(index);
+    }
+
+    public void setDisableBreak(boolean value){
+        mMissionSettings.setDisableBreak(value);
+    }
+
+    public LiveData<Boolean> getDisableBreak(){
+        return mDisableBreak;
     }
 }
