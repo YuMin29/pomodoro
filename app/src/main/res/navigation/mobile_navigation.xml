@@ -61,15 +61,10 @@
         android:name="com.yumin.pomodoro.ui.view.TimerFragment"
         android:label="@string/mission_timer"
         tools:layout="@layout/fragment_timer">
-        <action
-            android:id="@+id/action_timer_to_break_timer"
-            app:destination="@id/fragment_break_timer"
-            app:popUpTo="@+id/fragment_timer"
-            app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/load_timer_again"
-            app:destination="@+id/fragment_timer"
+            android:id="@+id/timer_to_home"
+            app:destination="@+id/nav_home"
             app:popUpTo="@id/fragment_timer"
             app:popUpToInclusive="true"/>
     </fragment>

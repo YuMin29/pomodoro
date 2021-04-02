@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -148,9 +149,9 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
             if (time > editMissionViewModel.getEditMission().getValue().getRepeatStart() ||
                     time > editMissionViewModel.getEditMission().getValue().getRepeatEnd()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                        .setTitle("執行日小於重複區間")
-                        .setMessage("將會清除已設置的重複區間")
-                        .setPositiveButton(R.string.ok +"??", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.notice_choose_operate_day)
+                        .setMessage(R.string.notice_clear_repeat_range)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 latestRepeatStart = -1L;
@@ -170,6 +171,9 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                             }
                         });
                 builder.show();
+            } else {
+                fragmentEditMissionBinding.itemOperate.updateUI(time);
+                operateDay = time;
             }
         } else {
             fragmentEditMissionBinding.itemOperate.updateUI(time);
@@ -181,6 +185,12 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
 
         public void onSaveButtonClick(){
             LogUtil.logD(TAG,"[onSaveButtonClick]");
+
+            if (fragmentEditMissionBinding.missionTitle.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), R.string.notice_set_mission_title, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             editMissionViewModel.saveMission();
         }
 

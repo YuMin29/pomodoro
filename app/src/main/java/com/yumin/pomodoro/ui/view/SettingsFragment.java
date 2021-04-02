@@ -21,6 +21,16 @@ public class SettingsFragment extends DataBindingFragment {
     private SettingsViewModel mSettingsViewModel;
     private FragmentSettingsBinding mFragmentSettingsBinding;
 
+    private int[] mBackgroundMusicIds = {
+            -1,
+            R.raw.sound_effect_clock,
+            R.raw.sound_effect_clock2,
+            R.raw.sound_effect_sea,
+            R.raw.sound_effect_sea2,
+            R.raw.sound_effect_water,
+            R.raw.sound_effect_water2
+    };
+
     @Override
     protected void initViewModel() {
         mSettingsViewModel = getFragmentScopeViewModel(SettingsViewModel.class);
@@ -92,9 +102,7 @@ public class SettingsFragment extends DataBindingFragment {
             LogUtil.logE(TAG,"[onSelectMissionBackgroundRingtone] pos = "+pos+" ,val = "
                     +parent.getSelectedItem().toString());
             mSettingsViewModel.setMissionBackgroundRingtone(pos);
-
-            int[] backgroundMusic = getContext().getResources().getIntArray(R.array.background_music_name);
-            LogUtil.logE(TAG,"[setBackgroundMusic] id = "+backgroundMusic[pos]);
+            LogUtil.logE(TAG,"[setBackgroundMusic] id = "+ mBackgroundMusicIds[pos]);
         }
 
         public void onSelectMissionFinishedRingtone(AdapterView<?> parent, View view, int pos, long id) {

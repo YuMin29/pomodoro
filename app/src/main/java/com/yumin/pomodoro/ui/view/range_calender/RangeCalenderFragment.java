@@ -19,6 +19,7 @@ import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.ui.base.DataBindingConfig;
 import com.yumin.pomodoro.ui.base.DataBindingFragment;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -258,10 +259,12 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
                         + " -- " + c.getScheme()
                         + "  --  " + c.getLunar());
             }
-            long start = calendars.get(0).getTimeInMillis();
-            long end = calendars.get(calendars.size()-1).getTimeInMillis();
+            long start = TimeToMillisecondUtil.getStartTime(calendars.get(0).getTimeInMillis());
+            long end = TimeToMillisecondUtil.getEndTime(calendars.get(calendars.size()-1).getTimeInMillis());
+
             Log.e(TAG,"SelectCalendarRange , start = " +start);
-            Log.e(TAG,"SelectCalendarRange , start = " +start);
+            Log.e(TAG,"SelectCalendarRange , end = " +end);
+
             sharedViewModel.setRepeatStart(start);
             sharedViewModel.setRepeatEnd(end);
             navigateUp();

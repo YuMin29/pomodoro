@@ -199,7 +199,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         // show missions info when calender click
         LogUtil.logE(TAG,"[onCalendarSelect] calendar.getYear() = "+calendar.getYear()+
                         ",calendar.getMonth() = "+calendar.getMonth()+",calendar.getDay() = "+calendar.getDay());
-        String currentTime = String.valueOf(TimeToMillisecondUtil.getInitTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
+        String currentTime = String.valueOf(TimeToMillisecondUtil.getStartTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
         LogUtil.logE(TAG,"[onCalendarSelect] DAY = " +currentTime);
         List<MissionState> missionStateList = missionStateMap.get(Long.valueOf(currentTime));
         if (null == missionStateList) {

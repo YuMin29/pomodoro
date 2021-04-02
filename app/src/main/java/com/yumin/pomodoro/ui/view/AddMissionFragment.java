@@ -161,6 +161,9 @@ public class AddMissionFragment extends DataBindingFragment implements ItemListV
                             }
                         });
                 builder.show();
+            } else {
+                mFragmentAddMissionBinding.itemOperate.updateUI(time);
+                mOperateDay = time;
             }
         } else {
             mFragmentAddMissionBinding.itemOperate.updateUI(time);

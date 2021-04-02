@@ -150,7 +150,7 @@ public class BreakTimerFragment extends DataBindingFragment {
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
                     notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,"執行中",pendingIntent,
+                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,pendingIntent,
                             ContextCompat.getColor(getContext(),R.color.break_timer_background));
                     notificationHelper.notify(notificationBuilder);
                 }
@@ -240,8 +240,8 @@ public class BreakTimerFragment extends DataBindingFragment {
                     }
 
                     // post value back to view model
-                    timerViewModel.setMissionTime(msTimeFormatter(missionTime));
-                    timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
+//                    timerViewModel.setMissionTime(msTimeFormatter(missionTime));
+//                    timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
 
                     if (missionTime != 0) {
                         Thread thread = new Thread(new Runnable() {

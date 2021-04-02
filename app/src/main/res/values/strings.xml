@@ -93,7 +93,7 @@
     <string name="reset_email_success">已經發送</string>
 
     <string name="notice_set_mission_title">請輸入任務名稱</string>
-    <string name="notice_choose_operate_day">執行日小於重複區間</string>
+    <string name="notice_choose_operate_day">執行日大於重複區間</string>
     <string name="notice_clear_repeat_range">清除已設置的重複區間</string>
     <string name="notice_calender_no_mission_state">今日無任務完成紀錄</string>
 
@@ -122,14 +122,4 @@
         <item>流水聲1</item>
         <item>流水聲2</item>
     </string-array>
-
-    <integer-array name="background_music_name">
-        <item>-1</item>
-        <item>@raw/sound_effect_clock</item>
-        <item>@raw/sound_effect_clock2</item>
-        <item>@raw/sound_effect_sea</item>
-        <item>@raw/sound_effect_sea2</item>
-        <item>@raw/sound_effect_water</item>
-        <item>@raw/sound_effect_water2</item>
-    </integer-array>
 </resources>

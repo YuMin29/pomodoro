@@ -38,8 +38,7 @@ public class NotificationHelper extends ContextWrapper {
         remoteView = new RemoteViews(getPackageName(), R.layout.notification_custom);
     }
 
-    public NotificationCompat.Builder getNotification(String title, String leftTime, PendingIntent pendingIntent,
-                                                      int backgroundColor) {
+    public NotificationCompat.Builder getNotification(String title, PendingIntent pendingIntent, int backgroundColor) {
         NotificationCompat.Builder builder = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder = new NotificationCompat.Builder(this, CHANNEL_ID);
@@ -49,8 +48,6 @@ public class NotificationHelper extends ContextWrapper {
         }
         builder.setSmallIcon(R.drawable.ic_tomato_24);
         builder.setContentIntent(pendingIntent);
-//        builder.setContentTitle(title);
-//        builder.setContentText(leftTime);
         remoteView.setTextViewText(R.id.left_time_textview,title);
         remoteView.setInt(R.id.left_time_textview,"setBackgroundColor",backgroundColor);
         builder.setCustomContentView(remoteView);

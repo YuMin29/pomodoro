@@ -27,8 +27,6 @@ public class TimerViewModel extends AndroidViewModel {
     private DataRepository dataRepository;
     private String missionStrId;
     private MediatorLiveData<UserMission> mMission = new MediatorLiveData<>();
-    private MutableLiveData<String> mMissionTime = new MutableLiveData<>();
-    private MutableLiveData<String> mMissionBreakTime = new MutableLiveData<>();
     private MediatorLiveData<Integer> mMissionNumberOfCompletion = new MediatorLiveData<>();
     private MediatorLiveData<MissionState> mMissionState = new MediatorLiveData<>();
 
@@ -95,22 +93,6 @@ public class TimerViewModel extends AndroidViewModel {
 
     public LiveData<UserMission> getMission(){
         return this.mMission;
-    }
-
-    public LiveData<String> getMissionTime(){
-        return this.mMissionTime;
-    }
-
-    public void setMissionTime(String mMissionTime){
-        this.mMissionTime.postValue(mMissionTime);
-    }
-
-    public LiveData<String> getMissionBreakTime(){
-        return this.mMissionBreakTime;
-    }
-
-    public void setMissionBreakTime(String breakTime){
-        this.mMissionBreakTime.postValue(breakTime);
     }
 
     public void updateMissionNumberOfCompletion(int num){

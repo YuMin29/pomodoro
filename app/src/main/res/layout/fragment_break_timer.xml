@@ -16,7 +16,6 @@
             android:id="@+id/breakTimer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:timeCountInMilliSeconds="@{breakTimerViewModel.missionBreakTime}"
             app:missionTime="@{breakTimerViewModel.mission.shortBreakTime}"
             app:timerType="@{@string/type_break}"
             app:missionName="@{@string/timer_break}"

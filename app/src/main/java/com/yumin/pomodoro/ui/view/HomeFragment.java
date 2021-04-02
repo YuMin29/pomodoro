@@ -8,6 +8,7 @@ import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
@@ -61,8 +62,14 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fragmentHomeBinding = (FragmentHomeBinding) getBinding();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        undoStatusBarColor();
         initUI();
         observeViewModel();
+    }
+
+    private void undoStatusBarColor() {
+        ((MainActivity) getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
     }
 
     @Override

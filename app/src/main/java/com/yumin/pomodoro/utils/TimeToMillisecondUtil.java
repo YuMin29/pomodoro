@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class TimeToMillisecondUtil {
-    public static long getInitTime(int year,int month,int day){
+    public static long getStartTime(int year, int month, int day){
         Calendar currentDate = new GregorianCalendar();
         currentDate.set(year,month-1,day);
         currentDate.set(Calendar.HOUR_OF_DAY, 0);
@@ -39,6 +39,7 @@ public class TimeToMillisecondUtil {
         currentDate.set(Calendar.HOUR_OF_DAY, 23);
         currentDate.set(Calendar.MINUTE, 59);
         currentDate.set(Calendar.SECOND, 59);
+        currentDate.set(Calendar.MILLISECOND, 0);
         return currentDate.getTimeInMillis();
     }
 
@@ -63,4 +64,25 @@ public class TimeToMillisecondUtil {
         return ctime;
     }
 
+    public static long getStartTime(long milliSeconds) {
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
+    }
+
+    public static long getEndTime(long milliSeconds) {
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
+    }
 }

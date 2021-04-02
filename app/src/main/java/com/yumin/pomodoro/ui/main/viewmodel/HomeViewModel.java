@@ -23,20 +23,15 @@ import java.util.List;
 public class HomeViewModel extends ViewModel {
     private static final String TAG = "[HomeViewModel]";
     private MutableLiveData<Boolean> mIsLoading  = new MutableLiveData<Boolean>();
-//    private RoomRepository roomRepository;
     private DataRepository dataRepository;
     private LiveData<List<UserMission>> allMissions;
     MutableLiveData<List<UserMission>> todayNoneRepeatMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> todayRepeatEverydayMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> todayRepeatDefineMissions = new MutableLiveData<>();
-
     MutableLiveData<List<UserMission>> comingNoneRepeatMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> comingRepeatEverydayMissions = new MutableLiveData<>();
     MutableLiveData<List<UserMission>> comingRepeatDefineMissions = new MutableLiveData<>();
-
-
     MutableLiveData<List<UserMission>> unfinishedMissions = new MutableLiveData<>();
-
     LiveData<List<UserMission>> finishedMissions;
 
     public HomeViewModel(Application application){
@@ -149,7 +144,8 @@ public class HomeViewModel extends ViewModel {
 
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getOperateDay() > TimeToMillisecondUtil.getTodayEndTime())
+            if (userMission.getRepeat() == UserMission.TYPE_NONE &&
+                    userMission.getOperateDay() > TimeToMillisecondUtil.getTodayEndTime())
                 missionList.add(userMission);
         }
         comingNoneRepeatMissions.setValue(missionList);
@@ -189,8 +185,7 @@ public class HomeViewModel extends ViewModel {
         List<UserMission> missionList = new ArrayList<>();
         for (UserMission userMission : allMissions.getValue()) {
             if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
-                    (userMission.getRepeatStart() > TimeToMillisecondUtil.getTodayEndTime() ||
-                            userMission.getRepeatEnd() >= TimeToMillisecondUtil.getTodayEndTime()))
+                    (userMission.getRepeatEnd() > TimeToMillisecondUtil.getTodayEndTime()))
                 missionList.add(userMission);
         }
         comingRepeatDefineMissions.setValue(missionList);
