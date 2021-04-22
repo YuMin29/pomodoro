@@ -3,7 +3,9 @@ package com.yumin.pomodoro.ui.main.viewmodel;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +15,7 @@ import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
+import com.yumin.pomodoro.ui.view.HomeFragment;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 import com.yumin.pomodoro.ui.base.BaseApplication;
@@ -36,22 +39,22 @@ public class HomeViewModel extends ViewModel {
 
     public HomeViewModel(Application application){
         LogUtil.logE(TAG,"[HomeViewModel] Constructor");
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-        else
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+//            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
+//        else
             this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
 
         fetchData();
     }
 
     public void refreshDataWhenLogout(){
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            LogUtil.logE(TAG,"[refreshDataWhenLogout] get firebase user");
-            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(BaseApplication.getApplication()));
-        } else {
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//            LogUtil.logE(TAG,"[refreshDataWhenLogout] get firebase user");
+//            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(BaseApplication.getApplication()));
+//        } else {
             LogUtil.logE(TAG,"[refreshDataWhenLogout] no firebase user");
             this.dataRepository = new RoomRepository(new RoomApiServiceImpl(BaseApplication.getApplication()));
-        }
+//        }
         fetchData();
     }
 
@@ -67,9 +70,80 @@ public class HomeViewModel extends ViewModel {
         mIsLoading.setValue(false);
     }
 
+    public void fetchTodayMissions(){
+        getTodayNoneRepeatMissions();
+        getTodayRepeatEverydayMissions();
+        getTodayRepeatDefineMissions();
+    }
+
+    public void fetchComingMissions(){
+        getComingNoneRepeatMissions();
+        getComingRepeatEverydayMissions();
+        getComingRepeatDefineMissions();
+    }
+
     public LiveData<List<UserMission>> getAllMissions(){
         LogUtil.logD(TAG,"getMissionList");
         return allMissions;
+    }
+
+    public MediatorLiveData<Result> getTodayMediatorLiveData() {
+        // observe today missions
+        MediatorLiveData<Result> todayMissions = new MediatorLiveData<Result>();
+        final Result current = new Result();
+        todayMissions.addSource(getTodayNoneRepeatMissions(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                LogUtil.logD(TAG,"getTodayMissionsByOperateDay [onChanged] SIZE = "+userMissions.size());
+                current.setMissionsByOperateDay(userMissions);
+                todayMissions.setValue(current);
+            }
+        });
+        todayMissions.addSource(getTodayRepeatEverydayMissions(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                LogUtil.logD(TAG,"getTodayMissionsByRepeatType [onChanged] SIZE = "+userMissions.size());
+                current.setMissionsByRepeatType(userMissions);
+                todayMissions.setValue(current);
+            }
+        });
+        todayMissions.addSource(getTodayRepeatDefineMissions(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                LogUtil.logD(TAG,"getTodayMissionsByRepeatRange [onChanged] SIZE = "+userMissions.size());
+                current.setMissionsByRepeatRange(userMissions);
+                todayMissions.setValue(current);
+            }
+        });
+        return todayMissions;
+    }
+
+    public MediatorLiveData<Result> getComingMediatorLiveData(){
+        // observe coming missions
+        MediatorLiveData<Result> comingMissions = new MediatorLiveData<>();
+        final Result current = new Result();
+        comingMissions.addSource(getComingNoneRepeatMissions(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                current.setMissionsByOperateDay(userMissions);
+                comingMissions.setValue(current);
+            }
+        });
+        comingMissions.addSource(getComingRepeatEverydayMissions(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                current.setMissionsByRepeatType(userMissions);
+                comingMissions.setValue(current);
+            }
+        });
+        comingMissions.addSource(getComingRepeatDefineMissions(), new Observer<List<UserMission>>() {
+            @Override
+            public void onChanged(List<UserMission> userMissions) {
+                current.setMissionsByRepeatRange(userMissions);
+                comingMissions.setValue(current);
+            }
+        });
+        return comingMissions;
     }
 
     /**
@@ -77,18 +151,19 @@ public class HomeViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<UserMission>> getTodayNoneRepeatMissions(){
-        if (allMissions.getValue() == null)
-            return null;
-
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == UserMission.TYPE_NONE &&
-                    TimeToMillisecondUtil.getTodayStartTime() <= userMission.getOperateDay() &&
-                    userMission.getOperateDay() <= TimeToMillisecondUtil.getTodayEndTime()) {
-                missionList.add(userMission);
+        if (allMissions.getValue() == null) {
+            todayNoneRepeatMissions.setValue(new ArrayList<>());
+        } else {
+            List<UserMission> missionList = new ArrayList<>();
+            for (UserMission userMission : allMissions.getValue()) {
+                if (userMission.getRepeat() == UserMission.TYPE_NONE &&
+                        TimeToMillisecondUtil.getTodayStartTime() <= userMission.getOperateDay() &&
+                        userMission.getOperateDay() <= TimeToMillisecondUtil.getTodayEndTime()) {
+                    missionList.add(userMission);
+                }
             }
+            todayNoneRepeatMissions.setValue(missionList);
         }
-        todayNoneRepeatMissions.setValue(missionList);
         return todayNoneRepeatMissions;
     }
 
@@ -97,16 +172,17 @@ public class HomeViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<UserMission>> getTodayRepeatEverydayMissions(){
-        if (allMissions.getValue() == null)
-            return null;
-
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY &&
-                    userMission.getOperateDay() <= TimeToMillisecondUtil.getTodayEndTime())
-                missionList.add(userMission);
+        if (allMissions.getValue() == null) {
+            todayRepeatEverydayMissions.setValue(new ArrayList<>());
+        } else {
+            List<UserMission> missionList = new ArrayList<>();
+            for (UserMission userMission : allMissions.getValue()) {
+                if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY &&
+                        userMission.getOperateDay() <= TimeToMillisecondUtil.getTodayEndTime())
+                    missionList.add(userMission);
+            }
+            todayRepeatEverydayMissions.setValue(missionList);
         }
-        todayRepeatEverydayMissions.setValue(missionList);
         return todayRepeatEverydayMissions;
     }
 
@@ -115,22 +191,24 @@ public class HomeViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<UserMission>> getTodayRepeatDefineMissions(){
-        if (allMissions.getValue() == null)
-            return null;
-        LogUtil.logE(TAG,"TimeMilli.getTodayStartTime() = "+ TimeToMillisecondUtil.getTodayStartTime()+
-                " , TimeMilli.getTodayEndTime() = "+ TimeToMillisecondUtil.getTodayEndTime());
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
-                TimeToMillisecondUtil.getTodayEndTime() >= userMission.getRepeatStart() &&
-                TimeToMillisecondUtil.getTodayEndTime() <= userMission.getRepeatEnd()) {
-                missionList.add(userMission);
+        if (allMissions.getValue() == null) {
+            todayRepeatDefineMissions.setValue(new ArrayList<>());
+        } else {
+            LogUtil.logE(TAG,"TimeMilli.getTodayStartTime() = "+ TimeToMillisecondUtil.getTodayStartTime()+
+                    " , TimeMilli.getTodayEndTime() = "+ TimeToMillisecondUtil.getTodayEndTime());
+            List<UserMission> missionList = new ArrayList<>();
+            for (UserMission userMission : allMissions.getValue()) {
+                if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
+                        TimeToMillisecondUtil.getTodayEndTime() >= userMission.getRepeatStart() &&
+                        TimeToMillisecondUtil.getTodayEndTime() <= userMission.getRepeatEnd()) {
+                    missionList.add(userMission);
+                }
+                LogUtil.logE(TAG,"userMission.getRepeatStart() = "+userMission.getRepeatStart()+
+                        " ,  userMission.getRepeatEnd() = "+  userMission.getRepeatEnd());
             }
-            LogUtil.logE(TAG,"userMission.getRepeatStart() = "+userMission.getRepeatStart()+
-                    " ,  userMission.getRepeatEnd() = "+  userMission.getRepeatEnd());
-        }
 
-        todayRepeatDefineMissions.setValue(missionList);
+            todayRepeatDefineMissions.setValue(missionList);
+        }
         return todayRepeatDefineMissions;
     }
 
@@ -139,16 +217,17 @@ public class HomeViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<UserMission>> getComingNoneRepeatMissions(){
-        if (allMissions.getValue() == null)
-            return null;
-
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == UserMission.TYPE_NONE &&
-                    userMission.getOperateDay() > TimeToMillisecondUtil.getTodayEndTime())
-                missionList.add(userMission);
+        if (allMissions.getValue() == null) {
+            comingNoneRepeatMissions.setValue(new ArrayList<>());
+        } else {
+            List<UserMission> missionList = new ArrayList<>();
+            for (UserMission userMission : allMissions.getValue()) {
+                if (userMission.getRepeat() == UserMission.TYPE_NONE &&
+                        userMission.getOperateDay() > TimeToMillisecondUtil.getTodayEndTime())
+                    missionList.add(userMission);
+            }
+            comingNoneRepeatMissions.setValue(missionList);
         }
-        comingNoneRepeatMissions.setValue(missionList);
         return comingNoneRepeatMissions;
     }
 
@@ -157,15 +236,16 @@ public class HomeViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<UserMission>> getComingRepeatEverydayMissions(){
-        if (allMissions.getValue() == null)
-            return null;
-
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY)
-                missionList.add(userMission);
+        if (allMissions.getValue() == null) {
+            comingRepeatEverydayMissions.setValue(new ArrayList<>());
+        } else {
+            List<UserMission> missionList = new ArrayList<>();
+            for (UserMission userMission : allMissions.getValue()) {
+                if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY)
+                    missionList.add(userMission);
+            }
+            comingRepeatEverydayMissions.setValue(missionList);
         }
-        comingRepeatEverydayMissions.setValue(missionList);
         return comingRepeatEverydayMissions;
     }
 
@@ -179,16 +259,17 @@ public class HomeViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<UserMission>> getComingRepeatDefineMissions(){
-        if (allMissions.getValue() == null)
-            return null;
-
-        List<UserMission> missionList = new ArrayList<>();
-        for (UserMission userMission : allMissions.getValue()) {
-            if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
-                    (userMission.getRepeatEnd() > TimeToMillisecondUtil.getTodayEndTime()))
-                missionList.add(userMission);
+        if (allMissions.getValue() == null) {
+            comingRepeatDefineMissions.setValue(new ArrayList<>());
+        } else {
+            List<UserMission> missionList = new ArrayList<>();
+            for (UserMission userMission : allMissions.getValue()) {
+                if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
+                        (userMission.getRepeatEnd() > TimeToMillisecondUtil.getTodayEndTime()))
+                    missionList.add(userMission);
+            }
+            comingRepeatDefineMissions.setValue(missionList);
         }
-        comingRepeatDefineMissions.setValue(missionList);
         return comingRepeatDefineMissions;
     }
     
@@ -202,9 +283,31 @@ public class HomeViewModel extends ViewModel {
         return finishedMissions;
     }
 
+    public class Result {
+        public List<UserMission> missionsByOperateDay = new ArrayList<>();
+        public List<UserMission> missionsByRepeatType = new ArrayList<>();
+        public List<UserMission> missionsByRepeatRange = new ArrayList<>();
+
+        public Result() {}
+
+        public void setMissionsByOperateDay(List<UserMission> missions){
+            this.missionsByOperateDay = missions;
+        }
+
+        public void setMissionsByRepeatType(List<UserMission> missions){
+            this.missionsByRepeatType = missions;
+        }
+
+        public void setMissionsByRepeatRange(List<UserMission> missions){
+            this.missionsByRepeatRange = missions;
+        }
+
+        public boolean isComplete() {
+            return (missionsByOperateDay != null && missionsByRepeatType != null && missionsByRepeatRange != null);
+        }
+    }
 
     public void deleteMission(UserMission mission){
         this.dataRepository.deleteMission(mission);
     }
-
 }

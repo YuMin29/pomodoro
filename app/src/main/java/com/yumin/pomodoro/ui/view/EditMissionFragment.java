@@ -1,7 +1,5 @@
 package com.yumin.pomodoro.ui.view;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -9,44 +7,54 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.EditMissionViewModel;
-import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
+import com.yumin.pomodoro.ui.view.mission.MissionBaseFragment;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.ui.base.DataBindingConfig;
-import com.yumin.pomodoro.ui.base.DataBindingFragment;
 import com.yumin.pomodoro.ui.base.MissionManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class EditMissionFragment extends DataBindingFragment implements ItemListView.OnCalenderListener, ItemDateView.OnOperateDayChanged{
+public class EditMissionFragment extends MissionBaseFragment {
     private static final String TAG = "[EditMissionFragment]";
     EditMissionViewModel editMissionViewModel;
-    SharedViewModel sharedViewModel;
     FragmentEditMissionBinding fragmentEditMissionBinding;
-//    RangeCalenderViewModel rangeCalenderViewModel;
     UserMission editMission;
-    private static final int REPEAT_NONE = 0;
-    private static final int REPEAT_EVERYDAY = 1;
-    private static final int REPEAT_DEFINE = 2;
-    private long latestRepeatStart = -1L;
-    private long latestRepeatEnd = -1L;
-    private long operateDay = -1L;
-    private long repeatStart = -1L;
-    private long repeatEnd = -1L;
 
     public EditMissionFragment() {}
 
     @Override
+    protected UserMission getMission() {
+        return editMission;
+    }
+
+    @Override
+    protected void updateItemOperateUI(long time) {
+        fragmentEditMissionBinding.missionAttributeView.getItemOperate().updateUI(time);
+    }
+
+    @Override
+    protected void setRangeCalenderId() {
+        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getStrEditId());
+    }
+
+    @Override
+    protected void updateEditMissionRepeatStart(long time) {
+        editMissionViewModel.updateEditMissionRepeatStart(time);
+    }
+
+    @Override
+    protected void updateEditMissionRepeatEnd(long time) {
+        editMissionViewModel.updateEditMissionRepeatEnd(time);
+    }
+
+    @Override
     protected void initViewModel() {
+        super.initViewModel();
         editMissionViewModel = getFragmentScopeViewModel(EditMissionViewModel.class);
-        sharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
     }
 
     @Override
@@ -55,57 +63,33 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                 .addBindingParam(BR.editMissionClickProxy ,new ClickProxy());
     }
 
-    private void navigateUp(){
-        NavHostFragment.findNavController(this).navigateUp();
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fragmentEditMissionBinding = (FragmentEditMissionBinding) getBinding();
-        fragmentEditMissionBinding.itemRepeat.setOnCalenderListener(this);
-        fragmentEditMissionBinding.itemOperate.setOperateDayListener(this);
+        fragmentEditMissionBinding.missionAttributeView.getItemRepeat().setOnRepeatTypeListener(this);
+        fragmentEditMissionBinding.missionAttributeView.getItemOperate().setOperateDayListener(this);
         initObserver();
     }
 
     private void initObserver() {
-        editMissionViewModel.getSaveButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        editMissionViewModel.getIsSaveButtonClicked().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean click) {
                 LogUtil.logD(TAG,"[Observe][getSaveButtonClick] click = "+click);
                 if (click) {
-//                    MainActivity.getNavController().navigateUp();
                     navigateUp();
                 }
             }
         });
 
-        editMissionViewModel.getCancelButtonClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        editMissionViewModel.getIsCancelButtonClicked().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean click) {
                 LogUtil.logD(TAG,"[Observe][getCancelButtonClick] click = "+click);
                 if (click) {
-//                    MainActivity.getNavController().navigateUp();
                     navigateUp();
                 }
-            }
-        });
-
-        sharedViewModel.getRepeatStart().observeInFragment(this, new Observer<Long>() {
-            @Override
-            public void onChanged(Long time) {
-                LogUtil.logD(TAG,"[Observe][getRepeatStart] time = "+time);
-                editMissionViewModel.updateRepeatStart(time);
-                latestRepeatStart = time;
-            }
-        });
-
-        sharedViewModel.getRepeatEnd().observeInFragment(this, new Observer<Long>() {
-            @Override
-            public void onChanged(Long time) {
-                LogUtil.logD(TAG,"[Observe][getRepeatEnd] time = "+time);
-                editMissionViewModel.updateRepeatEnd(time);
-                latestRepeatEnd = time;
             }
         });
 
@@ -115,78 +99,20 @@ public class EditMissionFragment extends DataBindingFragment implements ItemList
                 LogUtil.logE(TAG,"[onChanged] MISSION = "+mission.toString());
                 if (mission != null) {
                     editMission = mission;
-                    operateDay = editMission.getOperateDay();
-                    repeatStart = editMission.getRepeatStart();
-                    repeatEnd = editMission.getRepeatEnd();
+                    mOperateDay = editMission.getOperateDay();
+                    mRepeatStart = editMission.getRepeatStart();
+                    mRepeatEnd = editMission.getRepeatEnd();
                 }
             }
         });
-    }
 
-    private String getTransferDate(long time){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        return simpleDateFormat.format(new Date(time));
-    }
-
-    @Override
-    public void onOpened() {
-//        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getEditId());
-        MissionManager.getInstance().setRangeCalenderId(MissionManager.getInstance().getStrEditId());
-        Bundle bundle = new Bundle();
-        bundle.putLong("repeat_start", (latestRepeatStart != -1L) ? latestRepeatStart : repeatStart);
-        bundle.putLong("repeat_end", (latestRepeatEnd != -1L) ? latestRepeatEnd : repeatEnd);
-        bundle.putLong("mission_operate_day",operateDay);
-//        MainActivity.getNavController().navigate(R.id.fragment_range_calender,bundle);
-        NavHostFragment.findNavController(this).navigate(R.id.fragment_range_calender,bundle);
-    }
-
-    @Override
-    public void onOperateChanged(long time) {
-        LogUtil.logD(TAG,"[onOperateChanged] = "+getTransferDate(time));
-        if (editMission!=null && editMission.getRepeat() == REPEAT_DEFINE &&
-                editMission.getRepeatStart() != -1L &&
-                editMission.getRepeatEnd() != -1L) {
-            if (time > editMissionViewModel.getEditMission().getValue().getRepeatStart() ||
-                    time > editMissionViewModel.getEditMission().getValue().getRepeatEnd()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.notice_choose_operate_day)
-                        .setMessage(R.string.notice_clear_repeat_range)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                latestRepeatStart = -1L;
-                                latestRepeatEnd = -1L;
-                                repeatStart = -1L;
-                                repeatEnd = -1L;
-
-                                fragmentEditMissionBinding.itemOperate.updateUI(time);
-                                operateDay = time;
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-                                LogUtil.logD(TAG,"[onOperateChanged] click cancel");
-                            }
-                        });
-                builder.show();
-            } else {
-                fragmentEditMissionBinding.itemOperate.updateUI(time);
-                operateDay = time;
-            }
-        } else {
-            fragmentEditMissionBinding.itemOperate.updateUI(time);
-            operateDay = time;
-        }
     }
 
     public class ClickProxy{
-
         public void onSaveButtonClick(){
             LogUtil.logD(TAG,"[onSaveButtonClick]");
 
-            if (fragmentEditMissionBinding.missionTitle.getText().toString().isEmpty()) {
+            if (fragmentEditMissionBinding.missionAttributeView.getMissionTitle().getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), R.string.notice_set_mission_title, Toast.LENGTH_SHORT).show();
                 return;
             }

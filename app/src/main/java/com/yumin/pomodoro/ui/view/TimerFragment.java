@@ -26,7 +26,6 @@ import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
-import com.yumin.pomodoro.ui.base.MissionManager;
 import com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel;
 import com.yumin.pomodoro.utils.EventCountdownTimer;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -38,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 
 public class TimerFragment extends DataBindingFragment implements EventCountdownTimer.MissionTimerListener, EventCountdownTimer.BreakTimerListener {
     private static final String TAG = "[TimerFragment]";
-    final int NOTIFICATION_ID = 1000;
     FragmentTimerBinding mFragmentTimerBinding;
     TimerViewModel mTimerViewModel;
     boolean mEnabledVibrate;
@@ -53,12 +51,20 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
     private boolean mIsAutoStartMission = false;
     boolean mIsDisableBreak = false;
     private int mIndexOfBackgroundMusic = -1;
+    private int mIndexOfRingtone = -1;
     private EventCountdownTimer eventCountdownTimer;
     TimerStatus timerStatus = TimerStatus.MISSION_INIT;
     private int mBreakBackgroundColor = Color.parseColor("#87CEEB");
-    long missionTime;
-    private long missionBreakTime;
+    long mMissionTime;
+    private long mMissionBreakTime;
     private boolean mIsAutoStartBreak = false;
+    private boolean mEnabledSound = false;
+    private MissionState mMissionState = null;
+
+    @Override
+    public boolean enabledSound() {
+        return this.mEnabledSound;
+    }
 
     public enum TimerStatus {
         MISSION_INIT,
@@ -89,7 +95,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
     }
 
     void navigateUp() {
-        LogUtil.logE(TAG,"navigateUp");
+        LogUtil.logE(TAG, "navigateUp");
         NavHostFragment.findNavController(this).navigateUp();
         if (mEnableKeepScreenOn) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -105,7 +111,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mFragmentTimerBinding = (FragmentTimerBinding) getBinding();
         LogUtil.logE(TAG, "[onViewCreated]");
 
-        eventCountdownTimer = new EventCountdownTimer(getContext(),this,this);
+        eventCountdownTimer = new EventCountdownTimer(getContext(), this, this);
         mNotificationHelper = new NotificationHelper(getContext());
         observeViewModel();
 
@@ -124,7 +130,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                             public void onClick(DialogInterface dialog, int which) {
                                 // exit & cancel notification
                                 if (timerStatus != TimerStatus.MISSION_STOP ||
-                                    timerStatus != TimerStatus.BREAK_STOP) {
+                                        timerStatus != TimerStatus.BREAK_STOP) {
                                     resetTimer();
                                     if (mEnabledNotification)
                                         mNotificationHelper.cancelNotification();
@@ -151,8 +157,8 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         });
     }
 
-    public void setStatusBarColor(int color){
-        LogUtil.logE(TAG,"[setStatusBarColor] color = "+color);
+    public void setStatusBarColor(int color) {
+        LogUtil.logE(TAG, "[setStatusBarColor] color = " + color);
         ((MainActivity) getContext()).getWindow().setStatusBarColor(color);
     }
 
@@ -164,8 +170,8 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 LogUtil.logE(TAG, "[OBSERVE] getMission");
                 if (mission != null) {
                     // format
-                    missionTime = Long.valueOf(mission.getTime() * 1 * 1000);
-                    missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 1 * 1000);
+                    mMissionTime = Long.valueOf(mission.getTime() * 1 * 1000);
+                    mMissionBreakTime = Long.valueOf(mission.getShortBreakTime() * 1 * 1000);
                     // assign value
                     mMissionCount = mission.getGoal();
                     mEnabledVibrate = mission.isEnableVibrate();
@@ -173,13 +179,17 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                     mEnableKeepScreenOn = mission.isKeepScreenOn();
                     mMissionTitle = mission.getName();
                     mMissionBackgroundColor = mission.getColor();
+                    mEnabledSound = mission.isEnableSound();
 
-                    initTimerLayout(missionTime,mMissionBackgroundColor);
+                    if (timerStatus == TimerStatus.MISSION_INIT) {
+                        LogUtil.logE(TAG,"[Observe] getMission timerStatus == TimerStatus.MISSION_INIT");
+                        initTimerLayout(mMissionTime, mMissionBackgroundColor);
 
-                    // auto start in here ???
-                    if (missionTime != 0) {
-                        if (mIsAutoStartMission && mIndexOfBackgroundMusic != -1) {
-                            startTimer();
+                        // auto start in here ???
+                        if (mMissionTime != 0) {
+                            if (mIsAutoStartMission) {
+                                startTimer();
+                            }
                         }
                     }
                 }
@@ -198,6 +208,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             @Override
             public void onChanged(MissionState missionState) {
                 LogUtil.logE(TAG, "[OBSERVE] getMissionState = " + missionState);
+                mMissionState = missionState;
             }
         });
 
@@ -212,6 +223,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getAutoStartBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
+                LogUtil.logE(TAG, "[OBSERVE][getDisableBreak] aBoolean = " + aBoolean);
                 mIsAutoStartBreak = aBoolean;
             }
         });
@@ -229,6 +241,14 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             public void onChanged(Integer integer) {
                 LogUtil.logE(TAG, "[OBSERVE][getIndexOfMissionBackgroundRingtone] INDEX = " + integer);
                 mIndexOfBackgroundMusic = integer;
+            }
+        });
+
+        mTimerViewModel.getIndexOfFinishedMissionRingtone().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                LogUtil.logE(TAG, "[OBSERVE][getIndexOfFinishedMissionRingtone] INDEX = " + integer);
+                mIndexOfRingtone = integer;
             }
         });
     }
@@ -251,19 +271,22 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
     }
 
     private void startTimer() {
+        int backgroundColor = 0;
         // changing play icon to stop icon
         mFragmentTimerBinding.imageViewStartPause.setImageResource(R.drawable.ic_baseline_pause_24);
         // changing the timer status to started
         if (timerStatus == TimerStatus.MISSION_INIT) {
             timerStatus = TimerStatus.MISSION_START;
-            eventCountdownTimer.startMissionCountdown(missionTime);
-            createNotification("蕃茄任務:" + mMissionTitle, mMissionBackgroundColor);
-        } else if (timerStatus == TimerStatus.BREAK_STOP ||
-                timerStatus == TimerStatus.MISSION_STOP) {
+            eventCountdownTimer.startMissionCountdown(mMissionTime,mIndexOfBackgroundMusic,mIndexOfRingtone);
+            backgroundColor = mMissionBackgroundColor;
+        } else if (timerStatus == TimerStatus.BREAK_STOP || timerStatus == TimerStatus.MISSION_STOP) {
             timerStatus = TimerStatus.BREAK_START;
-            eventCountdownTimer.startBreakCountdown(missionBreakTime);
-            createNotification("蕃茄任務:" + mMissionTitle, mBreakBackgroundColor);
+            eventCountdownTimer.startBreakCountdown(mMissionBreakTime);
+            backgroundColor = mBreakBackgroundColor;
         }
+
+        if (mEnabledNotification)
+            createNotification("蕃茄任務:" + mMissionTitle, backgroundColor);
 
         if (mEnableKeepScreenOn) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -272,10 +295,13 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
             }
         }
+
+        if (mMissionState == null)
+            mTimerViewModel.initMissionState();
     }
 
     public void initTimerLayout(long time, int backgroundColor) {
-        LogUtil.logE(TAG,"[initTimerLayout]");
+        LogUtil.logE(TAG, "[initTimerLayout]");
         setStatusBarColor(backgroundColor);
         mFragmentTimerBinding.timerRelativeLayout.setBackgroundColor(backgroundColor);
         initTimerValues(time);
@@ -285,24 +311,22 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         setProgressBarValues(time);
     }
 
-    private void createNotification(String s, int mMissionBackgroundColor) {
+    private void createNotification(String title, int backgroundColor) {
         // show notification in here
-        if (mEnabledNotification) {
-            // Create an explicit intent for an Activity in your app
-            Intent intent = getContext().getPackageManager()
-                    .getLaunchIntentForPackage(getContext().getPackageName())
-                    .setPackage(null)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+        // Create an explicit intent for an Activity in your app
+        Intent intent = getContext().getPackageManager()
+                .getLaunchIntentForPackage(getContext().getPackageName())
+                .setPackage(null)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
-            mNotificationBuilder = mNotificationHelper.getNotification(s, pendingIntent, mMissionBackgroundColor);
-            mNotificationHelper.notify(mNotificationBuilder);
-        }
+        mNotificationBuilder = mNotificationHelper.getNotificationBuilder(title, pendingIntent, backgroundColor);
+        mNotificationHelper.notify(mNotificationBuilder);
     }
 
     @Override
     public void onMissionTimerTickResponse(long response) {
-        LogUtil.logE(TAG,"[onMissionTimerTickResponse]");
+        LogUtil.logE(TAG, "[onMissionTimerTickResponse]");
         // update progress bar & left time milliseconds
         setProgressBarValues(response);
         mFragmentTimerBinding.textViewTime.setText(msTimeFormatter(response));
@@ -331,12 +355,12 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 if (mIsDisableBreak) {
                     //                Bundle bundle = new Bundle();
 //                bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
-                    MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.timer_to_home,null);
+                    MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
                     navigateUp();
 
                     // cancel notification when finish the mission
                     if (mEnabledNotification) {
-                        mNotificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                        mNotificationHelper.cancelNotification();
                     }
                     return;
                 }
@@ -357,11 +381,12 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         if (mIsDisableBreak) {
             // repeat mission timer again
             timerStatus = TimerStatus.MISSION_INIT;
-            initTimerLayout(missionTime,mMissionBackgroundColor);
+            initTimerLayout(mMissionTime, mMissionBackgroundColor);
             updateNotification("執行蕃茄任務！");
         } else {
             // switch to break timer
-            initTimerLayout(missionBreakTime,mBreakBackgroundColor);
+            LogUtil.logE(TAG, "switch to break timer");
+            initTimerLayout(mMissionBreakTime, mBreakBackgroundColor);
 
             if (mIsAutoStartBreak)
                 startTimer();
@@ -386,13 +411,13 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
     @Override
     public void onBreakTimerFinishedResponse() {
-        LogUtil.logD(TAG,"[break timer][onFinished] 1");
-        LogUtil.logD(TAG,"[break timer][onFinished] missionCount = "+mMissionCount+
-                " ,numberOfCompletion = "+mNumberOfCompletion);
+        LogUtil.logD(TAG, "[break timer][onFinished] 1");
+        LogUtil.logD(TAG, "[break timer][onFinished] missionCount = " + mMissionCount +
+                " ,numberOfCompletion = " + mNumberOfCompletion);
         timerStatus = TimerStatus.BREAK_STOP;
         if (mMissionCount != -1 && mNumberOfCompletion != -1) {
             if ((mMissionCount - mNumberOfCompletion) >= 1) {
-                LogUtil.logD(TAG,"[break timer][onFinished] 2");
+                LogUtil.logD(TAG, "[break timer][onFinished] 2");
                 // vibrate for remind
                 if (mEnabledVibrate) {
                     Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -404,26 +429,26 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 }
 
                 // switch to mission timer
-                initTimerLayout(missionTime,mMissionBackgroundColor);
+                initTimerLayout(mMissionTime, mMissionBackgroundColor);
                 timerStatus = TimerStatus.MISSION_INIT;
 
                 if (mIsAutoStartMission)
                     startTimer();
 
             } else {
-                LogUtil.logD(TAG,"[break timer][onFinished] 3");
-                MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.timer_to_home,null);
+                LogUtil.logD(TAG, "[break timer][onFinished] 3");
+                MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
                 navigateUp();
 
                 // cancel notification when finish the mission
                 if (mEnabledNotification) {
-                    mNotificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                    mNotificationHelper.cancelNotification();
                 }
             }
         } else {
             //                Bundle bundle = new Bundle();
 //                bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
-            MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.timer_to_home,null);
+            MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
             navigateUp();
         }
     }
@@ -447,7 +472,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
         if (timerStatus == TimerStatus.MISSION_PAUSE) {
             timerStatus = TimerStatus.MISSION_START;
-            eventCountdownTimer.continueMissionCount();
+            eventCountdownTimer.continueMissionCount(mIndexOfBackgroundMusic);
         } else if (timerStatus == TimerStatus.BREAK_PAUSE) {
             timerStatus = TimerStatus.BREAK_START;
             eventCountdownTimer.continueBreakCount();
@@ -459,10 +484,10 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mFragmentTimerBinding.imageViewReset.setVisibility(View.GONE);
         if (timerStatus == TimerStatus.BREAK_PAUSE) {
             timerStatus = TimerStatus.BREAK_STOP;
-            timeMilli = missionBreakTime;
+            timeMilli = mMissionBreakTime;
         } else {
             timerStatus = TimerStatus.MISSION_INIT;
-            timeMilli = missionTime;
+            timeMilli = mMissionTime;
         }
         initTimerValues(timeMilli);
         mFragmentTimerBinding.textViewTime.setText(msTimeFormatter(timeMilli));

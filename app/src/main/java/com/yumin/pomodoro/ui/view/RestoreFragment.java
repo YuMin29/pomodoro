@@ -1,36 +1,77 @@
 package com.yumin.pomodoro.ui.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.activity.MainActivity;
+import com.yumin.pomodoro.data.MissionState;
+import com.yumin.pomodoro.data.UserMission;
+import com.yumin.pomodoro.ui.base.DataBindingConfig;
+import com.yumin.pomodoro.ui.base.DataBindingFragment;
 import com.yumin.pomodoro.ui.main.viewmodel.RestoreViewModel;
+import com.yumin.pomodoro.utils.LogUtil;
 
-public class RestoreFragment extends Fragment {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
-    private RestoreViewModel restoreViewModel;
+public class RestoreFragment extends DataBindingFragment {
+    private final String TAG = "[RestoreFragment]";
+    private RestoreViewModel mRestoreViewModel;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        restoreViewModel =
-                ViewModelProviders.of(this).get(RestoreViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_restore, container, false);
-        final TextView textView = root.findViewById(R.id.text_restore);
-        restoreViewModel.getText().observe(this, new Observer<String>() {
+    @Override
+    protected void initViewModel() {
+        mRestoreViewModel = getFragmentScopeViewModel(RestoreViewModel.class);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        observeViewModel();
+    }
+
+    private void observeViewModel(){
+        mRestoreViewModel.getProgress().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onChanged(Boolean progress) {
+                // false -> navigate up
+                if (!progress)
+                    navigateUp();
+                // set time stamp
+                String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.NAV_ITEM_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+                sharedPreferences.edit().putString(MainActivity.KEY_RESTORE_TIME,"上次還原時間:" + nowDate).commit();
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.setRestoreTime();
             }
         });
-        return root;
+
+
+        mRestoreViewModel.getResultMediatorLiveData().observe(getViewLifecycleOwner(), new Observer<RestoreViewModel.RestoreProgressResult>() {
+            @Override
+            public void onChanged(RestoreViewModel.RestoreProgressResult restoreProgressResult) {
+                if (restoreProgressResult.isComplete()) {
+                    mRestoreViewModel.operateRestore();
+                }
+            }
+        });
+    }
+
+    private void navigateUp(){
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
+    @Override
+    protected DataBindingConfig getDataBindingConfig() {
+        return new DataBindingConfig(R.layout.fragment_restore, BR.restore_view_model,mRestoreViewModel);
     }
 }

@@ -3,8 +3,8 @@
 
     <data>
         <variable
-            name="viewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel" />
+            name="itemDescription"
+            type="String"/>
     </data>
 
     <LinearLayout
@@ -51,6 +51,7 @@
             android:gravity="center"
             android:singleLine="false"
             android:textColor="@color/colorPrimaryDark"
+            android:text="@{itemDescription}"
             android:textSize="14sp" />
     </LinearLayout>
 </layout>

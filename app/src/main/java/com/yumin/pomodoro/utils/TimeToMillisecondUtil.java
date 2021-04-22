@@ -85,4 +85,11 @@ public class TimeToMillisecondUtil {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTimeInMillis();
     }
+
+    public static String getDateString(long milliSeconds){
+        SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return format.format(calendar.getTime());
+    }
 }

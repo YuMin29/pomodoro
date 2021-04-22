@@ -27,6 +27,8 @@ public interface DataRepository {
 
     public void deleteMission(UserMission mission);
 
+    public void deleteAllMission();
+
     public LiveData<Long> getMissionRepeatStart(String id);
 
     public LiveData<Long> getMissionRepeatEnd(String id);
@@ -43,5 +45,7 @@ public interface DataRepository {
 
     public void saveMissionState(String missionId, MissionState missionState);
 
-    public LiveData<List<MissionState>> getMissionStates();
+    public LiveData<List<MissionState>> getMissionStateList();
+
+    public LiveData<List<UserMission>> getPastFinishedMission(long today);
 }

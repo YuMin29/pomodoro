@@ -55,6 +55,12 @@ public class FirebaseRepository implements DataRepository {
         firebaseApiService.deleteMission(mission);
     }
 
+
+    @Override
+    public void deleteAllMission() {
+        firebaseApiService.deleteAllMission();
+    }
+
     public LiveData<Long> getMissionRepeatStart(String id){
         return firebaseApiService.getMissionRepeatStart(id);
     }
@@ -93,7 +99,12 @@ public class FirebaseRepository implements DataRepository {
     }
 
     @Override
-    public LiveData<List<MissionState>> getMissionStates() {
+    public LiveData<List<MissionState>> getMissionStateList() {
+        return firebaseApiService.getMissionStateList();
+    }
+
+    @Override
+    public LiveData<List<UserMission>> getPastFinishedMission(long today) {
         return null;
     }
 }

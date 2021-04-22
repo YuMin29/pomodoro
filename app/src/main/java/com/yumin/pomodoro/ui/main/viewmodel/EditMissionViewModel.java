@@ -14,78 +14,38 @@ import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
+import com.yumin.pomodoro.ui.main.viewmodel.mission.MissionBaseViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.ui.base.MissionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class EditMissionViewModel extends AndroidViewModel {
+public class EditMissionViewModel extends MissionBaseViewModel {
     private static final String TAG = "[EditMissionViewModel]";
-    private DataRepository dataRepository;
-    private LiveData<UserMission> editMission;
-    private MutableLiveData<Boolean> saveButtonClick = new MutableLiveData<>();
-    private MutableLiveData<Boolean> cancelButtonClick = new MutableLiveData<>();
-    private int missionId;
     private String missionStrId;
 
     public EditMissionViewModel(@NonNull Application application) {
         super(application);
+        LogUtil.logD(TAG,"[EditMissionViewModel] ");
+    }
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-        } else {
-            this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
-        }
-
+    public void fetchMission(){
+        LogUtil.logD(TAG,"[fetchMission] missionStrId = "+missionStrId);
         this.missionStrId = MissionManager.getInstance().getStrEditId();
-
-        LogUtil.logD(TAG,"missionStrId = "+missionStrId);
-        saveButtonClick.postValue(false);
-        cancelButtonClick.postValue(false);
-        fetchMission();
-    }
-
-    private void fetchMission(){
-        LogUtil.logD(TAG,"[fetchMission] ");
-//        editMission = roomRepository.getMissionById(missionId);
-        editMission = dataRepository.getMissionById(missionStrId);
-    }
-
-    public LiveData<UserMission> getEditMission(){
-        return this.editMission;
-    }
-
-    private String getTransferDate(long time){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        return simpleDateFormat.format(new Date(time));
-    }
-
-    public LiveData<Boolean> getSaveButtonClick(){
-        return this.saveButtonClick;
-    }
-
-    public LiveData<Boolean> getCancelButtonClick(){
-        return this.cancelButtonClick;
+        mEditMission = mDataRepository.getMissionById(missionStrId);
     }
 
     public void saveMission(){
-        LogUtil.logD(TAG,"[saveMission] mission val = "+ editMission.getValue().toString());
-//        roomRepository.updateMission(editMission.getValue());
-        dataRepository.updateMission(editMission.getValue());
-        saveButtonClick.postValue(true);
-    }
+        LogUtil.logD(TAG,"[saveMission] mission val = "+ mEditMission.getValue().toString());
+        if (mEditMission.getValue().getRepeat() != UserMission.TYPE_DEFINE &&
+                (mEditMission.getValue().getRepeatStart() != -1 || mEditMission.getValue().getRepeatEnd() != -1)) {
+            LogUtil.logE(TAG,"[saveMission] clear repeat start and end");
+            mEditMission.getValue().setRepeatStart(-1);
+            mEditMission.getValue().setRepeatEnd(-1);
+        }
 
-    public void cancel(){
-        cancelButtonClick.postValue(true);
-    }
-
-    public void updateRepeatStart(long time){
-        LogUtil.logD(TAG,"[updateRepeatStart] time = "+getTransferDate(time));
-        editMission.getValue().setRepeatStart(time);
-    }
-    public void updateRepeatEnd(long time){
-        LogUtil.logD(TAG,"[updateRepeatEnd] time = "+getTransferDate(time));
-        editMission.getValue().setRepeatEnd(time);
+        mDataRepository.updateMission(mEditMission.getValue());
+        mIsSaveButtonClicked.postValue(true);
     }
 }

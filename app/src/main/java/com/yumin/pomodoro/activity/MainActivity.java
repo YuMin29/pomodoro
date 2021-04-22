@@ -9,6 +9,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -42,6 +43,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.ui.view.Navigation.DrawerListAdapter;
+import com.yumin.pomodoro.ui.view.Navigation.NavItem;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.ui.base.MissionManager;
 
@@ -53,11 +56,15 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener{
     private static final String TAG = "[MainActivity]";
@@ -66,12 +73,27 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     private static NavController mNavController;
     FloatingActionButton mFab;
     private FirebaseAuth mAuth;
-    NavigationView navigationView;
+    NavigationView mNavigationView;
     FirebaseAuth.AuthStateListener authStateListener;
     DrawerLayout mDrawerLayout;
     FirebaseUser mCurrentFirebaseUser = null;
     Context mContext;
     OnRefreshHomeFragment onRefreshHomeFragment;
+
+    LinearLayout mNavHeaderMain = null;
+    ListView mDrawerList;
+    ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
+    private final int POSITION_CALENDER = 0;
+    private final int POSITION_SETTINGS = 1;
+    private final int POSITION_BACKUP = 2;
+    private final int POSITION_RESTORE = 3;
+    private final int POSITION_EXPIRED= 4;
+
+    DrawerListAdapter mDrawerListAdapter;
+
+    public static final String NAV_ITEM_SHARED_PREFERENCE = "nav_item";
+    public static final String KEY_BACKUP_TIME = "backup_time";
+    public static final String KEY_RESTORE_TIME = "restore_time";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,12 +119,12 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 mNavController.navigate(R.id.fragment_timer);
             }
         });
+        mNavigationView = findViewById(R.id.nav_view);
+        mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        mNavController.addOnDestinationChangedListener(this);
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        navigationView = findViewById(R.id.nav_view);
-
-        View navigationHeaderView = navigationView.getHeaderView(0);
-        navigationHeaderView.setOnClickListener(new View.OnClickListener() {
+        mNavHeaderMain = mDrawerLayout.findViewById(R.id.nav_header_main);
+        mNavHeaderMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // click for login , switch to login fragment
@@ -130,14 +152,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                                             onRefreshHomeFragment.onRefresh();
                                         }
                                     });
-
-//                                    for (UserInfo userInfo : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
-//                                        if (userInfo.getProviderId().equals("facebook.com")) {
-//                                            LoginManager.getInstance().logOut();
-//                                        } else {
-//                                            mAuth.signOut();
-//                                        }
-//                                    }
                                 }
                             }).setPositiveButton(getString(R.string.cancel), null);
                     builder.show();
@@ -146,16 +160,49 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             }
         });
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home,
-                R.id.nav_calender, R.id.nav_save_mission, R.id.nav_settings)
-                .setDrawerLayout(mDrawerLayout)
-                .build();
-        mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        mNavController.addOnDestinationChangedListener(this);
-        NavigationUI.setupActionBarWithNavController(this, mNavController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, mNavController);
+        mNavItems.add(new NavItem(getString(R.string.menu_calender), R.drawable.ic_baseline_calendar_today_24));
+        mNavItems.add(new NavItem(getString(R.string.menu_settings), R.drawable.ic_baseline_settings_24));
+        mNavItems.add(new NavItem(getString(R.string.menu_backup), R.drawable.ic_baseline_cloud_upload_24));
+        mNavItems.add(new NavItem(getString(R.string.menu_restore), R.drawable.ic_baseline_cloud_download_24));
+        mNavItems.add(new NavItem("已過期的任務",R.drawable.ic_baseline_save_24));
+
+
+        // Populate the Navigation Drawer with options
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        mDrawerListAdapter = new DrawerListAdapter(this, mNavItems);
+        mDrawerList.setAdapter(mDrawerListAdapter);
+
+        // Drawer Item click listeners
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                LogUtil.logE(TAG,"[onItemClick] POSITION = "+position);
+                switch (position) {
+                    case POSITION_CALENDER:
+                        mNavController.navigate(R.id.nav_calender);
+                        break;
+                    case POSITION_SETTINGS:
+                        mNavController.navigate(R.id.nav_settings);
+                        break;
+                    case POSITION_BACKUP:
+                        if (isLoginFirebase())
+                            showAlertDialog(R.string.menu_backup,R.string.backup_message,R.id.fragment_backup);
+                        break;
+                    case POSITION_RESTORE:
+                        if (isLoginFirebase())
+                            showAlertDialog(R.string.menu_restore,R.string.restore_message,R.id.fragment_restore);
+                        break;
+                    case POSITION_EXPIRED:
+                        mNavController.navigate(R.id.fragment_expired_mission);
+                        break;
+                }
+                closeDrawerLayout();
+            }
+        });
+
+        NavigationUI.setupActionBarWithNavController(this,mNavController,mDrawerLayout);
+        NavigationUI.setupWithNavController(mNavigationView, mNavController);
+
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -166,6 +213,37 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 mCurrentFirebaseUser = user;
             }
         };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setBackupTime();
+        setRestoreTime();
+    }
+
+    private boolean isLoginFirebase(){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(this, R.string.require_login, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void showAlertDialog(int title,int message,int fragmentId) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        dialog.setTitle(title);
+        dialog.setMessage(message);
+        dialog.setNegativeButton(R.string.cancel,null);
+        dialog.setPositiveButton(R.string.ok,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // TODO Auto-generated method stub
+                mNavController.navigate(fragmentId);
+            }
+
+        });
+        dialog.show();
     }
 
     public void setOnRefreshHomeFragment(OnRefreshHomeFragment onRefreshHomeFragment){
@@ -183,6 +261,21 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             }
         }
         return false;
+    }
+
+    public void setBackupTime(){
+        updateNaSubtitle(POSITION_BACKUP,KEY_BACKUP_TIME);
+    }
+
+    public void setRestoreTime(){
+        updateNaSubtitle(POSITION_RESTORE,KEY_RESTORE_TIME);
+    }
+
+     private void updateNaSubtitle(int navItem,String key){
+        SharedPreferences sharedPreferences = getSharedPreferences(NAV_ITEM_SHARED_PREFERENCE,MODE_PRIVATE);
+        String backupTime = sharedPreferences.getString(key,"");
+        mNavItems.get(navItem).setSubtitle(backupTime);
+        mDrawerListAdapter.notifyDataSetInvalidated();
     }
 
     private void getHashKey() {
@@ -212,9 +305,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     }
 
     private void updateNavHeader(FirebaseUser user){
-        View navigationHeaderView = navigationView.getHeaderView(0);
-        TextView userName = navigationHeaderView.findViewById(R.id.nav_header_user);
-        TextView userMail = navigationHeaderView.findViewById(R.id.nav_header_user_mail);
+//        View navigationHeaderView = navigationView.getHeaderView(0);
+        TextView userName = mNavHeaderMain.findViewById(R.id.nav_header_user);
+        TextView userMail = mNavHeaderMain.findViewById(R.id.nav_header_user_mail);
         userName.setText(user == null ? getApplicationContext().getString(R.string.nav_header_title_no_user) : user.getDisplayName());
         userMail.setText(user == null ? "" : user.getEmail());
     }
@@ -232,10 +325,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             mAuth.removeAuthStateListener(authStateListener);
         }
     }
-
-//    public static NavController getNavController(){
-//        return mNavController;
-//    }
 
     public static void commitWhenLifecycleStarted(Lifecycle lifecycle, int destination, Bundle bundle) {
         lifecycle.addObserver(new LifecycleEventObserver() {
@@ -277,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+        return NavigationUI.navigateUp(navController, mDrawerLayout)
                 || super.onSupportNavigateUp();
     }
 

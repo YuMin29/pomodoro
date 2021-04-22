@@ -74,7 +74,8 @@ public class ColorSelectorDialog extends Dialog {
         mColorGrid.setHorizontalSpacing(5);
 
         for(int position = 0; position<colors.size(); position++){
-            ColorView colorView = new ColorView(context,colors.get(position).colorValue);
+            ColorView colorView = new ColorView(context);
+            colorView.setColorValue(colors.get(position).colorValue);
 
             if(currentPosition == position){
                 colorView.setSelect(true);

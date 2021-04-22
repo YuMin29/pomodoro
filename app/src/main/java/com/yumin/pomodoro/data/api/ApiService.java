@@ -14,6 +14,7 @@ public interface ApiService<T,E> {
     public T getQuickMission(int time, int shortBreakTime, int color);
     public void updateMission(T mission);
     public void deleteMission(T mission);
+    public void deleteAllMission();
     public LiveData<T> getMissionById(String id);
     public void updateNumberOfCompletionById(String id, int num);
     public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber);
@@ -25,5 +26,6 @@ public interface ApiService<T,E> {
     public LiveData<E> getMissionStateById(String id, long todayStart);
     public void initMissionState(String id);
     public void saveMissionState(String missionId,MissionState missionState);
-    public LiveData<List<MissionState>> getMissionStates();
+    public LiveData<List<MissionState>> getMissionStateList();
+    public LiveData<List<UserMission>> getPastFinishedMission(long today);
 }

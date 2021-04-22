@@ -19,58 +19,57 @@ import java.util.List;
 public class LoginViewModel extends AndroidViewModel {
     private RoomRepository mRoomRepository;
     private FirebaseRepository mFirebaseRepository;
-    private LiveData<List<UserMission>> roomMissions;
-    private MutableLiveData<Boolean> isRoomMissionsExist = new MutableLiveData<>();
-    private LiveData<List<MissionState>> roomMissionStates;
-    private MutableLiveData<Boolean> isRoomMissionStatesExist = new MutableLiveData<>();
+    private LiveData<List<UserMission>> mRoomMissions;
+    private MutableLiveData<Boolean> mIsRoomMissionsExist = new MutableLiveData<>();
+    private LiveData<List<MissionState>> mRoomMissionStates;
+    private MutableLiveData<Boolean> mIsRoomMissionStatesExist = new MutableLiveData<>();
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
         mRoomRepository = new RoomRepository(new RoomApiServiceImpl(application));
         mFirebaseRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-        roomMissions = mRoomRepository.getMissions();
-        isRoomMissionsExist.setValue(false);
-        roomMissionStates = mRoomRepository.getMissionStates();
-        isRoomMissionStatesExist.setValue(false);
+        mRoomMissions = mRoomRepository.getMissions();
+        mIsRoomMissionsExist.setValue(false);
+        mRoomMissionStates = mRoomRepository.getMissionStateList();
+        mIsRoomMissionStatesExist.setValue(false);
     }
 
     public LiveData<List<UserMission>> getRoomMissions(){
-        return roomMissions;
+        return mRoomMissions;
     }
 
     public LiveData<List<MissionState>> getRoomMissionStates(){
-        return roomMissionStates;
+        return mRoomMissionStates;
     }
 
     public void setIsRoomMissionStatesExist(boolean exist){
-        this.isRoomMissionStatesExist.setValue(exist);
+        this.mIsRoomMissionStatesExist.setValue(exist);
     }
 
     public boolean getIsRoomMissionStatesExist(){
-        return this.isRoomMissionStatesExist.getValue();
+        return this.mIsRoomMissionStatesExist.getValue();
     }
 
     public void setIsRoomMissionsExist(boolean missionsExist){
-        this.isRoomMissionsExist.setValue(missionsExist );
+        this.mIsRoomMissionsExist.setValue(missionsExist);
     }
 
     public boolean getIsRoomMissionsExist(){
-        return this.isRoomMissionsExist.getValue();
+        return this.mIsRoomMissionsExist.getValue();
     }
 
     public void syncRoomMissionsToFirebase() {
-        for (UserMission userMission : roomMissions.getValue()) {
+        for (UserMission userMission : mRoomMissions.getValue()) {
             String firebaseMissionId = mFirebaseRepository.addMission(userMission);
 
             if (getIsRoomMissionStatesExist()) {
-                for (MissionState missionState : roomMissionStates.getValue()){
-                    if (missionState.missionId.equals(String.valueOf(userMission.getId()))) {
+                for (MissionState missionState : mRoomMissionStates.getValue()){
+                    if (missionState.getMissionId().equals(String.valueOf(userMission.getId()))) {
                         mFirebaseRepository.saveMissionState(firebaseMissionId,missionState);
                     }
                 }
             }
-
-            mRoomRepository.deleteMission(userMission);
+//            mRoomRepository.deleteMission(userMission);
         }
     }
 }

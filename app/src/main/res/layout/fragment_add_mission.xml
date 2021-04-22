@@ -18,189 +18,36 @@
         android:layout_height="match_parent"
         android:background="@color/layout_main_background">
 
-        <EditText
-            android:id="@+id/mission_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
-            android:hint="@string/mission_name"
-            android:textColorHint="@color/colorPrimaryLight"
-            android:textColor="@color/colorPrimary"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:text="@={addMissionViewModel.mission.name}"
-            app:layout_constraintBottom_toTopOf="@+id/scrollview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ScrollView
-            android:id="@+id/scrollview"
+        <com.yumin.pomodoro.ui.view.customize.MissionAttributeView
+            android:id="@+id/missionAttributeView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/cancel_button"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/add_mission_button"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mission_title">
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="1">
-
-                    <com.yumin.pomodoro.ui.view.ItemTextView
-                        android:id="@+id/item_time"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemContent="@={addMissionViewModel.mission.time}"
-                        app:itemDescription="@{@string/mission_time}"/>
-                </TableRow>
-
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="1">
-
-                    <com.yumin.pomodoro.ui.view.ItemTextView
-                        android:id="@+id/item_short_break"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemContent="@={addMissionViewModel.mission.shortBreakTime}"
-                        app:itemDescription="@{@string/mission_break}"/>
-
-<!--                    <com.yumin.pomodoro.ui.view.ItemTextView-->
-<!--                        android:id="@+id/item_long_break"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        app:itemContent="@={addMissionViewModel.mission.longBreakTime}"-->
-<!--                        app:itemDescription="@{@string/mission_long_break}"/>-->
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="2">
-
-                    <com.yumin.pomodoro.ui.view.ItemTextView
-                        android:id="@+id/item_goal"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemContent="@={addMissionViewModel.mission.goal}"
-                        app:itemDescription="@{@string/mission_goal}"/>
-
-                    <com.yumin.pomodoro.ui.view.ItemListView
-                        android:id="@+id/item_repeat"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemListVal="@={addMissionViewModel.mission.repeat}"
-                        app:itemDescription="@{@string/mission_repeat}" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="2">
-
-                    <com.yumin.pomodoro.ui.view.ItemDateView
-                        android:id="@+id/item_operate"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        app:itemDateVal="@={addMissionViewModel.mission.operateDay}"
-                        app:itemDescription="@{@string/mission_operate_day}" />
-
-                    <com.yumin.pomodoro.ui.view.ItemDialogView
-                        android:id="@+id/item_theme"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemValue="@={addMissionViewModel.mission.color}"
-                        app:itemDescription="@{@string/mission_theme}"/>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="1">
-
-                    <com.yumin.pomodoro.ui.view.ItemImageView
-                        android:id="@+id/item_notification"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemEnable="@={addMissionViewModel.mission.enableNotification}"
-                        app:itemDescription="@{@string/mission_notification}"/>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="2">
-
-                    <com.yumin.pomodoro.ui.view.ItemImageView
-                        android:id="@+id/item_sound"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemEnable="@={addMissionViewModel.mission.enableSound}"
-                        app:itemDescription="@{@string/mission_sound}"/>
-
-                    <com.yumin.pomodoro.ui.view.ItemImageView
-                        android:id="@+id/item_vibrate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemEnable="@={addMissionViewModel.mission.enableVibrate}"
-                        app:itemDescription="@{@string/mission_vibrate}"/>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="1">
-
-                    <com.yumin.pomodoro.ui.view.ItemImageView
-                        android:id="@+id/item_keep_screen_on"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:itemEnable="@={addMissionViewModel.mission.keepScreenOn}"
-                        app:itemDescription="@{@string/mission_keep_awake}"/>
-                </TableRow>
-            </TableLayout>
-        </ScrollView>
+            app:layout_constraintTop_toTopOf="parent"
+            app:userMission="@{addMissionViewModel.mission}" />
 
         <Button
             android:id="@+id/add_mission_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/colorPrimaryDark"
-            android:textColor="@color/button_normal"
-            android:textStyle="bold"
             android:onClick="@{()->addMissionClickProxy.onAddMissionButtonClick()}"
             android:text="@string/ok"
+            android:textColor="@color/button_normal"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancel_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollview" />
+            app:layout_constraintTop_toBottomOf="@+id/missionAttributeView" />
 
         <Button
             android:id="@+id/cancel_button"
@@ -218,7 +65,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/add_mission_button"
-            app:layout_constraintTop_toBottomOf="@+id/scrollview" />
+            app:layout_constraintTop_toBottomOf="@+id/missionAttributeView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

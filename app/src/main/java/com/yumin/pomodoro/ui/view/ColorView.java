@@ -22,36 +22,25 @@ public class ColorView extends View {
 
     public ColorView(Context context) {
         super(context);
-        initColorView();
-        mContext = context;
-    }
-
-    public ColorView(Context context, int color) {
-        super(context);
-        mColorValue = color;
-        initColorView();
-        mContext = context;
+        initColorView(context);
     }
 
     public ColorView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initColorView();
-        mContext = context;
+        initColorView(context);
     }
 
 
     public ColorView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initColorView();
-        mContext = context;
+        initColorView(context);
     }
 
 
-    public void initColorView(){
-//        mColorValue = Color.BLACK; // Default value. If want to change color use setColor method.
+    public void initColorView(Context context){
+        mContext = context;
         mPaint = new Paint();
         path = new Path();
-        mPaint.setColor(mColorValue);
         mPaint.setStrokeWidth(mStrokeWidth);
         mPaint.setDither(true);
         mPaint.setAntiAlias(true);

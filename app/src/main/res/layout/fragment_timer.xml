@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="timerViewModel"
             type="com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel" />
@@ -19,18 +20,19 @@
         <RelativeLayout
             android:id="@+id/timer_relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@{timerViewModel.mission.color}">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/timer_name"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_above="@+id/mission_finish_goal"
+                android:textSize="16sp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/timer_textview"
+                android:textColor="@color/colorPrimaryText"
+                android:textStyle="bold"
                 android:text="@{timerViewModel.mission.name}"
                 android:gravity="center"/>
 
@@ -40,9 +42,14 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:orientation="horizontal"
                 android:layout_above="@+id/progressBarCircle"
-                android:background="@drawable/timer_textview">
+                android:background="@drawable/timer_textview"
+                android:visibility="@{(timerViewModel.mission.goal == -1) ? View.GONE : View.VISIBLE}">
 
                 <TextView
                     android:layout_width="wrap_content"

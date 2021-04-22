@@ -59,6 +59,12 @@ public class RoomRepository implements DataRepository {
         roomApiService.deleteMission(userMission);
     }
 
+    @Override
+    public void deleteAllMission() {
+        roomApiService.deleteAllMission();
+    }
+
+
     public LiveData<Long> getMissionRepeatStart(String id){
         return roomApiService.getMissionRepeatStart(id);
     }
@@ -76,30 +82,6 @@ public class RoomRepository implements DataRepository {
         roomApiService.initMissionState(id);
     }
 
-    //    public LiveData<List<UserMission>> getTodayMissionsByOperateDay(long start, long end) {
-//        return null;
-//    }
-//
-//    public LiveData<List<UserMission>> getTodayMissionsByRepeatType(long start, long end) {
-//        return null;
-//    }
-//
-//    public LiveData<List<UserMission>> getTodayMissionsByRepeatRange(long start, long end) {
-//        return null;
-//    }
-//
-//    public LiveData<List<UserMission>> getComingMissionsByOperateDay(long today) {
-//        return null;
-//    }
-//
-//    public LiveData<List<UserMission>> getComingMissionsByRepeatType(long today) {
-//        return null;
-//    }
-//
-//    public LiveData<List<UserMission>> getComingMissionsByRepeatRange(long today) {
-//        return null;
-//    }
-//
     public LiveData<List<UserMission>> getFinishedMissionList(long start, long end){
         return roomApiService.getFinishedMissionList(start, end);
     }
@@ -117,15 +99,16 @@ public class RoomRepository implements DataRepository {
 
     @Override
     public void saveMissionState(String missionId,MissionState missionState) {
-
+        roomApiService.saveMissionState(missionId,missionState);
     }
 
     @Override
-    public LiveData<List<MissionState>> getMissionStates() {
-        return roomApiService.getMissionStates();
+    public LiveData<List<MissionState>> getMissionStateList() {
+        return roomApiService.getMissionStateList();
     }
 
-//    public LiveData<List<UserMission>> getUnfinishedMissions(long start, long end){
-//        return roomApiService.getUnFinishedMissions(start, end);
-//    }
+    @Override
+    public LiveData<List<UserMission>> getPastFinishedMission(long today) {
+        return roomApiService.getPastFinishedMission(today);
+    }
 }

@@ -20,6 +20,10 @@ public class Category {
         mIndex = index;
     }
 
+    public Category(String name){
+        mCategoryName = name;
+    }
+
     public void addMission(UserMission mission){
         mMissionList.add(mission);
     }

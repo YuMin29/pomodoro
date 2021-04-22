@@ -9,26 +9,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
-
 import androidx.annotation.Nullable;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.InverseBindingAdapter;
 import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseBindingMethods;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.ItemImageviewBinding;
-import com.yumin.pomodoro.utils.LogUtil;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @InverseBindingMethods({@InverseBindingMethod(type = ItemImageView.class,
         attribute = "itemEnable", event = "itemEnableAttrChanged")})
@@ -92,8 +82,8 @@ public class ItemImageView extends LinearLayout {
         return isEnabled;
     }
 
-    public void setItemDescription(String string){
-        viewBinding.descriptionTextview.setText(string);
+    public void setItemDescription(String string) {
+        viewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemEnableAttrChanged(InverseBindingListener inverseBindingListener){

@@ -19,6 +19,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseBindingMethods;
+import androidx.databinding.library.baseAdapters.BR;
 
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -49,12 +50,6 @@ public class ItemTextView extends LinearLayout {
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inverseBindingListener = new InverseBindingListener() {
-            @Override
-            public void onChange() {
-
-            }
-        };
         viewBinding = DataBindingUtil.inflate(inflater,R.layout.item_textview,this,true);
         viewBinding.addNum.setOnClickListener(new OnClickListener() {
             @Override
@@ -113,9 +108,7 @@ public class ItemTextView extends LinearLayout {
     }
 
     public void setItemDescription(String string){
-        LogUtil.logD(TAG,
-                "[setItemDescription] string = "+string);
-        viewBinding.descriptionTextview.setText(string);
+        viewBinding.setVariable(BR.itemDescription,string);
     }
 
     public int getItemContent(){

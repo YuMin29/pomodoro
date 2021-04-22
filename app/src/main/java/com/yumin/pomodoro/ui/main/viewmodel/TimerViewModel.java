@@ -40,9 +40,9 @@ public class TimerViewModel extends AndroidViewModel {
     public TimerViewModel(@NonNull Application application) {
         super(application);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-        else
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+//            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
+//        else
             this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
 
         this.missionStrId = MissionManager.getInstance().getStrOperateId();
@@ -57,16 +57,14 @@ public class TimerViewModel extends AndroidViewModel {
             mMission.setValue(dataRepository.getQuickMission());
             mMissionNumberOfCompletion.setValue(-1);
         } else {
-            LiveData<UserMission> sourceMission = dataRepository.getMissionById(missionStrId);
-            mMission.addSource(sourceMission, new Observer<UserMission>() {
+            mMission.addSource(dataRepository.getMissionById(missionStrId), new Observer<UserMission>() {
                 @Override
                 public void onChanged(UserMission userMission) {
                     mMission.setValue(userMission);
                 }
             });
 
-            LiveData<Integer> sourceMissionNumberOfCompletion  = dataRepository.getNumberOfCompletionById(missionStrId, TimeToMillisecondUtil.getTodayStartTime());
-            mMissionNumberOfCompletion.addSource(sourceMissionNumberOfCompletion, new Observer<Integer>() {
+            mMissionNumberOfCompletion.addSource(dataRepository.getNumberOfCompletionById(missionStrId, TimeToMillisecondUtil.getTodayStartTime()), new Observer<Integer>() {
                 @Override
                 public void onChanged(Integer integer) {
                     LogUtil.logE(TAG,"[fetchMission] mNumberOfCompletion = "+integer);
@@ -74,8 +72,7 @@ public class TimerViewModel extends AndroidViewModel {
                 }
             });
 
-            LiveData<MissionState> sourceMissionState = dataRepository.getMissionStateById(missionStrId, TimeToMillisecondUtil.getTodayStartTime());
-            mMissionState.addSource(sourceMissionState, new Observer<MissionState>() {
+            mMissionState.addSource(dataRepository.getMissionStateById(missionStrId, TimeToMillisecondUtil.getTodayStartTime()), new Observer<MissionState>() {
                 @Override
                 public void onChanged(MissionState missionState) {
                     LogUtil.logE(TAG,"[fetchMission] missionState = "+missionState);
@@ -122,6 +119,12 @@ public class TimerViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getIndexOfFinishedMissionRingtone(){
         return mMissionFinishedRingtone;
+    }
+
+    public void initMissionState(){
+        LogUtil.logE(TAG,"[initMissionState] INIT MISSION STATE");
+        if (!missionStrId.equals("quick_mission"))
+            dataRepository.initMissionState(missionStrId);
     }
 
     public LiveData<Boolean> getAutoStartNextMission(){

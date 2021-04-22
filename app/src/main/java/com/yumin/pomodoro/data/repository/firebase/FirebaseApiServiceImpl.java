@@ -151,6 +151,13 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
         deleteMissionState(mission.getFirebaseMissionId());
     }
 
+    @Override
+    public void deleteAllMission() {
+        LogUtil.logE(TAG,"[deleteAllMission] ");
+        getUserMissionPath().removeValue();
+        getCalendarPath().removeValue();
+    }
+
     private void deleteMissionState(String id){
         LogUtil.logE(TAG,"[deleteMissionState] id = "+id);
         getCalendarPath().addValueEventListener(new ValueEventListener() {
@@ -175,20 +182,14 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
     @Override
     public void updateNumberOfCompletionById(String id, int num) {
-        getCalendarPath().child(String.valueOf(TimeToMillisecondUtil.getTodayInitTime())).child(id)
-                .child("numberOfCompletion").setValue(num);
-
+        getCalendarPath().child(id).child("numberOfCompletion").setValue(num);
     }
 
     @Override
     public void updateMissionFinishedState(String id, boolean isFinished, int completeOfNumber) {
         LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+isFinished);
-
-        getCalendarPath().child(String.valueOf(TimeToMillisecondUtil.getTodayInitTime())).child(id)
-                .child("isFinished").setValue(isFinished);
-
-        getCalendarPath().child(String.valueOf(TimeToMillisecondUtil.getTodayInitTime())).child(id)
-                .child("finishedDay").setValue(isFinished ? new Date().getTime() : -1);
+        getCalendarPath().child(id).child("finished").setValue(isFinished);
+        getCalendarPath().child(id).child("finishedDay").setValue(isFinished ? new Date().getTime() : -1);
     }
 
     @Override
@@ -196,13 +197,14 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
         LogUtil.logE(TAG,"[getFinishedMissions] start = "+start+" ,end = "+end);
 
         List<String> missions = new ArrayList<>();
-        getCalendarPath().child(String.valueOf(start)).addValueEventListener(new ValueEventListener() {
+        getCalendarPath().addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             LogUtil.logE(TAG,"[getFinishedMissions] exist");
                             for (DataSnapshot missionState : snapshot.getChildren()){
-                                if (missionState.getValue(MissionState.class).isFinished()) {
+                                if (missionState.getValue(MissionState.class).getFinished() &&
+                                        missionState.getValue(MissionState.class).getRecordDay() == start) {
                                     String missionId = missionState.getValue(MissionState.class).getMissionId();
                                     missions.add(missionId);
                                 }
@@ -239,8 +241,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
         // query number of completion from calendar
         MutableLiveData<Integer> numberOfCompletion = new MutableLiveData<>();
-        getCalendarPath().child(String.valueOf(todayStart)).child(id).child("numberOfCompletion")
-                .addValueEventListener(new ValueEventListener() {
+        getCalendarPath().child(id).child("numberOfCompletion").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
@@ -259,8 +260,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     @Override
     public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
         MutableLiveData<MissionState> missionState = new MutableLiveData<>();
-        getCalendarPath().child(String.valueOf(todayStart)).child(id)
-                .addValueEventListener(new ValueEventListener() {
+        getCalendarPath().child(id).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
@@ -279,24 +279,27 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     @Override
     public void initMissionState(String missionId) {
         // insert value to calendar
-        String todayMilli = String.valueOf(TimeToMillisecondUtil.getTodayInitTime());
-        DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
+        DatabaseReference databaseReference = getCalendarPath();
         databaseReference.child(missionId).setValue(
                 new MissionState(0,false, TimeToMillisecondUtil.getTodayInitTime(),-1,missionId));
     }
 
     public void saveMissionState(String missionId,MissionState missionState){
-        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionState.missionId
-                +" ,completeOfNumber = "+missionState.numberOfCompletion
-                +" ,isFinish = "+missionState.isFinished);
-        missionState.missionId = missionId;
-        String todayMilli = String.valueOf(TimeToMillisecondUtil.getTodayInitTime());
-        DatabaseReference databaseReference = getCalendarPath().child(todayMilli);
+//        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionState.missionId
+//                +" ,completeOfNumber = "+missionState.numberOfCompletion
+//                +" ,isFinish = "+missionState.isFinished);
+        missionState.setMissionId(missionId);
+        DatabaseReference databaseReference = getCalendarPath();
         databaseReference.child(missionId).setValue(missionState);
     }
 
     @Override
-    public LiveData<List<MissionState>> getMissionStates() {
+    public LiveData<List<MissionState>> getMissionStateList() {
+        return new FirebaseQueryMissionListLiveData(getCalendarPath());
+    }
+
+    @Override
+    public LiveData<List<UserMission>> getPastFinishedMission(long today) {
         return null;
     }
 }

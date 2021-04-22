@@ -10,10 +10,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
     private static final String TAG = "[ExpandableBaseAdapter]";
     protected List<Category> mDataList;
     protected List<UserMission> mFinishedMissions;
+    protected List<MissionState> mMissionStates;
     private Context context;
 
     public ExpandableBaseAdapter(Context context, List<Category> list, List<UserMission> finishedMissions) {
@@ -105,18 +108,32 @@ public abstract class ExpandableBaseAdapter<B extends ViewDataBinding, M extends
         LogUtil.logE(TAG,"[getChildView] mFinishedMissions size = "+mFinishedMissions.size());
         boolean isFinished = false;
         for (UserMission item : mFinishedMissions) {
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                LogUtil.logE(TAG,"[getChildView] ITEM getFirebaseMissionId = "+item.getFirebaseMissionId());
-                LogUtil.logE(TAG,"[getChildView] USER MISSION getFirebaseMissionId = "+userMission.getFirebaseMissionId());
-                if (userMission.getFirebaseMissionId().equals(item.getFirebaseMissionId()))
-                    isFinished = true;
-            } else {
-                LogUtil.logE(TAG,"[getChildView] ITEM ID = "+item.getId());
-                LogUtil.logE(TAG,"[getChildView] USER MISSION ID = "+userMission.getId());
-                if (userMission.getId() == item.getId())
-                    isFinished = true;
+//            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//                LogUtil.logE(TAG,"[getChildView] ITEM getFirebaseMissionId = "+item.getFirebaseMissionId());
+//                LogUtil.logE(TAG,"[getChildView] USER MISSION getFirebaseMissionId = "+userMission.getFirebaseMissionId());
+//                if (userMission.getFirebaseMissionId().equals(item.getFirebaseMissionId()))
+//                    isFinished = true;
+//            } else {
+            LogUtil.logE(TAG,"[getChildView] ITEM ID = "+item.getId());
+            LogUtil.logE(TAG,"[getChildView] USER MISSION ID = "+userMission.getId());
+            if (userMission.getId() == item.getId())
+                isFinished = true;
+//            }
+        }
+
+        if (null != mMissionStates) {
+            for (MissionState missionState : mMissionStates) {
+                LogUtil.logE(TAG,"[getChildView] missionState ID = "+missionState.getMissionId());
+                LogUtil.logE(TAG,"[getChildView] userMission ID = "+userMission.getId());
+                if (missionState.getMissionId().equals(String.valueOf(userMission.getId()))) {
+                    LogUtil.logE(TAG,"[getChildView] missionState record day = "+TimeToMillisecondUtil.getDateString(missionState.getRecordDay()));
+                    LogUtil.logE(TAG,"[getChildView] group day = "+mDataList.get(groupPosition).getCategoryName());
+                    if (TimeToMillisecondUtil.getDateString(missionState.getRecordDay()).equals(mDataList.get(groupPosition).getCategoryName()))
+                        isFinished = missionState.getFinished();
+                }
             }
         }
+
         LogUtil.logE(TAG,"[getChildView] mFinishedMissions isFinished = "+isFinished);
         onBindChildLayout(binding,userMission,groupPosition,childPosition,convertView,isFinished);
         return convertView;

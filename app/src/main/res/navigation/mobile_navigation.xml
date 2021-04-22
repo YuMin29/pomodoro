@@ -11,24 +11,6 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home"/>
 
-<!--    <fragment-->
-<!--        android:id="@+id/nav_backup"-->
-<!--        android:name="com.yumin.pomodoro.ui.view.BackupFragment"-->
-<!--        android:label="@string/menu_backup"-->
-<!--        tools:layout="@layout/fragment_backup" />-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/nav_restore"-->
-<!--        android:name="com.yumin.pomodoro.ui.view.RestoreFragment"-->
-<!--        android:label="@string/menu_restore"-->
-<!--        tools:layout="@layout/fragment_restore" />-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/nav_total"-->
-<!--        android:name="com.yumin.pomodoro.ui.view.TotalFragment"-->
-<!--        android:label="@string/menu_total"-->
-<!--        tools:layout="@layout/fragment_total" />-->
-
     <fragment
         android:id="@+id/nav_calender"
         android:name="com.yumin.pomodoro.ui.view.calender.CalenderFragment"
@@ -100,4 +82,19 @@
         android:name="com.yumin.pomodoro.ui.view.ResetPasswordFragment"
         android:label="@string/reset_password_fragment_label"
         tools:layout="@layout/fragment_reset_password"/>
+
+    <fragment android:id="@+id/fragment_backup"
+        android:name="com.yumin.pomodoro.ui.view.BackupFragment"
+        android:label="@string/menu_backup"
+        tools:layout="@layout/fragment_backup"/>
+
+    <fragment android:id="@+id/fragment_restore"
+        android:name="com.yumin.pomodoro.ui.view.RestoreFragment"
+        android:label="@string/menu_restore"
+        tools:layout="@layout/fragment_restore"/>
+
+    <fragment android:id="@+id/fragment_expired_mission"
+        android:name="com.yumin.pomodoro.ui.view.ExpiredMissionFragment"
+        android:label="@string/menu_expired_mission"
+        tools:layout="@layout/fragment_expired_mission"/>
 </navigation>

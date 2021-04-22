@@ -195,10 +195,10 @@ public class LoginFragment extends DataBindingFragment {
                     Log.d(TAG, "Sign-in SUCCESS");
                     FirebaseUser user = mAuth.getCurrentUser();
                     if (user != null) {
-                        if (mLoginViewModel.getIsRoomMissionsExist()) {
-                            // sync Room to firebase
-                            mLoginViewModel.syncRoomMissionsToFirebase();
-                        }
+//                        if (mLoginViewModel.getIsRoomMissionsExist()) {
+//                            // sync Room to firebase
+//                            mLoginViewModel.syncRoomMissionsToFirebase();
+//                        }
                         navigate(R.id.nav_home);
                         mFragmentLoginBinding.login.setEnabled(true);
                         addUserToFirebase(user);
@@ -298,14 +298,10 @@ public class LoginFragment extends DataBindingFragment {
             loginAccount();
         }
 
-        ;
-
         public void register() {
             // switch to register fragment
             goToRegisterAccount();
         }
-
-        ;
 
         public void forgetPassword() {
             goToResetPassword();

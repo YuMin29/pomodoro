@@ -19,13 +19,13 @@ public class MissionManager {
     }
 
     public void setStrEditId(UserMission userMission){
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            LogUtil.logE(TAG,"setStrEditId = "+userMission.getFirebaseMissionId());
-            this.strEditId = userMission.getFirebaseMissionId();
-        } else {
-            LogUtil.logE(TAG,"setStrEditId = "+userMission.getId());
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//            LogUtil.logE(TAG,"setStrEditId = "+userMission.getFirebaseMissionId());
+//            this.strEditId = userMission.getFirebaseMissionId();
+//        } else {
+//            LogUtil.logE(TAG,"setStrEditId = "+userMission.getId());
             this.strEditId = String.valueOf(userMission.getId());
-        }
+//        }
     }
 
     public String getStrEditId(){
@@ -55,9 +55,9 @@ public class MissionManager {
         }
 
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            this.strOperateId = userMission.getFirebaseMissionId();
-        else
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+//            this.strOperateId = userMission.getFirebaseMissionId();
+//        else
             this.strOperateId = String.valueOf(userMission.getId());
     }
 

@@ -14,6 +14,7 @@ import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseBindingMethods;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.ItemDialogviewBinding;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -52,7 +53,7 @@ public class ItemDialogView extends LinearLayout {
             public void onClick(View v) {
                         // show color list dialog
                         ColorSelectorDialog dialog = new ColorSelectorDialog(context,
-                                getThemeColors(),0);
+                                getThemeColors(),getCurrentColorPosition());
                         dialog.setClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -94,12 +95,24 @@ public class ItemDialogView extends LinearLayout {
         this.content = color;
     }
 
+    private int getCurrentColorPosition(){
+        String[] backgroundAllColors = this.getResources().getStringArray(R.array.backgroundColors);
+        int position = 0;
+        for(String colorValue : backgroundAllColors){
+            int convertColor = Color.parseColor(colorValue);
+            if (convertColor == content)
+                return position;
+            position++;
+        }
+        return 0;
+    }
+
     public int getItemValue(){
         return  viewBinding.colorView.getColorValue();
     }
 
-    public void setItemDescription(String string){
-        viewBinding.descriptionTextview.setText(string);
+    public void setItemDescription(String string) {
+        viewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemValueAttrChanged(InverseBindingListener inverseBindingListener){

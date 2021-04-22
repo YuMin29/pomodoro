@@ -150,7 +150,7 @@ public class BreakTimerFragment extends DataBindingFragment {
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
                     notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotification("蕃茄任務:" + missionTitle,pendingIntent,
+                    notificationBuilder = notificationHelper.getNotificationBuilder("蕃茄任務:" + missionTitle,pendingIntent,
                             ContextCompat.getColor(getContext(),R.color.break_timer_background));
                     notificationHelper.notify(notificationBuilder);
                 }
@@ -186,7 +186,7 @@ public class BreakTimerFragment extends DataBindingFragment {
 
                         // cancel notification when finish the mission
                         if (enabledNotification) {
-                            notificationHelper.getNotificationManager().cancel(NOTIFICATION_ID);
+                            notificationHelper.cancelNotification();
                         }
                     }
                 } else {

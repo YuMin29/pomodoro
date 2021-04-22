@@ -22,6 +22,7 @@
     <string name="home_finish_mission">今日完成任務</string>
     <string name="count_list_time">預計時間</string>
     <string name="home_finish_time">已用時間</string>
+    <string name="menu_expired_mission">過期任務</string>
     
     
     <string name="mission_time">番茄時間</string>
@@ -105,8 +106,13 @@
 
     <array name="ringtone_list">
         <item>無</item>
-        <item>item1</item>
-        <item>item2</item>
+        <item>Bell ding</item>
+        <item>Clay chime thunk</item>
+        <item>Clay chime thunk</item>
+        <item>High Pitch Short Bell</item>
+        <item>Timer Bell</item>
+        <item>Toy Train Whistle</item>
+        <item>Woodpecker Peck</item>
     </array>
 
     <string-array name="ringtone_name">
@@ -121,5 +127,15 @@
         <item>海岸聲2</item>
         <item>流水聲1</item>
         <item>流水聲2</item>
+        <item>Dolphin Esque</item>
+        <item>Frolic</item>
+        <item>In 3</item>
+        <item>Interplanetary Alignment</item>
+        <item>Meeting Again</item>
+        <item>Nebular Focus</item>
     </string-array>
+
+    <string name="backup_message">備份數據將會覆蓋遠端數據 確定要執行嗎?</string>
+    <string name="restore_message">還原數據將會覆蓋本地端數據 確定要執行嗎?</string>
+    <string name="require_login">請先登入帳號</string>
 </resources>

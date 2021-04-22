@@ -47,6 +47,12 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new CalenderViewModel(application);
         } else if (modelClass == SettingsViewModel.class) {
             return (T) new SettingsViewModel(application);
+        } else if (modelClass == BackupViewModel.class) {
+            return (T) new BackupViewModel(application);
+        } else if (modelClass == RestoreViewModel.class) {
+            return (T) new RestoreViewModel(application);
+        } else if (modelClass == ExpiredMissionViewModel.class) {
+            return (T) new ExpiredMissionViewModel(application);
         }
         return null;
     }

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="userMission"
+            type="com.yumin.pomodoro.data.UserMission" />
+    </data>
+
+    <merge
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/mission_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/mission_name"
+            android:textColorHint="@color/colorPrimaryLight"
+            android:textColor="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:text="@={userMission.name}"
+            app:layout_constraintBottom_toTopOf="@+id/scrollview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:id="@+id/scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mission_title">
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="1">
+
+                    <com.yumin.pomodoro.ui.view.ItemTextView
+                        android:id="@+id/item_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemContent="@={userMission.time}"
+                        app:itemDescription="@{@string/mission_time}"/>
+                </TableRow>
+
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="1">
+
+                    <com.yumin.pomodoro.ui.view.ItemTextView
+                        android:id="@+id/item_short_break"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemContent="@={userMission.shortBreakTime}"
+                        app:itemDescription="@{@string/mission_break}"/>
+
+                    <!--                    <com.yumin.pomodoro.ui.view.ItemTextView-->
+                    <!--                        android:id="@+id/item_long_break"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_weight="1"-->
+                    <!--                        app:itemContent="@={addMissionViewModel.mission.longBreakTime}"-->
+                    <!--                        app:passedDescription="@{@string/mission_long_break}"/>-->
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="2">
+
+                    <com.yumin.pomodoro.ui.view.ItemTextView
+                        android:id="@+id/item_goal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemContent="@={userMission.goal}"
+                        app:itemDescription="@{@string/mission_goal}"/>
+
+                    <com.yumin.pomodoro.ui.view.ItemListView
+                        android:id="@+id/item_repeat"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemListVal="@={userMission.repeat}"
+                        app:itemDescription="@{@string/mission_repeat}" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="2">
+
+                    <com.yumin.pomodoro.ui.view.ItemDateView
+                        android:id="@+id/item_operate"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        app:itemDateVal="@={userMission.operateDay}"
+                        app:itemDescription="@{@string/mission_operate_day}" />
+
+                    <com.yumin.pomodoro.ui.view.ItemDialogView
+                        android:id="@+id/item_theme"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemValue="@={userMission.color}"
+                        app:itemDescription="@{@string/mission_theme}"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="1">
+
+                    <com.yumin.pomodoro.ui.view.ItemImageView
+                        android:id="@+id/item_notification"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemEnable="@={userMission.enableNotification}"
+                        app:itemDescription="@{@string/mission_notification}"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="2">
+
+                    <com.yumin.pomodoro.ui.view.ItemImageView
+                        android:id="@+id/item_sound"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemEnable="@={userMission.enableSound}"
+                        app:itemDescription="@{@string/mission_sound}"/>
+
+                    <com.yumin.pomodoro.ui.view.ItemImageView
+                        android:id="@+id/item_vibrate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemEnable="@={userMission.enableVibrate}"
+                        app:itemDescription="@{@string/mission_vibrate}"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="1">
+
+                    <com.yumin.pomodoro.ui.view.ItemImageView
+                        android:id="@+id/item_keep_screen_on"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:itemEnable="@={userMission.keepScreenOn}"
+                        app:itemDescription="@{@string/mission_keep_awake}"/>
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+    </merge>
+</layout>

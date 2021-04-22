@@ -17,22 +17,22 @@ import com.yumin.pomodoro.utils.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
+public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState>> {
     private static final String TAG = "[FirebaseQueryLiveData]";
-    private OnQueryListener onQueryListener;
+    private FirebaseQueryMissionListLiveData.OnQueryListener onQueryListener;
     private final Query query;
-    private final MyValueEventListener myValueEventListener = new MyValueEventListener();
+    private final FirebaseQueryMissionListLiveData.MyValueEventListener myValueEventListener = new FirebaseQueryMissionListLiveData.MyValueEventListener();
 
-    public FirebaseQueryListLiveData(Query query) {
+    public FirebaseQueryMissionListLiveData(Query query) {
         LogUtil.logE(TAG,"[query] "+query.toString());
         this.query = query;
     }
 
-    public FirebaseQueryListLiveData(DatabaseReference databaseReference) {
+    public FirebaseQueryMissionListLiveData(DatabaseReference databaseReference) {
         this.query = databaseReference;
     }
 
-    public void setOnQueryListener(OnQueryListener onQueryListener){
+    public void setOnQueryListener(FirebaseQueryMissionListLiveData.OnQueryListener onQueryListener){
         this.onQueryListener = onQueryListener;
     }
 
@@ -55,28 +55,29 @@ public class FirebaseQueryListLiveData extends LiveData<List<UserMission>> {
     }
 
     interface OnQueryListener{
-        public UserMission onSecondQuery(DataSnapshot dataSnapshot);
+        public MissionState onSecondQuery(DataSnapshot dataSnapshot);
     }
 
-    class MyValueEventListener implements ValueEventListener{
+    class MyValueEventListener implements ValueEventListener {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             LogUtil.logE(TAG,"[MyValueEventListener]");
-            List<UserMission> userMissionList = new ArrayList<>();
+            List<MissionState> missionStateList = new ArrayList<>();
             if (snapshot.exists()) {
                 LogUtil.logE(TAG,"[MyValueEventListener] snapshot EXIST");
-                for (DataSnapshot mission : snapshot.getChildren()) {
+                for (DataSnapshot state : snapshot.getChildren()) {
                     if (onQueryListener != null) {
                         // operate second query
-                        UserMission userMission = onQueryListener.onSecondQuery(mission);
-                        if (userMission != null)
-                            userMissionList.add(userMission);
+                        MissionState missionState = onQueryListener.onSecondQuery(state);
+                        if (missionState != null)
+                            missionStateList.add(missionState);
                     } else {
-                        userMissionList.add(mission.getValue(UserMission.class));
+                        LogUtil.logE(TAG,"[MyValueEventListener] state.getValue(MissionState.class) = "+state.getValue(MissionState.class).toString());
+                        missionStateList.add(state.getValue(MissionState.class));
                     }
                 }
             }
-            setValue(userMissionList);
+            setValue(missionStateList);
         }
 
         @Override

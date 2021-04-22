@@ -14,6 +14,7 @@ import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseBindingMethods;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.ItemListviewBinding;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -107,7 +108,7 @@ public class ItemDateView extends LinearLayout {
     }
 
     public void setItemDescription(String string) {
-        viewBinding.descriptionTextview.setText(string);
+        viewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemDateValAttrChanged(InverseBindingListener inverseBindingListener) {

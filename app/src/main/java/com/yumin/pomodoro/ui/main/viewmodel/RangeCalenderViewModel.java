@@ -26,9 +26,9 @@ public class RangeCalenderViewModel extends AndroidViewModel {
 
     public RangeCalenderViewModel(@NonNull Application application) {
         super(application);
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-        else
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+//            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
+//        else
             this.dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
 
         this.mStrMissionId = MissionManager.getInstance().getStrRangeCalenderId();

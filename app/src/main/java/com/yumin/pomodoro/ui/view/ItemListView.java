@@ -14,6 +14,7 @@ import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseBindingMethods;
 
+import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.ItemListviewBinding;
 
@@ -57,10 +58,16 @@ public class ItemListView extends LinearLayout {
                                 public void onClick(DialogInterface dialog, int index) {
                                     setItemListVal(index);
                                     switch (index) {
+                                        case REPEAT_NONE:
+                                        case REPEAT_EVERYDAY:
+                                            // clear repeat start & end day if exists.
+                                            if (onRepeatTypeListener != null)
+                                                onRepeatTypeListener.chooseRepeatNonDefine();
+                                            break;
                                         case REPEAT_DEFINE:
                                             // set repeat start & end day
-                                            if (calenderListener != null)
-                                                calenderListener.onOpened();
+                                            if (onRepeatTypeListener != null)
+                                                onRepeatTypeListener.chooseRepeatDefine();
                                             break;
                                     }
                                 }
@@ -95,20 +102,21 @@ public class ItemListView extends LinearLayout {
     }
 
     public void setItemDescription(String string) {
-        viewBinding.descriptionTextview.setText(string);
+        viewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemListValAttrChanged(InverseBindingListener inverseBindingListener) {
         this.inverseBindingListener = inverseBindingListener;
     }
 
-    public interface OnCalenderListener{
-        public void onOpened();
+    public interface OnRepeatTypeListener {
+        public void chooseRepeatDefine();
+        public void chooseRepeatNonDefine();
     }
 
-    private OnCalenderListener calenderListener = null;
+    private OnRepeatTypeListener onRepeatTypeListener = null;
 
-    public void setOnCalenderListener(OnCalenderListener listener){
-        this.calenderListener = listener;
+    public void setOnRepeatTypeListener(OnRepeatTypeListener listener){
+        this.onRepeatTypeListener = listener;
     }
 }

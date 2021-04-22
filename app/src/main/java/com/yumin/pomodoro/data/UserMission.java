@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.yumin.pomodoro.utils.LogUtil;
+
 @Entity(tableName = "MyMission")
 public class UserMission {
     private static final String TAG = "[UserMission]";
@@ -32,10 +34,13 @@ public class UserMission {
     private long createdTime;
     private String firebaseMissionId = "";
 
-    public UserMission(){}
+    public UserMission(){
+        LogUtil.logE("[UserMission]","Constructor");
+    }
 
     @Ignore
     public UserMission(int time, int shortBreakTime, int color) {
+        LogUtil.logE("[UserMission]","Constructor 111");
         this.name = "快速番茄任務";
         this.time = time;
         this.shortBreakTime = shortBreakTime;
@@ -49,6 +54,7 @@ public class UserMission {
                        int goal, int repeat, int repeatStart, int repeatEnd,
                        boolean enableNotification, boolean enableSound,
                        boolean enableVibrate, boolean keepScreenOn, String firebaseMissionId, long createdTime) {
+        LogUtil.logE("[UserMission]","Constructor 222");
         this.name = name;
         this.time = time;
         this.shortBreakTime = shortBreakTime;

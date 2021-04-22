@@ -8,6 +8,8 @@ import com.yumin.pomodoro.ui.base.UnPeekLiveData;
 public class SharedViewModel extends ViewModel {
     private UnPeekLiveData<Long> mRepeatStart = new UnPeekLiveData<>();
     private UnPeekLiveData<Long> mRepeatEnd = new UnPeekLiveData<>();
+    private UnPeekLiveData<String> mBackupTime = new UnPeekLiveData.Builder<String>().setAllowNullValue(false).create();
+    private UnPeekLiveData<String> mRestoreTime = new UnPeekLiveData.Builder<String>().setAllowNullValue(false).create();
 
     public ProtectedUnPeekLiveData<Long> getRepeatStart() {
         return mRepeatStart;
@@ -23,5 +25,21 @@ public class SharedViewModel extends ViewModel {
 
     public void setRepeatEnd(long time) {
         this.mRepeatEnd.setValue(time);
+    }
+
+    public void setBackupTime(String time){
+        this.mBackupTime.setValue(time);
+    }
+
+    public ProtectedUnPeekLiveData<String> getBackupTime(){
+        return mBackupTime;
+    }
+
+    public void setRestoreTime(String time){
+        this.mRestoreTime.setValue(time);
+    }
+
+    public ProtectedUnPeekLiveData<String> getRestoreTime(){
+        return mRestoreTime;
     }
 }
