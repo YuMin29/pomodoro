@@ -71,21 +71,21 @@ public class ColorView extends View {
     }
 
     public void setColorValue(int color){
-        this.mColorValue = color;
+        mColorValue = color;
         mPaint.setColor(mColorValue);
         invalidate();
     }
 
     public int getColorValue(){
-        return this.mColorValue;
+        return mColorValue;
     }
 
     public void setSelect(boolean select){
-        this.mSelect = select;
+        mSelect = select;
         invalidate();
     }
 
     public boolean getSelect(){
-        return this.mSelect;
+        return mSelect;
     }
 }

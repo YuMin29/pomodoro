@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 public class BackupFragment extends DataBindingFragment {
-    private static final String TAG = "[BackupFragment]";
+    private static final String TAG = BackupFragment.class.getSimpleName();
     private BackupViewModel mBackupViewModel;
 
     @Override
@@ -43,10 +43,9 @@ public class BackupFragment extends DataBindingFragment {
         mBackupViewModel.getProgress().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean progress) {
-                // false -> navigate up
                 if (!progress)
                     navigateUp();
-                // set time stamp
+
                 String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.NAV_ITEM_SHARED_PREFERENCE, Context.MODE_PRIVATE);
                 sharedPreferences.edit().putString(MainActivity.KEY_BACKUP_TIME,"上次備份時間:" + nowDate).commit();
@@ -58,7 +57,7 @@ public class BackupFragment extends DataBindingFragment {
         mBackupViewModel.getRoomMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissionList) {
-                LogUtil.logE(TAG, "[initObserver][getRoomMissions] isEmpty = " +
+                LogUtil.logE(TAG, "[getRoomMissions] isEmpty = " +
                         userMissionList.isEmpty());
                 mBackupViewModel.setIsRoomMissionsExist(!userMissionList.isEmpty());
                 mBackupViewModel.operateBackup();
@@ -68,7 +67,7 @@ public class BackupFragment extends DataBindingFragment {
         mBackupViewModel.getRoomMissionStates().observe(getViewLifecycleOwner(), new Observer<List<MissionState>>() {
             @Override
             public void onChanged(List<MissionState> missionStates) {
-                LogUtil.logE(TAG, "[initObserver][getRoomMissionStates] isEmpty = " +
+                LogUtil.logE(TAG, "[getRoomMissionStates] isEmpty = " +
                         missionStates.isEmpty());
                 mBackupViewModel.setIsRoomMissionStatesExist(!missionStates.isEmpty());
             }

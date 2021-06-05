@@ -1,12 +1,7 @@
 package com.yumin.pomodoro.ui.view;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,11 +18,10 @@ import com.yumin.pomodoro.databinding.ItemImageviewBinding;
 @InverseBindingMethods({@InverseBindingMethod(type = ItemImageView.class,
         attribute = "itemEnable", event = "itemEnableAttrChanged")})
 public class ItemImageView extends LinearLayout {
-    private static final String TAG = "[ItemImageView]";
-    private ItemImageviewBinding viewBinding;
-    private boolean isUseImage = false;
-    private boolean isEnabled;
-    private InverseBindingListener inverseBindingListener;
+    private ItemImageviewBinding mViewBinding;
+    private boolean mIsUseImage = false;
+    private boolean mIsEnabled;
+    private InverseBindingListener mInverseBindingListener;
 
     public ItemImageView(Context context) {
         super(context);
@@ -46,25 +40,24 @@ public class ItemImageView extends LinearLayout {
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.item_imageview,this,true);
-        viewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
+        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_imageview,this,true);
+        mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isUseImage) {
-                    // switch icon when click button
-                    if (isEnabled) {
-                        isEnabled = false;
+                if (mIsUseImage) {
+                    if (mIsEnabled) {
+                        mIsEnabled = false;
                     } else {
-                        isEnabled = true;
+                        mIsEnabled = true;
                     }
-                    setItemEnable(isEnabled);
+                    setItemEnable(mIsEnabled);
                 }
         }});
     }
 
     public void setItemEnable(boolean enabled){
-        isUseImage = true;
-        isEnabled = enabled;
+        mIsUseImage = true;
+        mIsEnabled = enabled;
         int imgRsc;
 
         if (enabled) {
@@ -73,20 +66,20 @@ public class ItemImageView extends LinearLayout {
             imgRsc = R.drawable.ic_cancel_black_24dp;
         }
 
-        viewBinding.imageView.setImageResource(imgRsc);
-        if (inverseBindingListener != null)
-            inverseBindingListener.onChange();
+        mViewBinding.imageView.setImageResource(imgRsc);
+        if (mInverseBindingListener != null)
+            mInverseBindingListener.onChange();
     }
 
     public boolean getItemEnable(){
-        return isEnabled;
+        return mIsEnabled;
     }
 
     public void setItemDescription(String string) {
-        viewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemEnableAttrChanged(InverseBindingListener inverseBindingListener){
-        this.inverseBindingListener = inverseBindingListener;
+        mInverseBindingListener = inverseBindingListener;
     }
 }

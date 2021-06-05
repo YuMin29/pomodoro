@@ -21,9 +21,9 @@ import com.yumin.pomodoro.databinding.ItemListviewBinding;
 @InverseBindingMethods(
         {@InverseBindingMethod(type = ItemListView.class, attribute = "itemListVal", event = "itemListValAttrChanged")})
 public class ItemListView extends LinearLayout {
-    private static final String TAG = "[ItemListView]";
-    private ItemListviewBinding viewBinding;
-    private InverseBindingListener inverseBindingListener;
+    private ItemListviewBinding mViewBinding;
+    private InverseBindingListener mInverseBindingListener;
+    private OnRepeatTypeListener mOnRepeatTypeListener = null;
     private static final int REPEAT_NONE = 0;
     private static final int REPEAT_EVERYDAY = 1;
     private static final int REPEAT_DEFINE = 2;
@@ -45,14 +45,15 @@ public class ItemListView extends LinearLayout {
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.item_listview, this, true);
-        viewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
+        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_listview, this, true);
+        mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (viewBinding.descriptionTextview.getText().toString().equals(getResources().getString(R.string.mission_repeat))) {
+                if (mViewBinding.descriptionTextview.getText().toString().equals(getResources().getString(R.string.mission_repeat))) {
                     String[] repeatArray = getResources().getStringArray(R.array.repeat_array);
+                    String title = context.getString(R.string.dialog_set_title) + mViewBinding.descriptionTextview.getText();
                     AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                            .setTitle("請設置" + viewBinding.descriptionTextview.getText())
+                            .setTitle(title)
                             .setItems(repeatArray, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int index) {
@@ -60,14 +61,12 @@ public class ItemListView extends LinearLayout {
                                     switch (index) {
                                         case REPEAT_NONE:
                                         case REPEAT_EVERYDAY:
-                                            // clear repeat start & end day if exists.
-                                            if (onRepeatTypeListener != null)
-                                                onRepeatTypeListener.chooseRepeatNonDefine();
+                                            if (mOnRepeatTypeListener != null)
+                                                mOnRepeatTypeListener.chooseRepeatNonDefine();
                                             break;
                                         case REPEAT_DEFINE:
-                                            // set repeat start & end day
-                                            if (onRepeatTypeListener != null)
-                                                onRepeatTypeListener.chooseRepeatDefine();
+                                            if (mOnRepeatTypeListener != null)
+                                                mOnRepeatTypeListener.chooseRepeatDefine();
                                             break;
                                     }
                                 }
@@ -81,20 +80,18 @@ public class ItemListView extends LinearLayout {
     public void setItemListVal(int val) {
         if (val == -1)
             return;
-        // update ui
         String[] repeatArray = getResources().getStringArray(R.array.repeat_array);
-        viewBinding.valTextview.setText(repeatArray[val]);
-        // notify listener
-        if (inverseBindingListener != null)
-            inverseBindingListener.onChange();
+        mViewBinding.valTextview.setText(repeatArray[val]);
+        if (mInverseBindingListener != null)
+            mInverseBindingListener.onChange();
     }
 
     public int getItemListVal() {
-        String text = viewBinding.valTextview.getText().toString();
+        String text = mViewBinding.valTextview.getText().toString();
         if (text != null) {
             String[] repeatArray = getResources().getStringArray(R.array.repeat_array);
             for (int index = 0; index < repeatArray.length; index++) {
-                if (repeatArray[index].equals(viewBinding.valTextview.getText().toString()))
+                if (repeatArray[index].equals(mViewBinding.valTextview.getText().toString()))
                     return index;
             }
         }
@@ -102,21 +99,19 @@ public class ItemListView extends LinearLayout {
     }
 
     public void setItemDescription(String string) {
-        viewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemListValAttrChanged(InverseBindingListener inverseBindingListener) {
-        this.inverseBindingListener = inverseBindingListener;
+        mInverseBindingListener = inverseBindingListener;
     }
 
     public interface OnRepeatTypeListener {
-        public void chooseRepeatDefine();
-        public void chooseRepeatNonDefine();
+        void chooseRepeatDefine();
+        void chooseRepeatNonDefine();
     }
 
-    private OnRepeatTypeListener onRepeatTypeListener = null;
-
     public void setOnRepeatTypeListener(OnRepeatTypeListener listener){
-        this.onRepeatTypeListener = listener;
+        mOnRepeatTypeListener = listener;
     }
 }

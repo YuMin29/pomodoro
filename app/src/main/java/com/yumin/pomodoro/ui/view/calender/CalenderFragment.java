@@ -2,7 +2,6 @@ package com.yumin.pomodoro.ui.view.calender;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,6 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
@@ -34,7 +32,7 @@ import java.util.Map;
 
 public class CalenderFragment extends DataBindingFragment implements CalendarView.OnCalendarSelectListener,
         CalendarView.OnYearChangeListener {
-    private static final String TAG = "[CalenderFragment]";
+    private static final String TAG = CalenderFragment.class.getSimpleName();
     private CalenderViewModel mCalenderViewModel;
     private FragmentCalenderBinding mFragmentCalenderBinding;
     private TextView mTextMonthDay;
@@ -42,11 +40,10 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     private TextView mTextLunar;
     private TextView mTextCurrentDay;
     private CalendarView mCalendarView;
-    private RelativeLayout mRelativeTool;
     private int mCurrentYear;
     private CalendarLayout mCalendarLayout;
-    private Map<String,List<UserMission>> userMissionMap;
-    private Map<Long,List<MissionState>> missionStateMap;
+    private Map<String,List<UserMission>> mUserMissionMap;
+    private Map<Long,List<MissionState>> mMissionStateMap;
     private RecyclerView mRecyclerView;
     private MissionStateAdapter mMissionStateAdapter;
 
@@ -73,7 +70,6 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         mTextMonthDay = mFragmentCalenderBinding.tvMonthDay;
         mTextYear = mFragmentCalenderBinding.tvYear;
         mTextLunar = mFragmentCalenderBinding.tvLunar;
-        mRelativeTool = mFragmentCalenderBinding.rlTool;
         mCalendarView = mFragmentCalenderBinding.calendarView;
         mTextCurrentDay = mFragmentCalenderBinding.tvCurrentDay;
         mCalendarLayout = mFragmentCalenderBinding.calendarLayout;
@@ -94,31 +90,31 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         mCalenderViewModel.getMediatorMissionFromViewModel().observe(getViewLifecycleOwner(), new Observer<CalenderViewModel.MissionResult>() {
             @Override
             public void onChanged(CalenderViewModel.MissionResult result) {
-                if (null == result || !result.isComplete())
+                if (result == null || !result.isComplete())
                     return;
 
                 Map<String, Calendar> calendarMap = new HashMap<>();
                 List<MissionState> missionStateList;
-                missionStateMap = new HashMap<>();
-                userMissionMap = new HashMap<>();
+                mMissionStateMap = new HashMap<>();
+                mUserMissionMap = new HashMap<>();
                 // remap for the mission state has same record day
-                for (MissionState missionState : result.allMissionStates) {
+                for (MissionState missionState : result.mAllMissionStates) {
                     long recordDay = missionState.getRecordDay();
-                    if (missionStateMap.containsKey(recordDay)) {
-                        missionStateMap.get(recordDay).add(missionState);
+                    if (mMissionStateMap.containsKey(recordDay)) {
+                        mMissionStateMap.get(recordDay).add(missionState);
                     } else {
                         missionStateList = new ArrayList<>();
                         missionStateList.add(missionState);
-                        missionStateMap.put(recordDay, missionStateList);
+                        mMissionStateMap.put(recordDay, missionStateList);
                     }
                 }
                 // go through all the map data
-                for (Map.Entry<Long,List<MissionState>> entry : missionStateMap.entrySet()) {
+                for (Map.Entry<Long,List<MissionState>> entry : mMissionStateMap.entrySet()) {
                     long recordDay = entry.getKey();
                     List<MissionState> missionStates = entry.getValue();
 
-                    LogUtil.logE(TAG, "[initObserver] Entry SET KEY: "+recordDay +
-                            " ,VALUE SIZE : "+missionStates.size());
+                    LogUtil.logE(TAG, "[getMediatorMissionFromViewModel] entry set key: "+recordDay +
+                            " ,value size : "+missionStates.size());
 
                     int year = Integer.parseInt(TimeToMillisecondUtil.getYear(recordDay));
                     int month = Integer.parseInt(TimeToMillisecondUtil.getMonth(recordDay));
@@ -129,7 +125,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                     List<UserMission> userMissions = new ArrayList<>();
                     // double confirm whether if the mission state exist
                     for (MissionState missionState : missionStates) {
-                        for (UserMission userMission : result.allUserMissions) {
+                        for (UserMission userMission : result.mAllUserMissions) {
                             UserMission fetchUserMission = null;
 
 //                            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -146,7 +142,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                                 userMissions.add(fetchUserMission);
                             }
                         }
-                        userMissionMap.put(String.valueOf(recordDay),userMissions);
+                        mUserMissionMap.put(String.valueOf(recordDay),userMissions);
                     }
 //                    LogUtil.logE(TAG,"[initObserver] map put calender size = "+calendar.getSchemes().size());
                     calendarMap.put(getSchemeCalendar(year,month,day).toString(),calendar);
@@ -189,12 +185,12 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     private void updateRecyclerViewData(Calendar calendar){
         String currentTime = String.valueOf(TimeToMillisecondUtil.getStartTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
         LogUtil.logE(TAG,"[onCalendarSelect] DAY = " +currentTime);
-        List<MissionState> missionStateList = missionStateMap.get(Long.valueOf(currentTime));
+        List<MissionState> missionStateList = mMissionStateMap.get(Long.valueOf(currentTime));
         if (null == missionStateList) {
             mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.VISIBLE);
             mFragmentCalenderBinding.recyclerView.setVisibility(View.GONE);
         } else {
-            setUpRecyclerViewAdapter(userMissionMap.get(currentTime),missionStateMap.get(Long.valueOf(currentTime)));
+            setUpRecyclerViewAdapter(mUserMissionMap.get(currentTime), mMissionStateMap.get(Long.valueOf(currentTime)));
             mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.GONE);
             mFragmentCalenderBinding.recyclerView.setVisibility(View.VISIBLE);
         }

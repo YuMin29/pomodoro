@@ -9,13 +9,12 @@ import com.haibin.calendarview.RangeMonthView;
 import com.yumin.pomodoro.utils.LogUtil;
 
 public class CustomRangeMonthView extends RangeMonthView {
-    private static final String TAG = "[CustomRangeMonthView]";
+    private static final String TAG = CustomRangeMonthView.class.getSimpleName();
     private int mRadius;
 
     public CustomRangeMonthView(Context context) {
         super(context);
     }
-
 
     @Override
     protected void onPreviewHook() {
@@ -26,18 +25,18 @@ public class CustomRangeMonthView extends RangeMonthView {
     @Override
     protected boolean onDrawSelected(Canvas canvas, Calendar calendar, int x, int y, boolean hasScheme,
                                      boolean isSelectedPre, boolean isSelectedNext) {
-        LogUtil.logD(TAG,"onDrawSelected");
+        LogUtil.logD(TAG, "[onDrawSelected]");
         int cx = x + mItemWidth / 2;
         int cy = y + mItemHeight / 2;
         if (isSelectedPre) {
             if (isSelectedNext) {
                 canvas.drawRect(x, cy - mRadius, x + mItemWidth, cy + mRadius, mSelectedPaint);
-            } else {//最后一个，the last
+            } else {
                 canvas.drawRect(x, cy - mRadius, cx, cy + mRadius, mSelectedPaint);
                 canvas.drawCircle(cx, cy, mRadius, mSelectedPaint);
             }
         } else {
-            if(isSelectedNext){
+            if (isSelectedNext) {
                 canvas.drawRect(cx, cy - mRadius, x + mItemWidth, cy + mRadius, mSelectedPaint);
             }
             canvas.drawCircle(cx, cy, mRadius, mSelectedPaint);
@@ -48,7 +47,7 @@ public class CustomRangeMonthView extends RangeMonthView {
 
     @Override
     protected void onDrawScheme(Canvas canvas, Calendar calendar, int x, int y, boolean isSelected) {
-        LogUtil.logD(TAG,"onDrawScheme");
+        LogUtil.logD(TAG, "[onDrawScheme]");
         int cx = x + mItemWidth / 2;
         int cy = y + mItemHeight / 2;
         canvas.drawCircle(cx, cy, mRadius, mSchemePaint); //draw a circle
@@ -56,7 +55,7 @@ public class CustomRangeMonthView extends RangeMonthView {
 
     @Override
     protected void onDrawText(Canvas canvas, Calendar calendar, int x, int y, boolean hasScheme, boolean isSelected) {
-        LogUtil.logD(TAG,"onDrawText");
+        LogUtil.logD(TAG, "[onDrawText]");
         float baselineY = mTextBaseLine + y;
         int cx = x + mItemWidth / 2;
 
@@ -73,12 +72,12 @@ public class CustomRangeMonthView extends RangeMonthView {
                     cx,
                     baselineY,
                     calendar.isCurrentDay() ? mCurDayTextPaint :
-                            calendar.isCurrentMonth() && isInRange && isEnable? mSchemeTextPaint : mOtherMonthTextPaint);
+                            calendar.isCurrentMonth() && isInRange && isEnable ? mSchemeTextPaint : mOtherMonthTextPaint);
 
         } else {
             canvas.drawText(String.valueOf(calendar.getDay()), cx, baselineY,
                     calendar.isCurrentDay() ? mCurDayTextPaint :
-                            calendar.isCurrentMonth() && isInRange && isEnable? mCurMonthTextPaint : mOtherMonthTextPaint);
+                            calendar.isCurrentMonth() && isInRange && isEnable ? mCurMonthTextPaint : mOtherMonthTextPaint);
         }
     }
 }

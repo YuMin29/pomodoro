@@ -43,19 +43,19 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void setIsRoomMissionStatesExist(boolean exist){
-        this.mIsRoomMissionStatesExist.setValue(exist);
+        mIsRoomMissionStatesExist.setValue(exist);
     }
 
     public boolean getIsRoomMissionStatesExist(){
-        return this.mIsRoomMissionStatesExist.getValue();
+        return mIsRoomMissionStatesExist.getValue();
     }
 
     public void setIsRoomMissionsExist(boolean missionsExist){
-        this.mIsRoomMissionsExist.setValue(missionsExist);
+        mIsRoomMissionsExist.setValue(missionsExist);
     }
 
     public boolean getIsRoomMissionsExist(){
-        return this.mIsRoomMissionsExist.getValue();
+        return mIsRoomMissionsExist.getValue();
     }
 
     public void syncRoomMissionsToFirebase() {

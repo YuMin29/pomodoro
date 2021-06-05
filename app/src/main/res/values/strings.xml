@@ -80,7 +80,7 @@
 
     <string name="login">登錄</string>
     <string name="register">註冊帳號</string>
-    <string name="logout">登出</string>
+    <string name="logout">登出?</string>
     <string name="create_account">建立帳號</string>
     <string name="create_account_error">信箱或密碼為空！</string>
     <string name="create_account_email_tint">test123@gmail.com</string>
@@ -138,4 +138,11 @@
     <string name="backup_message">備份數據將會覆蓋遠端數據 確定要執行嗎?</string>
     <string name="restore_message">還原數據將會覆蓋本地端數據 確定要執行嗎?</string>
     <string name="require_login">請先登入帳號</string>
+
+    <string name="finish_mission">結束任務</string>
+    <string name="check_finish_mission">確認結束任務？</string>
+    <string name="notification_title">蕃茄任務:</string>
+    <string name="notification_break_message">休息一下吧!</string>
+    <string name="notification_mission_message">執行蕃茄任務!</string>
+    <string name="dialog_set_title">請設置</string>
 </resources>

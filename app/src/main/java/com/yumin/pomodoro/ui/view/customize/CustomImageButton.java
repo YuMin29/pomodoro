@@ -17,7 +17,7 @@ import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.utils.LogUtil;
 
 public class CustomImageButton extends LinearLayout {
-    private static final String TAG = "[CustomImageButton]";
+    private static final String TAG = CustomImageButton.class.getSimpleName();
     private TextView mTextView;
     private ImageButton mImageButton;
     private boolean mTintEnabled = false;

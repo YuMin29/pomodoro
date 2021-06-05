@@ -24,14 +24,13 @@ import java.util.Date;
 import java.util.List;
 
 public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionState> {
-    private static final String TAG = "[FirebaseApiServiceImpl]";
-    DatabaseReference databaseReference;
+    private static final String TAG = FirebaseApiServiceImpl.class.getSimpleName();
+    DatabaseReference mDatabaseReference;
     Application mApplication;
 
     public FirebaseApiServiceImpl(Application application){
-        LogUtil.logE(TAG,"constructor");
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        this.mApplication = application;
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mApplication = application;
     }
 
     private String getCurrentUserUid(){
@@ -42,11 +41,11 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     private DatabaseReference getUserMissionPath(){
-        return databaseReference.child("usermissions").child(getCurrentUserUid());
+        return mDatabaseReference.child("usermissions").child(getCurrentUserUid());
     }
 
     private DatabaseReference getCalendarPath(){
-        return databaseReference.child("record_calender").child(getCurrentUserUid());
+        return mDatabaseReference.child("record_calender").child(getCurrentUserUid());
     }
 
     @Override
@@ -94,7 +93,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                LogUtil.logE(TAG,"[getMissionRepeatStart][onCancelled] ERROR = "+error.getDetails());
+                LogUtil.logE(TAG,"[getMissionRepeatStart][onCancelled] error = "+error.getDetails());
             }
         });
         return repeatStart;
@@ -114,7 +113,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        LogUtil.logE(TAG,"[getMissionRepeatEnd][onCancelled] ERROR = "+error.getDetails());
+                        LogUtil.logE(TAG,"[getMissionRepeatEnd][onCancelled] error = "+error.getDetails());
                     }
                 });
         return repeatEnd;
@@ -134,7 +133,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        LogUtil.logE(TAG,"[getMissionOperateDay][onCancelled] ERROR = "+error.getDetails());
+                        LogUtil.logE(TAG,"[getMissionOperateDay][onCancelled] error = "+error.getDetails());
                     }
                 });
         return operateDay;
@@ -186,14 +185,14 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     @Override
-    public void updateMissionFinishedState(String id, boolean isFinished, int completeOfNumber) {
+    public void updateMissionState(String id, boolean isFinished, int completeOfNumber) {
         LogUtil.logE(TAG,"[updateIsFinishedById] ID = " + id + ", finished = "+isFinished);
         getCalendarPath().child(id).child("finished").setValue(isFinished);
         getCalendarPath().child(id).child("finishedDay").setValue(isFinished ? new Date().getTime() : -1);
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissionList(long start, long end) {
+    public LiveData<List<UserMission>> getCompletedMissionList(long start, long end) {
         LogUtil.logE(TAG,"[getFinishedMissions] start = "+start+" ,end = "+end);
 
         List<String> missions = new ArrayList<>();
@@ -203,7 +202,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
                         if (snapshot.exists()) {
                             LogUtil.logE(TAG,"[getFinishedMissions] exist");
                             for (DataSnapshot missionState : snapshot.getChildren()){
-                                if (missionState.getValue(MissionState.class).getFinished() &&
+                                if (missionState.getValue(MissionState.class).getCompleted() &&
                                         missionState.getValue(MissionState.class).getRecordDay() == start) {
                                     String missionId = missionState.getValue(MissionState.class).getMissionId();
                                     missions.add(missionId);
@@ -214,7 +213,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        LogUtil.logE(TAG,"[getNumberOfCompletionById][onCancelled] ERROR = "+error.getDetails());
+                        LogUtil.logE(TAG,"[getNumberOfCompletionById][onCancelled] error = "+error.getDetails());
                     }
                 });
 
@@ -225,7 +224,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
                 for (String id : missions) {
                     UserMission userMission = dataSnapshot.getValue(UserMission.class);
                     if (userMission.getFirebaseMissionId().equals(id)) {
-                        LogUtil.logE(TAG,"[getFinishedMissions] 1111 exist");
+                        LogUtil.logE(TAG,"[getFinishedMissions] exist");
                         return userMission;
                     }
 
@@ -251,7 +250,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        LogUtil.logE(TAG,"[getNumberOfCompletionById][onCancelled] ERROR = "+error.getDetails());
+                        LogUtil.logE(TAG,"[getNumberOfCompletionById][onCancelled] error = "+error.getDetails());
                     }
                 });
         return numberOfCompletion;
@@ -270,7 +269,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        LogUtil.logE(TAG,"[getNumberOfCompletionById][onCancelled] ERROR = "+error.getDetails());
+                        LogUtil.logE(TAG,"[getNumberOfCompletionById][onCancelled] error = "+error.getDetails());
                     }
                 });
         return missionState;
@@ -285,9 +284,6 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     public void saveMissionState(String missionId,MissionState missionState){
-//        LogUtil.logE(TAG,"[recordFinishDayByMission] id = "+missionState.missionId
-//                +" ,completeOfNumber = "+missionState.numberOfCompletion
-//                +" ,isFinish = "+missionState.isFinished);
         missionState.setMissionId(missionId);
         DatabaseReference databaseReference = getCalendarPath();
         databaseReference.child(missionId).setValue(missionState);
@@ -299,7 +295,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     @Override
-    public LiveData<List<UserMission>> getPastFinishedMission(long today) {
+    public LiveData<List<UserMission>> getPastCompletedMission(long today) {
         return null;
     }
 }

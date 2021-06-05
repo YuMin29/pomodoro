@@ -76,11 +76,11 @@ public class BackupViewModel extends AndroidViewModel {
     }
 
     public void setIsRoomMissionStatesExist(boolean exist){
-        this.mIsRoomMissionStatesExist.setValue(exist);
+        mIsRoomMissionStatesExist.setValue(exist);
     }
 
     public void setIsRoomMissionsExist(boolean missionsExist){
-        this.mIsRoomMissionsExist.setValue(missionsExist);
+        mIsRoomMissionsExist.setValue(missionsExist);
     }
 
     public LiveData<Boolean> getProgress() {

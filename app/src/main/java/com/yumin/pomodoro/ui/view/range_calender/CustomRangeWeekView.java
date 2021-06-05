@@ -8,13 +8,8 @@ import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.RangeWeekView;
 import com.yumin.pomodoro.utils.LogUtil;
 
-/**
- * 范围选择周视图
- * Created by huanghaibin on 2018/9/13.
- */
-
 public class CustomRangeWeekView extends RangeWeekView {
-    private static final String TAG = "[CustomRangeWeekView]";
+    private static final String TAG = CustomRangeWeekView.class.getSimpleName();
     private int mRadius;
 
     public CustomRangeWeekView(Context context) {
@@ -31,14 +26,14 @@ public class CustomRangeWeekView extends RangeWeekView {
     @Override
     protected boolean onDrawSelected(Canvas canvas, Calendar calendar, int x, boolean hasScheme,
                                      boolean isSelectedPre, boolean isSelectedNext) {
-        LogUtil.logD(TAG,"onDrawSelected");
+        LogUtil.logD(TAG, "[onDrawSelected]");
         int cx = x + mItemWidth / 2;
         int cy = mItemHeight / 2;
 
         if (isSelectedPre) {
             if (isSelectedNext) {
                 canvas.drawRect(x, cy - mRadius, x + mItemWidth, cy + mRadius, mSelectedPaint);
-            } else {//最后一个，the last
+            } else {
                 canvas.drawRect(x, cy - mRadius, cx, cy + mRadius, mSelectedPaint);
                 canvas.drawCircle(cx, cy, mRadius, mSelectedPaint);
             }
@@ -57,14 +52,14 @@ public class CustomRangeWeekView extends RangeWeekView {
 //            grayOutPaint.setStyle(Paint.Style.FILL);
 //            grayOutPaint.setStrokeWidth(2);
 //            grayOutPaint.setColor(mOtherMonthTextPaint);
-            canvas.drawCircle(cx,cy,mRadius,mOtherMonthTextPaint);
+            canvas.drawCircle(cx, cy, mRadius, mOtherMonthTextPaint);
         }
         return false;
     }
 
     @Override
     protected void onDrawScheme(Canvas canvas, Calendar calendar, int x, boolean isSelected) {
-        LogUtil.logD(TAG,"onDrawScheme");
+        LogUtil.logD(TAG, "[onDrawScheme]");
         int cx = x + mItemWidth / 2;
         int cy = mItemHeight / 2;
         canvas.drawCircle(cx, cy, mRadius, mSchemePaint);
@@ -72,7 +67,7 @@ public class CustomRangeWeekView extends RangeWeekView {
 
     @Override
     protected void onDrawText(Canvas canvas, Calendar calendar, int x, boolean hasScheme, boolean isSelected) {
-        LogUtil.logD(TAG,"onDrawText");
+        LogUtil.logD(TAG, "[onDrawText]");
         float baselineY = mTextBaseLine;
         int cx = x + mItemWidth / 2;
         boolean isInRange = isInRange(calendar);
@@ -87,12 +82,12 @@ public class CustomRangeWeekView extends RangeWeekView {
                     cx,
                     baselineY,
                     calendar.isCurrentDay() ? mCurDayTextPaint :
-                            calendar.isCurrentMonth() && isInRange && isEnable? mSchemeTextPaint : mOtherMonthTextPaint);
+                            calendar.isCurrentMonth() && isInRange && isEnable ? mSchemeTextPaint : mOtherMonthTextPaint);
 
         } else {
             canvas.drawText(String.valueOf(calendar.getDay()), cx, baselineY,
                     calendar.isCurrentDay() ? mCurDayTextPaint :
-                            calendar.isCurrentMonth() && isInRange && isEnable? mCurMonthTextPaint : mOtherMonthTextPaint);
+                            calendar.isCurrentMonth() && isInRange && isEnable ? mCurMonthTextPaint : mOtherMonthTextPaint);
         }
     }
 }

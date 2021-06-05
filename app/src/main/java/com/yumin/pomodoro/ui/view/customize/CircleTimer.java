@@ -3,7 +3,6 @@ package com.yumin.pomodoro.ui.view.customize;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -25,23 +24,22 @@ import com.yumin.pomodoro.utils.LogUtil;
 import java.util.concurrent.TimeUnit;
 
 public class CircleTimer extends RelativeLayout implements View.OnClickListener{
-    private static final String TAG = "[CircleTimer]";
-    private CircleTimerBinding circleTimerBinding;
-    private TimerStatus timerStatus = TimerStatus.STOPPED;
-    private Context context;
-    private ProgressBar progressBarCircle;
-    private TextView textViewTime;
-    private ImageView imageViewReset;
-    private ImageView imageViewStartStop;
-    private CountDownTimer countDownTimer;
-    private long timeCountInMilliSeconds = 1 * 60000;
-    private long missionTime;
-    private long missionTimeLeft;
-    private CountDownTimerListener countDownTimerListener;
-    private Type type;
-    MediaPlayer mediaPlayer = null;
-    private boolean enabledSound;
-    private boolean autoStart;
+    private static final String TAG = CircleTimer.class.getSimpleName();
+    private CircleTimerBinding mCircleTimerBinding;
+    private TimerStatus mTimerStatus = TimerStatus.STOPPED;
+    private Context mContext;
+    private ProgressBar mProgressBarCircle;
+    private TextView mTextViewTime;
+    private ImageView mImageViewReset;
+    private ImageView mImageViewStartStop;
+    private CountDownTimer mCountDownTimer;
+    private long mTimeCountInMilliSeconds = 1 * 60000;
+    private long mMissionTime;
+    private long mMissionTimeLeft;
+    private CountDownTimerListener mCountDownTimerListener;
+    private Type mType;
+    MediaPlayer mMediaPlayer = null;
+    private boolean mEnabledSound;
 
     private enum Type{
         MISSION,
@@ -64,19 +62,19 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public CircleTimer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
-        initViews(context);
+        mContext = context;
+        initViews();
         initListeners();
     }
 
     public void setCountDownTimerListener(CountDownTimerListener listener){
-        this.countDownTimerListener = listener;
+        mCountDownTimerListener = listener;
     }
 
     public interface CountDownTimerListener {
-        public void onStarted();
-        public void onFinished();
-        public void onTick(long millisecond);
+        void onStarted();
+        void onFinished();
+        void onTick(long millisecond);
     }
 
     @Override
@@ -97,57 +95,54 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         STOPPED
     }
 
-    private void initViews(Context context){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        circleTimerBinding = DataBindingUtil.inflate(inflater,R.layout.circle_timer,this,true);
-        progressBarCircle = circleTimerBinding.progressBarCircle;
-        textViewTime = circleTimerBinding.textViewTime;
-        imageViewReset = circleTimerBinding.imageViewReset;
-        imageViewStartStop = circleTimerBinding.imageViewStartPause;
+    private void initViews(){
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mCircleTimerBinding = DataBindingUtil.inflate(inflater,R.layout.circle_timer,this,true);
+        mProgressBarCircle = mCircleTimerBinding.progressBarCircle;
+        mTextViewTime = mCircleTimerBinding.textViewTime;
+        mImageViewReset = mCircleTimerBinding.imageViewReset;
+        mImageViewStartStop = mCircleTimerBinding.imageViewStartPause;
     }
 
     private void initListeners() {
-        circleTimerBinding.imageViewReset.setOnClickListener(this);
-        circleTimerBinding.imageViewStartPause.setOnClickListener(this);
+        mCircleTimerBinding.imageViewReset.setOnClickListener(this);
+        mCircleTimerBinding.imageViewStartPause.setOnClickListener(this);
     }
 
     public void onClickReset() {
         initTimerValues();
-        textViewTime.setText(msTimeFormatter(missionTime));
-        setProgressBarValues(missionTime);
-        imageViewReset.setVisibility(GONE);
-        timerStatus = TimerStatus.STOPPED;
+        mTextViewTime.setText(msTimeFormatter(mMissionTime));
+        setProgressBarValues(mMissionTime);
+        mImageViewReset.setVisibility(GONE);
+        mTimerStatus = TimerStatus.STOPPED;
     }
 
     public void onClickStartStop() {
-        if (timerStatus == TimerStatus.STOPPED) {
-            LogUtil.logE(TAG,"[onClickStartStop] 111");
+        if (mTimerStatus == TimerStatus.STOPPED) {
             startTimer();
-        } else if (timerStatus == TimerStatus.STARTED) {
-            LogUtil.logE(TAG,"[onClickStartStop] 222");
+        } else if (mTimerStatus == TimerStatus.STARTED) {
             pauseTimer();
-        } else if (timerStatus == TimerStatus.PAUSE){
-            LogUtil.logE(TAG,"[onClickStartStop] 333");
+        } else if (mTimerStatus == TimerStatus.PAUSE){
             continueTimer();
         }
     }
 
     public TimerStatus getTimerStatus(){
-        return timerStatus;
+        return mTimerStatus;
     }
 
     private void continueTimer() {
-        imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
-        timerStatus = TimerStatus.STARTED;
-        imageViewReset.setVisibility(View.GONE);
+        mImageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
+        mTimerStatus = TimerStatus.STARTED;
+        mImageViewReset.setVisibility(View.GONE);
         continueCountDownTimer();
-        setProgressBarValues(missionTimeLeft);
+        setProgressBarValues(mMissionTimeLeft);
     }
 
     public void pauseTimer() {
-        imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-        imageViewReset.setVisibility(View.VISIBLE);
-        timerStatus = TimerStatus.PAUSE;
+        mImageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+        mImageViewReset.setVisibility(View.VISIBLE);
+        mTimerStatus = TimerStatus.PAUSE;
         pauseCountDownTimer();
     }
 
@@ -155,101 +150,93 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         // call to initialize the timer values
         initTimerValues();
         // call to initialize the progress bar values
-        setProgressBarValues(missionTime);
+        setProgressBarValues(mMissionTime);
         // hide the reset icon
-        imageViewReset.setVisibility(View.GONE);
+        mImageViewReset.setVisibility(View.GONE);
         // changing play icon to stop icon
-        imageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
+        mImageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
         // changing the timer status to started
-        timerStatus = TimerStatus.STARTED;
+        mTimerStatus = TimerStatus.STARTED;
         // call to start the count down timer
-        startCountDownTimer(missionTime);
+        startCountDownTimer(mMissionTime);
     }
 
     private void pauseCountDownTimer(){
-        countDownTimer.cancel();
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
+        mCountDownTimer.cancel();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
         }
     }
 
     private void continueCountDownTimer(){
-        startCountDownTimer(missionTimeLeft);
+        startCountDownTimer(mMissionTimeLeft);
     }
 
     private void initTimerValues() {
         LogUtil.logE(TAG,"[initTimerValues]");
-        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
-        missionTime = timeCountInMilliSeconds;
+        mProgressBarCircle.setMax((int) mTimeCountInMilliSeconds / 1000);
+        mMissionTime = mTimeCountInMilliSeconds;
     }
 
     /**
      * method to start count down timer
      */
     private void startCountDownTimer(long timeMilli) {
-        LogUtil.logE(TAG,"[startCountDownTimer] 000 ");
         // init media player
-        if (this.type == Type.MISSION && enabledSound) {
-            LogUtil.logE(TAG,"[startCountDownTimer] 111");
-            // TODO: 3/29/21 read spinner value in here
-            mediaPlayer = MediaPlayer.create(context,R.raw.sound_effect_clock);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.start();
+        if (mType == Type.MISSION && mEnabledSound) {
+            mMediaPlayer = MediaPlayer.create(mContext,R.raw.sound_effect_clock);
+            mMediaPlayer.setLooping(true);
+            mMediaPlayer.start();
         }
 
-        if (countDownTimerListener != null)
-            countDownTimerListener.onStarted();
+        if (mCountDownTimerListener != null)
+            mCountDownTimerListener.onStarted();
 
         // start count down
-        countDownTimer = new CountDownTimer(timeMilli, 1000) {
+        mCountDownTimer = new CountDownTimer(timeMilli, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                LogUtil.logE(TAG,"[startCountDownTimer] 222");
-                missionTimeLeft = millisUntilFinished;
-                textViewTime.setText(msTimeFormatter(millisUntilFinished));
-                progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+                mMissionTimeLeft = millisUntilFinished;
+                mTextViewTime.setText(msTimeFormatter(millisUntilFinished));
+                mProgressBarCircle.setProgress((int) (millisUntilFinished / 1000));
 
-                if (countDownTimerListener != null)
-                    countDownTimerListener.onTick(millisUntilFinished);
+                if (mCountDownTimerListener != null)
+                    mCountDownTimerListener.onTick(millisUntilFinished);
             }
 
             @Override
             public void onFinish() {
-                textViewTime.setText(msTimeFormatter(missionTime));
+                mTextViewTime.setText(msTimeFormatter(mMissionTime));
                 // call to initialize the progress bar values
-                setProgressBarValues(missionTime);
+                setProgressBarValues(mMissionTime);
                 // hiding the reset icon
-                imageViewReset.setVisibility(View.GONE);
+                mImageViewReset.setVisibility(View.GONE);
                 // changing stop icon to start icon
-                imageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                mImageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
                 // changing the timer status to stopped
-                timerStatus = TimerStatus.STOPPED;
+                mTimerStatus = TimerStatus.STOPPED;
 
-                if (mediaPlayer != null) {
-                    mediaPlayer.stop();
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.stop();
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
                 }
 
-                if (countDownTimerListener != null) {
-                    countDownTimerListener.onFinished();
+                if (mCountDownTimerListener != null) {
+                    mCountDownTimerListener.onFinished();
                     undoStatusBarColor();
                 }
             }
-
         }.start();
     }
 
-    /**
-     * method to set circular progress bar values
-     */
     private void setProgressBarValues(long time) {
         LogUtil.logE(TAG,"[setProgressBarValues]");
-        progressBarCircle.setProgress((int) time / 1000);
+        mProgressBarCircle.setProgress((int) time / 1000);
     }
 
     private String msTimeFormatter(long milliSeconds) {
@@ -260,58 +247,58 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void setTimeCountInMilliSeconds(LiveData<String> time){
-        circleTimerBinding.textViewTime.setText(time.getValue());
+        mCircleTimerBinding.textViewTime.setText(time.getValue());
     }
 
     public void setTimerBackgroundColor(int color) {
         LogUtil.logD(TAG,"[setTimerBackgroundColor] color = "+color);
-        circleTimerBinding.timerRelativelayout.setBackgroundColor(color);
+        mCircleTimerBinding.timerRelativelayout.setBackgroundColor(color);
         setStatusBarColor(color);
     }
 
     public void setStatusBarColor(int color){
-        ((MainActivity)context).getWindow().setStatusBarColor(color);
+        ((MainActivity)mContext).getWindow().setStatusBarColor(color);
     }
 
     private void undoStatusBarColor(){
-        ((MainActivity)context).getWindow().setStatusBarColor(context.getResources().getColor(R.color.colorPrimary));
+        ((MainActivity)mContext).getWindow().setStatusBarColor(mContext.getResources().getColor(R.color.colorPrimary));
     }
 
     public void setTimerType(String type){
-        LogUtil.logD(TAG,"type = "+type);
+        LogUtil.logD(TAG,"[setTimerType] = "+type);
         if (!TextUtils.isEmpty(type))
-            this.type = Type.getEnum(type);
+            mType = Type.getEnum(type);
     }
 
     public void setMissionTime(int time){
-        LogUtil.logE(TAG,"[setMissionTime] TIME = "+time);
-        this.timeCountInMilliSeconds = Long.valueOf(time * 1 * 1000);
+        LogUtil.logE(TAG,"[setMissionTime] time = "+time);
+        mTimeCountInMilliSeconds = Long.valueOf(time * 1 * 1000);
     }
 
     public void setMissionName(String name){
         if (name != null) {
-            circleTimerBinding.timerName.setVisibility(VISIBLE);
-            circleTimerBinding.timerName.setText(name);
+            mCircleTimerBinding.timerName.setVisibility(VISIBLE);
+            mCircleTimerBinding.timerName.setText(name);
         }
     }
 
     public void setMissionGoal(int goal){
         if (goal != -1)
-            circleTimerBinding.timerGoal.setText("/"+getResources().getString(R.string.mission_goal)+String.valueOf(goal));
+            mCircleTimerBinding.timerGoal.setText("/"+getResources().getString(R.string.mission_goal)+String.valueOf(goal));
     }
 
     public void setMissionFinished(int num){
         LogUtil.logE(TAG,"[setMissionFinished] num = "+num);
         if (num != -1)
-            circleTimerBinding.timerFinish.setText(getResources().getString(R.string.mission_finish_goal)+String.valueOf(num));
+            mCircleTimerBinding.timerFinish.setText(getResources().getString(R.string.mission_finish_goal)+String.valueOf(num));
     }
 
     public void setMissionEnabledSound(boolean enabled){
-        this.enabledSound = enabled;
+        mEnabledSound = enabled;
     }
 
     public void setMissionTimeLeft(long millisecond){
-        this.missionTimeLeft = millisecond;
+        mMissionTimeLeft = millisecond;
     }
 
     public void setBackgroundMusic(int index){

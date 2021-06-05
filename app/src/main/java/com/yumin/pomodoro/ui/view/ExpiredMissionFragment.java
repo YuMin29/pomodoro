@@ -1,6 +1,5 @@
 package com.yumin.pomodoro.ui.view;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,36 +12,31 @@ import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.model.Category;
-import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentExpiredMissionBinding;
 import com.yumin.pomodoro.databinding.MissionItemLayoutBinding;
 import com.yumin.pomodoro.ui.base.DataBindingConfig;
 import com.yumin.pomodoro.ui.base.DataBindingFragment;
-import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
+import com.yumin.pomodoro.ui.main.adapter.ExpandableBaseAdapter;
 import com.yumin.pomodoro.ui.main.viewmodel.ExpiredMissionViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
-import com.yumin.pomodoro.utils.SortTimeUtil;
 import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 public class ExpiredMissionFragment extends DataBindingFragment {
-    private static String TAG = "[ExpiredMissionFragment]";
+    private static String TAG = ExpiredMissionFragment.class.getSimpleName();
     private ExpiredMissionViewModel mExpiredMissionViewModel;
     private FragmentExpiredMissionBinding mFragmentExpiredMissionBinding;
     private List<Category> mCategory = new ArrayList<>();
     private List<UserMission> mFinishedMissions = new ArrayList<>();
-    ExpandableViewAdapter expandableViewAdapter;;
+    ExpandableBaseAdapter mExpandableViewAdapter;;
 
     @Override
     protected void initViewModel() {
@@ -50,7 +44,6 @@ public class ExpiredMissionFragment extends DataBindingFragment {
     }
 
     private void observeViewModel(){
-        // fetch mission list
         mExpiredMissionViewModel.getMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissionList) {
@@ -59,7 +52,7 @@ public class ExpiredMissionFragment extends DataBindingFragment {
                 }
             }
         });
-        // category: date
+
         mExpiredMissionViewModel.getPastMissions().observe(getViewLifecycleOwner(), new Observer<ExpiredMissionViewModel.Result>() {
             @Override
             public void onChanged(ExpiredMissionViewModel.Result result) {
@@ -72,7 +65,7 @@ public class ExpiredMissionFragment extends DataBindingFragment {
                     Map<String,List<UserMission>> remapUserMission = new TreeMap<>();
 
                     for (UserMission userMission : pastMissions) {
-                        LogUtil.logE(TAG,"[getPastMissions] USERMISSION = "+userMission.toString());
+                        LogUtil.logE(TAG,"[getPastMissions] usermissions = "+userMission.toString());
                         long diff;
                         if (userMission.getRepeat() == UserMission.TYPE_DEFINE) {
                             diff = TimeToMillisecondUtil.getTodayEndTime() - userMission.getRepeatStart();
@@ -80,7 +73,7 @@ public class ExpiredMissionFragment extends DataBindingFragment {
                             diff = TimeToMillisecondUtil.getTodayEndTime() - userMission.getOperateDay();
                         }
                         int days = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-                        LogUtil.logE(TAG,"[getPastMissions][Days] "+days);
+                        LogUtil.logE(TAG,"[getPastMissions] days "+days);
 
                         if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY ||
                             userMission.getRepeat() == UserMission.TYPE_DEFINE) {
@@ -107,16 +100,16 @@ public class ExpiredMissionFragment extends DataBindingFragment {
                             remapUserMission.get(dateString).add(userMission);
                         }
                     }
-                    // tree map to array list
+
                     List<Category> categoryList = new ArrayList<>();
                     for (Map.Entry<String, List<UserMission>> entry : remapUserMission.entrySet()) {
                         Category category = new Category(entry.getKey());
                         category.addAllMission(entry.getValue());
                         categoryList.add(category);
                     }
-                    expandableViewAdapter.flashCategory(categoryList);
-                    // expand all group
-                    for(int i=0; i < expandableViewAdapter.getGroupCount(); i++)
+                    mExpandableViewAdapter.updateCategory(categoryList);
+
+                    for(int i = 0; i < mExpandableViewAdapter.getGroupCount(); i++)
                         mFragmentExpiredMissionBinding.expiredMissionList.expandGroup(i);
                 }
             }
@@ -135,7 +128,7 @@ public class ExpiredMissionFragment extends DataBindingFragment {
             @Override
             public void onChanged(List<MissionState> missionStateList) {
                 if (null != missionStateList) {
-                    expandableViewAdapter.flashMissionState(missionStateList);
+                    mExpandableViewAdapter.flashMissionState(missionStateList);
                 }
             }
         });
@@ -145,13 +138,13 @@ public class ExpiredMissionFragment extends DataBindingFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFragmentExpiredMissionBinding = (FragmentExpiredMissionBinding) getBinding();
-        expandableViewAdapter = new ExpandableViewAdapter(getContext(),mCategory,mFinishedMissions);
+        mExpandableViewAdapter = new ExpandableBaseAdapter(getContext(),mCategory,mFinishedMissions);
         // set up adapter
-        mFragmentExpiredMissionBinding.expiredMissionList.setAdapter(expandableViewAdapter);
+        mFragmentExpiredMissionBinding.expiredMissionList.setAdapter(mExpandableViewAdapter);
 
-        expandableViewAdapter.setOnBindView(new ExpandableViewAdapter.OnBindView() {
+        mExpandableViewAdapter.setCustomizeItemBehavior(new ExpandableBaseAdapter.CustomizeItemBehavior() {
             @Override
-            public void onBindItem(MissionItemLayoutBinding binding, View view, int groupPosition, boolean isFinished, UserMission userMission) {
+            public void onBindItemBehavior(MissionItemLayoutBinding binding, View view, int groupPosition, boolean isFinished, UserMission userMission) {
                 // custom bind item behavior
                 // gray out item if it finished
                 if (isFinished) {

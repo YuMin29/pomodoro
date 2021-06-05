@@ -4,31 +4,28 @@ import com.yumin.pomodoro.utils.LogUtil;
 
 public class User {
     private static final String TAG = "[User]";
-    private String userName;
-    private String userMail;
-
-    public User() {
-    }
+    private String mUserName;
+    private String mUserMail;
 
     public User(String userName, String userMail) {
         LogUtil.logD(TAG,"New User => userName = "+userName+", userMail = "+userMail);
-        this.userName = userName == null ? "null" : userName;
-        this.userMail = userMail == null ? "null" : userMail;
+        mUserName = userName == null ? "null" : userName;
+        mUserMail = userMail == null ? "null" : userMail;
     }
 
     public String getUserName() {
-        return userName;
+        return mUserName;
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        mUserName = userName;
     }
 
     public String getUserMail() {
-        return userMail;
+        return mUserMail;
     }
 
     public void setUserMail(String userMail) {
-        this.userMail = userMail;
+        mUserMail = userMail;
     }
 }

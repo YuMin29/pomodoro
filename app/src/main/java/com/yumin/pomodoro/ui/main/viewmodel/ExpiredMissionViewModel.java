@@ -21,29 +21,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpiredMissionViewModel extends AndroidViewModel {
-    private final String TAG = "[ExpiredMissionViewModel]";
-    private DataRepository dataRepository;
-    private LiveData<List<UserMission>> missions;
-    private MutableLiveData<List<UserMission>> pastNoneRepeatMissions = new MutableLiveData<>();
-    private MutableLiveData<List<UserMission>> pastRepeatEveryMissions = new MutableLiveData<>();
-    private MutableLiveData<List<UserMission>> pastRepeatDefineMissions = new MutableLiveData<>();
-    private LiveData<List<UserMission>> pastFinishedMissions;
-    private LiveData<List<MissionState>> missionStates;
+    private final String TAG = ExpiredMissionViewModel.class.getSimpleName();
+    private DataRepository mDataRepository;
+    private LiveData<List<UserMission>> mMissions;
+    private MutableLiveData<List<UserMission>> mPastNoneRepeatMissions = new MutableLiveData<>();
+    private MutableLiveData<List<UserMission>> mPastRepeatEveryMissions = new MutableLiveData<>();
+    private MutableLiveData<List<UserMission>> mPastRepeatDefineMissions = new MutableLiveData<>();
+    private LiveData<List<UserMission>> mPastFinishedMissions;
+    private LiveData<List<MissionState>> mMissionStates;
 
     public ExpiredMissionViewModel(@NonNull Application application) {
         super(application);
-        dataRepository = new RoomRepository(new RoomApiServiceImpl(application));
+        mDataRepository = new RoomRepository(new RoomApiServiceImpl(application));
         fetchData();
     }
 
     private void fetchData(){
-        missions = dataRepository.getMissions();
-        pastFinishedMissions = dataRepository.getPastFinishedMission(TimeToMillisecondUtil.getTodayStartTime());
-        missionStates = dataRepository.getMissionStateList();
+        mMissions = mDataRepository.getMissions();
+        mPastFinishedMissions = mDataRepository.getPastCompletedMission(TimeToMillisecondUtil.getTodayStartTime());
+        mMissionStates = mDataRepository.getMissionStateList();
     }
 
     public LiveData<List<UserMission>> getMissions(){
-        return this.missions;
+        return mMissions;
     }
 
     public void fetchPastMissions(){
@@ -53,37 +53,37 @@ public class ExpiredMissionViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<UserMission>> getPastFinishedMission(){
-        return this.pastFinishedMissions;
+        return mPastFinishedMissions;
     }
 
     public LiveData<List<MissionState>> getMissionStates(){
-        return this.missionStates;
+        return mMissionStates;
     }
 
     public MediatorLiveData<Result> getPastMissions() {
         // observe today missions
         MediatorLiveData<Result> pastMissions = new MediatorLiveData<Result>();
         final Result current = new Result();
-        pastMissions.addSource(pastNoneRepeatMissions, new Observer<List<UserMission>>() {
+        pastMissions.addSource(mPastNoneRepeatMissions, new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG,"getTodayMissionsByOperateDay [onChanged] SIZE = "+userMissions.size());
+                LogUtil.logD(TAG,"[getTodayMissionsByOperateDay] size = "+userMissions.size());
                 current.setMissionsByOperateDay(userMissions);
                 pastMissions.setValue(current);
             }
         });
-        pastMissions.addSource(pastRepeatEveryMissions, new Observer<List<UserMission>>() {
+        pastMissions.addSource(mPastRepeatEveryMissions, new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG,"getTodayMissionsByRepeatType [onChanged] SIZE = "+userMissions.size());
+                LogUtil.logD(TAG,"[getTodayMissionsByRepeatType] size = "+userMissions.size());
                 current.setMissionsByRepeatType(userMissions);
                 pastMissions.setValue(current);
             }
         });
-        pastMissions.addSource(pastRepeatDefineMissions, new Observer<List<UserMission>>() {
+        pastMissions.addSource(mPastRepeatDefineMissions, new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG,"getTodayMissionsByRepeatRange [onChanged] SIZE = "+userMissions.size());
+                LogUtil.logD(TAG,"[getTodayMissionsByRepeatRange] size = "+userMissions.size());
                 current.setMissionsByRepeatRange(userMissions);
                 pastMissions.setValue(current);
             }
@@ -96,19 +96,19 @@ public class ExpiredMissionViewModel extends AndroidViewModel {
      * @return
      */
     private LiveData<List<UserMission>> getPastNoneRepeatMissions(){
-        if (missions.getValue() == null) {
-            pastNoneRepeatMissions.setValue(new ArrayList<>());
+        if (mMissions.getValue() == null) {
+            mPastNoneRepeatMissions.setValue(new ArrayList<>());
         } else {
             List<UserMission> missionList = new ArrayList<>();
-            for (UserMission userMission : missions.getValue()) {
+            for (UserMission userMission : mMissions.getValue()) {
                 if (userMission.getRepeat() == UserMission.TYPE_NONE &&
                         userMission.getOperateDay() < TimeToMillisecondUtil.getTodayStartTime()){
                     missionList.add(userMission);
                 }
             }
-            pastNoneRepeatMissions.setValue(missionList);
+            mPastNoneRepeatMissions.setValue(missionList);
         }
-        return pastNoneRepeatMissions;
+        return mPastNoneRepeatMissions;
     }
 
     /**
@@ -116,18 +116,18 @@ public class ExpiredMissionViewModel extends AndroidViewModel {
      * @return
      */
     private LiveData<List<UserMission>> getPastRepeatEverydayMissions(){
-        if (missions.getValue() == null) {
-            pastRepeatEveryMissions.setValue(new ArrayList<>());
+        if (mMissions.getValue() == null) {
+            mPastRepeatEveryMissions.setValue(new ArrayList<>());
         } else {
             List<UserMission> missionList = new ArrayList<>();
-            for (UserMission userMission : missions.getValue()) {
+            for (UserMission userMission : mMissions.getValue()) {
                 if (userMission.getRepeat() == UserMission.TYPE_EVERYDAY &&
                         userMission.getOperateDay() < TimeToMillisecondUtil.getTodayStartTime())
                     missionList.add(userMission);
             }
-            pastRepeatEveryMissions.setValue(missionList);
+            mPastRepeatEveryMissions.setValue(missionList);
         }
-        return pastRepeatEveryMissions ;
+        return mPastRepeatEveryMissions;
     }
 
     /**
@@ -135,13 +135,13 @@ public class ExpiredMissionViewModel extends AndroidViewModel {
      * @return
      */
     private LiveData<List<UserMission>> getPastRepeatDefineMissions(){
-        if (missions.getValue() == null) {
-            pastRepeatDefineMissions.setValue(new ArrayList<>());
+        if (mMissions.getValue() == null) {
+            mPastRepeatDefineMissions.setValue(new ArrayList<>());
         } else {
             LogUtil.logE(TAG,"TimeMilli.getTodayStartTime() = "+ TimeToMillisecondUtil.getTodayStartTime()+
                     " , TimeMilli.getTodayEndTime() = "+ TimeToMillisecondUtil.getTodayEndTime());
             List<UserMission> missionList = new ArrayList<>();
-            for (UserMission userMission : missions.getValue()) {
+            for (UserMission userMission : mMissions.getValue()) {
                 if (userMission.getRepeat() == UserMission.TYPE_DEFINE &&
                         userMission.getRepeatStart()  <= TimeToMillisecondUtil.getTodayStartTime()) {
                     missionList.add(userMission);
@@ -150,9 +150,9 @@ public class ExpiredMissionViewModel extends AndroidViewModel {
                         " ,  userMission.getRepeatEnd() = "+  userMission.getRepeatEnd());
             }
 
-            pastRepeatDefineMissions.setValue(missionList);
+            mPastRepeatDefineMissions.setValue(missionList);
         }
-        return pastRepeatDefineMissions;
+        return mPastRepeatDefineMissions;
     }
 
     public class Result {
@@ -163,15 +163,15 @@ public class ExpiredMissionViewModel extends AndroidViewModel {
         public Result() {}
 
         public void setMissionsByOperateDay(List<UserMission> missions){
-            this.missionsByOperateDay = missions;
+            missionsByOperateDay = missions;
         }
 
         public void setMissionsByRepeatType(List<UserMission> missions){
-            this.missionsByRepeatType = missions;
+            missionsByRepeatType = missions;
         }
 
         public void setMissionsByRepeatRange(List<UserMission> missions){
-            this.missionsByRepeatRange = missions;
+            missionsByRepeatRange = missions;
         }
 
         public boolean isComplete() {

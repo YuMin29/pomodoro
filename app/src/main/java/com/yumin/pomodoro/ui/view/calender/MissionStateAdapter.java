@@ -21,7 +21,7 @@ import com.yumin.pomodoro.utils.LogUtil;
 import java.util.List;
 
 public class MissionStateAdapter extends RecyclerView.Adapter<MissionStateAdapter.MissionStateViewHolder> {
-    private static final String TAG = "[MissionStateAdapter]";
+    private static final String TAG = MissionStateAdapter.class.getSimpleName();
     private List<UserMission> mUserMissionList;
     private List<MissionState> mMissionStateList;
     private Context mContext;
@@ -31,8 +31,8 @@ public class MissionStateAdapter extends RecyclerView.Adapter<MissionStateAdapte
     }
 
     public void setDataList(List<UserMission> userMissionList, List<MissionState> missionStateList) {
-        this.mUserMissionList = userMissionList;
-        this.mMissionStateList = missionStateList;
+        mUserMissionList = userMissionList;
+        mMissionStateList = missionStateList;
         notifyDataSetChanged();
     }
 

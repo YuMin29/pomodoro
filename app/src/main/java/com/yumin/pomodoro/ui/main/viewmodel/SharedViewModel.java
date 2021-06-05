@@ -16,7 +16,7 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setRepeatStart(long time) {
-        this.mRepeatStart.setValue(time);
+        mRepeatStart.setValue(time);
     }
 
     public ProtectedUnPeekLiveData<Long> getRepeatEnd() {
@@ -24,11 +24,11 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setRepeatEnd(long time) {
-        this.mRepeatEnd.setValue(time);
+        mRepeatEnd.setValue(time);
     }
 
     public void setBackupTime(String time){
-        this.mBackupTime.setValue(time);
+        mBackupTime.setValue(time);
     }
 
     public ProtectedUnPeekLiveData<String> getBackupTime(){
@@ -36,7 +36,7 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setRestoreTime(String time){
-        this.mRestoreTime.setValue(time);
+        mRestoreTime.setValue(time);
     }
 
     public ProtectedUnPeekLiveData<String> getRestoreTime(){

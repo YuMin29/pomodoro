@@ -41,6 +41,6 @@ public class Category {
     }
 
     public Index getIndex(){
-        return this.mIndex;
+        return mIndex;
     }
 }

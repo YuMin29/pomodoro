@@ -1,11 +1,11 @@
 package com.yumin.pomodoro.ui.view;
 
 public class ColorViewInfo {
-    boolean isSelect;
-    int colorValue;
+    boolean mIsSelect;
+    int mColorValue;
 
     public ColorViewInfo(boolean isSelect, int colorValue){
-        this.isSelect = isSelect;
-        this.colorValue = colorValue;
+        mIsSelect = isSelect;
+        mColorValue = colorValue;
     }
 }

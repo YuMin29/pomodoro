@@ -33,7 +33,7 @@ public class ColorSelectorDialog extends Dialog {
     private Context mContext;
     private List<ColorViewInfo> mColors;
     private Button mButtonOK, mButtonCancel;
-    private View.OnClickListener mClickListeanr;
+    private View.OnClickListener mOnClickListener;
 
 
     public ColorSelectorDialog(@NonNull Context context, List<ColorViewInfo> colors, int currentPosition) {
@@ -44,7 +44,7 @@ public class ColorSelectorDialog extends Dialog {
     }
 
     public void setClickListener(View.OnClickListener listener){
-        this.mClickListeanr = listener;
+        this.mOnClickListener = listener;
     }
 
     @Override
@@ -63,9 +63,9 @@ public class ColorSelectorDialog extends Dialog {
         mDialogTitle = findViewById(R.id.textView);
         mButtonCancel = findViewById(R.id.buttonCancel);
         mButtonOK = findViewById(R.id.buttonOk);
-        mButtonOK.setOnClickListener(mClickListeanr);
+        mButtonOK.setOnClickListener(mOnClickListener);
         mButtonCancel = findViewById(R.id.buttonCancel);
-        mButtonCancel.setOnClickListener(mClickListeanr);
+        mButtonCancel.setOnClickListener(mOnClickListener);
         mColorViewList = new ArrayList<ColorView>();
 
         mColorGrid.setNumColumns(4);
@@ -75,7 +75,7 @@ public class ColorSelectorDialog extends Dialog {
 
         for(int position = 0; position<colors.size(); position++){
             ColorView colorView = new ColorView(context);
-            colorView.setColorValue(colors.get(position).colorValue);
+            colorView.setColorValue(colors.get(position).mColorValue);
 
             if(currentPosition == position){
                 colorView.setSelect(true);

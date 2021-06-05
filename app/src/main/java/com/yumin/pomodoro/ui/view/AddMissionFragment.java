@@ -20,11 +20,10 @@ import com.yumin.pomodoro.ui.base.DataBindingConfig;
 import com.yumin.pomodoro.ui.base.MissionManager;
 
 public class AddMissionFragment extends MissionBaseFragment {
-    private static final String TAG = "[AddMissionFragment]";
+    private static final String TAG = AddMissionFragment.class.getSimpleName();
     private AddMissionViewModel mAddMissionViewModel;
     private FragmentAddMissionBinding mFragmentAddMissionBinding;
     private UserMission mMission = null;
-    public AddMissionFragment(){}
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -39,7 +38,7 @@ public class AddMissionFragment extends MissionBaseFragment {
         mAddMissionViewModel.getIsSaveButtonClicked().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean click) {
-                LogUtil.logD(TAG,"[Observe][getSaveButtonClick] click = "+click);
+                LogUtil.logD(TAG,"[getSaveButtonClick] click = "+click);
                 if (click) {
                     navigateUp();
                 }
@@ -49,7 +48,7 @@ public class AddMissionFragment extends MissionBaseFragment {
         mAddMissionViewModel.getIsCancelButtonClicked().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean click) {
-                LogUtil.logD(TAG,"[Observe][getCancelButtonClick] click = "+click);
+                LogUtil.logD(TAG,"[getCancelButtonClick] click = "+click);
                 if (click) {
                     navigateUp();
                 }
@@ -59,7 +58,7 @@ public class AddMissionFragment extends MissionBaseFragment {
         mAddMissionViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
             public void onChanged(UserMission mission) {
-                LogUtil.logD(TAG,"[Observe][getMission] mission = "+mission);
+                LogUtil.logD(TAG,"[getMission] mission = "+mission);
                 if (mMission == null || mMission != mission) {
                     mMission = mission;
                     mOperateDay = mission.getOperateDay();
@@ -109,7 +108,7 @@ public class AddMissionFragment extends MissionBaseFragment {
 
     public class ClickProxy{
         public void onAddMissionButtonClick(){
-            LogUtil.logD(TAG,"[onSaveButtonClick] GET MISSION TITLE = " +
+            LogUtil.logD(TAG,"[onSaveButtonClick] mission title = " +
                     mFragmentAddMissionBinding.missionAttributeView.getMissionTitle().getText().toString());
 
             if (mFragmentAddMissionBinding.missionAttributeView.getMissionTitle().getText().toString().isEmpty()) {

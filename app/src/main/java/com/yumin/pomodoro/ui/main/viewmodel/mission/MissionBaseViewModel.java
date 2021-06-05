@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class MissionBaseViewModel extends AndroidViewModel {
-    public static final String TAG = "[AddMissionViewModel]";
+    public static final String TAG = MissionBaseViewModel.class.getSimpleName();
     protected DataRepository mDataRepository;
     protected MutableLiveData<UserMission> mMission = new MutableLiveData<>();
     protected LiveData<UserMission> mEditMission;

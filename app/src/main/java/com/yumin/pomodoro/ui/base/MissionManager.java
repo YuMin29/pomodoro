@@ -1,16 +1,13 @@
 package com.yumin.pomodoro.ui.base;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.data.UserMission;
-import com.yumin.pomodoro.utils.LogUtil;
 
 public class MissionManager {
-    private static final String TAG = "[MissionManager]";
     private static final MissionManager mMissionManager =  new MissionManager();
-    private int rangeCalenderId = -1;
-    private String strOperateId = "";
-    private String strEditId = "";
-    private String strRangeCalenderId = "";
+    private int mRangeCalenderId = -1;
+    private String mStrOperateId = "";
+    private String mStrEditId = "";
+    private String mStrRangeCalenderId = "";
 
     private MissionManager(){}
 
@@ -24,44 +21,43 @@ public class MissionManager {
 //            this.strEditId = userMission.getFirebaseMissionId();
 //        } else {
 //            LogUtil.logE(TAG,"setStrEditId = "+userMission.getId());
-            this.strEditId = String.valueOf(userMission.getId());
+            mStrEditId = String.valueOf(userMission.getId());
 //        }
     }
 
     public String getStrEditId(){
-        return this.strEditId;
+        return mStrEditId;
     }
 
     public int getRangeCalenderId() {
-        return rangeCalenderId;
+        return mRangeCalenderId;
     }
 
     public void setRangeCalenderId(int rangeCalenderId) {
-        this.rangeCalenderId = rangeCalenderId;
+        this.mRangeCalenderId = rangeCalenderId;
     }
 
     public void setRangeCalenderId(String rangeCalenderId){
-        this.strRangeCalenderId = rangeCalenderId;
+        mStrRangeCalenderId = rangeCalenderId;
     }
 
     public String getStrRangeCalenderId(){
-        return this.strRangeCalenderId;
+        return mStrRangeCalenderId;
     }
 
     public void setOperateId(UserMission userMission){
         if (userMission == null) {
-            this.strOperateId = "quick_mission";
+            mStrOperateId = "quick_mission";
             return;
         }
 
-
 //        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-//            this.strOperateId = userMission.getFirebaseMissionId();
+//            mStrOperateId = userMission.getFirebaseMissionId();
 //        else
-            this.strOperateId = String.valueOf(userMission.getId());
+            mStrOperateId = String.valueOf(userMission.getId());
     }
 
     public String getStrOperateId(){
-        return this.strOperateId;
+        return this.mStrOperateId;
     }
 }

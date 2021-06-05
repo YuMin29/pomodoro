@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
@@ -25,10 +24,10 @@ import java.util.List;
 @InverseBindingMethods({@InverseBindingMethod(type = ItemDialogView.class,
         attribute = "itemValue", event = "itemValueAttrChanged")})
 public class ItemDialogView extends LinearLayout {
-    private static final String TAG = "[ItemDialogView]";
-    private ItemDialogviewBinding viewBinding;
-    private InverseBindingListener inverseBindingListener;
-    private int content;
+    private static final String TAG = ItemDialogView.class.getSimpleName();
+    private ItemDialogviewBinding mViewBinding;
+    private InverseBindingListener mInverseBindingListener;
+    private int mContent;
 
     public ItemDialogView(Context context) {
         super(context);
@@ -47,8 +46,8 @@ public class ItemDialogView extends LinearLayout {
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.item_dialogview,this,true);
-        viewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
+        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_dialogview,this,true);
+        mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                         // show color list dialog
@@ -89,10 +88,10 @@ public class ItemDialogView extends LinearLayout {
     }
 
     public void setItemValue(int color){
-        viewBinding.colorView.setColorValue(color);
-        if (inverseBindingListener != null)
-            inverseBindingListener.onChange();
-        this.content = color;
+        mViewBinding.colorView.setColorValue(color);
+        if (mInverseBindingListener != null)
+            mInverseBindingListener.onChange();
+        mContent = color;
     }
 
     private int getCurrentColorPosition(){
@@ -100,7 +99,7 @@ public class ItemDialogView extends LinearLayout {
         int position = 0;
         for(String colorValue : backgroundAllColors){
             int convertColor = Color.parseColor(colorValue);
-            if (convertColor == content)
+            if (convertColor == mContent)
                 return position;
             position++;
         }
@@ -108,14 +107,14 @@ public class ItemDialogView extends LinearLayout {
     }
 
     public int getItemValue(){
-        return  viewBinding.colorView.getColorValue();
+        return  mViewBinding.colorView.getColorValue();
     }
 
     public void setItemDescription(String string) {
-        viewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemValueAttrChanged(InverseBindingListener inverseBindingListener){
-        this.inverseBindingListener = inverseBindingListener;
+        mInverseBindingListener = inverseBindingListener;
     }
 }

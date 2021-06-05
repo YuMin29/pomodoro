@@ -38,60 +38,53 @@ import com.yumin.pomodoro.ui.base.MissionManager;
 import java.util.concurrent.TimeUnit;
 
 public class BreakTimerFragment extends DataBindingFragment {
-    private static final String TAG = "[BreakTimerFragment]";
-    private FragmentBreakTimerBinding fragmentBreakTimerBinding;
-    private TimerViewModel timerViewModel;
-    private boolean enabledVibrate;
-    private boolean enabledNotification;
-    private int missionCount;
-    private CircleTimer breakTimer;
-    private int numberOfCompletion;
-    private NotificationCompat.Builder notificationBuilder;
-    private NotificationHelper notificationHelper;
+    private static final String TAG = BreakTimerFragment.class.getSimpleName();
+    private FragmentBreakTimerBinding mFragmentBreakTimerBinding;
+    private TimerViewModel mTimerViewModel;
+    private boolean mEnabledVibrate;
+    private boolean mEnabledNotification;
+    private int mMissionCount;
+    private CircleTimer mBreakTimer;
+    private int mNumberOfCompletion;
+    private NotificationCompat.Builder mNotificationBuilder;
+    private NotificationHelper mNotificationHelper;
     private static final int NOTIFICATION_ID = 1000;
-    private String missionTitle;
-    private boolean isAutoStartBreak = false;
-    private Handler handler;
+    private String mMissionTitle;
+    private boolean mIsAutoStartBreak = false;
+    private Handler mHandler;
 
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-        LogUtil.logD(TAG,"[onResume]");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        LogUtil.logD(TAG,"[onStop]");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
     }
 
     @Override
     protected void initViewModel() {
-        timerViewModel = getFragmentScopeViewModel(TimerViewModel.class);
+        mTimerViewModel = getFragmentScopeViewModel(TimerViewModel.class);
     }
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_break_timer, BR.breakTimerViewModel, timerViewModel);
+        return new DataBindingConfig(R.layout.fragment_break_timer, BR.breakTimerViewModel, mTimerViewModel);
     }
 
-    private void navigateUp(){
+    private void navigateUp() {
         NavHostFragment.findNavController(this).navigateUp();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        fragmentBreakTimerBinding = (FragmentBreakTimerBinding) getBinding();
-        fragmentBreakTimerBinding.breakTimer.setStatusBarColor(
+        mFragmentBreakTimerBinding = (FragmentBreakTimerBinding) getBinding();
+        mFragmentBreakTimerBinding.breakTimer.setStatusBarColor(
                 getContext().getResources().getColor(R.color.break_timer_background));
 
-        handler = new Handler(new Handler.Callback() {
+        mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
                 if (msg.what == 1) {
-                    LogUtil.logE(TAG,"[handleMessage] CALL onClickStartStop()");
-                    fragmentBreakTimerBinding.breakTimer.onClickStartStop();
+                    LogUtil.logE(TAG, "[handleMessage] call onClickStartStop");
+                    mFragmentBreakTimerBinding.breakTimer.onClickStartStop();
                 }
                 return true;
             }
@@ -102,33 +95,29 @@ public class BreakTimerFragment extends DataBindingFragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // pause timer if started
-                if (fragmentBreakTimerBinding.breakTimer.getTimerStatus() == CircleTimer.TimerStatus.STARTED)
-                    fragmentBreakTimerBinding.breakTimer.pauseTimer();
+                if (mFragmentBreakTimerBinding.breakTimer.getTimerStatus() == CircleTimer.TimerStatus.STARTED)
+                    mFragmentBreakTimerBinding.breakTimer.pauseTimer();
 
-                // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                        .setTitle("結束休息?")
-                        .setMessage("確認結束休息？")
-                        .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.finish_mission)
+                        .setMessage(R.string.check_finish_mission)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // exit & cancel notification
-                                if (fragmentBreakTimerBinding.breakTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
-                                    fragmentBreakTimerBinding.breakTimer.onClickReset();
-                                    if (enabledNotification)
-                                        notificationHelper.cancelNotification();
+                                if (mFragmentBreakTimerBinding.breakTimer.getTimerStatus() != CircleTimer.TimerStatus.STOPPED) {
+                                    mFragmentBreakTimerBinding.breakTimer.onClickReset();
+                                    if (mEnabledNotification)
+                                        mNotificationHelper.cancelNotification();
                                 }
 
                                 navigateUp();
-                                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                                 undoStatusBarColor();
                             }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // resume
-                                fragmentBreakTimerBinding.breakTimer.onClickStartStop();
+                                mFragmentBreakTimerBinding.breakTimer.onClickStartStop();
                             }
                         })
                         .create();
@@ -136,94 +125,87 @@ public class BreakTimerFragment extends DataBindingFragment {
             }
         });
 
-        breakTimer = fragmentBreakTimerBinding.breakTimer;
-        breakTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
+        mBreakTimer = mFragmentBreakTimerBinding.breakTimer;
+        mBreakTimer.setCountDownTimerListener(new CircleTimer.CountDownTimerListener() {
             @Override
             public void onStarted() {
-                // show notification in here
-                if (enabledNotification) {
-                    // Create an explicit intent for an Activity in your app
+                if (mEnabledNotification) {
                     Intent intent = getContext().getPackageManager()
                             .getLaunchIntentForPackage(getContext().getPackageName())
                             .setPackage(null)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
-                    notificationHelper = new NotificationHelper(getContext());
-                    notificationBuilder = notificationHelper.getNotificationBuilder("蕃茄任務:" + missionTitle,pendingIntent,
-                            ContextCompat.getColor(getContext(),R.color.break_timer_background));
-                    notificationHelper.notify(notificationBuilder);
+                    mNotificationHelper = new NotificationHelper(getContext());
+                    mNotificationBuilder = mNotificationHelper.getNotificationBuilder(getString(R.string.notification_title) + mMissionTitle, pendingIntent,
+                            ContextCompat.getColor(getContext(), R.color.break_timer_background));
+                    mNotificationHelper.notify(mNotificationBuilder);
                 }
             }
 
             @Override
             public void onFinished() {
-                LogUtil.logD(TAG,"[break timer][onFinished] 1");
-                LogUtil.logD(TAG,"[break timer][onFinished] missionCount = "+missionCount+" ,numberOfCompletion = "+numberOfCompletion);
-                if (missionCount != -1 && numberOfCompletion != -1) {
-                    if ((missionCount - numberOfCompletion) >= 1) {
-                        LogUtil.logD(TAG,"[break timer][onFinished] 2");
+                LogUtil.logD(TAG, "[break timer][onFinished] missionCount = " + mMissionCount + " ,numberOfCompletion = " + mNumberOfCompletion);
+                if (mMissionCount != -1 && mNumberOfCompletion != -1) {
+                    if ((mMissionCount - mNumberOfCompletion) >= 1) {
                         // vibrate for remind
-                        if (enabledVibrate) {
+                        if (mEnabledVibrate) {
                             Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1000);
                         }
 
-                        if (enabledNotification) {
-                            notificationHelper.changeRemoteContent("執行蕃茄任務！");
-                            notificationHelper.notify(notificationBuilder);
+                        if (mEnabledNotification) {
+                            mNotificationHelper.changeRemoteContent(getString(R.string.notification_mission_message));
+                            mNotificationHelper.notify(mNotificationBuilder);
                         }
 
                         // switch to mission timer
                         Bundle bundle = new Bundle();
                         bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
-                        MainActivity.commitWhenLifecycleStarted(getLifecycle(),R.id.break_timer_to_timer,bundle);
+                        MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.break_timer_to_timer, bundle);
                     } else {
-                        LogUtil.logD(TAG,"[break timer][onFinished] 3");
                         navigateUp();
-                        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                         undoStatusBarColor();
 
                         // cancel notification when finish the mission
-                        if (enabledNotification) {
-                            notificationHelper.cancelNotification();
+                        if (mEnabledNotification) {
+                            mNotificationHelper.cancelNotification();
                         }
                     }
                 } else {
                     navigateUp();
-                    ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                     undoStatusBarColor();
                 }
             }
 
             @Override
             public void onTick(long millisecond) {
-                if (enabledNotification) {
-                    notificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
-                    notificationHelper.notify(notificationBuilder);
+                if (mEnabledNotification) {
+                    mNotificationHelper.changeRemoteContent(msTimeFormatter(millisecond));
+                    mNotificationHelper.notify(mNotificationBuilder);
                 }
             }
         });
     }
 
-    private void undoStatusBarColor(){
-        ((MainActivity)getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
+    private void undoStatusBarColor() {
+        ((MainActivity) getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
     }
 
-    private void observeViewModel(){
-        // TODO: 2/8/21 Use Mediator to observe mission from view model
-        timerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
+    private void observeViewModel() {
+        mTimerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
             public void onChanged(UserMission mission) {
                 if (mission != null) {
-                    // format
                     long missionTime = Long.valueOf(mission.getTime() * 60 * 1000);
                     long missionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
-                    missionCount = mission.getGoal();
-                    enabledVibrate = mission.isEnableVibrate();
-                    enabledNotification = mission.isEnableNotification();
-                    missionTitle = mission.getName();
+                    mMissionCount = mission.getGoal();
+                    mEnabledVibrate = mission.isEnableVibrate();
+                    mEnabledNotification = mission.isEnableNotification();
+                    mMissionTitle = mission.getName();
 
                     if (mission.isKeepScreenOn()) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -239,17 +221,13 @@ public class BreakTimerFragment extends DataBindingFragment {
                         }
                     }
 
-                    // post value back to view model
-//                    timerViewModel.setMissionTime(msTimeFormatter(missionTime));
-//                    timerViewModel.setMissionBreakTime(msTimeFormatter(missionBreakTime));
-
                     if (missionTime != 0) {
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                LogUtil.logE(TAG,"isAutoStartBreak = "+isAutoStartBreak);
-                                if (isAutoStartBreak) {
-                                    handler.sendEmptyMessage(1);
+                                LogUtil.logE(TAG, "isAutoStartBreak = " + mIsAutoStartBreak);
+                                if (mIsAutoStartBreak) {
+                                    mHandler.sendEmptyMessage(1);
                                 }
                             }
                         });
@@ -259,18 +237,18 @@ public class BreakTimerFragment extends DataBindingFragment {
             }
         });
 
-        timerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        mTimerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                LogUtil.logE(TAG,"[OBSERVE] getNumberOfCompletion = "+integer);
-                numberOfCompletion = integer;
+                LogUtil.logE(TAG, "[getNumberOfCompletion] = " + integer);
+                mNumberOfCompletion = integer;
             }
         });
 
-        timerViewModel.getAutoStartBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mTimerViewModel.getAutoStartBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                isAutoStartBreak = aBoolean;
+                mIsAutoStartBreak = aBoolean;
             }
         });
     }

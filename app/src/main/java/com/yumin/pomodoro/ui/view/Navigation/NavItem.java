@@ -13,14 +13,14 @@ public class NavItem {
     }
 
     public void setShowDivider(boolean show){
-        this.mShowDivider = show;
+        mShowDivider = show;
     }
 
     public void setShowSubTitle(boolean show){
-        this.mShowSubTitle = show;
+        mShowSubTitle = show;
     }
 
     public void setSubtitle(String subtitle){
-        this.mSubtitle = subtitle;
+        mSubtitle = subtitle;
     }
 }

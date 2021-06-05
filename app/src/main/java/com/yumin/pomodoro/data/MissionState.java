@@ -16,9 +16,9 @@ public class MissionState {
     @PrimaryKey(autoGenerate = true)
     int id;
     private int numberOfCompletion = 0;
-    private boolean finished = false;
+    private boolean isCompleted = false;
     private long recordDay = TimeToMillisecondUtil.getTodayInitTime();
-    private long finishedDay = -1;
+    private long completedDay = -1;
     private String missionId = "";
 
 
@@ -30,16 +30,16 @@ public class MissionState {
     public MissionState(int numberOfCompletion, boolean finished) {
         LogUtil.logE("[MissionState]","Constructor 111");
         this.numberOfCompletion = numberOfCompletion;
-        this.finished = finished;
+        this.isCompleted = finished;
     }
 
     @Ignore
     public MissionState(int numberOfCompletion, boolean finished, long recordDay, long finishedDay, String missionId) {
         LogUtil.logE("[MissionState]","Constructor 222");
         this.numberOfCompletion = numberOfCompletion;
-        this.finished = finished;
+        this.isCompleted = finished;
         this.recordDay = recordDay;
-        this.finishedDay = finishedDay;
+        this.completedDay = finishedDay;
         this.missionId = missionId;
     }
 
@@ -48,9 +48,9 @@ public class MissionState {
         return "MissionState{" +
                 "id=" + id +
                 ", completeOfNumber=" + numberOfCompletion +
-                ", finished=" + finished +
+                ", finished=" + isCompleted +
                 ", recordDay=" + recordDay +
-                ", finishedDay=" + finishedDay +
+                ", finishedDay=" + completedDay +
                 ", missionId=" + missionId +
                 "}";
     }
@@ -71,12 +71,12 @@ public class MissionState {
         this.numberOfCompletion = numberOfCompletion;
     }
 
-    public boolean getFinished() {
-        return finished;
+    public boolean getCompleted() {
+        return isCompleted;
     }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
+    public void setCompleted(boolean completed) {
+        this.isCompleted = completed;
     }
 
     public long getRecordDay() {
@@ -87,12 +87,12 @@ public class MissionState {
         this.recordDay = recordDay;
     }
 
-    public long getFinishedDay() {
-        return finishedDay;
+    public long getCompletedDay() {
+        return completedDay;
     }
 
-    public void setFinishedDay(long finishedDay) {
-        this.finishedDay = finishedDay;
+    public void setCompletedDay(long completedDay) {
+        this.completedDay = completedDay;
     }
 
     public String getMissionId() {

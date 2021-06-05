@@ -11,29 +11,28 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.data.MissionState;
-import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState>> {
-    private static final String TAG = "[FirebaseQueryLiveData]";
-    private FirebaseQueryMissionListLiveData.OnQueryListener onQueryListener;
-    private final Query query;
-    private final FirebaseQueryMissionListLiveData.MyValueEventListener myValueEventListener = new FirebaseQueryMissionListLiveData.MyValueEventListener();
+    private static final String TAG = FirebaseQueryMissionListLiveData.class.getSimpleName();
+    private FirebaseQueryMissionListLiveData.OnQueryListener mOnQueryListener;
+    private final Query mQuery;
+    private final FirebaseQueryMissionListLiveData.MyValueEventListener mMyValueEventListener = new FirebaseQueryMissionListLiveData.MyValueEventListener();
 
     public FirebaseQueryMissionListLiveData(Query query) {
         LogUtil.logE(TAG,"[query] "+query.toString());
-        this.query = query;
+        mQuery = query;
     }
 
     public FirebaseQueryMissionListLiveData(DatabaseReference databaseReference) {
-        this.query = databaseReference;
+        mQuery = databaseReference;
     }
 
     public void setOnQueryListener(FirebaseQueryMissionListLiveData.OnQueryListener onQueryListener){
-        this.onQueryListener = onQueryListener;
+        mOnQueryListener = onQueryListener;
     }
 
     private boolean isLoginAsUser(){
@@ -45,13 +44,13 @@ public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState
     @Override
     protected void onActive() {
         LogUtil.logE(TAG,"[onActive]");
-        query.addValueEventListener(myValueEventListener);
+        mQuery.addValueEventListener(mMyValueEventListener);
     }
 
     @Override
     protected void onInactive() {
         LogUtil.logE(TAG,"[onInactive]");
-        query.removeEventListener(myValueEventListener);
+        mQuery.removeEventListener(mMyValueEventListener);
     }
 
     interface OnQueryListener{
@@ -66,9 +65,9 @@ public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState
             if (snapshot.exists()) {
                 LogUtil.logE(TAG,"[MyValueEventListener] snapshot EXIST");
                 for (DataSnapshot state : snapshot.getChildren()) {
-                    if (onQueryListener != null) {
+                    if (mOnQueryListener != null) {
                         // operate second query
-                        MissionState missionState = onQueryListener.onSecondQuery(state);
+                        MissionState missionState = mOnQueryListener.onSecondQuery(state);
                         if (missionState != null)
                             missionStateList.add(missionState);
                     } else {

@@ -54,7 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class LoginFragment extends DataBindingFragment {
-    private static final String TAG = "[LoginFragment]";
+    private static final String TAG = LoginFragment.class.getSimpleName();
     private static final int RC_SIGN_IN = 1001;
     LoginViewModel mLoginViewModel;
     CallbackManager mCallbackManager;
@@ -108,13 +108,11 @@ public class LoginFragment extends DataBindingFragment {
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
-                // ...
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
-                // ...
             }
         });
 
@@ -123,7 +121,7 @@ public class LoginFragment extends DataBindingFragment {
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handelGoogleSignIn();
+                handleGoogleSignIn();
             }
         });
         initObserver();
@@ -133,7 +131,7 @@ public class LoginFragment extends DataBindingFragment {
         mLoginViewModel.getRoomMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logE(TAG, "[initObserver][getRoomMissions] isEmpty = " +
+                LogUtil.logE(TAG, "[getRoomMissions] isEmpty = " +
                         userMissions.isEmpty());
                 mLoginViewModel.setIsRoomMissionsExist(!userMissions.isEmpty());
             }
@@ -142,15 +140,15 @@ public class LoginFragment extends DataBindingFragment {
         mLoginViewModel.getRoomMissionStates().observe(getViewLifecycleOwner(), new Observer<List<MissionState>>() {
             @Override
             public void onChanged(List<MissionState> missionStates) {
-                LogUtil.logE(TAG, "[initObserver][getRoomMissionStates] isEmpty = " +
+                LogUtil.logE(TAG, "[getRoomMissionStates] isEmpty = " +
                         missionStates.isEmpty());
                 mLoginViewModel.setIsRoomMissionStatesExist(!missionStates.isEmpty());
             }
         });
     }
 
-    private void handelGoogleSignIn() {
-        LogUtil.logD(TAG, "[handelGoogleSignIn]");
+    private void handleGoogleSignIn() {
+        LogUtil.logD(TAG, "[handleGoogleSignIn]");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -161,7 +159,7 @@ public class LoginFragment extends DataBindingFragment {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        LogUtil.logD(TAG, "handleFacebookAccessToken:" + token);
+        LogUtil.logD(TAG, "[handleFacebookAccessToken] :" + token);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(getOnCompleteListener());
@@ -242,12 +240,12 @@ public class LoginFragment extends DataBindingFragment {
         try {
             // Google Sign In was successful, authenticate with Firebase
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            LogUtil.logD(TAG, "handleGoogleSignInResult:" + account.getId());
+            LogUtil.logD(TAG, "[handleGoogleSignInResult] :" + account.getId());
             firebaseAuthWithGoogle(account.getIdToken());
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "[signInResult:failed] =" + e.getStatusCode());
         }
     }
 
@@ -275,7 +273,6 @@ public class LoginFragment extends DataBindingFragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                LogUtil.logE(TAG, "[addUserToFirebase]  222 ");
             }
         });
     }
@@ -297,12 +294,10 @@ public class LoginFragment extends DataBindingFragment {
         public void login() {
             loginAccount();
         }
-
         public void register() {
             // switch to register fragment
             goToRegisterAccount();
         }
-
         public void forgetPassword() {
             goToResetPassword();
         }

@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 
 import androidx.annotation.Nullable;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.InverseBindingListener;
 import androidx.databinding.InverseBindingMethod;
@@ -28,10 +27,10 @@ import com.yumin.pomodoro.databinding.ItemTextviewBinding;
 @InverseBindingMethods({@InverseBindingMethod(type = ItemTextView.class,
         attribute = "itemContent", event = "itemContentAttrChanged")})
 public class ItemTextView extends LinearLayout {
-    private static final String TAG = "[ItemTextView]";
-    private ItemTextviewBinding viewBinding;
-    private int content;
-    private InverseBindingListener inverseBindingListener;
+    private static final String TAG = ItemTextView.class.getSimpleName();
+    private ItemTextviewBinding mViewBinding;
+    private int mContent;
+    private InverseBindingListener mInverseBindingListener;
 
     public ItemTextView(Context context) {
         super(context);
@@ -50,28 +49,28 @@ public class ItemTextView extends LinearLayout {
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        viewBinding = DataBindingUtil.inflate(inflater,R.layout.item_textview,this,true);
-        viewBinding.addNum.setOnClickListener(new OnClickListener() {
+        mViewBinding = DataBindingUtil.inflate(inflater,R.layout.item_textview,this,true);
+        mViewBinding.addNum.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 LogUtil.logD(TAG,"[addNum][onClick]");
-                int content = Integer.parseInt(viewBinding.numTextview.getText().toString());
-                content++;
-                setItemContent(content);
+                int val = Integer.parseInt(mViewBinding.numTextview.getText().toString());
+                val ++;
+                setItemContent(val);
             }
         });
-        viewBinding.minusNum.setOnClickListener(new OnClickListener() {
+        mViewBinding.minusNum.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 LogUtil.logD(TAG,"[minusNum][onClick]");
                 LogUtil.logD(TAG,"[addNum][onClick]");
-                int content = Integer.parseInt(viewBinding.numTextview.getText().toString());
-                if (content > 0)
-                    content--;
-                setItemContent(content);
+                int val = Integer.parseInt(mViewBinding.numTextview.getText().toString());
+                if (val > 0)
+                    val --;
+                setItemContent(val);
             }
         });
-        viewBinding.itemLinearlayout.setOnClickListener(new OnClickListener() {
+        mViewBinding.itemLinearlayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"[itemLinearlayout][onClick]");
@@ -79,46 +78,47 @@ public class ItemTextView extends LinearLayout {
                 View view = LayoutInflater.from(context).inflate(R.layout.dialog_count,null);
                 EditText editText = view.findViewById(R.id.editText);
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                editText.setText(viewBinding.numTextview.getText());
+                editText.setText(mViewBinding.numTextview.getText());
 
+                String title = context.getString(R.string.dialog_set_title) + mViewBinding.descriptionTextview.getText();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                        .setTitle("請設置"+viewBinding.descriptionTextview.getText())
+                        .setTitle(title)
                         .setView(view)
-                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                LogUtil.logD(TAG,"[AlerDialog][setText] : "+editText.getText());
+                                LogUtil.logD(TAG,"[AlertDialog][setText] : "+editText.getText());
                                 setItemContent(Integer.valueOf(editText.getText().toString()));
                             }
                         })
-                        .setNegativeButton("cancel",null);
+                        .setNegativeButton(R.string.cancel,null);
                 builder.show();
             }
         });
     }
 
 
-    public void setItemContent(int content){
+    public void setItemContent(int val){
         LogUtil.logD(TAG,
-                "[setItemContent] content = "+content);
-        viewBinding.numTextview.setText(String.valueOf(content));
-        if (inverseBindingListener != null)
-            inverseBindingListener.onChange();
-        this.content = content;
+                "[setItemContent] content = "+val);
+        mViewBinding.numTextview.setText(String.valueOf(val));
+        if (mInverseBindingListener != null)
+            mInverseBindingListener.onChange();
+        mContent = val;
     }
 
     public void setItemDescription(String string){
-        viewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription,string);
     }
 
     public int getItemContent(){
-        LogUtil.logD(TAG,"[getItemContent] RETURN = "+viewBinding.numTextview.getText().toString());
-        if (TextUtils.isEmpty(viewBinding.numTextview.getText().toString()))
+        LogUtil.logD(TAG,"[getItemContent] return = "+ mViewBinding.numTextview.getText().toString());
+        if (TextUtils.isEmpty(mViewBinding.numTextview.getText().toString()))
             return 0;
-        return Integer.parseInt(viewBinding.numTextview.getText().toString());
+        return Integer.parseInt(mViewBinding.numTextview.getText().toString());
     }
 
     public void setItemContentAttrChanged(InverseBindingListener inverseBindingListener){
-        this.inverseBindingListener = inverseBindingListener;
+        mInverseBindingListener = inverseBindingListener;
     }
 }

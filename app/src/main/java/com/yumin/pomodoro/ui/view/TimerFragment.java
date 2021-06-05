@@ -36,7 +36,7 @@ import com.yumin.pomodoro.ui.base.DataBindingFragment;
 import java.util.concurrent.TimeUnit;
 
 public class TimerFragment extends DataBindingFragment implements EventCountdownTimer.MissionTimerListener, EventCountdownTimer.BreakTimerListener {
-    private static final String TAG = "[TimerFragment]";
+    private static final String TAG = TimerFragment.class.getSimpleName();
     FragmentTimerBinding mFragmentTimerBinding;
     TimerViewModel mTimerViewModel;
     boolean mEnabledVibrate;
@@ -63,7 +63,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
     @Override
     public boolean enabledSound() {
-        return this.mEnabledSound;
+        return mEnabledSound;
     }
 
     public enum TimerStatus {
@@ -95,7 +95,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
     }
 
     void navigateUp() {
-        LogUtil.logE(TAG, "navigateUp");
+        LogUtil.logE(TAG, "[navigateUp]");
         NavHostFragment.findNavController(this).navigateUp();
         if (mEnableKeepScreenOn) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -123,9 +123,9 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
                 // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                        .setTitle("結束任務")
-                        .setMessage("確認結束任務？")
-                        .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.finish_mission)
+                        .setMessage(R.string.check_finish_mission)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // exit & cancel notification
@@ -137,14 +137,14 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                                 }
                                 navigateUp();
 
-                                // update finish status
+                                // update completed status
                                 if (mMissionCount != -1 && mNumberOfCompletion != -1) {
                                     if ((mMissionCount - mNumberOfCompletion) < 1) {
-                                        mTimerViewModel.updateMissionFinishedState(true, mNumberOfCompletion);
+                                        mTimerViewModel.updateMissionState(true, mNumberOfCompletion);
                                     }
                                 }
                             }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // resume
@@ -163,11 +163,9 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
     }
 
     private void observeViewModel() {
-        // TODO: 2/8/21 Use Mediator to observe mission from view model
         mTimerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
             @Override
             public void onChanged(UserMission mission) {
-                LogUtil.logE(TAG, "[OBSERVE] getMission");
                 if (mission != null) {
                     // format
                     mMissionTime = Long.valueOf(mission.getTime() * 1 * 1000);
@@ -185,7 +183,6 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                         LogUtil.logE(TAG,"[Observe] getMission timerStatus == TimerStatus.MISSION_INIT");
                         initTimerLayout(mMissionTime, mMissionBackgroundColor);
 
-                        // auto start in here ???
                         if (mMissionTime != 0) {
                             if (mIsAutoStartMission) {
                                 startTimer();
@@ -199,7 +196,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                LogUtil.logE(TAG, "[OBSERVE] getNumberOfCompletion = " + integer);
+                LogUtil.logE(TAG, "[getNumberOfCompletion] = " + integer);
                 mNumberOfCompletion = integer;
             }
         });
@@ -207,7 +204,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
             @Override
             public void onChanged(MissionState missionState) {
-                LogUtil.logE(TAG, "[OBSERVE] getMissionState = " + missionState);
+                LogUtil.logE(TAG, "[getMissionState] = " + missionState);
                 mMissionState = missionState;
             }
         });
@@ -215,7 +212,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                LogUtil.logE(TAG, "[OBSERVE][getAutoStartNextMission] aBoolean = " + aBoolean);
+                LogUtil.logE(TAG, "[getAutoStartNextMission] = " + aBoolean);
                 mIsAutoStartMission = aBoolean;
             }
         });
@@ -223,7 +220,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getAutoStartBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                LogUtil.logE(TAG, "[OBSERVE][getDisableBreak] aBoolean = " + aBoolean);
+                LogUtil.logE(TAG, "[getDisableBreak] = " + aBoolean);
                 mIsAutoStartBreak = aBoolean;
             }
         });
@@ -231,7 +228,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getDisableBreak().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                LogUtil.logE(TAG, "[OBSERVE][getDisableBreak] aBoolean = " + aBoolean);
+                LogUtil.logE(TAG, "[getDisableBreak] = " + aBoolean);
                 mIsDisableBreak = aBoolean;
             }
         });
@@ -239,7 +236,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getIndexOfMissionBackgroundRingtone().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                LogUtil.logE(TAG, "[OBSERVE][getIndexOfMissionBackgroundRingtone] INDEX = " + integer);
+                LogUtil.logE(TAG, "[getIndexOfMissionBackgroundRingtone] index = " + integer);
                 mIndexOfBackgroundMusic = integer;
             }
         });
@@ -247,7 +244,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getIndexOfFinishedMissionRingtone().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                LogUtil.logE(TAG, "[OBSERVE][getIndexOfFinishedMissionRingtone] INDEX = " + integer);
+                LogUtil.logE(TAG, "[getIndexOfFinishedMissionRingtone] index = " + integer);
                 mIndexOfRingtone = integer;
             }
         });
@@ -286,7 +283,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         }
 
         if (mEnabledNotification)
-            createNotification("蕃茄任務:" + mMissionTitle, backgroundColor);
+            createNotification(getString(R.string.notification_title) + mMissionTitle, backgroundColor);
 
         if (mEnableKeepScreenOn) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -350,15 +347,12 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             if (mNumberOfCompletion == mMissionCount) {
                 // Finished mission
                 LogUtil.logD(TAG, "[mission timer][onFinished] mNumberOfCompletion == missionCount");
-                mTimerViewModel.updateMissionFinishedState(true, mNumberOfCompletion);
+                mTimerViewModel.updateMissionState(true, mNumberOfCompletion);
 
                 if (mIsDisableBreak) {
-                    //                Bundle bundle = new Bundle();
-//                bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
                     MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
                     navigateUp();
 
-                    // cancel notification when finish the mission
                     if (mEnabledNotification) {
                         mNotificationHelper.cancelNotification();
                     }
@@ -375,16 +369,15 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
         // update notification
         if (mEnabledNotification && !mIsDisableBreak) {
-            updateNotification("休息一下吧！");
+            updateNotification(getString(R.string.notification_break_message));
         }
 
         if (mIsDisableBreak) {
             // repeat mission timer again
             timerStatus = TimerStatus.MISSION_INIT;
             initTimerLayout(mMissionTime, mMissionBackgroundColor);
-            updateNotification("執行蕃茄任務！");
+            updateNotification(getString(R.string.notification_mission_message));
         } else {
-            // switch to break timer
             LogUtil.logE(TAG, "switch to break timer");
             initTimerLayout(mMissionBreakTime, mBreakBackgroundColor);
 
@@ -400,7 +393,6 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
     @Override
     public void onBreakTimerTickResponse(long response) {
-        // change ui
         setProgressBarValues(response);
         mFragmentTimerBinding.textViewTime.setText(msTimeFormatter(response));
 
@@ -411,13 +403,11 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
     @Override
     public void onBreakTimerFinishedResponse() {
-        LogUtil.logD(TAG, "[break timer][onFinished] 1");
         LogUtil.logD(TAG, "[break timer][onFinished] missionCount = " + mMissionCount +
                 " ,numberOfCompletion = " + mNumberOfCompletion);
         timerStatus = TimerStatus.BREAK_STOP;
         if (mMissionCount != -1 && mNumberOfCompletion != -1) {
             if ((mMissionCount - mNumberOfCompletion) >= 1) {
-                LogUtil.logD(TAG, "[break timer][onFinished] 2");
                 // vibrate for remind
                 if (mEnabledVibrate) {
                     Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -425,7 +415,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 }
 
                 if (mEnabledNotification) {
-                    updateNotification("執行蕃茄任務！");
+                    updateNotification(getString(R.string.notification_mission_message));
                 }
 
                 // switch to mission timer
@@ -436,7 +426,6 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                     startTimer();
 
             } else {
-                LogUtil.logD(TAG, "[break timer][onFinished] 3");
                 MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
                 navigateUp();
 
@@ -446,8 +435,6 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 }
             }
         } else {
-            //                Bundle bundle = new Bundle();
-//                bundle.putString("itemId", MissionManager.getInstance().getStrOperateId());
             MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
             navigateUp();
         }

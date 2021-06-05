@@ -13,10 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProtectedUnPeekLiveData<T> extends LiveData<T> {
-
-    protected boolean isAllowNullValue;
-
-    private final HashMap<Integer, Boolean> observers = new HashMap<>();
+    protected boolean mIsAllowNullValue;
+    private final HashMap<Integer, Boolean> mObservers = new HashMap<>();
 
     public void observeInActivity(@NonNull AppCompatActivity activity, @NonNull Observer<? super T> observer) {
         LifecycleOwner owner = activity;
@@ -30,41 +28,27 @@ public class ProtectedUnPeekLiveData<T> extends LiveData<T> {
         observe(storeId, owner, observer);
     }
 
-    private void observe(@NonNull Integer storeId,
-                         @NonNull LifecycleOwner owner,
-                         @NonNull Observer<? super T> observer) {
+    private void observe(@NonNull Integer storeId, @NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
 
-        if (observers.get(storeId) == null) {
-            observers.put(storeId, true);
+        if (mObservers.get(storeId) == null) {
+            mObservers.put(storeId, true);
         }
 
         super.observe(owner, t -> {
-            if (!observers.get(storeId)) {
-                observers.put(storeId, true);
-                if (t != null || isAllowNullValue) {
+            if (!mObservers.get(storeId)) {
+                mObservers.put(storeId, true);
+                if (t != null || mIsAllowNullValue) {
                     observer.onChanged(t);
                 }
             }
         });
     }
 
-    /**
-     * 重写的 setValue 方法，默认不接收 null
-     * 可通过 Builder 配置允许接收
-     * 可通过 Builder 配置消息延时清理的时间
-     * <p>
-     * override setValue, do not receive null by default
-     * You can configure to allow receiving through Builder
-     * And also, You can configure the delay time of message clearing through Builder
-     *
-     * @param value
-     */
     @Override
     protected void setValue(T value) {
-        if (value != null || isAllowNullValue) {
-            LogUtil.logD(ProtectedUnPeekLiveData.class.getName(),"[setValue] 111 value = "+value);
-            for (Map.Entry<Integer, Boolean> entry : observers.entrySet()) {
-                LogUtil.logD(ProtectedUnPeekLiveData.class.getName(),"[setValue] 222 value = "+value);
+        if (value != null || mIsAllowNullValue) {
+            for (Map.Entry<Integer, Boolean> entry : mObservers.entrySet()) {
+                LogUtil.logD(ProtectedUnPeekLiveData.class.getName(),"[setValue] value = "+value);
                 entry.setValue(false);
             }
             super.setValue(value);

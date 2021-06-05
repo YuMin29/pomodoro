@@ -1,6 +1,5 @@
 package com.yumin.pomodoro.utils;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,11 +7,9 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.Settings;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
 
@@ -22,8 +19,7 @@ public class NotificationHelper extends ContextWrapper {
     private static final int NOTIFICATION_ID = 1000;
     private NotificationManager mNotificationManager;
     private NotificationChannel mNotificationChannel;
-    RemoteViews remoteView;
-
+    private RemoteViews mRemoteView;
     public static final String CHANNEL_ID = "default";
     private static final String CHANNEL_NAME = "Default Channel";
     private static final String CHANNEL_DESCRIPTION = "this is default channel!";
@@ -35,7 +31,7 @@ public class NotificationHelper extends ContextWrapper {
             mNotificationChannel.setDescription(CHANNEL_DESCRIPTION);
             getNotificationManager().createNotificationChannel(mNotificationChannel);
         }
-        remoteView = new RemoteViews(getPackageName(), R.layout.notification_custom);
+        mRemoteView = new RemoteViews(getPackageName(), R.layout.notification_custom);
     }
 
     public NotificationCompat.Builder getNotificationBuilder(String title, PendingIntent pendingIntent, int backgroundColor) {
@@ -48,15 +44,15 @@ public class NotificationHelper extends ContextWrapper {
         }
         builder.setSmallIcon(R.drawable.ic_tomato_24);
         builder.setContentIntent(pendingIntent);
-        remoteView.setTextViewText(R.id.left_time_textview,title);
-        remoteView.setInt(R.id.left_time_textview,"setBackgroundColor",backgroundColor);
-        builder.setCustomContentView(remoteView);
+        mRemoteView.setTextViewText(R.id.left_time_textview,title);
+        mRemoteView.setInt(R.id.left_time_textview,"setBackgroundColor",backgroundColor);
+        builder.setCustomContentView(mRemoteView);
         builder.setOnlyAlertOnce(true);
         return builder;
     }
 
     public void changeRemoteContent(String title){
-        remoteView.setTextViewText(R.id.left_time_textview,title);
+        mRemoteView.setTextViewText(R.id.left_time_textview,title);
     }
 
     public void notify(NotificationCompat.Builder builder) {
@@ -88,7 +84,7 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationManager getNotificationManager() {
         if (mNotificationManager == null)
-            mNotificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+            mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         return mNotificationManager;
     }
 

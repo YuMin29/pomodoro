@@ -26,10 +26,10 @@ import java.util.Date;
 @InverseBindingMethods(
         {@InverseBindingMethod(type = ItemDateView.class, attribute = "itemDateVal", event = "itemDateValAttrChanged")})
 public class ItemDateView extends LinearLayout {
-    private static final String TAG = "[ItemListView]";
-    private ItemListviewBinding viewBinding;
-    private InverseBindingListener inverseBindingListener;
-    private long operateDay;
+    private static final String TAG = ItemDateView.class.getSimpleName();
+    private ItemListviewBinding mViewBinding;
+    private InverseBindingListener mInverseBindingListener;
+    private long mOperateDay;
 
     public ItemDateView(Context context) {
         super(context);
@@ -48,8 +48,8 @@ public class ItemDateView extends LinearLayout {
 
     private void inflateView(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.item_listview, this, true);
-        viewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
+        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_listview, this, true);
+        mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // show calendar
@@ -73,27 +73,26 @@ public class ItemDateView extends LinearLayout {
     }
 
     public void setItemDateVal(long val) {
-        // long convert to string
-        operateDay = val;
+        mOperateDay = val;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date(val);
-        LogUtil.logD(TAG,"[setItemDateLiveData] val = "+simpleDateFormat.format(date));
+        LogUtil.logD(TAG,"[setItemDateVal] val = "+simpleDateFormat.format(date));
         int compareResult = date.compareTo(Calendar.getInstance().getTime());
 
         if (compareResult == 0) {
             // equal
-            viewBinding.valTextview.setText("TODAY");
+            mViewBinding.valTextview.setText("TODAY");
         } else {
-            viewBinding.valTextview.setTextSize(26);
+            mViewBinding.valTextview.setTextSize(26);
         }
-        viewBinding.valTextview.setText(simpleDateFormat.format(date));
+        mViewBinding.valTextview.setText(simpleDateFormat.format(date));
 
-        if (inverseBindingListener != null)
-            inverseBindingListener.onChange();
+        if (mInverseBindingListener != null)
+            mInverseBindingListener.onChange();
     }
 
     public interface OnOperateDayChanged{
-        public void onOperateChanged(long time);
+        void onOperateChanged(long time);
     }
 
     public void updateUI(long val){
@@ -104,15 +103,15 @@ public class ItemDateView extends LinearLayout {
     }
 
     public long getItemDateVal() {
-        return this.operateDay;
+        return mOperateDay;
     }
 
     public void setItemDescription(String string) {
-        viewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription,string);
     }
 
     public void setItemDateValAttrChanged(InverseBindingListener inverseBindingListener) {
-        this.inverseBindingListener = inverseBindingListener;
+        mInverseBindingListener = inverseBindingListener;
     }
 
     private OnOperateDayChanged operateDayListener = null;

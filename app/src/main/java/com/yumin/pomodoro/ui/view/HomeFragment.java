@@ -9,11 +9,9 @@ import android.widget.ExpandableListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.activity.MainActivity;
 import com.yumin.pomodoro.R;
@@ -21,11 +19,9 @@ import com.yumin.pomodoro.data.model.Category;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.CategoryItemLayoutBinding;
 import com.yumin.pomodoro.databinding.FragmentHomeBinding;
-import com.yumin.pomodoro.ui.main.adapter.CategoryAdapter;
-import com.yumin.pomodoro.ui.main.adapter.ExpandableViewAdapter;
+import com.yumin.pomodoro.ui.main.adapter.ExpandableBaseAdapter;
 import com.yumin.pomodoro.ui.main.adapter.GroupIndex;
 import com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel;
-import com.yumin.pomodoro.ui.main.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.SortTimeUtil;
 import com.yumin.pomodoro.ui.base.DataBindingConfig;
@@ -39,18 +35,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends DataBindingFragment implements MainActivity.OnRefreshHomeFragment {
-    private static final String TAG = "[HomeFragment]";
+    private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel mHomeViewModel;
-    private SharedViewModel mSharedViewModel;
-    private CategoryAdapter mCategoryAdapter;
-    private ExpandableViewAdapter expandableViewAdapter;
-    private List<UserMission> mMissions = new ArrayList<>();
+    private ExpandableBaseAdapter mExpandableViewAdapter;
     private List<Category> mCategory = new ArrayList<>();
-    private List<UserMission> mFinishedMissions = new ArrayList<>();
-    FragmentHomeBinding fragmentHomeBinding;
-    Category today = null;
-    Category coming = null;
-    private int mTodayMissions = -1;
+    private List<UserMission> mCompletedMissions = new ArrayList<>();
+    FragmentHomeBinding mFragmentHomeBinding;
+    Category mToday = null;
+    Category mComing = null;
+    private int mTodayMissionSize = -1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +54,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fragmentHomeBinding = (FragmentHomeBinding) getBinding();
+        mFragmentHomeBinding = (FragmentHomeBinding) getBinding();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         undoStatusBarColor();
         initUI();
@@ -76,7 +69,6 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
     protected void initViewModel() {
         LogUtil.logD(TAG,"[initViewModel]");
         mHomeViewModel = getFragmentScopeViewModel(HomeViewModel.class);
-        mSharedViewModel = getApplicationScopeViewModel(SharedViewModel.class);
     }
 
     @Override
@@ -90,58 +82,50 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
     }
 
     private void initUI() {
-//        mCategoryAdapter = new CategoryAdapter(getContext(),mCategory);
-        expandableViewAdapter = new ExpandableViewAdapter(getContext(), mCategory, mFinishedMissions);
-        expandableViewAdapter.setOnExpandableItemClickListener(new ExpandableViewAdapter.OnExpandableItemClickListener() {
+        mExpandableViewAdapter = new ExpandableBaseAdapter(getContext(), mCategory, mCompletedMissions);
+        mExpandableViewAdapter.setOnExpandableItemClickListener(new ExpandableBaseAdapter.OnExpandableItemClickListener() {
             @Override
             public void onDelete(UserMission userMission, int groupPosition, int childPosition) {
-                LogUtil.logD(TAG, "[item onDelete] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
+                LogUtil.logD(TAG, "[onDelete] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
                 mHomeViewModel.deleteMission(userMission);
-                fragmentHomeBinding.homeListView.turnToNormal();
+                mFragmentHomeBinding.homeListView.turnToNormal();
             }
 
             @Override
             public void onEdit(UserMission userMission, int groupPosition, int childPosition) {
-                LogUtil.logD(TAG, "[item onEdit] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
+                LogUtil.logD(TAG, "[onEdit] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
                 MissionManager.getInstance().setStrEditId(userMission);
                 navigate(R.id.edit_mission_fragment);
             }
         });
-        fragmentHomeBinding.homeListView.setAdapter(expandableViewAdapter);
-        fragmentHomeBinding.homeListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        mFragmentHomeBinding.homeListView.setAdapter(mExpandableViewAdapter);
+        mFragmentHomeBinding.homeListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                UserMission userMission = (UserMission) expandableViewAdapter.getChild(groupPosition, childPosition);
-                LogUtil.logD(TAG, "[onChildClick] item = " + userMission.getName() +
-                        " ,groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
-
+                UserMission userMission = (UserMission) mExpandableViewAdapter.getChild(groupPosition, childPosition);
+                LogUtil.logD(TAG, "[onChildClick] item = " + userMission.getName() + " ,groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
                 boolean isFinished = false;
-                for (UserMission item : mFinishedMissions) {
-//                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//                        if (userMission.getFirebaseMissionId().equals(item.getFirebaseMissionId()))
-//                            isFinished = true;
-//                    } else {
-                        if (userMission.getId() == item.getId())
-                            isFinished = true;
-//                    }
+                for (UserMission item : mCompletedMissions) {
+                    if (userMission.getId() == item.getId())
+                        isFinished = true;
                 }
 
                 if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!isFinished)) {
                     MissionManager.getInstance().setOperateId(userMission);
                     navigate(R.id.fragment_timer);
                 } else {
-                    // TODO: 2020/12/29 重新開始任務？ 清除完成紀錄？
-
+                    // TODO: 2021/06/05 重新開始任務？ 清除完成紀錄？
                 }
                 return true;
             }
         });
 
-        fragmentHomeBinding.homeListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        mFragmentHomeBinding.homeListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                LogUtil.logD(TAG,"[onGroupClick] ");
-                CategoryItemLayoutBinding categoryItemLayoutBinding = (CategoryItemLayoutBinding) v.getTag();
+                LogUtil.logD(TAG,"[onGroupClick] groupPosition = "+groupPosition);
+                ExpandableBaseAdapter.GroupViewHolder groupViewHolder = (ExpandableBaseAdapter.GroupViewHolder) v.getTag();
+                CategoryItemLayoutBinding categoryItemLayoutBinding = (CategoryItemLayoutBinding) groupViewHolder.getViewDataBinding();
                 categoryItemLayoutBinding.categoryArrow.startAnimation(arrowAnimation(180,0));
                 return false;
             }
@@ -158,88 +142,61 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
 
     private void observeViewModel() {
         LogUtil.logE(TAG,"[observeViewModel]");
-        mHomeViewModel.getLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                LogUtil.logE(TAG,"[observeViewModel][getLoading] onChanged");
-                fragmentHomeBinding.progressBar.setVisibility(aBoolean ? View.VISIBLE : View.INVISIBLE);
-            }});
-
-        mHomeViewModel.getAllMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> missions) {
-                LogUtil.logD(TAG, "[observeViewModel][getAllMissions] size = " + missions.size());
-                if (missions != null) {
-                      mHomeViewModel.fetchTodayMissions();
-                      mHomeViewModel.fetchComingMissions();
-
-                }
-                mHomeViewModel.getLoading().postValue(false);
-            }});
-
-        mHomeViewModel.getTodayMediatorLiveData().observe(getViewLifecycleOwner(), new Observer<HomeViewModel.Result>() {
+        mHomeViewModel.getTodayMissions().observe(getViewLifecycleOwner(), new Observer<HomeViewModel.Result>() {
             @Override
             public void onChanged(HomeViewModel.Result result) {
-                if (result == null || !result.isComplete()) {
-                    // Ignore, this means only one of the queries has finished
+                if (result == null || !result.isCompleted())
                     return;
-                }
-                today = new Category(getString(R.string.category_today), Category.Index.TODAY);
-                today.addAllMission(result.missionsByOperateDay);
-                today.addAllMission(result.missionsByRepeatType);
-                today.addAllMission(result.missionsByRepeatRange);
-                Collections.sort(today.getMissionList(), new SortTimeUtil());
+                mToday = new Category(getString(R.string.category_today), Category.Index.TODAY);
+                mToday.addAllMission(result.mNoneRepeatMissions);
+                mToday.addAllMission(result.mRepeatEverydayMissions);
+                mToday.addAllMission(result.mRepeatCustomizeMissions);
+                Collections.sort(mToday.getMissionList(), new SortTimeUtil());
                 expandCategoryList();
-                LogUtil.logE(TAG,"[observeViewModel][todayObserver] today size = "
-                        +today.getMissionList().size());
-                // for update unfinished mission count
-                mTodayMissions = today.getMissionList().size();
-                updateFinishedUI();
+                LogUtil.logE(TAG,"[observeViewModel][getTodayMissions] size = " + mToday.getMissionList().size());
+                mTodayMissionSize = mToday.getMissionList().size();
+                updateMissionsUI();
             }
         });
 
-        mHomeViewModel.getComingMediatorLiveData().observe(getViewLifecycleOwner(), new Observer<HomeViewModel.Result>() {
+        mHomeViewModel.getComingMissions().observe(getViewLifecycleOwner(), new Observer<HomeViewModel.Result>() {
             @Override
             public void onChanged(HomeViewModel.Result result) {
-                if (result == null || !result.isComplete())
+                if (result == null || !result.isCompleted())
                     return;
-
-                coming = new Category(getString(R.string.category_coming), Category.Index.COMING);
-                coming.addAllMission(result.missionsByOperateDay);
-                coming.addAllMission(result.missionsByRepeatType);
-                coming.addAllMission(result.missionsByRepeatRange);
+                mComing = new Category(getString(R.string.category_coming), Category.Index.COMING);
+                mComing.addAllMission(result.mNoneRepeatMissions);
+                mComing.addAllMission(result.mRepeatEverydayMissions);
+                mComing.addAllMission(result.mRepeatCustomizeMissions);
                 expandCategoryList();
-                LogUtil.logE(TAG,"[observeViewModel][comingObserver] coming size = "
-                        +coming.getMissionList().size());
+                LogUtil.logE(TAG,"[observeViewModel][getComingMissions] size = " + mComing.getMissionList().size());
             }
         });
 
-        mHomeViewModel.getFinishedMissions().observe(getViewLifecycleOwner(), missions -> {
-            mFinishedMissions = missions;
-            updateFinishedUI();
+        mHomeViewModel.getCompletedMissions().observe(getViewLifecycleOwner(), missions -> {
+            mCompletedMissions = missions;
+            updateMissionsUI();
         });
     }
 
-    private void updateFinishedUI(){
-        expandableViewAdapter.flashFinishedMission(mFinishedMissions);
-        // update finished mission number
-        if (mFinishedMissions == null) {
-            LogUtil.logE(TAG,"[getFinishedMissions] 111");
-            fragmentHomeBinding.finishedMission.setText("0");
+    private void updateMissionsUI(){
+        mExpandableViewAdapter.updateCompletedMission(mCompletedMissions);
+
+        if (mCompletedMissions == null) {
+            mFragmentHomeBinding.finishedMission.setText("0");
         } else {
-            LogUtil.logE(TAG,"[getFinishedMissions] 222 , mission list size = "+mFinishedMissions.size());
-            fragmentHomeBinding.finishedMission.setText(String.valueOf(mFinishedMissions.size()));
+            mFragmentHomeBinding.finishedMission.setText(String.valueOf(mCompletedMissions.size()));
             int usedTime = 0;
-            for (UserMission mission : mFinishedMissions) {
+            for (UserMission mission : mCompletedMissions) {
                 usedTime += (mission.getTime()*mission.getGoal());
             }
             float num = (float)usedTime / 60;
             DecimalFormat decimalFormat = new DecimalFormat("0.00");
-            fragmentHomeBinding.totalFinishedTime.setText(decimalFormat.format(num)+"h");
+            mFragmentHomeBinding.totalFinishedTime.setText(decimalFormat.format(num)+"h");
             // unfinished mission count - finished mission count
-            LogUtil.logE(TAG,"[getFinishedMissions] 333 , mTodayMissions-missions.size() = "+String.valueOf(mTodayMissions-mFinishedMissions.size()));
-            if (mTodayMissions > 0)
-                fragmentHomeBinding.unfinishedMission.setText(String.valueOf(mTodayMissions-mFinishedMissions.size()));
+
+            if (mTodayMissionSize > 0)
+                mFragmentHomeBinding.unfinishedMission.setText(String.valueOf(mTodayMissionSize - mCompletedMissions.size()));
         }
     }
 
@@ -249,26 +206,27 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
         observeViewModel();
     }
 
-    public static <T> boolean IsNullOrEmpty(Collection<T> list) {
+    public static <T> boolean listIsNullOrEmpty(Collection<T> list) {
         return null == list || list.isEmpty();
     }
 
     private void expandCategoryList(){
         mCategory.clear();
 
-        if (today != null && !IsNullOrEmpty(today.getMissionList()))
-            mCategory.add(today);
+        if (mToday != null && !listIsNullOrEmpty(mToday.getMissionList()))
+            mCategory.add(mToday);
 
-        if (coming != null && !IsNullOrEmpty(coming.getMissionList()))
-            mCategory.add(coming);
+        if (mComing != null && !listIsNullOrEmpty(mComing.getMissionList()))
+            mCategory.add(mComing);
 
-        expandableViewAdapter.flashCategory(mCategory);
+        mExpandableViewAdapter.updateCategory(mCategory);
 
-        int groupCount = expandableViewAdapter.getGroupCount();
+        int groupCount = mExpandableViewAdapter.getGroupCount();
         for (int i = 0; i < groupCount; i++) {
             LogUtil.logD(TAG, "[updateCategoryList] group count = " + groupCount + " , i =" + i);
-            fragmentHomeBinding.homeListView.expandGroup(i);
+            mFragmentHomeBinding.homeListView.expandGroup(i);
         }
+        mFragmentHomeBinding.progressBar.setVisibility(View.INVISIBLE);
     }
 
     public class ClickProxy{

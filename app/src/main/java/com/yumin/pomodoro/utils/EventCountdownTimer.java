@@ -7,18 +7,18 @@ import android.os.CountDownTimer;
 import com.yumin.pomodoro.R;
 
 public class EventCountdownTimer {
-    private final String TAG = getClass().getSimpleName();
-    private static Context context;
-    private BreakTimerListener breakTimerListener;
-    private MissionTimerListener missionTimerListener;
-    private long missionLeftTimeMilli;
+    private final String TAG = EventCountdownTimer.class.getSimpleName();
+    private static Context mContext;
+    private BreakTimerListener mBreakTimerListener;
+    private MissionTimerListener mMissionTimerListener;
+    private long mMissionLeftTimeMilli;
     private int mIndexOfRingtone = 0;
     private int mIndexOfMissionBackground = 0;
-    private long breakLeftTimeMilli;
-    private CountDownTimer missionCountDownTimer;
-    private CountDownTimer breakCountDownTimer;
-    private MediaPlayer mediaPlayer;
-    private int[] missionBackgroundIdArray = {
+    private long mBreakLeftTimeMilli;
+    private CountDownTimer mMissionCountDownTimer;
+    private CountDownTimer mBreakCountDownTimer;
+    private MediaPlayer mMediaPlayer;
+    private int[] mMissionBackgroundIdArray = {
             R.raw.sound_effect_clock,
             R.raw.sound_effect_clock2,
             R.raw.sound_effect_sea,
@@ -33,7 +33,7 @@ public class EventCountdownTimer {
             R.raw.nebular_focus
     };
 
-    private int[] ringtoneIdArray = {
+    private int[] mRingtoneIdArray = {
             R.raw.ringtone_bell_ding,
             R.raw.ringtone_clay_chime_thunk,
             R.raw.ringtone_high_pitch_short_bell,
@@ -43,25 +43,23 @@ public class EventCountdownTimer {
     };
 
     public EventCountdownTimer(Context context, MissionTimerListener missionTimerListener, BreakTimerListener breakTimerListener) {
-        this.context = context;
-        this.missionTimerListener = missionTimerListener;
-        this.breakTimerListener = breakTimerListener;
+        mContext = context;
+        mMissionTimerListener = missionTimerListener;
+        mBreakTimerListener = breakTimerListener;
     }
 
     public void startBreakCountdown(long breakTime){
         LogUtil.logE(TAG,"[startBreakCountdown]");
-
-        breakCountDownTimer = new CountDownTimer(breakTime, 1000) {
+        mBreakCountDownTimer = new CountDownTimer(breakTime, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 LogUtil.logE(TAG,"[startCountdown]");
-                breakLeftTimeMilli = millisUntilFinished;
-                breakTimerListener.onBreakTimerTickResponse(millisUntilFinished);
+                mBreakLeftTimeMilli = millisUntilFinished;
+                mBreakTimerListener.onBreakTimerTickResponse(millisUntilFinished);
             }
-
             @Override
             public void onFinish() {
-                breakTimerListener.onBreakTimerFinishedResponse();
+                mBreakTimerListener.onBreakTimerFinishedResponse();
             }
 
         }.start();
@@ -70,32 +68,32 @@ public class EventCountdownTimer {
     public void startMissionCountdown(long timeMilli,int indexOfBackgroundMusic,int indexOfRingtone){
         LogUtil.logE(TAG,"[startMissionCountdown]");
 
-        if (missionTimerListener.enabledSound() && indexOfBackgroundMusic != 0) {
-            mediaPlayer = MediaPlayer.create(context, missionBackgroundIdArray[indexOfBackgroundMusic - 1]);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.start();
-            this.mIndexOfMissionBackground = indexOfBackgroundMusic;
+        if (mMissionTimerListener.enabledSound() && indexOfBackgroundMusic != 0) {
+            mMediaPlayer = MediaPlayer.create(mContext, mMissionBackgroundIdArray[indexOfBackgroundMusic - 1]);
+            mMediaPlayer.setLooping(true);
+            mMediaPlayer.start();
+            mIndexOfMissionBackground = indexOfBackgroundMusic;
         }
 
-        missionCountDownTimer = new CountDownTimer(timeMilli, 1000) {
+        mMissionCountDownTimer = new CountDownTimer(timeMilli, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 LogUtil.logE(TAG,"[startCountdown] millisUntilFinished = "+millisUntilFinished);
-                missionLeftTimeMilli = millisUntilFinished;
-                missionTimerListener.onMissionTimerTickResponse(millisUntilFinished);
+                mMissionLeftTimeMilli = millisUntilFinished;
+                mMissionTimerListener.onMissionTimerTickResponse(millisUntilFinished);
             }
 
             @Override
             public void onFinish() {
-                missionTimerListener.onMissionTimerFinishedResponse();
-                if (mediaPlayer != null) {
-                    mediaPlayer.stop();
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
+                mMissionTimerListener.onMissionTimerFinishedResponse();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.stop();
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
                 }
 
-                if (missionTimerListener.enabledSound() && indexOfRingtone != 0) {
+                if (mMissionTimerListener.enabledSound() && indexOfRingtone != 0) {
                     playFinishedRingtone(indexOfRingtone);
                 }
             }
@@ -104,45 +102,45 @@ public class EventCountdownTimer {
     }
 
     private void playFinishedRingtone(int indexOfRingtone){
-        mediaPlayer = MediaPlayer.create(context, ringtoneIdArray[indexOfRingtone - 1]);
-        mediaPlayer.start();
+        mMediaPlayer = MediaPlayer.create(mContext, mRingtoneIdArray[indexOfRingtone - 1]);
+        mMediaPlayer.start();
         mIndexOfRingtone = indexOfRingtone;
     }
 
     public void pauseMissionCountdown(){
-        missionCountDownTimer.cancel();
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
+        mMissionCountDownTimer.cancel();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
         }
     }
 
     public void continueMissionCount(int indexOfBackgroundMusic){
-        startMissionCountdown(missionLeftTimeMilli,mIndexOfMissionBackground,mIndexOfRingtone);
+        startMissionCountdown(mMissionLeftTimeMilli,mIndexOfMissionBackground,mIndexOfRingtone);
     }
 
     public void pauseBreakCountdown() {
-        breakCountDownTimer.cancel();
+        mBreakCountDownTimer.cancel();
     }
 
     public void continueBreakCount() {
-        startBreakCountdown(breakLeftTimeMilli);
+        startBreakCountdown(mBreakLeftTimeMilli);
     }
 
     public interface TimerListener {
-        public boolean enabledSound();
+        boolean enabledSound();
     }
 
     public interface MissionTimerListener extends TimerListener{
-        public void onMissionTimerTickResponse(long response);
-        public void onMissionTimerFinishedResponse();
+        void onMissionTimerTickResponse(long response);
+        void onMissionTimerFinishedResponse();
     }
 
     public interface BreakTimerListener{
-        public void onBreakTimerTickResponse(long response);
-        public void onBreakTimerFinishedResponse();
+        void onBreakTimerTickResponse(long response);
+        void onBreakTimerFinishedResponse();
     }
 }
 

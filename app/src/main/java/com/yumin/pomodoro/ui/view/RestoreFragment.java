@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 public class RestoreFragment extends DataBindingFragment {
-    private final String TAG = "[RestoreFragment]";
     private RestoreViewModel mRestoreViewModel;
 
     @Override

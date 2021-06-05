@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 public class BaseApplication extends Application implements ViewModelStoreOwner {
-    private static Application sApplication;
+    private static Application mApplication;
     private ViewModelStore mAppViewModelStore;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sApplication = this;
+        mApplication = this;
         mAppViewModelStore = new ViewModelStore();
     }
 
@@ -25,7 +25,7 @@ public class BaseApplication extends Application implements ViewModelStoreOwner 
     }
 
     public static Application getApplication() {
-        return sApplication;
+        return mApplication;
     }
 
     public static Context getContext() {

@@ -14,33 +14,33 @@ import java.util.List;
 @Dao
 public interface MissionStateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insert(MissionState missionState);
+    void insert(MissionState missionState);
 
     @Query("UPDATE MissionState SET numberOfCompletion=:value WHERE missionId=:id AND recordDay=:today")
-    public void updateNumberOfCompletionsById(int id, int value, long today);
+    void updateNumberOfCompletionsById(int id, int value, long today);
 
-    @Query("UPDATE MissionState SET finished=:value WHERE missionId=:id")
-    public void updateIsFinishedById(int id, boolean value);
+    @Query("UPDATE MissionState SET isCompleted=:value WHERE missionId=:id")
+    void updateIsFinishedById(int id, boolean value);
 
-    @Query("UPDATE MissionState SET finishedDay=:value WHERE missionId=:id")
-    public void updateFinishedDayById(int id, long value);
-
-    @Query("SELECT MyMission.id,name,time,shortBreakTime,longBreakTime,color,operateDay,goal,repeat,repeatStart,repeatEnd,enableNotification,enableSound,enableVibrate,keepScreenOn,createdTime,firebaseMissionId" +
-            " FROM MyMission INNER JOIN MissionState ON MissionState.missionId=MyMission.id" +
-            " WHERE recordDay =:today AND finished = 1")
-    public LiveData<List<UserMission>> getTodayFinishedMissions(long today);
+    @Query("UPDATE MissionState SET completedDay=:value WHERE missionId=:id")
+    void updateFinishedDayById(int id, long value);
 
     @Query("SELECT MyMission.id,name,time,shortBreakTime,longBreakTime,color,operateDay,goal,repeat,repeatStart,repeatEnd,enableNotification,enableSound,enableVibrate,keepScreenOn,createdTime,firebaseMissionId" +
             " FROM MyMission INNER JOIN MissionState ON MissionState.missionId=MyMission.id" +
-            " WHERE recordDay <:today AND finished = 1")
-    public LiveData<List<UserMission>> getPastFinishedMissions(long today);
+            " WHERE recordDay =:today AND isCompleted = 1")
+    LiveData<List<UserMission>> getTodayCompletedMissions(long today);
+
+    @Query("SELECT MyMission.id,name,time,shortBreakTime,longBreakTime,color,operateDay,goal,repeat,repeatStart,repeatEnd,enableNotification,enableSound,enableVibrate,keepScreenOn,createdTime,firebaseMissionId" +
+            " FROM MyMission INNER JOIN MissionState ON MissionState.missionId=MyMission.id" +
+            " WHERE recordDay <:today AND isCompleted = 1")
+    LiveData<List<UserMission>> getPastCompletedMissions(long today);
 
     @Query("SELECT numberOfCompletion FROM MissionState WHERE missionId=:id AND recordDay =:today")
-    public LiveData<Integer> getNumberOfCompletionById(int id, long today);
+    LiveData<Integer> getNumberOfCompletionById(int id, long today);
 
     @Query("SELECT * FROM MissionState WHERE missionId=:id AND recordDay =:today")
-    public LiveData<MissionState> getMissionStateById(int id, long today);
+    LiveData<MissionState> getMissionStateById(int id, long today);
 
     @Query("SELECT * FROM MissionState")
-    public LiveData<List<MissionState>> getAllMissionStates();
+    LiveData<List<MissionState>> getAllMissionStates();
 }

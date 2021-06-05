@@ -39,7 +39,6 @@ public class DrawerListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
-
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.drawer_item, null);
@@ -47,21 +46,13 @@ public class DrawerListAdapter extends BaseAdapter {
         else {
             view = convertView;
         }
-
-        TextView titleView = (TextView) view.findViewById(R.id.title);
-        TextView subtitleView = (TextView) view.findViewById(R.id.subTitle);
-        ImageView iconView = (ImageView) view.findViewById(R.id.icon);
-        View divider = view.findViewById(R.id.divider);
-
+        TextView titleView = view.findViewById(R.id.title);
+        TextView subtitleView = view.findViewById(R.id.subTitle);
+        ImageView iconView = view.findViewById(R.id.icon);
         titleView.setText(mNavItems.get(position).mTitle);
-
         subtitleView.setText(mNavItems.get(position).mSubtitle);
         subtitleView.setVisibility(mNavItems.get(position).mSubtitle.isEmpty() ? View.GONE : View.VISIBLE);
-
-//        divider.setVisibility(mNavItems.get(position).mSubtitle.isEmpty() ? View.GONE : View.VISIBLE);
-
         iconView.setImageResource(mNavItems.get(position).mIcon);
-
         return view;
     }
 }

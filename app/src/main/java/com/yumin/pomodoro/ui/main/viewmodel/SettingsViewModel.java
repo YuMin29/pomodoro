@@ -2,13 +2,13 @@ package com.yumin.pomodoro.ui.main.viewmodel;
 
 import android.app.Application;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.yumin.pomodoro.data.MissionSettings;
 
-public class SettingsViewModel extends ViewModel {
-    private Application mApplication;
+public class SettingsViewModel extends AndroidViewModel {
     private LiveData<Boolean> mAutoStartNextMission;
     private LiveData<Boolean> mAutoStartBreak;
     private LiveData<Integer> mMissionBackgroundRingtone;
@@ -17,7 +17,7 @@ public class SettingsViewModel extends ViewModel {
     private MissionSettings mMissionSettings;
 
     public SettingsViewModel(Application application) {
-        this.mApplication = application;
+        super(application);
         mMissionSettings = new MissionSettings(application);
         fetchData();
     }
@@ -31,11 +31,11 @@ public class SettingsViewModel extends ViewModel {
     }
 
     public LiveData<Boolean> getAutoStartNextMission(){
-        return this.mAutoStartNextMission;
+        return mAutoStartNextMission;
     }
 
     public LiveData<Boolean> getAutoStartBreak(){
-        return this.mAutoStartBreak;
+        return mAutoStartBreak;
     }
 
     public void setAutoStartNextMission(boolean value){

@@ -13,98 +13,98 @@ import java.util.List;
 
 public class FirebaseRepository implements DataRepository {
 
-    private FirebaseApiServiceImpl firebaseApiService;
+    private FirebaseApiServiceImpl mFirebaseApiService;
 
     public FirebaseRepository(ApiService apiService){
-        this.firebaseApiService = (FirebaseApiServiceImpl) apiService;
+        mFirebaseApiService = (FirebaseApiServiceImpl) apiService;
     }
 
     public LiveData<List<UserMission>> getMissions(){
-        return firebaseApiService.getMissions();
+        return mFirebaseApiService.getMissions();
     }
 
     public UserMission getInitMission(){
-        return firebaseApiService.getInitMission();
+        return mFirebaseApiService.getInitMission();
     }
 
     public UserMission getQuickMission(){
-        return firebaseApiService.getQuickMission(25,5, Color.parseColor("#e57373"));
+        return mFirebaseApiService.getQuickMission(25,5, Color.parseColor("#e57373"));
     }
 
     public LiveData<UserMission> getMissionById(String id){
-        return firebaseApiService.getMissionById(id);
+        return mFirebaseApiService.getMissionById(id);
     }
 
     public String addMission(UserMission mission){
-        return firebaseApiService.addMission(mission);
+        return mFirebaseApiService.addMission(mission);
     }
 
     public void updateMission(UserMission mission){
-        firebaseApiService.updateMission(mission);
+        mFirebaseApiService.updateMission(mission);
     }
 
     public void updateMissionNumberOfCompletion(String id, int num){
-        firebaseApiService.updateNumberOfCompletionById(id,num);
+        mFirebaseApiService.updateNumberOfCompletionById(id,num);
     }
 
     public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber){
-        firebaseApiService.updateMissionFinishedState(id,finished,completeOfNumber);
+        mFirebaseApiService.updateMissionState(id,finished,completeOfNumber);
     }
 
     public void deleteMission(UserMission mission){
-        firebaseApiService.deleteMission(mission);
+        mFirebaseApiService.deleteMission(mission);
     }
 
 
     @Override
     public void deleteAllMission() {
-        firebaseApiService.deleteAllMission();
+        mFirebaseApiService.deleteAllMission();
     }
 
     public LiveData<Long> getMissionRepeatStart(String id){
-        return firebaseApiService.getMissionRepeatStart(id);
+        return mFirebaseApiService.getMissionRepeatStart(id);
     }
 
     public LiveData<Long> getMissionRepeatEnd(String id){
-        return firebaseApiService.getMissionRepeatEnd(id);
+        return mFirebaseApiService.getMissionRepeatEnd(id);
     }
 
     public LiveData<Long> getMissionOperateDay(String id){
-        return firebaseApiService.getMissionOperateDay(id);
+        return mFirebaseApiService.getMissionOperateDay(id);
     }
 
     @Override
     public void initMissionState(String id) {
-        firebaseApiService.initMissionState(id);
+        mFirebaseApiService.initMissionState(id);
     }
 
     @Override
-    public LiveData<List<UserMission>> getFinishedMissionList(long start, long end) {
-        return firebaseApiService.getFinishedMissionList(start, end);
+    public LiveData<List<UserMission>> getCompletedMissionList(long start, long end) {
+        return mFirebaseApiService.getCompletedMissionList(start, end);
     }
 
     @Override
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
-        return firebaseApiService.getNumberOfCompletionById(id,todayStart);
+        return mFirebaseApiService.getNumberOfCompletionById(id,todayStart);
     }
 
     @Override
     public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
-        return firebaseApiService.getMissionStateById(id, todayStart);
+        return mFirebaseApiService.getMissionStateById(id, todayStart);
     }
 
     @Override
     public void saveMissionState(String missionId,MissionState missionState) {
-        firebaseApiService.saveMissionState(missionId,missionState);
+        mFirebaseApiService.saveMissionState(missionId,missionState);
     }
 
     @Override
     public LiveData<List<MissionState>> getMissionStateList() {
-        return firebaseApiService.getMissionStateList();
+        return mFirebaseApiService.getMissionStateList();
     }
 
     @Override
-    public LiveData<List<UserMission>> getPastFinishedMission(long today) {
+    public LiveData<List<UserMission>> getPastCompletedMission(long today) {
         return null;
     }
 }

@@ -22,7 +22,7 @@ import com.yumin.pomodoro.ui.base.DataBindingConfig;
 import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 public class RegisterFragment extends DataBindingFragment {
-    private static final String TAG = "[RegisterFragment]";
+    private static final String TAG = RegisterFragment.class.getSimpleName();
     FirebaseAuth mAuth;
     FragmentRegisterBinding mFragmentRegisterBinding;
 
@@ -74,7 +74,6 @@ public class RegisterFragment extends DataBindingFragment {
                             if (user != null) {
                                 mFragmentRegisterBinding.progressBar.setVisibility(View.GONE);
                                 mFragmentRegisterBinding.createAccount.setEnabled(true);
-//                                MainActivity.getNavController().navigate(R.id.nav_home);
                                 navigate(R.id.nav_home);
                             }
                         } else {
@@ -94,7 +93,6 @@ public class RegisterFragment extends DataBindingFragment {
     }
 
     private void back(){
-        // TODO: 1/28/21 add navigate up here
         NavHostFragment.findNavController(this).navigateUp();
     }
 

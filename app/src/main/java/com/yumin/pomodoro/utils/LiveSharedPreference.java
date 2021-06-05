@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Map;
 
 public class LiveSharedPreference<T> extends LiveData<T> {
-    private static final String TAG = "[LiveSharedPreference]";
+    private static final String TAG = LiveSharedPreference.class.getSimpleName();
     private SharedPreferences mSharedPreferences;
     private String mKey;
     private T mDefaultValue;

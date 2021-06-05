@@ -65,7 +65,6 @@ public class ResetPasswordFragment extends DataBindingFragment {
     }
 
     private void back(){
-        // TODO: 1/28/21 add navigate up here
         NavHostFragment.findNavController(this).navigateUp();
     }
 

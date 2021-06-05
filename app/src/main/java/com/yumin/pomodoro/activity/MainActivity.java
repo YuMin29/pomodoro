@@ -36,7 +36,6 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
@@ -67,8 +66,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener{
-    private static final String TAG = "[MainActivity]";
-    private AppBarConfiguration mAppBarConfiguration;
+    private static final String TAG = MainActivity.class.getSimpleName();
     static TextView mToolbarTitle = null;
     private static NavController mNavController;
     FloatingActionButton mFab;
@@ -78,8 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     DrawerLayout mDrawerLayout;
     FirebaseUser mCurrentFirebaseUser = null;
     Context mContext;
-    OnRefreshHomeFragment onRefreshHomeFragment;
-
+    OnRefreshHomeFragment mOnRefreshHomeFragment;
     LinearLayout mNavHeaderMain = null;
     ListView mDrawerList;
     ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
@@ -100,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         super.onCreate(savedInstanceState);
         mContext = this;
         mAuth = FirebaseAuth.getInstance();
-
-        // set status bar color as tool bar color
+        // set status bar color
         setStatusBarGradient(this);
         setStatusBarColor(getResources().getColor(R.color.colorPrimary));
         setContentView(R.layout.activity_main);
@@ -123,12 +119,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
         mNavController.addOnDestinationChangedListener(this);
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mNavHeaderMain = mDrawerLayout.findViewById(R.id.nav_header_main);
         mNavHeaderMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // click for login , switch to login fragment
-                // current user exist , switch to logout fragment
                 if (mCurrentFirebaseUser == null) {
                     // check network state first
                     if (!isNetworkConnected()) {
@@ -138,18 +133,16 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                     }
                     mNavController.navigate(R.id.fragment_login);
                 } else {
-                    // Showing a dialog to confirm logout or not
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
-                            .setTitle("登出帳號？")
+                            .setTitle(R.string.logout)
                             .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
                                     AuthUI.getInstance().signOut(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            LogUtil.logE(TAG,"[LOG OUT] [onComplete]");
-                                            onRefreshHomeFragment.onRefresh();
+                                            LogUtil.logE(TAG,"sign out [onComplete]");
+                                            mOnRefreshHomeFragment.onRefresh();
                                         }
                                     });
                                 }
@@ -164,19 +157,16 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mNavItems.add(new NavItem(getString(R.string.menu_settings), R.drawable.ic_baseline_settings_24));
         mNavItems.add(new NavItem(getString(R.string.menu_backup), R.drawable.ic_baseline_cloud_upload_24));
         mNavItems.add(new NavItem(getString(R.string.menu_restore), R.drawable.ic_baseline_cloud_download_24));
-        mNavItems.add(new NavItem("已過期的任務",R.drawable.ic_baseline_save_24));
+        mNavItems.add(new NavItem(getString(R.string.menu_expired_mission),R.drawable.ic_baseline_save_24));
 
-
-        // Populate the Navigation Drawer with options
         mDrawerList = (ListView) findViewById(R.id.navList);
         mDrawerListAdapter = new DrawerListAdapter(this, mNavItems);
         mDrawerList.setAdapter(mDrawerListAdapter);
-
         // Drawer Item click listeners
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                LogUtil.logE(TAG,"[onItemClick] POSITION = "+position);
+                LogUtil.logE(TAG,"[onItemClick] position = "+position);
                 switch (position) {
                     case POSITION_CALENDER:
                         mNavController.navigate(R.id.nav_calender);
@@ -203,15 +193,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         NavigationUI.setupActionBarWithNavController(this,mNavController,mDrawerLayout);
         NavigationUI.setupWithNavController(mNavigationView, mNavController);
 
-
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                // Check if user is signed in (non-null) and update UI accordingly.
-                updateNavHeader(user);
-                mCurrentFirebaseUser = user;
-            }
+        authStateListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            updateNavHeader(user);
+            mCurrentFirebaseUser = user;
         };
     }
 
@@ -247,14 +232,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     }
 
     public void setOnRefreshHomeFragment(OnRefreshHomeFragment onRefreshHomeFragment){
-        this.onRefreshHomeFragment = onRefreshHomeFragment;
+        mOnRefreshHomeFragment = onRefreshHomeFragment;
     }
 
     private boolean isNetworkConnected(){
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (null != connectivity) {
+        if (connectivity != null) {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
-            if (null != info && info.isConnected()) {
+            if (info != null && info.isConnected()) {
                 if (info.getState() == NetworkInfo.State.CONNECTED) {
                     return true;
                 }
@@ -278,8 +263,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mDrawerListAdapter.notifyDataSetInvalidated();
     }
 
-    private void getHashKey() {
-        // for test
+    private void getAppliationHashKey() {
         PackageInfo info;
         try {
             info = getPackageManager().getPackageInfo("com.yumin.pomodoro", PackageManager.GET_SIGNATURES);
@@ -305,7 +289,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     }
 
     private void updateNavHeader(FirebaseUser user){
-//        View navigationHeaderView = navigationView.getHeaderView(0);
         TextView userName = mNavHeaderMain.findViewById(R.id.nav_header_user);
         TextView userMail = mNavHeaderMain.findViewById(R.id.nav_header_user_mail);
         userName.setText(user == null ? getApplicationContext().getString(R.string.nav_header_title_no_user) : user.getDisplayName());
@@ -375,10 +358,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mToolbarTitle.setText(navDestination.getLabel().toString());
         LogUtil.logD(TAG,"[onDestinationChanged] label = "+navDestination.getLabel().toString());
         String navHomeLabel = getResources().getString(R.string.menu_home);
-        if (navHomeLabel.equals(navDestination.getLabel().toString()))
+        if (navHomeLabel.equals(navDestination.getLabel().toString())) {
             mFab.setVisibility(View.VISIBLE);
-        else
+        } else {
             mFab.setVisibility(View.GONE);
+        }
     }
 
     public boolean isStoragePermissionGranted() {
@@ -392,7 +376,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
+        } else {
+            //permission is automatically granted on sdk<23 upon installation
             LogUtil.logV(TAG, "Permission is granted");
             return true;
         }

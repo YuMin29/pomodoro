@@ -12,18 +12,16 @@ import android.widget.LinearLayout;
 import com.yumin.pomodoro.utils.LogUtil;
 
 public class SlideExpandableListView extends ExpandableListView {
-    private static final String TAG = "[SlideExpandableListView]";
-    private int mScreenWidth;   // 屏幕宽度
-    private int mDownX;         // 按下点的x值
-    private int mDownY;         // 按下点的y值
-    private int mDeleteBtnWidth;// 删除按钮的宽度
-    private int mEditBtnWidth; // 編輯按鈕的寬度
-
-    private boolean isDeleteShown;  // 删除按钮是否正在显示
-
-    private ViewGroup mPointChild;  // 当前处理的item
-    private LinearLayout.LayoutParams mLayoutParams;    // 当前处理的item的LayoutParams
-    private boolean isChildLayout = false;
+    private static final String TAG = SlideExpandableListView.class.getSimpleName();
+    private int mScreenWidth;
+    private int mDownX;
+    private int mDownY;
+    private int mDeleteBtnWidth;
+    private int mEditBtnWidth;
+    private boolean isDeleteShown;
+    private ViewGroup mPointChild;
+    private LinearLayout.LayoutParams mLayoutParams;
+    private boolean mIsChildLayout = false;
 
     public SlideExpandableListView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -31,60 +29,56 @@ public class SlideExpandableListView extends ExpandableListView {
 
     public SlideExpandableListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        // 获取屏幕宽度
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics dm = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(dm);
-        mScreenWidth = dm.widthPixels;
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        mScreenWidth = displayMetrics.widthPixels;
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN://初次触摸
-                performActionDown(ev);
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                performActionDown(motionEvent);
                 break;
-            case MotionEvent.ACTION_MOVE://滑动
-                if (isChildLayout) {
-                    super.onTouchEvent(ev);//调用父类方法，防止滑动时触发点击事件
-                    return performActionMove(ev);
+            case MotionEvent.ACTION_MOVE:
+                if (mIsChildLayout) {
+                    super.onTouchEvent(motionEvent);
+                    return performActionMove(motionEvent);
                 }
-            case MotionEvent.ACTION_UP://抬起
-                if (isChildLayout) {
+            case MotionEvent.ACTION_UP:
+                if (mIsChildLayout) {
                     performActionUp();
                     break;
                 }
         }
-        return super.onTouchEvent(ev);
+        return super.onTouchEvent(motionEvent);
     }
 
-    // 处理action_down事件
     private void performActionDown(MotionEvent ev) {
-        if(isDeleteShown) {
+        if (isDeleteShown) {
             turnToNormal();
         }
-
         mDownX = (int) ev.getX();
         mDownY = (int) ev.getY();
-        // 获取当前点的item
+
         mPointChild = (ViewGroup) getChildAt(pointToPosition(mDownX, mDownY)
                 - getFirstVisiblePosition());
 
-        if (mPointChild == null || mPointChild.getChildCount() < 3 ) {
-            LogUtil.logD(TAG,"[performActionDown] mPointChild == null");
-            isChildLayout = false;
+        if (mPointChild == null || mPointChild.getChildCount() < 3) {
+            LogUtil.logD(TAG, "[performActionDown] mPointChild == null");
+            mIsChildLayout = false;
             return;
         }
-        isChildLayout = true;
+        mIsChildLayout = true;
 
         if (mPointChild.getChildAt(1) != null)
             mEditBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;
-        LogUtil.logD(TAG,"[performActionDown] mEditBtnWidth = "+mEditBtnWidth);
+        LogUtil.logD(TAG, "[performActionDown] mEditBtnWidth = " + mEditBtnWidth);
 
-        // 获取删除按钮的宽度
         if (mPointChild.getChildAt(2) != null)
             mDeleteBtnWidth = mPointChild.getChildAt(2).getLayoutParams().width;
-        LogUtil.logD(TAG,"[performActionDown] mDeleteBtnWidth = "+mDeleteBtnWidth);
+        LogUtil.logD(TAG, "[performActionDown] mDeleteBtnWidth = " + mDeleteBtnWidth);
 
         mLayoutParams = (LinearLayout.LayoutParams) mPointChild.getChildAt(0)
                 .getLayoutParams();
@@ -92,23 +86,18 @@ public class SlideExpandableListView extends ExpandableListView {
         mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
     }
 
-    // 处理action_move事件
     private boolean performActionMove(MotionEvent ev) {
         int nowX = (int) ev.getX();
         int nowY = (int) ev.getY();
-        if(Math.abs(nowX - mDownX) > Math.abs(nowY - mDownY)) {
-            // 如果向左滑动
-            if(nowX < mDownX) {
-                // 计算要偏移的距离
+        if (Math.abs(nowX - mDownX) > Math.abs(nowY - mDownY)) {
+            if (nowX < mDownX) {
                 int scroll = (nowX - mDownX) / 2;
-                // 如果大于了删除按钮的宽度， 则最大为删除按钮的宽度
-                if(-scroll >= mEditBtnWidth) {
-                    scroll = -mDeleteBtnWidth-mEditBtnWidth;
+                if (-scroll >= mEditBtnWidth) {
+                    scroll = -mDeleteBtnWidth - mEditBtnWidth;
                 }
                 if (mPointChild == null)
                     return false;
 
-                // 重新设置leftMargin
                 mLayoutParams.leftMargin = scroll;
                 mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
             }
@@ -117,34 +106,27 @@ public class SlideExpandableListView extends ExpandableListView {
         return super.onTouchEvent(ev);
     }
 
-    // 处理action_up事件
     private void performActionUp() {
-        // 偏移量大于button的一半，则显示button
-        // 否则恢复默认
         if (mPointChild == null)
             return;
-        if(-mLayoutParams.leftMargin >= mEditBtnWidth / 2) {
-            mLayoutParams.leftMargin = -mDeleteBtnWidth-mEditBtnWidth - 100;
+
+        if (-mLayoutParams.leftMargin >= mEditBtnWidth / 2) {
+            mLayoutParams.leftMargin = -mDeleteBtnWidth - mEditBtnWidth - 100;
             isDeleteShown = true;
-        }else {
+        } else {
             turnToNormal();
         }
 
         mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
     }
-    /**
-     * 变为正常状态
-     */
+
     public void turnToNormal() {
-        LogUtil.logD(TAG,"[turnToNormal]");
+        LogUtil.logD(TAG, "[turnToNormal]");
         mLayoutParams.leftMargin = 0;
         mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
         isDeleteShown = false;
     }
-    /**
-     * 当前是否可点击
-     * @return 是否可点击
-     */
+
     public boolean canClick() {
         return !isDeleteShown;
     }
