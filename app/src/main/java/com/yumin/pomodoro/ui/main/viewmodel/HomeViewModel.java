@@ -26,13 +26,13 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(Application application) {
         super(application);
-        LogUtil.logE(TAG, "[HomeViewModel] Constructor");
         mDataRepository = new RoomRepository(new RoomApiServiceImpl(application));
         fetchData();
     }
 
     public void refreshDataWhenLogout() {
         mDataRepository = new RoomRepository(new RoomApiServiceImpl(BaseApplication.getApplication()));
+        mDataRepository.deleteAllMission();
         fetchData();
     }
 

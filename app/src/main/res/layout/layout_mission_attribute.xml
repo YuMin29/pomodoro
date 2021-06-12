@@ -50,7 +50,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemContent="@={userMission.time}"
+                        app:itemValue="@={userMission.time}"
                         app:itemDescription="@{@string/mission_time}"/>
                 </TableRow>
 
@@ -65,16 +65,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemContent="@={userMission.shortBreakTime}"
+                        app:itemValue="@={userMission.shortBreakTime}"
                         app:itemDescription="@{@string/mission_break}"/>
-
-                    <!--                    <com.yumin.pomodoro.ui.view.ItemTextView-->
-                    <!--                        android:id="@+id/item_long_break"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:layout_weight="1"-->
-                    <!--                        app:itemContent="@={addMissionViewModel.mission.longBreakTime}"-->
-                    <!--                        app:passedDescription="@{@string/mission_long_break}"/>-->
                 </TableRow>
 
                 <TableRow
@@ -87,7 +79,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:itemContent="@={userMission.goal}"
+                        app:itemValue="@={userMission.goal}"
                         app:itemDescription="@{@string/mission_goal}"/>
 
                     <com.yumin.pomodoro.ui.view.ItemListView

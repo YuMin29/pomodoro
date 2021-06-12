@@ -53,7 +53,6 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
         return new FirebaseQueryListLiveData(getUserMissionPath());
     }
 
-    @Override
     public String addMission(UserMission mission) {
         LogUtil.logD(TAG,"[addMission]");
         String id = getUserMissionPath().push().getKey();
@@ -218,7 +217,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
                 });
 
         FirebaseQueryListLiveData firebaseQueryListLiveData = new FirebaseQueryListLiveData(getUserMissionPath());
-        FirebaseQueryListLiveData.OnQueryListener onQueryListener = new FirebaseQueryListLiveData.OnQueryListener() {
+        FirebaseQueryListLiveData.QueryListener onQueryListener = new FirebaseQueryListLiveData.QueryListener() {
             @Override
             public UserMission onSecondQuery(DataSnapshot dataSnapshot) {
                 for (String id : missions) {
@@ -257,7 +256,7 @@ public class FirebaseApiServiceImpl implements ApiService<UserMission,MissionSta
     }
 
     @Override
-    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
+    public LiveData<MissionState> getMissionStateByToday(String id, long todayStart) {
         MutableLiveData<MissionState> missionState = new MutableLiveData<>();
         getCalendarPath().child(id).addValueEventListener(new ValueEventListener() {
                     @Override

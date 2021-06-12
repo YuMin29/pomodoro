@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.activity.MainActivity;
@@ -48,9 +49,10 @@ public class BackupFragment extends DataBindingFragment {
 
                 String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.NAV_ITEM_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-                sharedPreferences.edit().putString(MainActivity.KEY_BACKUP_TIME,"上次備份時間:" + nowDate).commit();
+                sharedPreferences.edit().putString(FirebaseAuth.getInstance().getCurrentUser().getUid() +
+                        MainActivity.KEY_BACKUP_TIME,"上次備份時間:" + nowDate).commit();
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.setBackupTime();
+                mainActivity.setBackupTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
         });
 

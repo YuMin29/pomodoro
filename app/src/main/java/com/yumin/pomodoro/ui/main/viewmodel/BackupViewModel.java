@@ -21,8 +21,8 @@ import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import java.util.List;
 
 public class BackupViewModel extends AndroidViewModel {
-    protected DataRepository mFirebaseRepository;
-    protected DataRepository mRoomRepository;
+    protected FirebaseRepository mFirebaseRepository;
+    protected RoomRepository mRoomRepository;
     private LiveData<List<UserMission>> mRoomMissions;
     private MutableLiveData<Boolean> mIsRoomMissionsExist = new MutableLiveData<>();
     private LiveData<List<MissionState>> mRoomMissionStates;

@@ -1,5 +1,6 @@
 package com.yumin.pomodoro.data;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -22,20 +23,16 @@ public class MissionState {
     private String missionId = "";
 
 
-    public MissionState() {
-        LogUtil.logE("[MissionState]","Constructor");
-    }
+    public MissionState() {}
 
     @Ignore
     public MissionState(int numberOfCompletion, boolean finished) {
-        LogUtil.logE("[MissionState]","Constructor 111");
         this.numberOfCompletion = numberOfCompletion;
         this.isCompleted = finished;
     }
 
     @Ignore
     public MissionState(int numberOfCompletion, boolean finished, long recordDay, long finishedDay, String missionId) {
-        LogUtil.logE("[MissionState]","Constructor 222");
         this.numberOfCompletion = numberOfCompletion;
         this.isCompleted = finished;
         this.recordDay = recordDay;
@@ -53,6 +50,19 @@ public class MissionState {
                 ", finishedDay=" + completedDay +
                 ", missionId=" + missionId +
                 "}";
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (!(obj instanceof MissionState))
+            return false;
+
+        if (obj == this)
+            return true;
+
+        MissionState missionState = (MissionState) obj;
+        LogUtil.logD("MissionState","missionState.getMissionId() = "+missionState.getMissionId()+" ,this.missionId = "+this.missionId);
+        return this.missionId.equals(missionState.missionId);
     }
 
     public int getId() {

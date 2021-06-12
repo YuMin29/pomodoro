@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel;
 import com.yumin.pomodoro.ui.main.viewmodel.mission.MissionBaseViewModel;
 import com.yumin.pomodoro.utils.LogUtil;
 
-//TODO: ViewModel class shouldn't import any android.* or view.* class
 
 public class AddMissionViewModel extends MissionBaseViewModel {
     public static final String TAG = AndroidViewModel.class.getSimpleName();
@@ -17,12 +16,12 @@ public class AddMissionViewModel extends MissionBaseViewModel {
     }
 
     public void fetchMission(){
-        mMission.setValue(mDataRepository.getInitMission());
+        mMission.setValue(mRoomRepository.getInitMission());
     }
 
     public void saveMission(){
         LogUtil.logD(TAG,"[saveMission] mission val = "+ mMission.getValue().toString());
-        mDataRepository.addMission(mMission.getValue());
+        mRoomRepository.addMission(mMission.getValue());
         mIsSaveButtonClicked.postValue(true);
     }
 }

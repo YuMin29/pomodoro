@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
-import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -17,54 +16,40 @@ import com.yumin.pomodoro.utils.LogUtil;
 import java.util.List;
 
 public class CalenderViewModel extends AndroidViewModel {
-    private final String TAG = CalenderViewModel.class.getSimpleName();
-    private DataRepository mDataRepository;
+    private RoomRepository mRoomRepository;
     private LiveData<List<MissionState>> mAllMissionStates;
-    private LiveData<List<UserMission>> mAllUserMissions;
-    // observe coming missions
-    private MediatorLiveData<MissionResult> mMissions = new MediatorLiveData<>();
+    private LiveData<List<UserMission>> mAllMissions;
+    private MediatorLiveData<MissionResult> mMissionResult = new MediatorLiveData<>();
 
     public CalenderViewModel(Application application) {
         super(application);
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-//            this.dataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-//        else
-            this.mDataRepository = new RoomRepository(new RoomApiServiceImpl(application));
-
+        mRoomRepository = new RoomRepository(new RoomApiServiceImpl(application));
         fetchData();
     }
 
     private void fetchData(){
-        this.mAllMissionStates = mDataRepository.getMissionStateList();
-        this.mAllUserMissions = mDataRepository.getMissions();
+        this.mAllMissionStates = mRoomRepository.getMissionStateList();
+        this.mAllMissions = mRoomRepository.getMissions();
 
         MissionResult missionResult = new MissionResult();
-        mMissions.addSource(mAllMissionStates, new Observer<List<MissionState>>() {
+        mMissionResult.addSource(mAllMissionStates, new Observer<List<MissionState>>() {
             @Override
             public void onChanged(List<MissionState> missionStates) {
                 missionResult.setAllMissionStates(missionStates);
-                mMissions.setValue(missionResult);
+                mMissionResult.setValue(missionResult);
             }
         });
-        mMissions.addSource(mAllUserMissions, new Observer<List<UserMission>>() {
+        mMissionResult.addSource(mAllMissions, new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissions) {
                 missionResult.setAllUserMissions(userMissions);
-                mMissions.setValue(missionResult);
+                mMissionResult.setValue(missionResult);
             }
         });
     }
 
-    public MediatorLiveData<MissionResult> getMediatorMissionFromViewModel() {
-        return mMissions;
-    }
-
-    public LiveData<List<MissionState>> getAllMissionStates(){
-        return this.mAllMissionStates;
-    }
-
-    public LiveData<List<UserMission>> getAllUserMissions(){
-        return this.mAllUserMissions;
+    public MediatorLiveData<MissionResult> getMissionResult() {
+        return mMissionResult;
     }
 
     public class MissionResult {

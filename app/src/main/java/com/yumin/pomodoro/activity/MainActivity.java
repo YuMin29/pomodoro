@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     DrawerLayout mDrawerLayout;
     FirebaseUser mCurrentFirebaseUser = null;
     Context mContext;
-    OnRefreshHomeFragment mOnRefreshHomeFragment;
+    RefreshHomeFragment mRefreshHomeFragment;
     LinearLayout mNavHeaderMain = null;
     ListView mDrawerList;
     ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
@@ -85,12 +84,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     private final int POSITION_BACKUP = 2;
     private final int POSITION_RESTORE = 3;
     private final int POSITION_EXPIRED= 4;
-
     DrawerListAdapter mDrawerListAdapter;
-
     public static final String NAV_ITEM_SHARED_PREFERENCE = "nav_item";
-    public static final String KEY_BACKUP_TIME = "backup_time";
-    public static final String KEY_RESTORE_TIME = "restore_time";
+    public static final String KEY_BACKUP_TIME = "_backup";
+    public static final String KEY_RESTORE_TIME = "_restore";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             LogUtil.logE(TAG,"sign out [onComplete]");
-                                            mOnRefreshHomeFragment.onRefresh();
+                                            mRefreshHomeFragment.onRefresh();
+                                            setBackupTime(null);
+                                            setRestoreTime(null);
                                         }
                                     });
                                 }
@@ -196,6 +195,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         authStateListener = firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             updateNavHeader(user);
+            if (user != null) {
+                setBackupTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                setRestoreTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            }
             mCurrentFirebaseUser = user;
         };
     }
@@ -203,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     @Override
     protected void onResume() {
         super.onResume();
-        setBackupTime();
-        setRestoreTime();
     }
 
     private boolean isLoginFirebase(){
@@ -231,8 +232,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         dialog.show();
     }
 
-    public void setOnRefreshHomeFragment(OnRefreshHomeFragment onRefreshHomeFragment){
-        mOnRefreshHomeFragment = onRefreshHomeFragment;
+    public void setRefreshHomeFragment(RefreshHomeFragment onRefreshHomeFragment){
+        mRefreshHomeFragment = onRefreshHomeFragment;
     }
 
     private boolean isNetworkConnected(){
@@ -248,22 +249,25 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         return false;
     }
 
-    public void setBackupTime(){
-        updateNaSubtitle(POSITION_BACKUP,KEY_BACKUP_TIME);
+    public void setBackupTime(String uid){
+        updateNaSubtitle(POSITION_BACKUP, uid == null ? null : uid + KEY_BACKUP_TIME);
     }
 
-    public void setRestoreTime(){
-        updateNaSubtitle(POSITION_RESTORE,KEY_RESTORE_TIME);
+    public void setRestoreTime(String uid){
+        updateNaSubtitle(POSITION_RESTORE, uid == null ? null : uid + KEY_RESTORE_TIME);
     }
 
      private void updateNaSubtitle(int navItem,String key){
-        SharedPreferences sharedPreferences = getSharedPreferences(NAV_ITEM_SHARED_PREFERENCE,MODE_PRIVATE);
-        String backupTime = sharedPreferences.getString(key,"");
+        String backupTime = "";
+        if (key != null) {
+            SharedPreferences sharedPreferences = getSharedPreferences(NAV_ITEM_SHARED_PREFERENCE,MODE_PRIVATE);
+            backupTime = sharedPreferences.getString(key,"");
+        }
         mNavItems.get(navItem).setSubtitle(backupTime);
         mDrawerListAdapter.notifyDataSetInvalidated();
     }
 
-    private void getAppliationHashKey() {
+    private void getApplicationHashKey() {
         PackageInfo info;
         try {
             info = getPackageManager().getPackageInfo("com.yumin.pomodoro", PackageManager.GET_SIGNATURES);
@@ -273,14 +277,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                 md.update(signature.toByteArray());
                 String something = new String(Base64.encode(md.digest(), 0));
                 //String something = new String(Base64.encodeBytes(md.digest()));
-                Log.e("hash key", something);
+                LogUtil.logE("hash key", something);
             }
         } catch (PackageManager.NameNotFoundException e1) {
-            Log.e("name not found", e1.toString());
+            LogUtil.logE("name not found", e1.toString());
         } catch (NoSuchAlgorithmException e) {
-            Log.e("no such an algorithm", e.toString());
+            LogUtil.logE("no such an algorithm", e.toString());
         } catch (Exception e) {
-            Log.e("exception", e.toString());
+            LogUtil.logE("exception", e.toString());
         }
     }
 
@@ -354,6 +358,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     }
 
     @Override
+    public void onBackPressed() {
+        if (mNavController.getCurrentDestination().getId() == R.id.nav_home)
+            finish();
+        else
+            super.onBackPressed();
+    }
+
+    @Override
     public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
         mToolbarTitle.setText(navDestination.getLabel().toString());
         LogUtil.logD(TAG,"[onDestinationChanged] label = "+navDestination.getLabel().toString());
@@ -383,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         }
     }
 
-    public interface OnRefreshHomeFragment{
-        public void onRefresh();
+    public interface RefreshHomeFragment {
+        void onRefresh();
     }
 }

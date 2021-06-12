@@ -23,9 +23,7 @@ public class ResetPasswordFragment extends DataBindingFragment {
     FragmentResetPasswordBinding mFragmentResetPasswordBinding;
 
     @Override
-    protected void initViewModel() {
-
-    }
+    protected void initViewModel() {}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,10 +53,10 @@ public class ResetPasswordFragment extends DataBindingFragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    // change reset button color
                     mFragmentResetPasswordBinding.resetPassword
                             .setBackgroundColor(Color.parseColor("#00FF00")); // color green
                     mFragmentResetPasswordBinding.resetPassword.setText(R.string.reset_email_success);
+                    mFragmentResetPasswordBinding.resetPassword.setClickable(false);
                 }
             }
         });
@@ -72,7 +70,6 @@ public class ResetPasswordFragment extends DataBindingFragment {
         public void resetPassword(){
             sendResetPasswordLink();
         };
-
         public void resetBack(){
             back();
         };

@@ -1,9 +1,12 @@
 package com.yumin.pomodoro.ui.view;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,6 +34,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -40,8 +46,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
-import com.yumin.pomodoro.data.MissionState;
-import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
 import com.yumin.pomodoro.ui.main.viewmodel.LoginViewModel;
@@ -51,18 +55,17 @@ import com.yumin.pomodoro.ui.base.DataBindingFragment;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class LoginFragment extends DataBindingFragment {
     private static final String TAG = LoginFragment.class.getSimpleName();
-    private static final int RC_SIGN_IN = 1001;
+    private static final int RC_GOOGLE_SIGN_IN = 1001;
     LoginViewModel mLoginViewModel;
     CallbackManager mCallbackManager;
     FirebaseAuth mAuth;
     FragmentLoginBinding mFragmentLoginBinding;
     GoogleSignInClient mGoogleSignInClient;
+    AlertDialog mSyncProgressBar;
+    private boolean mSyncData = false;
 
-    // TODO: 2021/3/11 It's need to refactor especially move some function to view model
     @Override
     protected void initViewModel() {
         mLoginViewModel = getFragmentScopeViewModel(LoginViewModel.class);
@@ -71,10 +74,8 @@ public class LoginFragment extends DataBindingFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtil.logD(TAG, "[onCreate]");
         mAuth = FirebaseAuth.getInstance();
         FacebookSdk.sdkInitialize(getContext());
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -89,9 +90,7 @@ public class LoginFragment extends DataBindingFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        LogUtil.logD(TAG, "[onViewCreated]");
         mFragmentLoginBinding = (FragmentLoginBinding) getBinding();
-        // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
         // FB login action
@@ -101,22 +100,21 @@ public class LoginFragment extends DataBindingFragment {
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                LogUtil.logD(TAG, "[facebook:onSuccess] " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
             public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
+                LogUtil.logD(TAG, "[facebook:onCancel]");
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
+                LogUtil.logD(TAG, "[facebook:onError] " + error);
             }
         });
 
-        // Google login action
         SignInButton googleSignInButton = mFragmentLoginBinding.googleSignInButton;
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,21 +126,31 @@ public class LoginFragment extends DataBindingFragment {
     }
 
     private void initObserver() {
-        mLoginViewModel.getRoomMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
+        mLoginViewModel.getResultMediatorLiveData().observe(getViewLifecycleOwner(), new Observer<LoginViewModel.Result>() {
             @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logE(TAG, "[getRoomMissions] isEmpty = " +
-                        userMissions.isEmpty());
-                mLoginViewModel.setIsRoomMissionsExist(!userMissions.isEmpty());
+            public void onChanged(LoginViewModel.Result result) {
+                if (result.isComplete()) {
+                    if (result.getFirebaseMissions().size() > 0 && !mSyncData) {
+                        mSyncProgressBar = createProgressBarDialog();
+                        mSyncProgressBar.show();
+                        mLoginViewModel.syncFirebaseMissionsToRoom();
+                        mSyncData = true;
+                    } else {
+                        navigate(R.id.nav_home);
+                    }
+                }
             }
         });
 
-        mLoginViewModel.getRoomMissionStates().observe(getViewLifecycleOwner(), new Observer<List<MissionState>>() {
+        mLoginViewModel.getNavigateToHome().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public void onChanged(List<MissionState> missionStates) {
-                LogUtil.logE(TAG, "[getRoomMissionStates] isEmpty = " +
-                        missionStates.isEmpty());
-                mLoginViewModel.setIsRoomMissionStatesExist(!missionStates.isEmpty());
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    if (mSyncProgressBar != null)
+                        mSyncProgressBar.dismiss();
+                    navigate(R.id.nav_home);
+                }
+
             }
         });
     }
@@ -150,7 +158,7 @@ public class LoginFragment extends DataBindingFragment {
     private void handleGoogleSignIn() {
         LogUtil.logD(TAG, "[handleGoogleSignIn]");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
     }
 
     @Override
@@ -159,10 +167,12 @@ public class LoginFragment extends DataBindingFragment {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        LogUtil.logD(TAG, "[handleFacebookAccessToken] :" + token);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        AlertDialog progressBarDialog = createProgressBarDialog();
+        progressBarDialog.show();
+        mFragmentLoginBinding.login.setEnabled(false);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getOnCompleteListener());
+                .addOnCompleteListener(getOnCompleteListener(progressBarDialog));
     }
 
     private void navigate(int id) {
@@ -170,7 +180,6 @@ public class LoginFragment extends DataBindingFragment {
     }
 
     public void loginAccount() {
-        // check email and password
         String email = mFragmentLoginBinding.loginEmail.getText().toString();
         String password = mFragmentLoginBinding.loginPassword.getText().toString();
 
@@ -179,34 +188,75 @@ public class LoginFragment extends DataBindingFragment {
             return;
         }
 
+        AlertDialog progressBarDialog = createProgressBarDialog();
+        progressBarDialog.show();
         mFragmentLoginBinding.login.setEnabled(false);
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(getOnCompleteListener());
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
+                        progressBarDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            singInSuccess();
+                        } else {
+                            try {
+                                throw task.getException();
+                            } catch (Exception e) {
+                                LogUtil.logD(TAG, "[signInWithEmailAndPassword] exception : " + e.getStackTrace());
+                                if (e instanceof FirebaseAuthInvalidUserException)
+                                    Toast.makeText(getActivity(), R.string.sign_in_email_exception, Toast.LENGTH_SHORT).show();
+                                if (e instanceof FirebaseAuthInvalidCredentialsException)
+                                    Toast.makeText(getActivity(), R.string.sign_in_password_exception, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        mFragmentLoginBinding.login.setEnabled(true);
+                    }
+                });
+    }
+
+    private AlertDialog createProgressBarDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_progressbar,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        return alertDialog;
+    }
+
+    private void singInSuccess() {
+        LogUtil.logD(TAG, "[singInSuccess]");
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            addUserToFirebase(user);
+            mLoginViewModel.setFirebaseUserExist(true);
+        }
     }
 
     @NotNull
-    private OnCompleteListener<AuthResult> getOnCompleteListener() {
+    private OnCompleteListener<AuthResult> getOnCompleteListener(AlertDialog progressBarDialog) {
         return new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                progressBarDialog.dismiss();
+
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "Sign-in SUCCESS");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    if (user != null) {
-//                        if (mLoginViewModel.getIsRoomMissionsExist()) {
-//                            // sync Room to firebase
-//                            mLoginViewModel.syncRoomMissionsToFirebase();
-//                        }
-                        navigate(R.id.nav_home);
-                        mFragmentLoginBinding.login.setEnabled(true);
-                        addUserToFirebase(user);
-                    }
+                    singInSuccess();
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "Sign-in FAILURE", task.getException());
-                    Toast.makeText(getContext(), "登入失敗："+task.getException().getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                    try {
+                        throw task.getException();
+                    } catch (Exception e) {
+                        LogUtil.logD(TAG, "[signInWithCredential] exception = " + e.getStackTrace());
+                        if (e instanceof FirebaseAuthInvalidUserException)
+                            Toast.makeText(getActivity(),R.string.invalid_user_exception,Toast.LENGTH_SHORT).show();
+                        if (e instanceof FirebaseAuthInvalidCredentialsException)
+                            Toast.makeText(getActivity(),R.string.invalid_credential_exception,Toast.LENGTH_SHORT).show();
+                        if (e instanceof FirebaseAuthUserCollisionException)
+                            Toast.makeText(getActivity(),R.string.user_collision_exception,Toast.LENGTH_SHORT).show();
+                    }
                 }
+                mFragmentLoginBinding.login.setEnabled(true);
             }
         };
     }
@@ -219,40 +269,36 @@ public class LoginFragment extends DataBindingFragment {
         navigate(R.id.fragment_register);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
+        if (requestCode == RC_GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleGoogleSignInResult(task);
         } else {
-            // Pass the activity result back to the Facebook SDK
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            // Google Sign In was successful, authenticate with Firebase
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             LogUtil.logD(TAG, "[handleGoogleSignInResult] :" + account.getId());
             firebaseAuthWithGoogle(account.getIdToken());
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "[signInResult:failed] =" + e.getStatusCode());
+            LogUtil.logD(TAG, "[signInResult:failed] =" + e.getStatusCode());
         }
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        AlertDialog progressBarDialog = createProgressBarDialog();
+        progressBarDialog.show();
+        mFragmentLoginBinding.login.setEnabled(false);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getOnCompleteListener());
+                .addOnCompleteListener(getOnCompleteListener(progressBarDialog));
     }
 
     private void addUserToFirebase(FirebaseUser firebaseUser) {
@@ -277,13 +323,6 @@ public class LoginFragment extends DataBindingFragment {
         });
     }
 
-    private void syncLocalRoomToFirebase() {
-        // 1. check where if local Room has data
-        // 2. if have, sync data
-        // 3. then clear local room
-    }
-
-
     @Override
     protected DataBindingConfig getDataBindingConfig() {
         return new DataBindingConfig(R.layout.fragment_login, -1, null)
@@ -295,7 +334,6 @@ public class LoginFragment extends DataBindingFragment {
             loginAccount();
         }
         public void register() {
-            // switch to register fragment
             goToRegisterAccount();
         }
         public void forgetPassword() {

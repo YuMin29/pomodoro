@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.data.MissionSettings;
 import com.yumin.pomodoro.data.MissionState;
-import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
@@ -20,7 +19,8 @@ import com.yumin.pomodoro.ui.base.MissionManager;
 
 public class TimerViewModel extends AndroidViewModel {
     private static final String TAG = TimerViewModel.class.getSimpleName();
-    private DataRepository mDataRepository;
+    private static final String QUICK_MISSION = "quick_mission";
+    private RoomRepository mRoomRepository;
     private String mMissionStrId;
     private MediatorLiveData<UserMission> mMission = new MediatorLiveData<>();
     private MediatorLiveData<Integer> mMissionNumberOfCompletion = new MediatorLiveData<>();
@@ -34,30 +34,26 @@ public class TimerViewModel extends AndroidViewModel {
 
     public TimerViewModel(@NonNull Application application) {
         super(application);
-
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-//            mDataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-//        else
-            mDataRepository = new RoomRepository(new RoomApiServiceImpl(application));
-
+        mRoomRepository = new RoomRepository(new RoomApiServiceImpl(application));
         mMissionStrId = MissionManager.getInstance().getStrOperateId();
         mMissionSettings = new MissionSettings(application);
         fetchMission();
     }
 
     private void fetchMission(){
-        if (mMissionStrId.equals("quick_mission")) {
-            mMission.setValue(mDataRepository.getQuickMission());
+        if (mMissionStrId.equals(QUICK_MISSION)) {
+            mMission.setValue(mRoomRepository.getQuickMission());
             mMissionNumberOfCompletion.setValue(-1);
         } else {
-            mMission.addSource(mDataRepository.getMissionById(mMissionStrId), new Observer<UserMission>() {
+            // TODO 2021 Use transformation.switchMap
+            mMission.addSource(mRoomRepository.getMissionById(mMissionStrId), new Observer<UserMission>() {
                 @Override
                 public void onChanged(UserMission userMission) {
                     mMission.setValue(userMission);
                 }
             });
 
-            mMissionNumberOfCompletion.addSource(mDataRepository.getNumberOfCompletionById(mMissionStrId, TimeToMillisecondUtil.getTodayStartTime()), new Observer<Integer>() {
+            mMissionNumberOfCompletion.addSource(mRoomRepository.getNumberOfCompletionById(mMissionStrId, TimeToMillisecondUtil.getTodayStartTime()), new Observer<Integer>() {
                 @Override
                 public void onChanged(Integer integer) {
                     LogUtil.logE(TAG,"[fetchMission] mNumberOfCompletion = "+integer);
@@ -65,7 +61,7 @@ public class TimerViewModel extends AndroidViewModel {
                 }
             });
 
-            mMissionState.addSource(mDataRepository.getMissionStateById(mMissionStrId, TimeToMillisecondUtil.getTodayStartTime()), new Observer<MissionState>() {
+            mMissionState.addSource(mRoomRepository.getMissionStateByToday(mMissionStrId, TimeToMillisecondUtil.getTodayStartTime()), new Observer<MissionState>() {
                 @Override
                 public void onChanged(MissionState missionState) {
                     LogUtil.logE(TAG,"[fetchMission] missionState = "+missionState);
@@ -86,16 +82,17 @@ public class TimerViewModel extends AndroidViewModel {
     }
 
     public void updateMissionNumberOfCompletion(int num){
+        //TODO 20210613 Change init mission state logic to other place
         if (mMissionState.getValue() == null) {
             LogUtil.logE(TAG,"[updateNumberOfCompletionById] init");
-            mDataRepository.initMissionState(mMissionStrId);
+            mRoomRepository.initMissionState(mMissionStrId);
         }
         LogUtil.logE(TAG,"[updateNumberOfCompletionById] num = "+num);
-        mDataRepository.updateMissionNumberOfCompletion(mMissionStrId,num);
+        mRoomRepository.updateMissionNumberOfCompletion(mMissionStrId,num);
     }
 
     public void updateMissionState(boolean finished, int completeOfNumber){
-        mDataRepository.updateMissionFinishedState(mMissionStrId,finished,completeOfNumber);
+        mRoomRepository.updateMissionFinishedState(mMissionStrId,finished,completeOfNumber);
     }
 
     public LiveData<Integer> getMissionNumberOfCompletion(){
@@ -117,7 +114,7 @@ public class TimerViewModel extends AndroidViewModel {
     public void initMissionState(){
         LogUtil.logE(TAG,"[initMissionState] init mission");
         if (!mMissionStrId.equals("quick_mission"))
-            mDataRepository.initMissionState(mMissionStrId);
+            mRoomRepository.initMissionState(mMissionStrId);
     }
 
     public LiveData<Boolean> getAutoStartNextMission(){

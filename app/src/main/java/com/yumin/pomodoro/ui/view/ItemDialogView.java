@@ -45,59 +45,58 @@ public class ItemDialogView extends LinearLayout {
     }
 
     private void inflateView(Context context) {
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_dialogview,this,true);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_dialogview, this, true);
         mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                        // show color list dialog
-                        ColorSelectorDialog dialog = new ColorSelectorDialog(context,
-                                getThemeColors(),getCurrentColorPosition());
-                        dialog.setClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                switch (v.getId()){
-                                    case R.id.buttonOk:
-                                        int color = dialog.getSelectColor();
-                                        LogUtil.logD(TAG,"choose color = "+color);
-                                        setItemValue(color);
-                                        dialog.dismiss();
-                                        break;
+                ColorSelectorDialog dialog = new ColorSelectorDialog(context,
+                        getThemeColors(), getCurrentColorPosition());
+                dialog.setClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch (v.getId()) {
+                            case R.id.buttonOk:
+                                int color = dialog.getSelectColor();
+                                LogUtil.logD(TAG, "choose color = " + color);
+                                setItemValue(color);
+                                dialog.dismiss();
+                                break;
 
-                                    case R.id.buttonCancel:
-                                        // Do nothing
-                                        dialog.dismiss();
-                                        break;
-                                }
-                            }
-                        });
-                        dialog.show();
+                            case R.id.buttonCancel:
+                                // Do nothing
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                });
+                dialog.show();
 
-        }});
+            }
+        });
     }
 
     private List<ColorViewInfo> getThemeColors() {
         final List<ColorViewInfo> colorList = new ArrayList<ColorViewInfo>();
-        // Get color array list from resource. Define in color.xml.
         String[] backgroundAllColors = this.getResources().getStringArray(R.array.backgroundColors);
-        for(String colorValue : backgroundAllColors){
+        for (String colorValue : backgroundAllColors) {
             int convertColor = Color.parseColor(colorValue);
-            colorList.add(new ColorViewInfo(false,convertColor));
+            colorList.add(new ColorViewInfo(false, convertColor));
         }
         return colorList;
     }
 
-    public void setItemValue(int color){
+    public void setItemValue(int color) {
         mViewBinding.colorView.setColorValue(color);
         if (mInverseBindingListener != null)
             mInverseBindingListener.onChange();
         mContent = color;
     }
 
-    private int getCurrentColorPosition(){
+    private int getCurrentColorPosition() {
         String[] backgroundAllColors = this.getResources().getStringArray(R.array.backgroundColors);
         int position = 0;
-        for(String colorValue : backgroundAllColors){
+        for (String colorValue : backgroundAllColors) {
             int convertColor = Color.parseColor(colorValue);
             if (convertColor == mContent)
                 return position;
@@ -106,15 +105,15 @@ public class ItemDialogView extends LinearLayout {
         return 0;
     }
 
-    public int getItemValue(){
-        return  mViewBinding.colorView.getColorValue();
+    public int getItemValue() {
+        return mViewBinding.colorView.getColorValue();
     }
 
     public void setItemDescription(String string) {
-        mViewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription, string);
     }
 
-    public void setItemValueAttrChanged(InverseBindingListener inverseBindingListener){
+    public void setItemValueAttrChanged(InverseBindingListener inverseBindingListener) {
         mInverseBindingListener = inverseBindingListener;
     }
 }

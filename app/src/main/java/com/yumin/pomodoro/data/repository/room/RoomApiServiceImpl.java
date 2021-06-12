@@ -3,6 +3,7 @@ package com.yumin.pomodoro.data.repository.room;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.ApiService;
@@ -12,6 +13,10 @@ import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Single;
 
 public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> {
     private static final String TAG = RoomApiServiceImpl.class.getSimpleName();
@@ -25,7 +30,6 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     private LiveData<List<MissionState>> mAllMissionState;
 
     public RoomApiServiceImpl(Application application){
-        LogUtil.logD(TAG,"constructor");
         MissionDBManager missionDBManager = MissionDBManager.getInstance(application);
         mMissionDao = missionDBManager.getMissionDao();
         mMissionStateDao = missionDBManager.getMissionStateDao();
@@ -55,21 +59,8 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                mMissionStateDao.updateIsFinishedById(Integer.valueOf(id), isCompleted);
-                mMissionStateDao.updateFinishedDayById(Integer.valueOf(id), isCompleted ? new Date().getTime() : -1);
-            }
-        });
-    }
-
-    private void saveMissionState(String missionId, int completeOfNumber, boolean isFinish){
-        LogUtil.logE(TAG,"[saveMissionState] id = "+missionId +" ,completeOfNumber = "+completeOfNumber
-                +" ,isFinish = "+isFinish);
-
-        MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                MissionState missionState = new MissionState();
-                mMissionStateDao.insert(missionState);
+                mMissionStateDao.updateIsFinishedById(Integer.valueOf(id), isCompleted,TimeToMillisecondUtil.getTodayStartTime());
+                mMissionStateDao.updateFinishedDayById(Integer.valueOf(id), isCompleted ? new Date().getTime() : -1,TimeToMillisecondUtil.getTodayStartTime());
             }
         });
     }
@@ -108,14 +99,23 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         return mMissionStateDao.getPastCompletedMissions(today);
     }
 
-
     @Override
     public LiveData<List<UserMission>> getMissions() {
         return mAllMissions;
     }
 
-    @Override
-    public String addMission(UserMission userMission) {
+    public Single<String> addMissionAndGetId(UserMission userMission) {
+        return Single.fromCallable(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                userMission.setCreatedTime(new Date().getTime());
+                String id = String.valueOf(mMissionDao.insertAndGetId(userMission));
+                return id;
+            }
+        });
+    }
+
+    public void addMission(UserMission userMission){
         MissionDBManager.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -123,7 +123,6 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
                 mMissionDao.insert(userMission);
             }
         });
-        return String.valueOf(userMission.getId());
     }
 
     public void updateMission(UserMission userMission) {
@@ -164,8 +163,8 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
     }
 
     @Override
-    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
-        return mMissionStateDao.getMissionStateById(Integer.valueOf(id),todayStart);
+    public LiveData<MissionState> getMissionStateByToday(String id, long todayStart) {
+        return mMissionStateDao.getMissionStateByToday(Integer.valueOf(id),todayStart);
     }
 
     public void deleteMission(UserMission userMission){
@@ -201,8 +200,8 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         return mMissionDao.getTodayRepeatEverydayMissions(UserMission.TYPE_EVERYDAY,TimeToMillisecondUtil.getTodayEndTime());
     }
 
-    public LiveData<List<UserMission>> getTodayRepeatDefineMissions(){
-        return mMissionDao.getTodayRepeatDefineMissions(UserMission.TYPE_DEFINE,TimeToMillisecondUtil.getTodayEndTime());
+    public LiveData<List<UserMission>> getTodayRepeatCustomizeMissions(){
+        return mMissionDao.getTodayRepeatCustomizeMissions(UserMission.TYPE_DEFINE,TimeToMillisecondUtil.getTodayEndTime());
     }
 
     public LiveData<List<UserMission>> getComingNoneRepeatMissions(){
@@ -213,7 +212,19 @@ public class RoomApiServiceImpl implements ApiService<UserMission,MissionState> 
         return mMissionDao.getComingRepeatEverydayMissions(UserMission.TYPE_EVERYDAY);
     }
 
-    public LiveData<List<UserMission>> getComingRepeatDefineMissions(){
-        return mMissionDao.getComingRepeatDefineMissions(UserMission.TYPE_DEFINE, TimeToMillisecondUtil.getTodayEndTime());
+    public LiveData<List<UserMission>> getComingRepeatCustomizeMissions(){
+        return mMissionDao.getComingRepeatCustomizeMissions(UserMission.TYPE_DEFINE, TimeToMillisecondUtil.getTodayEndTime());
+    }
+
+    public LiveData<List<UserMission>> getPastNoneRepeatMissions(){
+        return mMissionDao.getPastNoneRepeatMissions(UserMission.TYPE_NONE, TimeToMillisecondUtil.getTodayStartTime());
+    }
+
+    public LiveData<List<UserMission>> getPastRepeatEverydayMissions(){
+        return mMissionDao.getPastRepeatEverydayMissions(UserMission.TYPE_EVERYDAY, TimeToMillisecondUtil.getTodayStartTime());
+    }
+
+    public LiveData<List<UserMission>> getPastRepeatCustomizeMissions(){
+        return mMissionDao.getPastRepeatCustomizeMissions(UserMission.TYPE_DEFINE, TimeToMillisecondUtil.getTodayStartTime());
     }
 }

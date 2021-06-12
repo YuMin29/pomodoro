@@ -20,7 +20,7 @@ public class EditMissionViewModel extends MissionBaseViewModel {
     public void fetchMission(){
         this.mMissionStrId = MissionManager.getInstance().getStrEditId();
         LogUtil.logD(TAG,"[fetchMission] missionStrId = "+ mMissionStrId);
-        mEditMission = mDataRepository.getMissionById(mMissionStrId);
+        mEditMission = mRoomRepository.getMissionById(mMissionStrId);
     }
 
     public void saveMission(){
@@ -31,7 +31,7 @@ public class EditMissionViewModel extends MissionBaseViewModel {
             mEditMission.getValue().setRepeatEnd(-1);
         }
 
-        mDataRepository.updateMission(mEditMission.getValue());
+        mRoomRepository.updateMission(mEditMission.getValue());
         mIsSaveButtonClicked.postValue(true);
     }
 }

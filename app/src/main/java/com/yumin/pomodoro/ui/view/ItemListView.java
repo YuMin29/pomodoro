@@ -23,7 +23,7 @@ import com.yumin.pomodoro.databinding.ItemListviewBinding;
 public class ItemListView extends LinearLayout {
     private ItemListviewBinding mViewBinding;
     private InverseBindingListener mInverseBindingListener;
-    private OnRepeatTypeListener mOnRepeatTypeListener = null;
+    private RepeatTypeListener mOnRepeatTypeListener = null;
     private static final int REPEAT_NONE = 0;
     private static final int REPEAT_EVERYDAY = 1;
     private static final int REPEAT_DEFINE = 2;
@@ -99,19 +99,19 @@ public class ItemListView extends LinearLayout {
     }
 
     public void setItemDescription(String string) {
-        mViewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription, string);
     }
 
     public void setItemListValAttrChanged(InverseBindingListener inverseBindingListener) {
         mInverseBindingListener = inverseBindingListener;
     }
 
-    public interface OnRepeatTypeListener {
+    public interface RepeatTypeListener {
         void chooseRepeatDefine();
         void chooseRepeatNonDefine();
     }
 
-    public void setOnRepeatTypeListener(OnRepeatTypeListener listener){
+    public void setOnRepeatTypeListener(RepeatTypeListener listener) {
         mOnRepeatTypeListener = listener;
     }
 }

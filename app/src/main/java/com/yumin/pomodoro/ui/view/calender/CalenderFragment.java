@@ -77,8 +77,9 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         mCalendarView.setOnYearChangeListener(this);
         mTextYear.setText(String.valueOf(mCalendarView.getCurYear()));
         mCurrentYear = mCalendarView.getCurYear();
-        mTextMonthDay.setText(mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "日");
-        mTextLunar.setText("今日");
+        mTextMonthDay.setText(mCalendarView.getCurMonth() + getString(R.string.calender_month)
+                + mCalendarView.getCurDay() + getString(R.string.calender_day));
+        mTextLunar.setText(R.string.calender_today);
         mTextCurrentDay.setText(String.valueOf(mCalendarView.getCurDay()));
         mRecyclerView = mFragmentCalenderBinding.recyclerView;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -87,7 +88,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     }
 
     private void initObserver() {
-        mCalenderViewModel.getMediatorMissionFromViewModel().observe(getViewLifecycleOwner(), new Observer<CalenderViewModel.MissionResult>() {
+        mCalenderViewModel.getMissionResult().observe(getViewLifecycleOwner(), new Observer<CalenderViewModel.MissionResult>() {
             @Override
             public void onChanged(CalenderViewModel.MissionResult result) {
                 if (result == null || !result.isComplete())
@@ -97,7 +98,6 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                 List<MissionState> missionStateList;
                 mMissionStateMap = new HashMap<>();
                 mUserMissionMap = new HashMap<>();
-                // remap for the mission state has same record day
                 for (MissionState missionState : result.mAllMissionStates) {
                     long recordDay = missionState.getRecordDay();
                     if (mMissionStateMap.containsKey(recordDay)) {
@@ -108,7 +108,6 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                         mMissionStateMap.put(recordDay, missionStateList);
                     }
                 }
-                // go through all the map data
                 for (Map.Entry<Long,List<MissionState>> entry : mMissionStateMap.entrySet()) {
                     long recordDay = entry.getKey();
                     List<MissionState> missionStates = entry.getValue();
@@ -120,36 +119,26 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
                     int month = Integer.parseInt(TimeToMillisecondUtil.getMonth(recordDay));
                     int day = Integer.parseInt(TimeToMillisecondUtil.getDay(recordDay));
 
-                    // create Calender
                     Calendar calendar = getSchemeCalendar(year,month,day);
                     List<UserMission> userMissions = new ArrayList<>();
-                    // double confirm whether if the mission state exist
                     for (MissionState missionState : missionStates) {
                         for (UserMission userMission : result.mAllUserMissions) {
                             UserMission fetchUserMission = null;
 
-//                            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//                                if (userMission.getFirebaseMissionId().equals(missionState.getMissionId()))
-//                                    fetchUserMission = userMission;
-//                            } else {
-                                if (Integer.valueOf(missionState.getMissionId()) == userMission.getId())
-                                    fetchUserMission = userMission;
-//                            }
+                            if (Integer.valueOf(missionState.getMissionId()) == userMission.getId())
+                                fetchUserMission = userMission;
 
                             if (null != fetchUserMission) {
-                                LogUtil.logE(TAG,"[initObserver] null != fetchUserMission , ID = "+missionState.getMissionId());
+                                LogUtil.logE(TAG,"fetchUserMission , ID = "+missionState.getMissionId());
                                 calendar.addScheme(fetchUserMission.getColor()," ");
                                 userMissions.add(fetchUserMission);
                             }
                         }
                         mUserMissionMap.put(String.valueOf(recordDay),userMissions);
                     }
-//                    LogUtil.logE(TAG,"[initObserver] map put calender size = "+calendar.getSchemes().size());
                     calendarMap.put(getSchemeCalendar(year,month,day).toString(),calendar);
                 }
-                // set up calender view data
                 mCalendarView.setSchemeDate(calendarMap);
-                // for init
                 updateRecyclerViewData(mCalendarView.getSelectedCalendar());
             }
         });
@@ -175,7 +164,6 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
 
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
-        // show missions info when calender click
         LogUtil.logE(TAG,"[onCalendarSelect] calendar.getYear() = "+calendar.getYear()+
                         ",calendar.getMonth() = "+calendar.getMonth()+",calendar.getDay() = "+calendar.getDay());
         if (isClick)
@@ -184,7 +172,7 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
 
     private void updateRecyclerViewData(Calendar calendar){
         String currentTime = String.valueOf(TimeToMillisecondUtil.getStartTime(calendar.getYear(),calendar.getMonth(),calendar.getDay()));
-        LogUtil.logE(TAG,"[onCalendarSelect] DAY = " +currentTime);
+        LogUtil.logE(TAG,"[onCalendarSelect] day = " +currentTime);
         List<MissionState> missionStateList = mMissionStateMap.get(Long.valueOf(currentTime));
         if (null == missionStateList) {
             mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.VISIBLE);

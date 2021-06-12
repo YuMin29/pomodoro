@@ -16,18 +16,15 @@ import com.yumin.pomodoro.data.UserMission;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {UserMission.class, MissionState.class}, version = 2, exportSchema = false)
+@Database(entities = {UserMission.class, MissionState.class}, version = 1, exportSchema = false)
 public abstract class MissionDBManager extends RoomDatabase {
-    private final static String TAG = "[MissionDBManager]";
     private final static String DB_NAME = "mysql.db";
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-
     private static MissionDBManager instance;
 
     public static synchronized MissionDBManager getInstance(Context context) {
-        // singleton
         if (instance == null) {
             instance = create(context);
         }

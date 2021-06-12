@@ -8,44 +8,41 @@ import com.yumin.pomodoro.data.UserMission;
 import java.util.List;
 
 public interface DataRepository {
+    LiveData<List<UserMission>> getMissions();
 
-    public LiveData<List<UserMission>> getMissions();
+    UserMission getInitMission();
 
-    public UserMission getInitMission();
+    UserMission getQuickMission();
 
-    public UserMission getQuickMission();
+    LiveData<UserMission> getMissionById(String id);
 
-    public LiveData<UserMission> getMissionById(String id);
+    String addMission(UserMission mission);
 
-    public String addMission(UserMission mission);
+    void updateMission(UserMission mission);
 
-    public void updateMission(UserMission mission);
+    void updateMissionNumberOfCompletion(String id, int num);
 
-    public void updateMissionNumberOfCompletion(String id, int num);
+    void updateMissionFinishedState(String id, boolean finished, int completeOfNumber);
 
-    public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber);
+    void deleteMission(UserMission mission);
 
-    public void deleteMission(UserMission mission);
+    void deleteAllMission();
 
-    public void deleteAllMission();
+    LiveData<Long> getMissionRepeatStart(String id);
 
-    public LiveData<Long> getMissionRepeatStart(String id);
+    LiveData<Long> getMissionRepeatEnd(String id);
 
-    public LiveData<Long> getMissionRepeatEnd(String id);
+    void initMissionState(String id);
 
-    public LiveData<Long> getMissionOperateDay(String id);
+    LiveData<List<UserMission>> getCompletedMissionList(long start, long end);
 
-    public void initMissionState(String id);
+    LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
 
-    public LiveData<List<UserMission>> getCompletedMissionList(long start, long end);
+    LiveData<MissionState> getMissionStateById(String id, long todayStart);
 
-    public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart);
+    void saveMissionState(String missionId, MissionState missionState);
 
-    public LiveData<MissionState> getMissionStateById(String id, long todayStart);
+    LiveData<List<MissionState>> getMissionStateList();
 
-    public void saveMissionState(String missionId, MissionState missionState);
-
-    public LiveData<List<MissionState>> getMissionStateList();
-
-    public LiveData<List<UserMission>> getPastCompletedMission(long today);
+    LiveData<List<UserMission>> getPastCompletedMission(long today);
 }

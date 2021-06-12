@@ -22,7 +22,7 @@ import com.yumin.pomodoro.utils.LogUtil;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public abstract class MissionBaseFragment extends DataBindingFragment implements ItemListView.OnRepeatTypeListener, ItemDateView.OnOperateDayChanged{
+public abstract class MissionBaseFragment extends DataBindingFragment implements ItemListView.RepeatTypeListener, ItemDateView.OperateDayChanged {
     private final String TAG = MissionBaseFragment.class.getSimpleName();
     protected long mLatestRepeatStart = -1L;
     protected long mLatestRepeatEnd = -1L;
@@ -118,13 +118,6 @@ public abstract class MissionBaseFragment extends DataBindingFragment implements
     @Override
     public void chooseRepeatNonDefine() {
         LogUtil.logE(TAG,"[chooseRepeatNonDefine]");
-//        if (mLatestRepeatStart != -1) {
-//            sharedViewModel.setRepeatStart(-1);
-//        }
-//
-//        if (mLatestRepeatEnd != -1) {
-//            sharedViewModel.setRepeatEnd(-1);
-//        }
     }
 
     private String getTransferDate(long time){

@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.InverseBindingListener;
@@ -39,8 +40,8 @@ public class ItemImageView extends LinearLayout {
     }
 
     private void inflateView(Context context) {
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_imageview,this,true);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mViewBinding = DataBindingUtil.inflate(inflater, R.layout.item_imageview, this, true);
         mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,34 +53,35 @@ public class ItemImageView extends LinearLayout {
                     }
                     setItemEnable(mIsEnabled);
                 }
-        }});
+            }
+        });
     }
 
-    public void setItemEnable(boolean enabled){
+    public void setItemEnable(boolean enabled) {
         mIsUseImage = true;
         mIsEnabled = enabled;
         int imgRsc;
 
-        if (enabled) {
+        if (enabled)
             imgRsc = R.drawable.ic_check_circle_black_24dp;
-        } else {
+        else
             imgRsc = R.drawable.ic_cancel_black_24dp;
-        }
+
 
         mViewBinding.imageView.setImageResource(imgRsc);
         if (mInverseBindingListener != null)
             mInverseBindingListener.onChange();
     }
 
-    public boolean getItemEnable(){
+    public boolean getItemEnable() {
         return mIsEnabled;
     }
 
     public void setItemDescription(String string) {
-        mViewBinding.setVariable(BR.itemDescription,string);
+        mViewBinding.setVariable(BR.itemDescription, string);
     }
 
-    public void setItemEnableAttrChanged(InverseBindingListener inverseBindingListener){
+    public void setItemEnableAttrChanged(InverseBindingListener inverseBindingListener) {
         mInverseBindingListener = inverseBindingListener;
     }
 }

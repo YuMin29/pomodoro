@@ -6,13 +6,14 @@ import androidx.lifecycle.LiveData;
 
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.api.ApiService;
-import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.List;
 
-public class RoomRepository implements DataRepository {
+import io.reactivex.rxjava3.core.Single;
+
+public class RoomRepository {
     private static final String TAG = RoomRepository.class.getSimpleName();
     private RoomApiServiceImpl mRoomApiService;
 
@@ -36,20 +37,22 @@ public class RoomRepository implements DataRepository {
         return mRoomApiService.getMissionById(id);
     }
 
-    public String addMission(UserMission userMission){
-        return mRoomApiService.addMission(userMission);
+    public void addMission(UserMission userMission){
+        mRoomApiService.addMission(userMission);
+    }
+
+    public Single<String> addMissionAndGetId(UserMission userMission){
+        return mRoomApiService.addMissionAndGetId(userMission);
     }
 
     public void updateMission(UserMission userMission){
         mRoomApiService.updateMission(userMission);
     }
 
-    @Override
     public void updateMissionNumberOfCompletion(String id, int num) {
         mRoomApiService.updateNumberOfCompletionById(id,num);
     }
 
-    @Override
     public void updateMissionFinishedState(String id, boolean finished, int completeOfNumber) {
         mRoomApiService.updateMissionState(id,finished,completeOfNumber);
     }
@@ -59,7 +62,6 @@ public class RoomRepository implements DataRepository {
         mRoomApiService.deleteMission(userMission);
     }
 
-    @Override
     public void deleteAllMission() {
         mRoomApiService.deleteAllMission();
     }
@@ -73,11 +75,6 @@ public class RoomRepository implements DataRepository {
         return mRoomApiService.getMissionRepeatEnd(id);
     }
 
-    public LiveData<Long> getMissionOperateDay(String id){
-        return mRoomApiService.getMissionOperateDay(id);
-    }
-
-    @Override
     public void initMissionState(String id) {
         mRoomApiService.initMissionState(id);
     }
@@ -86,28 +83,23 @@ public class RoomRepository implements DataRepository {
         return mRoomApiService.getCompletedMissionList(start, end);
     }
 
-    @Override
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
         return mRoomApiService.getNumberOfCompletionById(id,todayStart);
     }
 
-    @Override
-    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
-        LogUtil.logE(TAG,"[getMissionStateById] ID = "+id+" , TODAYSTART = "+todayStart);
-        return mRoomApiService.getMissionStateById(id,todayStart);
+    public LiveData<MissionState> getMissionStateByToday(String id, long todayStart) {
+        LogUtil.logE(TAG,"[getMissionStateByToday] ID = "+id+" , TODAYSTART = "+todayStart);
+        return mRoomApiService.getMissionStateByToday(id,todayStart);
     }
 
-    @Override
     public void saveMissionState(String missionId,MissionState missionState) {
         mRoomApiService.saveMissionState(missionId,missionState);
     }
 
-    @Override
     public LiveData<List<MissionState>> getMissionStateList() {
         return mRoomApiService.getMissionStateList();
     }
 
-    @Override
     public LiveData<List<UserMission>> getPastCompletedMission(long today) {
         return mRoomApiService.getPastCompletedMission(today);
     }
@@ -121,7 +113,7 @@ public class RoomRepository implements DataRepository {
     }
 
     public LiveData<List<UserMission>> getTodayRepeatCustomizeMissions(){
-        return mRoomApiService.getTodayRepeatDefineMissions();
+        return mRoomApiService.getTodayRepeatCustomizeMissions();
     }
 
     public LiveData<List<UserMission>> getComingNoneRepeatMissions(){
@@ -133,6 +125,18 @@ public class RoomRepository implements DataRepository {
     }
 
     public LiveData<List<UserMission>> getComingRepeatCustomizeMissions(){
-        return mRoomApiService.getComingRepeatDefineMissions();
+        return mRoomApiService.getComingRepeatCustomizeMissions();
+    }
+
+    public LiveData<List<UserMission>> getPastNoneRepeatMissions(){
+        return mRoomApiService.getPastNoneRepeatMissions();
+    }
+
+    public LiveData<List<UserMission>> getPastRepeatEverydayMissions(){
+        return mRoomApiService.getPastRepeatEverydayMissions();
+    }
+
+    public LiveData<List<UserMission>> getPastRepeatDefineMissions(){
+        return mRoomApiService.getPastRepeatCustomizeMissions();
     }
 }

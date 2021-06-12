@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
-import com.yumin.pomodoro.data.api.DataRepository;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
 import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
@@ -22,12 +21,12 @@ import java.util.List;
 
 public class RestoreViewModel extends AndroidViewModel {
     private final String TAG = RestoreViewModel.class.getSimpleName();
-    protected DataRepository mFirebaseRepository;
-    protected DataRepository mRoomRepository;
+    protected FirebaseRepository mFirebaseRepository;
+    protected RoomRepository mRoomRepository;
     private LiveData<List<UserMission>> mFirebaseMissions;
     private LiveData<List<MissionState>> mFirebaseMissionStates;
     public MutableLiveData<Boolean> mProgress = new MutableLiveData<>();
-    private MediatorLiveData<RestoreProgressResult> mResultMediatorLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<Result> mResultMediatorLiveData = new MediatorLiveData<>();
 
     public RestoreViewModel(@NonNull Application application) {
         super(application);
@@ -38,7 +37,7 @@ public class RestoreViewModel extends AndroidViewModel {
         mFirebaseMissionStates = mFirebaseRepository.getMissionStateList();
         mProgress.setValue(true);
 
-        RestoreProgressResult restoreProgressResult = new RestoreProgressResult();
+        Result restoreProgressResult = new Result();
         mResultMediatorLiveData.addSource(mFirebaseMissions, new Observer<List<UserMission>>() {
             @Override
             public void onChanged(List<UserMission> userMissionList) {
@@ -58,7 +57,7 @@ public class RestoreViewModel extends AndroidViewModel {
         });
     }
 
-    public MediatorLiveData<RestoreProgressResult> getResultMediatorLiveData(){
+    public MediatorLiveData<Result> getResultMediatorLiveData(){
         return mResultMediatorLiveData;
     }
 
@@ -104,7 +103,7 @@ public class RestoreViewModel extends AndroidViewModel {
         return mProgress;
     }
 
-    public class RestoreProgressResult{
+    public class Result {
         private List<UserMission> restoreMission = null;
         private List<MissionState> restoreMissionState = null;
 

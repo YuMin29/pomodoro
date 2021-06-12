@@ -44,23 +44,14 @@ public class ExpiredMissionFragment extends DataBindingFragment {
     }
 
     private void observeViewModel(){
-        mExpiredMissionViewModel.getMissions().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissionList) {
-                if (userMissionList != null) {
-                    mExpiredMissionViewModel.fetchPastMissions();
-                }
-            }
-        });
-
         mExpiredMissionViewModel.getPastMissions().observe(getViewLifecycleOwner(), new Observer<ExpiredMissionViewModel.Result>() {
             @Override
             public void onChanged(ExpiredMissionViewModel.Result result) {
                 if (result.isComplete()) {
                     List<UserMission> pastMissions = new ArrayList<>();
-                    pastMissions.addAll(result.missionsByOperateDay);
-                    pastMissions.addAll(result.missionsByRepeatRange);
-                    pastMissions.addAll(result.missionsByRepeatType);
+                    pastMissions.addAll(result.mPastNoneRepeatMissions);
+                    pastMissions.addAll(result.mPastRepeatCustomizeMissions);
+                    pastMissions.addAll(result.mPastRepeatEverydayMissions);
 
                     Map<String,List<UserMission>> remapUserMission = new TreeMap<>();
 
@@ -111,15 +102,6 @@ public class ExpiredMissionFragment extends DataBindingFragment {
 
                     for(int i = 0; i < mExpandableViewAdapter.getGroupCount(); i++)
                         mFragmentExpiredMissionBinding.expiredMissionList.expandGroup(i);
-                }
-            }
-        });
-
-        mExpiredMissionViewModel.getPastFinishedMission().observe(getViewLifecycleOwner(), new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissionList) {
-                if (userMissionList != null) {
-//                    expandableViewAdapter.flashFinishedMission(userMissionList);
                 }
             }
         });

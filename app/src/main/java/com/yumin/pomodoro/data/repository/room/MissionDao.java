@@ -13,6 +13,8 @@ import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Maybe;
+
 @Dao
 public interface MissionDao {
     @Query("SELECT * FROM MyMission")
@@ -22,7 +24,10 @@ public interface MissionDao {
     LiveData<UserMission> getMissionById(int id);
 
     @Insert
-    void insert(UserMission... missions);
+    void insert(UserMission mission);
+
+    @Insert
+    Long insertAndGetId(UserMission mission);
 
     @Update
     void update(UserMission... missions);
@@ -68,7 +73,7 @@ public interface MissionDao {
      * @return
      */
     @Query("SELECT * FROM MyMission WHERE repeat=:type AND repeatStart <= :todayEnd AND repeatEnd >= :todayEnd")
-    LiveData<List<UserMission>> getTodayRepeatDefineMissions(int type, long todayEnd);
+    LiveData<List<UserMission>> getTodayRepeatCustomizeMissions(int type, long todayEnd);
 
     /**
      * 不重複： 執行日大於今天結束
@@ -99,5 +104,26 @@ public interface MissionDao {
      * @return
      */
     @Query("SELECT * FROM MyMission WHERE repeat =:type AND repeatEnd >:todayEnd")
-    LiveData<List<UserMission>> getComingRepeatDefineMissions(int type, long todayEnd);
+    LiveData<List<UserMission>> getComingRepeatCustomizeMissions(int type, long todayEnd);
+
+    /**
+     * 不重複 且 執行日為今天以前 operate day <---- [today start]
+     * @return
+     */
+    @Query("SELECT * FROM MyMission WHERE repeat=:type AND operateDay < :todayStart")
+    LiveData<List<UserMission>> getPastNoneRepeatMissions(int type, long todayStart);
+
+    /**
+     * 每日重複： everyday && 執行日為今天或今天以前
+     * @return
+     */
+    @Query("SELECT * FROM MyMission WHERE repeat=:type AND operateDay < :todayStart")
+    LiveData<List<UserMission>> getPastRepeatEverydayMissions(int type, long todayStart);
+
+    /**
+     * 特定範圍重複： 判斷今天有無在範圍區間內  repeat start <---- today start
+     * @return
+     */
+    @Query("SELECT * FROM MyMission WHERE repeat=:type AND repeatStart < :todayStart")
+    LiveData<List<UserMission>> getPastRepeatCustomizeMissions(int type, long todayStart);
 }

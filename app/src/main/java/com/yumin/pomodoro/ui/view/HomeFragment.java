@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class HomeFragment extends DataBindingFragment implements MainActivity.OnRefreshHomeFragment {
+public class HomeFragment extends DataBindingFragment implements MainActivity.RefreshHomeFragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel mHomeViewModel;
     private ExpandableBaseAdapter mExpandableViewAdapter;
@@ -48,7 +48,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((MainActivity)getActivity()).setOnRefreshHomeFragment(this);
+        ((MainActivity)getActivity()).setRefreshHomeFragment(this);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
 
     private void initUI() {
         mExpandableViewAdapter = new ExpandableBaseAdapter(getContext(), mCategory, mCompletedMissions);
-        mExpandableViewAdapter.setOnExpandableItemClickListener(new ExpandableBaseAdapter.OnExpandableItemClickListener() {
+        mExpandableViewAdapter.setOnExpandableItemClickListener(new ExpandableBaseAdapter.ExpandableItemClickListener() {
             @Override
             public void onDelete(UserMission userMission, int groupPosition, int childPosition) {
                 LogUtil.logD(TAG, "[onDelete] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
@@ -113,8 +113,6 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
                 if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!isFinished)) {
                     MissionManager.getInstance().setOperateId(userMission);
                     navigate(R.id.fragment_timer);
-                } else {
-                    // TODO: 2021/06/05 重新開始任務？ 清除完成紀錄？
                 }
                 return true;
             }
@@ -195,7 +193,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.On
             mFragmentHomeBinding.totalFinishedTime.setText(decimalFormat.format(num)+"h");
             // unfinished mission count - finished mission count
 
-            if (mTodayMissionSize > 0)
+            if (mTodayMissionSize >= 0)
                 mFragmentHomeBinding.unfinishedMission.setText(String.valueOf(mTodayMissionSize - mCompletedMissions.size()));
         }
     }

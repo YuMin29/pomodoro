@@ -5,26 +5,24 @@
 
     <data>
         <variable
-            name="rangeCalenderViewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.RangeCalenderViewModel" />
-        <variable
             name="rangeCalenderClickProxy"
             type="com.yumin.pomodoro.ui.view.range_calender.RangeCalenderFragment.ClickProxy" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        tools:ignore="RtlHardcoded,HardcodedText,RtlSymmetry,SmallSp">
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:gravity="center_vertical"
-            android:background="@color/colorPrimary">
+            android:layout_height="0dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -34,55 +32,34 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:text="@string/range_choose"
-                android:textColor="#000000"
+                android:textColor="@color/colorPrimaryText"
                 android:textSize="22sp"
-                android:textStyle="bold"
                 tools:ignore="RelativeOverlap,RtlSymmetry" />
 
             <ImageView
                 android:id="@+id/iv_clear"
                 android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_height="match_parent"
                 android:layout_marginRight="12dp"
                 android:background="@drawable/bg_ripple"
                 android:contentDescription="@string/app_name"
+                android:onClick="@{()->rangeCalenderClickProxy.onClear()}"
                 android:padding="7dp"
                 android:scaleType="centerInside"
                 android:src="@mipmap/ic_clear"
-                android:tint="#333333"
-                android:onClick="@{()->rangeCalenderClickProxy.onClear()}"/>
-
-            <ImageView
-                android:id="@+id/iv_reduce"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginRight="12dp"
-                android:background="@drawable/bg_ripple"
-                android:contentDescription="@string/app_name"
-                android:padding="6dp"
-                android:scaleType="centerInside"
-                android:src="@mipmap/ic_reduce"
-                android:tint="#333333"
-                android:onClick="@{()->rangeCalenderClickProxy.onReduce()}"/>
-
-            <ImageView
-                android:id="@+id/iv_increase"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/bg_ripple"
-                android:padding="8dp"
-                android:src="@mipmap/ic_increase"
-                android:tint="#333333"
-                tools:ignore="ContentDescription"
-                android:onClick="@{()->rangeCalenderClickProxy.onIncrease()}"/>
-
+                android:tint="#333333" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_commit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -123,18 +100,18 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:layout_marginBottom="12dp"
                     android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@color/line_color" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingBottom="12dp"
                     android:paddingLeft="16dp"
+                    android:paddingTop="12dp"
                     android:paddingRight="16dp"
-                    android:paddingTop="12dp">
+                    android:paddingBottom="12dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -206,28 +183,30 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:layout_marginBottom="12dp"
                     android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@color/line_color" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
         <TextView
             android:id="@+id/tv_commit"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:textSize="16sp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->rangeCalenderClickProxy.onCommit()}"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
             android:text="@string/range_commit"
-            android:background="@color/colorPrimary"
-            android:textColor="@color/colorPrimaryText"
-            android:onClick="@{()->rangeCalenderClickProxy.onCommit()}"/>
-    </LinearLayout>
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/button_normal"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

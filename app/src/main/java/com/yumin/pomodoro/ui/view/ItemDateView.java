@@ -52,12 +52,10 @@ public class ItemDateView extends LinearLayout {
         mViewBinding.itemLinearLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // show calendar
                 Calendar calendar = Calendar.getInstance();
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        LogUtil.logD(TAG, "[datePickerDialog][onDateSet]");
                         Calendar chooseDate = Calendar.getInstance();
                         chooseDate.set(year, month, dayOfMonth);
                         Date chooseDateTime = chooseDate.getTime();
@@ -79,19 +77,18 @@ public class ItemDateView extends LinearLayout {
         LogUtil.logD(TAG,"[setItemDateVal] val = "+simpleDateFormat.format(date));
         int compareResult = date.compareTo(Calendar.getInstance().getTime());
 
-        if (compareResult == 0) {
-            // equal
+        if (compareResult == 0)
             mViewBinding.valTextview.setText("TODAY");
-        } else {
+        else
             mViewBinding.valTextview.setTextSize(26);
-        }
+
         mViewBinding.valTextview.setText(simpleDateFormat.format(date));
 
         if (mInverseBindingListener != null)
             mInverseBindingListener.onChange();
     }
 
-    public interface OnOperateDayChanged{
+    public interface OperateDayChanged {
         void onOperateChanged(long time);
     }
 
@@ -114,8 +111,8 @@ public class ItemDateView extends LinearLayout {
         mInverseBindingListener = inverseBindingListener;
     }
 
-    private OnOperateDayChanged operateDayListener = null;
-    public void setOperateDayListener(OnOperateDayChanged listener) {
+    private OperateDayChanged operateDayListener = null;
+    public void setOperateDayListener(OperateDayChanged listener) {
         if (operateDayListener == null)
             operateDayListener = listener;
     }

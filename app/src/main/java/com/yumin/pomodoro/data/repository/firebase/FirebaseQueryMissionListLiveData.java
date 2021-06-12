@@ -18,7 +18,7 @@ import java.util.List;
 
 public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState>> {
     private static final String TAG = FirebaseQueryMissionListLiveData.class.getSimpleName();
-    private FirebaseQueryMissionListLiveData.OnQueryListener mOnQueryListener;
+    private QueryListener mOnQueryListener;
     private final Query mQuery;
     private final FirebaseQueryMissionListLiveData.MyValueEventListener mMyValueEventListener = new FirebaseQueryMissionListLiveData.MyValueEventListener();
 
@@ -31,7 +31,7 @@ public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState
         mQuery = databaseReference;
     }
 
-    public void setOnQueryListener(FirebaseQueryMissionListLiveData.OnQueryListener onQueryListener){
+    public void setOnQueryListener(QueryListener onQueryListener){
         mOnQueryListener = onQueryListener;
     }
 
@@ -53,8 +53,8 @@ public class FirebaseQueryMissionListLiveData extends LiveData<List<MissionState
         mQuery.removeEventListener(mMyValueEventListener);
     }
 
-    interface OnQueryListener{
-        public MissionState onSecondQuery(DataSnapshot dataSnapshot);
+    interface QueryListener {
+        MissionState onSecondQuery(DataSnapshot dataSnapshot);
     }
 
     class MyValueEventListener implements ValueEventListener {

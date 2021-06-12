@@ -25,7 +25,7 @@ public class ExpandableBaseAdapter extends BaseExpandableListAdapter implements 
     protected List<UserMission> mCompletedMissions;
     protected List<MissionState> mMissionStates;
     private Context mContext;
-    private OnExpandableItemClickListener onExpandableItemClickListener;
+    private ExpandableItemClickListener onExpandableItemClickListener;
     private CustomizeItemBehavior mCustomizeItemBehavior;
 
     public ExpandableBaseAdapter(Context context, List<Category> list, List<UserMission> completedMissions) {
@@ -34,7 +34,7 @@ public class ExpandableBaseAdapter extends BaseExpandableListAdapter implements 
         mCompletedMissions = completedMissions;
     }
 
-    public interface OnExpandableItemClickListener {
+    public interface ExpandableItemClickListener {
         void onDelete(UserMission mission, int groupPosition, int childPosition);
         void onEdit(UserMission mission, int groupPosition, int childPosition);
     }
@@ -134,8 +134,10 @@ public class ExpandableBaseAdapter extends BaseExpandableListAdapter implements 
                 if (missionState.getMissionId().equals(String.valueOf(userMission.getId()))) {
                     LogUtil.logE(TAG,"[getChildView] missionState record day = "+TimeToMillisecondUtil.getDateString(missionState.getRecordDay()));
                     LogUtil.logE(TAG,"[getChildView] group day = "+mDataList.get(groupPosition).getCategoryName());
-                    if (TimeToMillisecondUtil.getDateString(missionState.getRecordDay()).equals(mDataList.get(groupPosition).getCategoryName()))
+                    if (TimeToMillisecondUtil.getDateString(missionState.getRecordDay()).equals(mDataList.get(groupPosition).getCategoryName())) {
                         isCompleted = missionState.getCompleted();
+                        LogUtil.logE(TAG,"[getChildView] record day equal to group day ");
+                    }
                 }
             }
         }
@@ -192,7 +194,7 @@ public class ExpandableBaseAdapter extends BaseExpandableListAdapter implements 
         return convertView;
     }
 
-    public void setOnExpandableItemClickListener(OnExpandableItemClickListener onExpandableItemClickListener) {
+    public void setOnExpandableItemClickListener(ExpandableItemClickListener onExpandableItemClickListener) {
         this.onExpandableItemClickListener = onExpandableItemClickListener;
     }
 

@@ -7,11 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.data.UserMission;
-import com.yumin.pomodoro.data.api.DataRepository;
-import com.yumin.pomodoro.data.repository.firebase.FirebaseApiServiceImpl;
-import com.yumin.pomodoro.data.repository.firebase.FirebaseRepository;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
@@ -21,7 +17,7 @@ import java.util.Date;
 
 public abstract class MissionBaseViewModel extends AndroidViewModel {
     public static final String TAG = MissionBaseViewModel.class.getSimpleName();
-    protected DataRepository mDataRepository;
+    protected RoomRepository mRoomRepository;
     protected MutableLiveData<UserMission> mMission = new MutableLiveData<>();
     protected LiveData<UserMission> mEditMission;
     protected MutableLiveData<Boolean> mIsSaveButtonClicked = new MutableLiveData<>();
@@ -32,30 +28,26 @@ public abstract class MissionBaseViewModel extends AndroidViewModel {
 
     public MissionBaseViewModel(@NonNull Application application) {
         super(application);
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-//            this.mDataRepository = new FirebaseRepository(new FirebaseApiServiceImpl(application));
-//        else
-            this.mDataRepository = new RoomRepository(new RoomApiServiceImpl(application));
-
+        mRoomRepository = new RoomRepository(new RoomApiServiceImpl(application));
         fetchMission();
         mIsSaveButtonClicked.postValue(false);
         mIsCancelButtonClicked.postValue(false);
     }
 
     public LiveData<UserMission> getMission(){
-        return this.mMission;
+        return mMission;
     }
 
     public LiveData<UserMission> getEditMission(){
-        return this.mEditMission;
+        return mEditMission;
     }
 
     public LiveData<Boolean> getIsSaveButtonClicked(){
-        return this.mIsSaveButtonClicked;
+        return mIsSaveButtonClicked;
     }
 
     public LiveData<Boolean> getIsCancelButtonClicked(){
-        return this.mIsCancelButtonClicked;
+        return mIsCancelButtonClicked;
     }
 
     public void cancel(){

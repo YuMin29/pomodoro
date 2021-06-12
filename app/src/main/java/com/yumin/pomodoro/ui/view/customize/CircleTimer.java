@@ -147,17 +147,11 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     public void startTimer() {
-        // call to initialize the timer values
         initTimerValues();
-        // call to initialize the progress bar values
         setProgressBarValues(mMissionTime);
-        // hide the reset icon
         mImageViewReset.setVisibility(View.GONE);
-        // changing play icon to stop icon
         mImageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
-        // changing the timer status to started
         mTimerStatus = TimerStatus.STARTED;
-        // call to start the count down timer
         startCountDownTimer(mMissionTime);
     }
 
@@ -181,9 +175,6 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
         mMissionTime = mTimeCountInMilliSeconds;
     }
 
-    /**
-     * method to start count down timer
-     */
     private void startCountDownTimer(long timeMilli) {
         // init media player
         if (mType == Type.MISSION && mEnabledSound) {
@@ -210,13 +201,9 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
             @Override
             public void onFinish() {
                 mTextViewTime.setText(msTimeFormatter(mMissionTime));
-                // call to initialize the progress bar values
                 setProgressBarValues(mMissionTime);
-                // hiding the reset icon
                 mImageViewReset.setVisibility(View.GONE);
-                // changing stop icon to start icon
                 mImageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-                // changing the timer status to stopped
                 mTimerStatus = TimerStatus.STOPPED;
 
                 if (mMediaPlayer != null) {
@@ -235,7 +222,7 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     }
 
     private void setProgressBarValues(long time) {
-        LogUtil.logE(TAG,"[setProgressBarValues]");
+        LogUtil.logE(TAG,"[setProgressBarValues] time = "+time);
         mProgressBarCircle.setProgress((int) time / 1000);
     }
 

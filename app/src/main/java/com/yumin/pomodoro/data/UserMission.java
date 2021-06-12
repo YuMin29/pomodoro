@@ -2,6 +2,7 @@ package com.yumin.pomodoro.data;
 
 import android.graphics.Color;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -14,6 +15,7 @@ public class UserMission {
     public static final int TYPE_NONE = 0;
     public static final int TYPE_EVERYDAY = 1;
     public static final int TYPE_DEFINE = 2;
+    public static final String QUICK_MISSION_STRING = "快速番茄任務";
 
     @PrimaryKey(autoGenerate = true)
     int id;
@@ -34,14 +36,11 @@ public class UserMission {
     private long createdTime;
     private String firebaseMissionId = "";
 
-    public UserMission(){
-        LogUtil.logE("[UserMission]","Constructor");
-    }
+    public UserMission() {}
 
     @Ignore
     public UserMission(int time, int shortBreakTime, int color) {
-        LogUtil.logE("[UserMission]","Constructor 111");
-        this.name = "快速番茄任務";
+        this.name = QUICK_MISSION_STRING;
         this.time = time;
         this.shortBreakTime = shortBreakTime;
         this.color = color;
@@ -54,7 +53,6 @@ public class UserMission {
                        int goal, int repeat, int repeatStart, int repeatEnd,
                        boolean enableNotification, boolean enableSound,
                        boolean enableVibrate, boolean keepScreenOn, String firebaseMissionId, long createdTime) {
-        LogUtil.logE("[UserMission]","Constructor 222");
         this.name = name;
         this.time = time;
         this.shortBreakTime = shortBreakTime;
@@ -74,6 +72,32 @@ public class UserMission {
     }
 
     @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this)
+            return true;
+
+        if (!(obj instanceof UserMission))
+            return false;
+
+        UserMission userMission = (UserMission) obj;
+        return this.name.equals(userMission.name) &&
+                this.time == userMission.time &&
+                this.shortBreakTime == userMission.shortBreakTime &&
+                this.longBreakTime == userMission.longBreakTime &&
+                this.color == userMission.color &&
+                this.operateDay == userMission.operateDay &&
+                this.goal == userMission.goal &&
+                this.repeat == userMission.repeat &&
+                this.repeatStart == userMission.repeatStart &&
+                this.repeatEnd == userMission.repeatEnd &&
+                this.enableNotification == userMission.enableNotification &&
+                this.enableSound == userMission.enableSound &&
+                this.enableVibrate == userMission.enableVibrate &&
+                this.keepScreenOn == userMission.keepScreenOn &&
+                this.firebaseMissionId.equals(userMission.firebaseMissionId);
+    }
+
+    @Override
     public String toString() {
         return "UserMission { " +
                 "id=" + id +
@@ -85,8 +109,8 @@ public class UserMission {
                 ", operateDay='" + operateDay + '\'' +
                 ", goal=" + goal + '\'' +
                 ", repeat='" + repeat + '\'' +
-                ", repeatStart ='"+repeatStart + '\'' +
-                ", repeatEnd ='"+repeatEnd + '\'' +
+                ", repeatStart ='" + repeatStart + '\'' +
+                ", repeatEnd ='" + repeatEnd + '\'' +
                 ", enableNotification=" + enableNotification + '\'' +
                 ", enableSound=" + enableSound + '\'' +
                 ", enableVibrate=" + enableVibrate + '\'' +
@@ -94,7 +118,7 @@ public class UserMission {
 //                ", isFinished =" + isFinished + '\'' +
                 ", firebaseId = " + firebaseMissionId +
 //                ", finishedDay = " + finishedDay +
-                ", createdTime = "+createdTime
+                ", createdTime = " + createdTime
                 + " } ";
     }
 

@@ -71,9 +71,11 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         MISSION_START,
         MISSION_PAUSE,
         MISSION_STOP,
+        MISSION_KEEP_PAUSE,
         BREAK_START,
         BREAK_PAUSE,
-        BREAK_STOP
+        BREAK_STOP,
+        BREAK_KEEP_PAUSE
     }
 
     @Override
@@ -119,7 +121,12 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             @Override
             public void handleOnBackPressed() {
                 // pause timer if started
-                pauseTimer();
+                if (timerStatus == TimerStatus.MISSION_START || timerStatus == TimerStatus.BREAK_START)
+                    pauseTimer();
+                else if (timerStatus == TimerStatus.MISSION_PAUSE)
+                    timerStatus = TimerStatus.MISSION_KEEP_PAUSE;
+                else if (timerStatus == TimerStatus.BREAK_PAUSE)
+                    timerStatus = TimerStatus.BREAK_KEEP_PAUSE;
 
                 // showing a dialog to check whether to exit this page or not
                 AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -147,8 +154,12 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // resume
-                                startTimer();
+                                if (timerStatus == TimerStatus.BREAK_PAUSE || timerStatus == TimerStatus.MISSION_PAUSE)
+                                    continueTimer();
+                                else if (timerStatus == TimerStatus.BREAK_KEEP_PAUSE)
+                                    timerStatus = TimerStatus.BREAK_PAUSE;
+                                else if (timerStatus == TimerStatus.MISSION_KEEP_PAUSE)
+                                    timerStatus = TimerStatus.MISSION_PAUSE;
                             }
                         })
                         .create();
@@ -204,6 +215,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
         mTimerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
             @Override
             public void onChanged(MissionState missionState) {
+                //TODO 20210613 Change init mission state logic to other place
                 LogUtil.logE(TAG, "[getMissionState] = " + missionState);
                 mMissionState = missionState;
             }
@@ -293,6 +305,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             }
         }
 
+        //TODO 20210613 Change init mission state logic to other place
         if (mMissionState == null)
             mTimerViewModel.initMissionState();
     }
@@ -350,12 +363,11 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                 mTimerViewModel.updateMissionState(true, mNumberOfCompletion);
 
                 if (mIsDisableBreak) {
-                    MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
-                    navigateUp();
-
                     if (mEnabledNotification) {
                         mNotificationHelper.cancelNotification();
                     }
+                    MainActivity.commitWhenLifecycleStarted(getLifecycle(), R.id.timer_to_home, null);
+                    navigateUp();
                     return;
                 }
             }
@@ -377,7 +389,12 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             timerStatus = TimerStatus.MISSION_INIT;
             initTimerLayout(mMissionTime, mMissionBackgroundColor);
             updateNotification(getString(R.string.notification_mission_message));
+
+            if (mIsAutoStartMission)
+                startTimer();
+
         } else {
+            // switch to break
             LogUtil.logE(TAG, "switch to break timer");
             initTimerLayout(mMissionBreakTime, mBreakBackgroundColor);
 

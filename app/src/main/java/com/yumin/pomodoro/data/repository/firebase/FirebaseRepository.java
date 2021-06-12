@@ -7,11 +7,10 @@ import androidx.lifecycle.LiveData;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.api.ApiService;
-import com.yumin.pomodoro.data.api.DataRepository;
 
 import java.util.List;
 
-public class FirebaseRepository implements DataRepository {
+public class FirebaseRepository {
 
     private FirebaseApiServiceImpl mFirebaseApiService;
 
@@ -56,7 +55,6 @@ public class FirebaseRepository implements DataRepository {
     }
 
 
-    @Override
     public void deleteAllMission() {
         mFirebaseApiService.deleteAllMission();
     }
@@ -69,41 +67,37 @@ public class FirebaseRepository implements DataRepository {
         return mFirebaseApiService.getMissionRepeatEnd(id);
     }
 
-    public LiveData<Long> getMissionOperateDay(String id){
-        return mFirebaseApiService.getMissionOperateDay(id);
-    }
 
-    @Override
     public void initMissionState(String id) {
         mFirebaseApiService.initMissionState(id);
     }
 
-    @Override
+
     public LiveData<List<UserMission>> getCompletedMissionList(long start, long end) {
         return mFirebaseApiService.getCompletedMissionList(start, end);
     }
 
-    @Override
+
     public LiveData<Integer> getNumberOfCompletionById(String id, long todayStart) {
         return mFirebaseApiService.getNumberOfCompletionById(id,todayStart);
     }
 
-    @Override
-    public LiveData<MissionState> getMissionStateById(String id, long todayStart) {
-        return mFirebaseApiService.getMissionStateById(id, todayStart);
+
+    public LiveData<MissionState> getMissionStateByToday(String id, long todayStart) {
+        return mFirebaseApiService.getMissionStateByToday(id, todayStart);
     }
 
-    @Override
+
     public void saveMissionState(String missionId,MissionState missionState) {
         mFirebaseApiService.saveMissionState(missionId,missionState);
     }
 
-    @Override
+
     public LiveData<List<MissionState>> getMissionStateList() {
         return mFirebaseApiService.getMissionStateList();
     }
 
-    @Override
+
     public LiveData<List<UserMission>> getPastCompletedMission(long today) {
         return null;
     }

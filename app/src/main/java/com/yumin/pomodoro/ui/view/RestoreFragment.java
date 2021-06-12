@@ -10,19 +10,16 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.activity.MainActivity;
-import com.yumin.pomodoro.data.MissionState;
-import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.ui.base.DataBindingConfig;
 import com.yumin.pomodoro.ui.base.DataBindingFragment;
 import com.yumin.pomodoro.ui.main.viewmodel.RestoreViewModel;
-import com.yumin.pomodoro.utils.LogUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class RestoreFragment extends DataBindingFragment {
     private RestoreViewModel mRestoreViewModel;
@@ -48,16 +45,16 @@ public class RestoreFragment extends DataBindingFragment {
                 // set time stamp
                 String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.NAV_ITEM_SHARED_PREFERENCE, Context.MODE_PRIVATE);
-                sharedPreferences.edit().putString(MainActivity.KEY_RESTORE_TIME,"上次還原時間:" + nowDate).commit();
+                sharedPreferences.edit().putString(FirebaseAuth.getInstance().getCurrentUser().getUid() + MainActivity.KEY_RESTORE_TIME,"上次還原時間:" + nowDate).commit();
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.setRestoreTime();
+                mainActivity.setRestoreTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
         });
 
 
-        mRestoreViewModel.getResultMediatorLiveData().observe(getViewLifecycleOwner(), new Observer<RestoreViewModel.RestoreProgressResult>() {
+        mRestoreViewModel.getResultMediatorLiveData().observe(getViewLifecycleOwner(), new Observer<RestoreViewModel.Result>() {
             @Override
-            public void onChanged(RestoreViewModel.RestoreProgressResult restoreProgressResult) {
+            public void onChanged(RestoreViewModel.Result restoreProgressResult) {
                 if (restoreProgressResult.isComplete()) {
                     mRestoreViewModel.operateRestore();
                 }

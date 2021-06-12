@@ -63,7 +63,7 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     @Override
     protected DataBindingConfig getDataBindingConfig() {
-        return new DataBindingConfig(R.layout.fragment_range_calender, BR.rangeCalenderViewModel, null)
+        return new DataBindingConfig(R.layout.fragment_range_calender, -1, null)
                 .addBindingParam(BR.rangeCalenderClickProxy, new ClickProxy());
     }
 
@@ -74,8 +74,8 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     }
 
     private void initView() {
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         mFragmentRangeCalenderBinding.calendarView.setOnCalendarRangeSelectListener(this);
         mFragmentRangeCalenderBinding.calendarView.setOnMonthChangeListener(this);
         mFragmentRangeCalenderBinding.calendarView.setOnCalendarInterceptListener(this);
@@ -245,15 +245,13 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
                 return;
             }
             for (Calendar c : calendars) {
-                LogUtil.logE(TAG, c.toString()
-                        + " -- " + c.getScheme()
-                        + "  --  " + c.getLunar());
+                LogUtil.logE(TAG, c.toString() + "-" + c.getScheme() + "-" + c.getLunar());
             }
             long start = TimeToMillisecondUtil.getStartTime(calendars.get(0).getTimeInMillis());
             long end = TimeToMillisecondUtil.getEndTime(calendars.get(calendars.size() - 1).getTimeInMillis());
 
-            Log.e(TAG, "SelectCalendarRange , start = " + start);
-            Log.e(TAG, "SelectCalendarRange , end = " + end);
+            LogUtil.logE(TAG, "SelectCalendarRange , start = " + start);
+            LogUtil.logE(TAG, "SelectCalendarRange , end = " + end);
 
             mSharedViewModel.setRepeatStart(start);
             mSharedViewModel.setRepeatEnd(end);

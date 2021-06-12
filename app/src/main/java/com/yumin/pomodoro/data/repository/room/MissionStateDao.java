@@ -19,11 +19,11 @@ public interface MissionStateDao {
     @Query("UPDATE MissionState SET numberOfCompletion=:value WHERE missionId=:id AND recordDay=:today")
     void updateNumberOfCompletionsById(int id, int value, long today);
 
-    @Query("UPDATE MissionState SET isCompleted=:value WHERE missionId=:id")
-    void updateIsFinishedById(int id, boolean value);
+    @Query("UPDATE MissionState SET isCompleted=:value WHERE missionId=:id AND recordDay =:today")
+    void updateIsFinishedById(int id, boolean value, long today);
 
-    @Query("UPDATE MissionState SET completedDay=:value WHERE missionId=:id")
-    void updateFinishedDayById(int id, long value);
+    @Query("UPDATE MissionState SET completedDay=:value WHERE missionId=:id AND recordDay =:today")
+    void updateFinishedDayById(int id, long value, long today);
 
     @Query("SELECT MyMission.id,name,time,shortBreakTime,longBreakTime,color,operateDay,goal,repeat,repeatStart,repeatEnd,enableNotification,enableSound,enableVibrate,keepScreenOn,createdTime,firebaseMissionId" +
             " FROM MyMission INNER JOIN MissionState ON MissionState.missionId=MyMission.id" +
@@ -39,7 +39,10 @@ public interface MissionStateDao {
     LiveData<Integer> getNumberOfCompletionById(int id, long today);
 
     @Query("SELECT * FROM MissionState WHERE missionId=:id AND recordDay =:today")
-    LiveData<MissionState> getMissionStateById(int id, long today);
+    LiveData<MissionState> getMissionStateByToday(int id, long today);
+
+    @Query("SELECT * FROM MissionState WHERE missionId=:id")
+    LiveData<MissionState> getMissionStateById(int id);
 
     @Query("SELECT * FROM MissionState")
     LiveData<List<MissionState>> getAllMissionStates();

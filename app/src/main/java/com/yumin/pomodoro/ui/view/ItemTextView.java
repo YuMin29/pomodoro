@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -25,11 +24,11 @@ import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.databinding.ItemTextviewBinding;
 
 @InverseBindingMethods({@InverseBindingMethod(type = ItemTextView.class,
-        attribute = "itemContent", event = "itemContentAttrChanged")})
+        attribute = "itemValue", event = "itemValueAttrChanged")})
 public class ItemTextView extends LinearLayout {
     private static final String TAG = ItemTextView.class.getSimpleName();
     private ItemTextviewBinding mViewBinding;
-    private int mContent;
+    private int mValue;
     private InverseBindingListener mInverseBindingListener;
 
     public ItemTextView(Context context) {
@@ -53,27 +52,23 @@ public class ItemTextView extends LinearLayout {
         mViewBinding.addNum.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogUtil.logD(TAG,"[addNum][onClick]");
                 int val = Integer.parseInt(mViewBinding.numTextview.getText().toString());
                 val ++;
-                setItemContent(val);
+                setItemValue(val);
             }
         });
         mViewBinding.minusNum.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogUtil.logD(TAG,"[minusNum][onClick]");
-                LogUtil.logD(TAG,"[addNum][onClick]");
                 int val = Integer.parseInt(mViewBinding.numTextview.getText().toString());
-                if (val > 0)
+                if (val > 1)
                     val --;
-                setItemContent(val);
+                setItemValue(val);
             }
         });
         mViewBinding.itemLinearlayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"[itemLinearlayout][onClick]");
                 //create dialog to set number
                 View view = LayoutInflater.from(context).inflate(R.layout.dialog_count,null);
                 EditText editText = view.findViewById(R.id.editText);
@@ -88,7 +83,7 @@ public class ItemTextView extends LinearLayout {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 LogUtil.logD(TAG,"[AlertDialog][setText] : "+editText.getText());
-                                setItemContent(Integer.valueOf(editText.getText().toString()));
+                                setItemValue(Integer.valueOf(editText.getText().toString()));
                             }
                         })
                         .setNegativeButton(R.string.cancel,null);
@@ -98,27 +93,26 @@ public class ItemTextView extends LinearLayout {
     }
 
 
-    public void setItemContent(int val){
-        LogUtil.logD(TAG,
-                "[setItemContent] content = "+val);
+    public void setItemValue(int val){
+        LogUtil.logD(TAG, "[setItemContent] val = "+val);
         mViewBinding.numTextview.setText(String.valueOf(val));
         if (mInverseBindingListener != null)
             mInverseBindingListener.onChange();
-        mContent = val;
+        mValue = val;
     }
 
     public void setItemDescription(String string){
         mViewBinding.setVariable(BR.itemDescription,string);
     }
 
-    public int getItemContent(){
+    public int getItemValue(){
         LogUtil.logD(TAG,"[getItemContent] return = "+ mViewBinding.numTextview.getText().toString());
         if (TextUtils.isEmpty(mViewBinding.numTextview.getText().toString()))
             return 0;
         return Integer.parseInt(mViewBinding.numTextview.getText().toString());
     }
 
-    public void setItemContentAttrChanged(InverseBindingListener inverseBindingListener){
+    public void setItemValueAttrChanged(InverseBindingListener inverseBindingListener){
         mInverseBindingListener = inverseBindingListener;
     }
 }
