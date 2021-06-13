@@ -6,10 +6,10 @@
     <data>
         <variable
             name="addMissionClickProxy"
-            type="com.yumin.pomodoro.ui.view.AddMissionFragment.ClickProxy" />
+            type="com.yumin.pomodoro.fragment.AddMissionFragment.ClickProxy" />
         <variable
             name="addMissionViewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.AddMissionViewModel" />
+            type="com.yumin.pomodoro.viewmodel.AddMissionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:background="@color/layout_main_background">
 
-        <com.yumin.pomodoro.ui.view.customize.MissionAttributeView
+        <com.yumin.pomodoro.customize.MissionAttributeView
             android:id="@+id/missionAttributeView"
             android:layout_width="match_parent"
             android:layout_height="0dp"

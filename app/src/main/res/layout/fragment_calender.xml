@@ -6,11 +6,11 @@
     <data>
         <variable
             name="calenderViewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.CalenderViewModel" />
+            type="com.yumin.pomodoro.viewmodel.CalenderViewModel" />
 
         <variable
             name="calenderClickProxy"
-            type="com.yumin.pomodoro.ui.view.calender.CalenderFragment.ClickProxy" />
+            type="com.yumin.pomodoro.fragment.CalenderFragment.ClickProxy" />
     </data>
 
     <LinearLayout
@@ -126,8 +126,8 @@
                 app:scheme_text_color="#333"
                 app:scheme_theme_color="#128c4b"
                 app:selected_lunar_text_color="#CFCFCF"
-                app:month_view="com.yumin.pomodoro.ui.view.calender.CalenderMonthView"
-                app:week_view="com.yumin.pomodoro.ui.view.calender.CalenderWeekView"
+                app:month_view="com.yumin.pomodoro.calender.CalenderMonthView"
+                app:week_view="com.yumin.pomodoro.calender.CalenderWeekView"
                 app:selected_text_color="#333"
                 app:selected_theme_color="#80cfcfcf"
                 app:week_background="#fff"

@@ -5,14 +5,14 @@
     <data>
         <variable
             name="breakTimerViewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.TimerViewModel" />
+            type="com.yumin.pomodoro.viewmodel.TimerViewModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.yumin.pomodoro.ui.view.customize.CircleTimer
+        <com.yumin.pomodoro.customize.CircleTimer
             android:id="@+id/breakTimer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

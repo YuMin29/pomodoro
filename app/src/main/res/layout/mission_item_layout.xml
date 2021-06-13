@@ -21,7 +21,7 @@
             android:background="@drawable/mission_item_shape"
             android:clickable="false">
 
-            <com.yumin.pomodoro.ui.view.ColorView
+            <com.yumin.pomodoro.customize.ColorView
                 android:id="@+id/colorView"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

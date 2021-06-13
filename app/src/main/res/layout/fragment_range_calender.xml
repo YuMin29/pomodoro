@@ -6,7 +6,7 @@
     <data>
         <variable
             name="rangeCalenderClickProxy"
-            type="com.yumin.pomodoro.ui.view.range_calender.RangeCalenderFragment.ClickProxy" />
+            type="com.yumin.pomodoro.fragment.RangeCalenderFragment.ClickProxy" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -79,7 +79,7 @@
                     app:max_select_range="-1"
                     app:min_select_range="-1"
                     app:min_year="2004"
-                    app:month_view="com.yumin.pomodoro.ui.view.range_calender.CustomRangeMonthView"
+                    app:month_view="com.yumin.pomodoro.customize.CustomRangeMonthView"
                     app:month_view_show_mode="mode_only_current"
                     app:other_month_text_color="#e1e1e1"
                     app:scheme_text="假"
@@ -90,7 +90,7 @@
                     app:selected_theme_color="#EE7621"
                     app:week_background="#fff"
                     app:week_text_color="#111"
-                    app:week_view="com.yumin.pomodoro.ui.view.range_calender.CustomRangeWeekView"
+                    app:week_view="com.yumin.pomodoro.customize.CustomRangeWeekView"
                     app:year_view_day_text_color="#333333"
                     app:year_view_day_text_size="9sp"
                     app:year_view_month_text_color="#ff0000"

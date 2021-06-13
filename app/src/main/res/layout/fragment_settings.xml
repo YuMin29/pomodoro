@@ -5,10 +5,10 @@
     <data>
         <variable
             name="settingsViewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.SettingsViewModel" />
+            type="com.yumin.pomodoro.viewmodel.SettingsViewModel" />
         <variable
             name="settingsClickProxy"
-            type="com.yumin.pomodoro.ui.view.SettingsFragment.ClickProxy" />
+            type="com.yumin.pomodoro.fragment.SettingsFragment.ClickProxy" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="loginClickProxy"
-            type="com.yumin.pomodoro.ui.view.LoginFragment.ClickProxy" />
+            type="com.yumin.pomodoro.fragment.LoginFragment.ClickProxy" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

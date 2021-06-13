@@ -6,10 +6,10 @@
     <data>
         <variable
             name="homeClickProxy"
-            type="com.yumin.pomodoro.ui.view.HomeFragment.ClickProxy" />
+            type="com.yumin.pomodoro.fragment.HomeFragment.ClickProxy" />
         <variable
             name="homeViewModel"
-            type="com.yumin.pomodoro.ui.main.viewmodel.HomeViewModel" />
+            type="com.yumin.pomodoro.viewmodel.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -123,7 +123,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linear" />
 
-        <com.yumin.pomodoro.ui.view.customize.SlideExpandableListView
+        <com.yumin.pomodoro.customize.SlideExpandableListView
             android:id="@+id/home_list_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
