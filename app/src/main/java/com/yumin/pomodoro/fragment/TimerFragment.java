@@ -23,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.base.MissionManager;
 import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentTimerBinding;
@@ -115,6 +116,7 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
 
         eventCountdownTimer = new EventCountdownTimer(getContext(), this, this);
         mNotificationHelper = new NotificationHelper(getContext());
+        mTimerViewModel.setMissionStringId(MissionManager.getInstance().getStrOperateId());
         observeViewModel();
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -174,13 +176,17 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
     }
 
     private void observeViewModel() {
-        mTimerViewModel.getMission().observe(getViewLifecycleOwner(), new Observer<UserMission>() {
+        mTimerViewModel.gerFetchDataResult().observe(getViewLifecycleOwner(), new Observer<TimerViewModel.Result>() {
             @Override
-            public void onChanged(UserMission mission) {
-                if (mission != null) {
+            public void onChanged(TimerViewModel.Result result) {
+                if (result.isInit()) {
+                    mNumberOfCompletion = result.missionNumberOfCompletion;
+                    mMissionState = result.missionState;
+
+                    UserMission mission = result.mission;
                     // format
-                    mMissionTime = Long.valueOf(mission.getTime() * 1 * 1000);
-                    mMissionBreakTime = Long.valueOf(mission.getShortBreakTime() * 1 * 1000);
+                    mMissionTime = Long.valueOf(mission.getTime() * 60 * 1000);
+                    mMissionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
                     // assign value
                     mMissionCount = mission.getGoal();
                     mEnabledVibrate = mission.isEnableVibrate();
@@ -201,23 +207,6 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                         }
                     }
                 }
-            }
-        });
-
-        mTimerViewModel.getMissionNumberOfCompletion().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                LogUtil.logE(TAG, "[getNumberOfCompletion] = " + integer);
-                mNumberOfCompletion = integer;
-            }
-        });
-
-        mTimerViewModel.getMissionState().observe(getViewLifecycleOwner(), new Observer<MissionState>() {
-            @Override
-            public void onChanged(MissionState missionState) {
-                //TODO 20210613 Change init mission state logic to other place
-                LogUtil.logE(TAG, "[getMissionState] = " + missionState);
-                mMissionState = missionState;
             }
         });
 
@@ -305,7 +294,6 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
             }
         }
 
-        //TODO 20210613 Change init mission state logic to other place
         if (mMissionState == null)
             mTimerViewModel.initMissionState();
     }
@@ -371,6 +359,10 @@ public class TimerFragment extends DataBindingFragment implements EventCountdown
                     return;
                 }
             }
+        } else if (mNumberOfCompletion == -1 && mIsDisableBreak){
+            // quick mission
+            navigateUp();
+            return;
         }
 
         // vibrate for remind
