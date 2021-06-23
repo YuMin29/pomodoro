@@ -41,6 +41,9 @@ public interface MissionStateDao {
     @Query("SELECT * FROM MissionState WHERE missionId=:id AND recordDay =:today")
     LiveData<MissionState> getMissionStateByToday(int id, long today);
 
+    @Query("SELECT * FROM MissionState WHERE missionId=:id AND recordDay =:today")
+    MissionState getMissionStateByTodayForService(int id, long today);
+
     @Query("SELECT * FROM MissionState WHERE missionId=:id")
     LiveData<MissionState> getMissionStateById(int id);
 

@@ -13,7 +13,6 @@ import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
 import com.yumin.pomodoro.viewmodel.EditMissionViewModel;
-import com.yumin.pomodoro.base.MissionBaseFragment;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.base.DataBindingConfig;
 import com.yumin.pomodoro.base.MissionManager;

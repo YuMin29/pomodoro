@@ -189,7 +189,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
                 usedTime += (mission.getTime()*mission.getGoal());
             }
             float num = (float)usedTime / 60;
-            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+            DecimalFormat decimalFormat = new DecimalFormat("0.0");
             mFragmentHomeBinding.totalFinishedTime.setText(decimalFormat.format(num)+"h");
             // unfinished mission count - finished mission count
 

@@ -51,17 +51,6 @@
             app:popUpToInclusive="true"/>
     </fragment>
 
-    <fragment android:id="@+id/fragment_break_timer"
-        android:name="com.yumin.pomodoro.fragment.BreakTimerFragment"
-        android:label="@string/mission_break_timer"
-        tools:layout="@layout/fragment_break_timer">
-        <action
-            android:id="@+id/break_timer_to_timer"
-            app:destination="@id/fragment_timer"
-            app:popUpTo="@+id/fragment_break_timer"
-            app:popUpToInclusive="true" />
-    </fragment>
-
     <fragment android:id="@+id/fragment_range_calender"
         android:name="com.yumin.pomodoro.fragment.RangeCalenderFragment"
         android:label="@string/fragment_range_calender"

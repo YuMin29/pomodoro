@@ -1,4 +1,4 @@
-package com.yumin.pomodoro.base;
+package com.yumin.pomodoro.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.yumin.pomodoro.R;
+import com.yumin.pomodoro.base.DataBindingConfig;
+import com.yumin.pomodoro.base.DataBindingFragment;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.viewmodel.SharedViewModel;
 import com.yumin.pomodoro.customize.ItemDateView;
@@ -21,6 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class MissionBaseFragment extends DataBindingFragment implements ItemListView.RepeatTypeListener, ItemDateView.OperateDayChanged {
+    public static final String REPEAT_START = "repeat_start";
+    public static final String REPEAT_END = "repeat_end";
+    public static final String MISSION_OPERATE_DAY = "mission_operate_day";
     private final String TAG = MissionBaseFragment.class.getSimpleName();
     protected long mLatestRepeatStart = -1L;
     protected long mLatestRepeatEnd = -1L;
@@ -51,7 +56,6 @@ public abstract class MissionBaseFragment extends DataBindingFragment implements
         mSharedViewModel.getRepeatStart().observeInFragment(this, new Observer<Long>() {
             @Override
             public void onChanged(Long time) {
-                LogUtil.logD(TAG,"[getRepeatStart] time = "+time);
                 updateEditMissionRepeatStart(time);
                 mLatestRepeatStart = time;
             }
@@ -60,7 +64,6 @@ public abstract class MissionBaseFragment extends DataBindingFragment implements
         mSharedViewModel.getRepeatEnd().observeInFragment(this, new Observer<Long>() {
             @Override
             public void onChanged(Long time) {
-                LogUtil.logD(TAG,"[getRepeatEnd] time = "+time);
                 updateEditMissionRepeatEnd(time);
                 mLatestRepeatEnd = time;
             }
@@ -107,20 +110,14 @@ public abstract class MissionBaseFragment extends DataBindingFragment implements
         LogUtil.logE(TAG,"[chooseRepeatDefine]");
         setRangeCalenderId();
         Bundle bundle = new Bundle();
-        bundle.putLong("repeat_start", (mLatestRepeatStart != -1L) ? mLatestRepeatStart : mRepeatStart);
-        bundle.putLong("repeat_end", (mLatestRepeatEnd != -1L) ? mLatestRepeatEnd : mRepeatEnd);
-        bundle.putLong("mission_operate_day", mOperateDay);
+        bundle.putLong(REPEAT_START, (mLatestRepeatStart != -1L) ? mLatestRepeatStart : mRepeatStart);
+        bundle.putLong(REPEAT_END, (mLatestRepeatEnd != -1L) ? mLatestRepeatEnd : mRepeatEnd);
+        bundle.putLong(MISSION_OPERATE_DAY, mOperateDay);
         NavHostFragment.findNavController(this).navigate(R.id.fragment_range_calender,bundle);
     }
 
     @Override
     public void chooseRepeatNonDefine() {
-        LogUtil.logE(TAG,"[chooseRepeatNonDefine]");
-    }
-
-    private String getTransferDate(long time){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        return simpleDateFormat.format(new Date(time));
     }
 
     protected void navigateUp(){

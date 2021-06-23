@@ -43,14 +43,12 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
     @Override
     public void onResume() {
-        LogUtil.logD(TAG, "[onResume]");
         super.onResume();
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
     }
 
     @Override
     public void onStop() {
-        LogUtil.logD(TAG, "[onStop]");
         super.onStop();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
@@ -73,8 +71,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     }
 
     private void initView() {
-//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         mFragmentRangeCalenderBinding.calendarView.setOnCalendarRangeSelectListener(this);
         mFragmentRangeCalenderBinding.calendarView.setOnMonthChangeListener(this);
         mFragmentRangeCalenderBinding.calendarView.setOnCalendarInterceptListener(this);
@@ -89,13 +85,9 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mLatestRepeatStart = bundle.getLong("repeat_start");
-            mLatestRepeatEnd = bundle.getLong("repeat_end");
-            mMissionOperateDay = bundle.getLong("mission_operate_day");
-
-            LogUtil.logD(TAG, "[initView] latestRepeatStart = " + mLatestRepeatStart);
-            LogUtil.logD(TAG, "[initView] latestRepeatEnd = " + mLatestRepeatEnd);
-            LogUtil.logD(TAG, "[initView] missionOperateDay = " + mMissionOperateDay);
+            mLatestRepeatStart = bundle.getLong(MissionBaseFragment.REPEAT_START);
+            mLatestRepeatEnd = bundle.getLong(MissionBaseFragment.REPEAT_END);
+            mMissionOperateDay = bundle.getLong(MissionBaseFragment.MISSION_OPERATE_DAY);
 
             if (mLatestRepeatStart == -1L) {
                 mFragmentRangeCalenderBinding.tvLeftWeek.setText(getString(R.string.range_start));
@@ -248,9 +240,6 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
             }
             long start = TimeToMillisecondUtil.getStartTime(calendars.get(0).getTimeInMillis());
             long end = TimeToMillisecondUtil.getEndTime(calendars.get(calendars.size() - 1).getTimeInMillis());
-
-            LogUtil.logE(TAG, "SelectCalendarRange , start = " + start);
-            LogUtil.logE(TAG, "SelectCalendarRange , end = " + end);
 
             mSharedViewModel.setRepeatStart(start);
             mSharedViewModel.setRepeatEnd(end);

@@ -23,6 +23,9 @@ public interface MissionDao {
     @Query("SELECT * FROM MyMission WHERE id=:id")
     LiveData<UserMission> getMissionById(int id);
 
+    @Query("SELECT * FROM MyMission WHERE id=:id")
+    UserMission getMissionByIdForService(int id);
+
     @Insert
     void insert(UserMission mission);
 

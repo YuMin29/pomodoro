@@ -144,6 +144,7 @@
     <string name="notification_title">蕃茄任務:</string>
     <string name="notification_break_message">休息一下吧!</string>
     <string name="notification_mission_message">執行蕃茄任務!</string>
+    <string name="notification_finished_message">任務完成</string>
     <string name="dialog_set_title">請設置</string>
     <string name="calender_today">今日</string>
     <string name="calender_month">月</string>

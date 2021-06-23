@@ -6,8 +6,8 @@ import android.os.CountDownTimer;
 
 import com.yumin.pomodoro.R;
 
-public class EventCountdownTimer {
-    private final String TAG = EventCountdownTimer.class.getSimpleName();
+public class CountdownTimer {
+    private final String TAG = CountdownTimer.class.getSimpleName();
     private static Context mContext;
     private BreakTimerListener mBreakTimerListener;
     private MissionTimerListener mMissionTimerListener;
@@ -42,7 +42,7 @@ public class EventCountdownTimer {
             R.raw.ringtone_woodpecker_peck
     };
 
-    public EventCountdownTimer(Context context, MissionTimerListener missionTimerListener, BreakTimerListener breakTimerListener) {
+    public CountdownTimer(Context context, MissionTimerListener missionTimerListener, BreakTimerListener breakTimerListener) {
         mContext = context;
         mMissionTimerListener = missionTimerListener;
         mBreakTimerListener = breakTimerListener;
@@ -107,8 +107,9 @@ public class EventCountdownTimer {
         mIndexOfRingtone = indexOfRingtone;
     }
 
-    public void pauseMissionCountdown(){
-        mMissionCountDownTimer.cancel();
+    public void cancelMissionCountdown(){
+        if (mMissionCountDownTimer != null)
+            mMissionCountDownTimer.cancel();
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
@@ -117,12 +118,13 @@ public class EventCountdownTimer {
         }
     }
 
-    public void continueMissionCount(int indexOfBackgroundMusic){
+    public void continueMissionCount(){
         startMissionCountdown(mMissionLeftTimeMilli,mIndexOfMissionBackground,mIndexOfRingtone);
     }
 
-    public void pauseBreakCountdown() {
-        mBreakCountDownTimer.cancel();
+    public void cancelBreakCountdown() {
+        if (mBreakCountDownTimer != null)
+            mBreakCountDownTimer.cancel();
     }
 
     public void continueBreakCount() {

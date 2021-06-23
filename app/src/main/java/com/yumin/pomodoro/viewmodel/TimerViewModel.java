@@ -1,6 +1,8 @@
 package com.yumin.pomodoro.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
@@ -16,7 +18,9 @@ import com.yumin.pomodoro.data.MissionState;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
+import com.yumin.pomodoro.utils.LiveSharedPreference;
 import com.yumin.pomodoro.utils.LogUtil;
+import com.yumin.pomodoro.utils.PrefUtils;
 import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
 
 public class TimerViewModel extends AndroidViewModel {
@@ -28,19 +32,18 @@ public class TimerViewModel extends AndroidViewModel {
     private LiveData<MissionState> mMissionState;
     private MissionSettings mMissionSettings;
     private LiveData<Boolean> mAutoStartNextMission;
-    private LiveData<Boolean> mAutoStartBreak;
-    private LiveData<Integer> mMissionBackgroundRingtone;
-    private LiveData<Integer> mMissionFinishedRingtone;
-    private LiveData<Boolean> mDisableBreak;
-
     private MutableLiveData<String> missionStringId = new MutableLiveData<>();
     private MediatorLiveData<Result> mFetchDataResult;
+    private final String preferenceName = "missionSettings";
+    private SharedPreferences mSharedPreferences;
+    private static final String KEY_TIMER_SERVICE_STATUS = "timer_service_status";
 
     public TimerViewModel(@NonNull Application application) {
         super(application);
         mRoomRepository = new RoomRepository(new RoomApiServiceImpl(application));
         mMissionSettings = new MissionSettings(application);
         fetchMission();
+        mSharedPreferences = application.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
     }
 
     private void fetchMission(){
@@ -83,6 +86,7 @@ public class TimerViewModel extends AndroidViewModel {
             }
         });
 
+
         mFetchDataResult = new MediatorLiveData<>();
         Result result = new Result();
         mFetchDataResult.addSource(mMission, new Observer<UserMission>() {
@@ -111,10 +115,6 @@ public class TimerViewModel extends AndroidViewModel {
         });
 
         mAutoStartNextMission = mMissionSettings.getAutoStartNextMission();
-        mAutoStartBreak = mMissionSettings.getAutoStartBreak();
-        mMissionBackgroundRingtone = mMissionSettings.getIndexOfBackgroundRingtone();
-        mMissionFinishedRingtone = mMissionSettings.getIndexOfFinishedRingtone();
-        mDisableBreak = mMissionSettings.getDisableBreak();
     }
 
     public void setMissionStringId(String id){
@@ -125,15 +125,12 @@ public class TimerViewModel extends AndroidViewModel {
         return mFetchDataResult;
     }
 
-    public LiveData<UserMission> getMission(){
-        return mMission;
+    public LiveSharedPreference<Integer> getTimerServiceStatus(){
+        return new LiveSharedPreference<Integer>(mSharedPreferences, KEY_TIMER_SERVICE_STATUS, 0);
     }
 
-    public void updateMissionNumberOfCompletion(int num){
-        if (mMissionState.getValue() == null) {
-            mRoomRepository.initMissionState(missionStringId.getValue());
-        }
-        mRoomRepository.updateMissionNumberOfCompletion(missionStringId.getValue(),num);
+    public LiveData<UserMission> getMission(){
+        return mMission;
     }
 
     public void updateMissionState(boolean finished, int completeOfNumber){
@@ -148,29 +145,13 @@ public class TimerViewModel extends AndroidViewModel {
         return mMissionState;
     }
 
-    public LiveData<Integer> getIndexOfMissionBackgroundRingtone(){
-        return mMissionBackgroundRingtone;
-    }
-
-    public LiveData<Integer> getIndexOfFinishedMissionRingtone(){
-        return mMissionFinishedRingtone;
-    }
-
     public void initMissionState(){
-        if (!missionStringId.getValue().equals("quick_mission"))
+        if (!missionStringId.getValue().equals(QUICK_MISSION))
             mRoomRepository.initMissionState(missionStringId.getValue());
     }
 
     public LiveData<Boolean> getAutoStartNextMission(){
         return mAutoStartNextMission;
-    }
-
-    public LiveData<Boolean> getAutoStartBreak(){
-        return mAutoStartBreak;
-    }
-
-    public LiveData<Boolean> getDisableBreak(){
-        return mDisableBreak;
     }
 
     public class Result{

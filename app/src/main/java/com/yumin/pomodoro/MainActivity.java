@@ -44,6 +44,7 @@ import com.yumin.pomodoro.adapter.DrawerListAdapter;
 import com.yumin.pomodoro.adapter.NavItem;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.base.MissionManager;
+import com.yumin.pomodoro.utils.PrefUtils;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -200,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
             }
             mCurrentFirebaseUser = user;
         };
+
+        // init
+        PrefUtils.clearTimerServiceStatus(this);
     }
 
     @Override
