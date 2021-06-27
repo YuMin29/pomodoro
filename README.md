@@ -14,3 +14,7 @@
 ## Images
 
 ![timer](timer.png)
+
+## Links
+
+You can download test version [here](https://drive.google.com/file/d/1aCQ_0F08ftO9vxWDw-HYG3VKDfCFPi0J/view?usp=sharing).
