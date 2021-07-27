@@ -39,15 +39,21 @@ public class RestoreFragment extends DataBindingFragment {
         mRestoreViewModel.getProgress().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean progress) {
-                // false -> navigate up
-                if (!progress)
-                    navigateUp();
                 // set time stamp
                 String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.NAV_ITEM_SHARED_PREFERENCE, Context.MODE_PRIVATE);
                 sharedPreferences.edit().putString(FirebaseAuth.getInstance().getCurrentUser().getUid() + MainActivity.KEY_RESTORE_TIME,"上次還原時間:" + nowDate).commit();
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.setRestoreTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                // false -> navigate up
+                if (!progress) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("restoreFinished",true);
+                    navigateUp(bundle);
+                }
+
+
+//                MainActivity mainActivity = (MainActivity) getActivity();
+//                mainActivity.setRestoreTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
         });
 
@@ -62,8 +68,8 @@ public class RestoreFragment extends DataBindingFragment {
         });
     }
 
-    private void navigateUp(){
-        NavHostFragment.findNavController(this).navigateUp();
+    private void navigateUp(Bundle bundle){
+        NavHostFragment.findNavController(this).navigate(R.id.nav_settings,bundle);
     }
 
     @Override

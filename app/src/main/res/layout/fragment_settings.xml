@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="settingsViewModel"
             type="com.yumin.pomodoro.viewmodel.SettingsViewModel" />
+
         <variable
             name="settingsClickProxy"
             type="com.yumin.pomodoro.fragment.SettingsFragment.ClickProxy" />
@@ -13,21 +15,29 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/layout_main_background">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/music_linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/mission_item_shape"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
+            android:background="@drawable/mission_item_shape"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/settings_music_title"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,20 +47,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/settings_set_mission_background_ringtone"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
-                    android:paddingBottom="8dp"/>
+                    android:paddingBottom="8dp"
+                    android:text="@string/settings_set_mission_background_ringtone" />
 
                 <Spinner
                     android:id="@+id/mission_background_music"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:entries="@array/background_music_list"
+                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionBackgroundRingtone(parent,view,pos,id)}"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:entries="@array/background_music_list"
-                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionBackgroundRingtone(parent,view,pos,id)}"/>
+                    android:paddingBottom="8dp" />
 
             </LinearLayout>
 
@@ -71,12 +81,67 @@
                     android:id="@+id/mission_finish_music"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:entries="@array/ringtone_list"
+                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionFinishedRingtone(parent,view,pos,id)}"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:entries="@array/ringtone_list"
-                    android:onItemSelected="@{(parent,view,pos,id)->settingsClickProxy.onSelectMissionFinishedRingtone(parent,view,pos,id)}"/>
+                    android:paddingBottom="8dp" />
             </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/mission_settings_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/mission_item_shape"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/music_linearLayout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/settings_mission_title"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/auto_start_mission_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartNextMissionChanged(view,checked)}"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/settings_auto_start_mission" />
+
+            <Switch
+                android:id="@+id/auto_start_break_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartBreakChanged(view,checked)}"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/settings_auto_start_break" />
+
+            <Switch
+                android:id="@+id/disable_break"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onDisableBreakChanged(view,checked)}"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/settings_disable_break" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -89,37 +154,109 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/music_linearLayout">
+            app:layout_constraintTop_toBottomOf="@id/mission_settings_linearLayout">
 
-            <Switch
-                android:id="@+id/auto_start_mission_switch"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="8dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="32dp"
-                android:text="@string/settings_auto_start_mission"
-                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartNextMissionChanged(view,checked)}"/>
+                android:paddingBottom="16dp"
+                android:text="@string/settings_data_title"
+                android:textStyle="bold" />
 
-            <Switch
-                android:id="@+id/auto_start_break_switch"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
-                android:paddingBottom="32dp"
-                android:text="@string/settings_auto_start_break"
-                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onAutoStartBreakChanged(view,checked)}"/>
+                android:onClick="@{()->settingsClickProxy.onBackupClick()}"
+                android:orientation="horizontal">
 
-            <Switch
-                android:id="@+id/disable_break"
+                <ImageView
+                    android:id="@+id/backup_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/ic_baseline_cloud_upload_24" />
+
+                <TextView
+                    android:id="@+id/backup_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/icon"
+                    android:layout_toRightOf="@+id/icon"
+                    android:gravity="center_vertical"
+                    android:text="@string/menu_backup"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/backup_subTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
-                android:paddingBottom="32dp"
-                android:text="@string/settings_disable_break"
-                android:onCheckedChanged="@{(view,checked)->settingsClickProxy.onDisableBreakChanged(view,checked)}"/>
+                android:layout_below="@+id/title"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="64dp"
+                android:layout_toRightOf="@+id/icon"
+                android:text="Line 2"
+                android:textSize="12dp"
+                android:visibility="gone" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="@{()->settingsClickProxy.onRestoreClick()}"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/restore_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/ic_baseline_cloud_download_24" />
+
+                <TextView
+                    android:id="@+id/restore_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/icon"
+                    android:layout_toRightOf="@+id/icon"
+                    android:gravity="center_vertical"
+                    android:text="@string/menu_restore"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/restore_subTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="64dp"
+                android:layout_marginBottom="8dp"
+                android:layout_toRightOf="@+id/icon"
+                android:text="Line 2"
+                android:textSize="12dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout></layout>

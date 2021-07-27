@@ -18,6 +18,7 @@
             android:id="@+id/category_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryText"
             android:text="@{category.categoryName}"
             android:textSize="16dp" />
 

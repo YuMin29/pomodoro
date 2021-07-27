@@ -24,6 +24,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        viewBinding true
     }
 }
 apply plugin: 'com.android.application'
@@ -74,4 +75,8 @@ dependencies {
     // Declare the dependency for the Realtime Database library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-database'
+
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
+
+    implementation 'io.alterac.blurkit:blurkit:1.1.0'
 }

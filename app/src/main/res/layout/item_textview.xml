@@ -16,7 +16,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/home_item_shape"
         android:orientation="horizontal">
 
         <Button
@@ -25,10 +25,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_weight="1"
-            android:background="@color/layout_item_background"
+            android:background="@null"
             android:stateListAnimator="@null"
             android:text="+"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/colorPrimaryText" />
 
         <LinearLayout
             android:id="@+id/count_linearLayout"
@@ -44,7 +44,7 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="4dp"
                 android:gravity="center"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryText"
                 android:textSize="36sp" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:singleLine="false"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/colorPrimaryText"
                 android:text="@{itemDescription}"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -65,9 +65,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_weight="1"
-            android:background="@color/layout_item_background"
+            android:background="@null"
             android:stateListAnimator="@null"
             android:text="-"
-            android:textColor="@color/colorPrimaryDark"/>
+            android:textColor="@color/colorPrimaryText"/>
     </LinearLayout>
 </layout>

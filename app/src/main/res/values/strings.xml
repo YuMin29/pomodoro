@@ -10,7 +10,7 @@
     <string name="login_fragment_label">登入</string>
     <string name="register_fragment_label">註冊</string>
     <string name="reset_password_fragment_label">重設密碼</string>
-    <string name="menu_home">首頁</string>
+    <string name="menu_home">任務管理</string>
     <string name="menu_backup">備份數據</string>
     <string name="menu_restore">還原數據</string>
     <string name="menu_total">統計</string>
@@ -23,8 +23,8 @@
     <string name="count_list_time">預計時間</string>
     <string name="home_finish_time">已用時間</string>
     <string name="menu_expired_mission">過期任務</string>
-    
-    
+    <string name="menu_lock">解鎖高級版</string>
+
     <string name="mission_time">番茄時間</string>
     <string name="mission_break">短休息時間</string>
     <string name="mission_long_break">長休息時間</string>
@@ -98,11 +98,14 @@
     <string name="notice_clear_repeat_range">清除已設置的重複區間</string>
     <string name="notice_calender_no_mission_state">今日無任務完成紀錄</string>
 
+    <string name="settings_music_title">音樂設置</string>
     <string name="settings_set_mission_background_ringtone">設置任務背景音</string>
     <string name="settings_set_mission_finished_ringtone">設置任務完成音</string>
+    <string name="settings_mission_title">任務設置</string>
     <string name="settings_auto_start_mission">自動開始下個蕃茄任務</string>
     <string name="settings_auto_start_break">自動開始休息</string>
     <string name="settings_disable_break">禁用休息</string>
+    <string name="settings_data_title">資料備份/還原設置</string>
 
     <array name="ringtone_list">
         <item>無</item>
@@ -158,4 +161,29 @@
     <string name="invalid_user_exception">The user account you are trying to sign in to has been disabled.</string>
     <string name="invalid_credential_exception">The credential is malformed or has expired.</string>
     <string name="user_collision_exception">There already exists an account with the email address asserted by the credential.</string>
+
+    <string name="slide_1_title">隨時管理您的任務</string>
+    <string name="slide_1_desc">無論是今天或是安排未來的任務 都可以輕鬆建立</string>
+
+    <string name="slide_2_title">隨時備分您的任務</string>
+    <string name="slide_2_desc">只要登入帳號並透過即時雲端備份服務 再也不用擔心遺失任務資訊</string>
+
+    <string name="slide_3_title">提供跨裝置還原任務資訊</string>
+    <string name="slide_3_desc">只要登入帳號 即可以透過雲端跨來恢復任務資訊</string>
+
+    <string name="slide_4_title">檢視您的任務狀態</string>
+    <string name="slide_4_desc">透過日曆及過期任務 一覽無遺您的任務狀態</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+    <string name="next">下一頁</string>
+    <string name="skip">略過</string>
+    <string name="start">開始!</string>
+
+    <string name="network_warning">請設置網路</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

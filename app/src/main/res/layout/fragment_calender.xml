@@ -14,9 +14,9 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
         tools:ignore="RtlHardcoded,HardcodedText,RtlSymmetry,SmallSp">
@@ -25,7 +25,7 @@
             android:id="@+id/rl_tool"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:background="@color/colorPrimary">
+            android:background="@color/colorPrimaryTransparent">
 
             <TextView
                 android:id="@+id/tv_month_day"
@@ -105,16 +105,15 @@
         <com.haibin.calendarview.CalendarLayout
             android:id="@+id/calendarLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/layout_main_background"
             app:calendar_content_view_id="@+id/viewSwitcher">
 
             <com.haibin.calendarview.CalendarView
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/layout_item_background"
+                android:background="@color/calender_background"
                 app:calendar_padding="10dp"
                 app:current_month_text_color="#333333"
                 app:current_month_lunar_text_color="#CFCFCF"
@@ -130,7 +129,7 @@
                 app:week_view="com.yumin.pomodoro.calender.CalenderWeekView"
                 app:selected_text_color="#333"
                 app:selected_theme_color="#80cfcfcf"
-                app:week_background="#fff"
+                app:week_background="@color/calender_background"
                 app:week_text_color="#111111"
                 app:week_start_with="sun"
                 app:week_view_scrollable="true"
@@ -141,40 +140,66 @@
                 app:month_view_show_mode="mode_only_current"
                 app:year_view_scheme_color="#f17706"/>
 
-            <ViewSwitcher
-                android:id="@+id/viewSwitcher"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<!--            <ViewSwitcher-->
+<!--                android:id="@+id/viewSwitcher"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/layout_main_background"
-                    android:visibility="gone"/>
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/recyclerView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:visibility="gone"/>-->
 
-                <LinearLayout
-                    android:id="@+id/no_mission_state_linearLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/layout_main_background"
-                    android:orientation="vertical"
-                    android:visibility="visible">
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/no_mission_state_linearLayout"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:visibility="visible">-->
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/ic_baseline_announcement_24" />
+<!--                    <ImageView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:src="@drawable/ic_baseline_announcement_24" />-->
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/notice_calender_no_mission_state"
-                        android:textAlignment="center" />
-                </LinearLayout>
-            </ViewSwitcher>
+<!--                    <TextView-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:text="@string/notice_calender_no_mission_state"-->
+<!--                        android:textAlignment="center" />-->
+<!--                </LinearLayout>-->
+<!--            </ViewSwitcher>-->
 
         </com.haibin.calendarview.CalendarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/no_mission_state_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_baseline_announcement_24" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/colorPrimaryText"
+                android:text="@string/notice_calender_no_mission_state"
+                android:textAlignment="center" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

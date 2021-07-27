@@ -59,7 +59,7 @@
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:text="@{mission.name}"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryText"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
                     android:layout_weight="1"
                     android:ellipsize="marquee"
                     android:singleLine="true"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryText"
                     android:background="@drawable/child_item_textview_shape"
                     android:textSize="14sp" />
 
@@ -96,7 +96,7 @@
                     android:layout_weight="1"
                     android:ellipsize="marquee"
                     android:singleLine="true"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryText"
                     android:background="@drawable/child_item_textview_shape"
                     android:textSize="14sp" />
 
@@ -117,7 +117,7 @@
                     android:id="@+id/item_operate_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryText"
                     android:textSize="14sp"
                     android:layout_weight="1"
                     android:ellipsize="marquee"
@@ -132,7 +132,7 @@
             android:id="@+id/edit"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
+            android:background="@color/edit_background"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -142,7 +142,7 @@
             android:id="@+id/delete"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryTransparent"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"

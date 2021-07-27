@@ -11,8 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/layout_main_background">
+        android:layout_height="match_parent">
 
         <ExpandableListView
             android:id="@+id/expired_mission_list"

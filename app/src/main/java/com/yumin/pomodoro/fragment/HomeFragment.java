@@ -55,15 +55,16 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFragmentHomeBinding = (FragmentHomeBinding) getBinding();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         undoStatusBarColor();
         initUI();
         observeViewModel();
     }
 
     private void undoStatusBarColor() {
-        ((MainActivity) getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
+//        ((MainActivity) getContext()).getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.colorPrimary));
     }
+
 
     @Override
     protected void initViewModel() {
@@ -201,7 +202,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
     @Override
     public void onRefresh() {
         mHomeViewModel.refreshDataWhenLogout();
-        observeViewModel();
+//        observeViewModel();
     }
 
     public static <T> boolean listIsNullOrEmpty(Collection<T> list) {

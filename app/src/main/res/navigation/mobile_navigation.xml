@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/nav_save_mission"
-        android:name="com.yumin.pomodoro.fragment.SaveMissionFragment"
+        android:name="com.yumin.pomodoro.fragment.ExpiredMissionFragment"
         android:label="@string/menu_save_mission"
         tools:layout="@layout/fragment_save_mission" />
 
@@ -86,4 +86,5 @@
         android:name="com.yumin.pomodoro.fragment.ExpiredMissionFragment"
         android:label="@string/menu_expired_mission"
         tools:layout="@layout/fragment_expired_mission"/>
+
 </navigation>

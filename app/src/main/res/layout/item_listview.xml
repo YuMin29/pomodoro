@@ -15,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/home_item_shape"
         android:orientation="vertical">
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="4dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryText"
             android:gravity="center"
             android:textSize="36sp" />
 
@@ -36,7 +36,7 @@
             android:gravity="center"
             android:singleLine="false"
             android:text="@{itemDescription}"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryText"
             android:textSize="14sp" />
     </LinearLayout>
 </layout>

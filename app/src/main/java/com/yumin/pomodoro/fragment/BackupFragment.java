@@ -44,15 +44,19 @@ public class BackupFragment extends DataBindingFragment {
         mBackupViewModel.getProgress().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean progress) {
-                if (!progress)
-                    navigateUp();
-
                 String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.NAV_ITEM_SHARED_PREFERENCE, Context.MODE_PRIVATE);
                 sharedPreferences.edit().putString(FirebaseAuth.getInstance().getCurrentUser().getUid() +
                         MainActivity.KEY_BACKUP_TIME,"上次備份時間:" + nowDate).commit();
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.setBackupTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                if (!progress) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("backupFinished",true);
+                    navigateUp(bundle);
+                }
+
+//                MainActivity mainActivity = (MainActivity) getActivity();
+//                mainActivity.setBackupTime(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
         });
 
@@ -76,8 +80,8 @@ public class BackupFragment extends DataBindingFragment {
         });
     }
 
-    private void navigateUp(){
-        NavHostFragment.findNavController(this).navigateUp();
+    private void navigateUp(Bundle bundle){
+        NavHostFragment.findNavController(this).navigate(R.id.nav_settings,bundle);
     }
 
     @Override
