@@ -13,14 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.github.mmin18.widget.RealtimeBlurView
+            android:id="@+id/realtimeBlurView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:realtimeBlurRadius="20dp"
+            app:realtimeOverlayColor="#70A4C9CD" />
+
+
         <TextView
             android:id="@+id/login_email_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/email_title"
-            android:textSize="18dp"
-            android:gravity="center"
-            android:layout_marginStart="50dp"
+            android:textSize="14dp"
+            android:gravity="left"
+            android:layout_marginStart="55dp"
             android:layout_marginEnd="50dp"
             android:layout_marginTop="50dp"
             android:textColor="@color/colorPrimaryText"
@@ -34,11 +42,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="30dp"
             android:hint="@string/create_account_email_tint"
+            android:drawableLeft="@drawable/ic_person"
             android:textColorHint="@color/calender_background"
             android:textColor="@color/colorPrimaryText"
-            android:backgroundTint="@color/colorPrimaryText"
+            android:background="@drawable/edittext"
+            android:drawablePadding="5dp"
+            android:padding="10dp"
+            android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_email_title"/>
@@ -47,12 +59,12 @@
             android:id="@+id/login_password_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
             android:layout_marginTop="32dp"
             android:text="@string/password_title"
-            android:textSize="18dp"
-            android:gravity="center"
+            android:textSize="14dp"
+            android:gravity="left"
+            android:layout_marginStart="55dp"
             android:textColor="@color/colorPrimaryText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,6 +78,10 @@
             android:layout_marginEnd="50dp"
             android:layout_marginTop="18dp"
             android:inputType="textPassword"
+            android:drawableLeft="@drawable/ic_person"
+            android:background="@drawable/edittext"
+            android:drawablePadding="5dp"
+            android:padding="10dp"
             android:hint="@string/create_account_password_tint"
             android:textColorHint="@color/calender_background"
             android:textColor="@color/colorPrimaryText"
@@ -74,38 +90,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_password_title"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="60dp"
-            android:text="@string/login"
-            android:background="@color/colorPrimaryTransparent"
-            android:textColor="@color/colorPrimaryText"
             android:onClick="@{()->loginClickProxy.login()}"
+            android:text="@string/login"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="18sp"
+            app:cornerRadius="25dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#FF7055"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login_password"/>
+            app:layout_constraintTop_toBottomOf="@+id/login_password" />
 
 
         <TextView
             android:id="@+id/forgetPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="18dp"
+            android:onClick="@{()->loginClickProxy.forgetPassword()}"
             android:text="@string/forget_password"
             android:textColor="@color/colorPrimaryText"
-            android:onClick="@{()->loginClickProxy.forgetPassword()}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login"/>
+            app:layout_constraintEnd_toStartOf="@+id/progressBar"
+            app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/fb_login_button"
+        <FrameLayout
+            android:id="@+id/fb_frame_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -115,11 +132,33 @@
             android:layout_marginBottom="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/forgetPassword"/>
+            app:layout_constraintTop_toBottomOf="@+id/login">
 
-        <com.google.android.gms.common.SignInButton
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/fb_login_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fb_custom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Facebook"
+                android:textAllCaps="false"
+                android:textColor="#FF7055"
+                android:backgroundTint="#FFFFFF"
+                android:textStyle="bold"
+                app:iconTint="#FF7055"
+                app:strokeColor="#FF7055"
+                app:strokeWidth="1dp"
+                app:icon="@drawable/facebook_icon"
+                app:iconSize="24dp"
+                app:cornerRadius="25dp" />
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/google_sign_in_button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
@@ -127,7 +166,30 @@
             android:layout_marginBottom="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fb_login_button"/>
+            android:text="Google"
+            android:textAllCaps="false"
+            android:textColor="#FF7055"
+            android:backgroundTint="#ffffff"
+            android:textStyle="bold"
+            app:iconTint="#FF7055"
+            app:strokeColor="#FF7055"
+            app:strokeWidth="1dp"
+            app:icon="@drawable/google_icon"
+            app:iconSize="24dp"
+            app:cornerRadius="25dp"
+            app:layout_constraintTop_toBottomOf="@+id/fb_frame_layout"/>
+
+<!--        <com.google.android.gms.common.SignInButton-->
+<!--            android:id="@+id/google_sign_in_button"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="50dp"-->
+<!--            android:layout_marginEnd="50dp"-->
+<!--            android:layout_marginTop="18dp"-->
+<!--            android:layout_marginBottom="30dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/fb_frame_layout"/>-->
 
         <TextView
             android:id="@+id/register"
@@ -135,12 +197,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="50dp"
             android:onClick="@{()->loginClickProxy.register()}"
             android:text="@string/register"
             android:textColor="@color/colorPrimaryText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
 
         <ProgressBar
@@ -152,6 +212,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

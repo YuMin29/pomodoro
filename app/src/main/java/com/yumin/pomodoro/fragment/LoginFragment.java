@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -55,6 +57,9 @@ import com.yumin.pomodoro.base.DataBindingFragment;
 
 import org.jetbrains.annotations.NotNull;
 
+
+// TODO: [10/24] 登入帳密可以在fragment先檢查是否為空,但後續驗證帳號有效與否 應該交給view model 去call repository api處理
+//               再把結果透過view model回傳到fragment
 public class LoginFragment extends DataBindingFragment {
     private static final String TAG = LoginFragment.class.getSimpleName();
     private static final int RC_GOOGLE_SIGN_IN = 1001;
@@ -76,28 +81,29 @@ public class LoginFragment extends DataBindingFragment {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         FacebookSdk.sdkInitialize(getContext());
+        // TODO: [10/24] 應該搬到VIEW MODEL?
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), googleSignInOptions);
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFragmentLoginBinding = (FragmentLoginBinding) getBinding();
         mCallbackManager = CallbackManager.Factory.create();
 
+        // TODO: [10/24] 應該搬到VIEW MODEL?
         // FB login action
-        LoginButton loginButton = mFragmentLoginBinding.fbLoginButton;
-        loginButton.setFragment(this);
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        LoginButton fbLoginButton = mFragmentLoginBinding.fbLoginButton;
+        fbLoginButton.setFragment(this);
+        fbLoginButton.setReadPermissions("email", "public_profile");
+        fbLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 LogUtil.logD(TAG, "[facebook:onSuccess] " + loginResult);
@@ -115,7 +121,12 @@ public class LoginFragment extends DataBindingFragment {
             }
         });
 
-        SignInButton googleSignInButton = mFragmentLoginBinding.googleSignInButton;
+        MaterialButton fbCustom = mFragmentLoginBinding.fbCustom;
+        fbCustom.setOnClickListener(v -> {
+            fbLoginButton.performClick();
+        });
+
+        MaterialButton googleSignInButton = mFragmentLoginBinding.googleSignInButton;
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,6 +190,7 @@ public class LoginFragment extends DataBindingFragment {
         NavHostFragment.findNavController(this).navigate(id);
     }
 
+    // TODO: [10/24] this part should move to view model
     public void loginAccount() {
         String email = mFragmentLoginBinding.loginEmail.getText().toString();
         String password = mFragmentLoginBinding.loginPassword.getText().toString();
@@ -188,6 +200,7 @@ public class LoginFragment extends DataBindingFragment {
             return;
         }
 
+        // TODO: [10/24] 應該搬到VIEW MODEL?
         AlertDialog progressBarDialog = createProgressBarDialog();
         progressBarDialog.show();
         mFragmentLoginBinding.login.setEnabled(false);

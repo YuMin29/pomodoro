@@ -25,7 +25,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-
+// TODO [10/24] 應該把登入成功後 sync data的地方交給main fragment + main view model去完成
+//              此view model只要負責登入驗證就好
 public class LoginViewModel extends AndroidViewModel {
     private final String TAG = LoginViewModel.class.getSimpleName();
     private RoomRepository mRoomRepository;
