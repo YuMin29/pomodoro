@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     private final int POSITION_BACKUP = 2;
     private final int POSITION_RESTORE = 3;
     private final int POSITION_EXPIRED = 4;
+    public ImageView userSignIn;
+    public ImageView settings;
     FloatingActionButton mFab;
     NavigationView mNavigationView;
     FirebaseAuth.AuthStateListener authStateListener;
@@ -81,12 +84,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     ListView mDrawerList;
     ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
     DrawerListAdapter mDrawerListAdapter;
+    BottomNavigationView mBottomNavigationView;
+    View mTopView;
     private FirebaseAuth mAuth;
-
-    public ImageView userSignIn;
-    public ImageView settings;
-    BottomNavigationView navView;
-    View topView;
 
     public static void commitWhenLifecycleStarted(Lifecycle lifecycle, int destination, Bundle bundle) {
         lifecycle.addObserver(new LifecycleEventObserver() {
@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
     public static void setStatusBarGradient(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            Window window = activity.getWindow();
-//            Drawable background = activity.getResources().getDrawable(R.drawable.background);
-//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
-//            window.setNavigationBarColor(activity.getResources().getColor(android.R.color.transparent));
+            Window window = activity.getWindow();
+            Drawable background = activity.getResources().getDrawable(R.drawable.background);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
+            window.setNavigationBarColor(activity.getResources().getColor(android.R.color.transparent));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // 5.0
@@ -135,8 +135,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
         View settingView = findViewById(R.id.top_view);
         settingView.setPadding(0, getStatusBarHeight(), 0, 0);
-        topView = findViewById(R.id.top_view);
-        navView = findViewById(R.id.nav_view);
+        mTopView = findViewById(R.id.top_view);
+        mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        mBottomNavigationView.getMenu().getItem(1).setEnabled(false);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -154,9 +156,8 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         mNavController.addOnDestinationChangedListener(this);
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, mNavController);
+        NavigationUI.setupWithNavController(mBottomNavigationView, mNavController);
 
         userSignIn = findViewById(R.id.user_sign_in);
         userSignIn.setOnClickListener(new View.OnClickListener() {
@@ -373,10 +374,10 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mDrawerListAdapter.notifyDataSetInvalidated();
     }
 
-    private void updateNavHeader(FirebaseUser user){
+    private void updateNavHeader(FirebaseUser user) {
         TextView userName = findViewById(R.id.user_name);
 //        TextView userMail = mNavHeaderMain.findViewById(R.id.nav_header_user_mail);
-        userName.setText(user == null ? getApplicationContext().getString(R.string.nav_header_title_no_user) : "Hi,"+user.getDisplayName());
+        userName.setText(user == null ? getApplicationContext().getString(R.string.nav_header_title_no_user) : "Hi," + user.getDisplayName());
 //        userMail.setText(user == null ? "" : user.getEmail());
     }
 
@@ -405,11 +406,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         mDrawerLayout.closeDrawers();
     }
 
-    public void fullScreenMode(boolean enable){
-        topView.setVisibility(enable? View.GONE : View.VISIBLE);
-        settings.setVisibility(enable? View.GONE : View.VISIBLE);
-        userSignIn.setVisibility(enable? View.GONE : View.VISIBLE);
-        navView.setVisibility(enable? View.GONE : View.VISIBLE);
+    public void fullScreenMode(boolean enable) {
+        mTopView.setVisibility(enable ? View.GONE : View.VISIBLE);
+        settings.setVisibility(enable ? View.GONE : View.VISIBLE);
+        userSignIn.setVisibility(enable ? View.GONE : View.VISIBLE);
+        mBottomNavigationView.setVisibility(enable ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -421,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     @Override
     protected void onStop() {
         super.onStop();
-        if (authStateListener != null){
+        if (authStateListener != null) {
             mAuth.removeAuthStateListener(authStateListener);
         }
     }

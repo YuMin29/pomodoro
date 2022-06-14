@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_tomato"
+        android:icon="@drawable/ic_baseline_home_24"
         android:title="@string/menu_home" />
 
     <item
-        android:id="@+id/nav_calender"
-        android:icon="@drawable/ic_baseline_calendar_today_24"
-        android:title="@string/menu_calender" />
+        android:id="@+id/placeholder"
+        android:title="" />
 
     <item
-        android:id="@+id/nav_save_mission"
-        android:icon="@drawable/ic_baseline_event_busy_24"
-        android:title="@string/menu_expired_mission" />
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/menu_settings" />
 </menu>
