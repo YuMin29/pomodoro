@@ -127,8 +127,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         // set status bar color
 //        setStatusBarGradient(this);
 //        setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        setContentView(R.layout.activity_main);
+        extendLayoutToStatusBar();
         this.getSupportActionBar().hide();
+        setContentView(R.layout.activity_main);
 
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -301,6 +302,15 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         PrefUtils.clearTimerServiceStatus(this);
     }
 
+    private void extendLayoutToStatusBar() {
+        View decorView = getWindow().getDecorView();
+        int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        decorView.setSystemUiVisibility(option);
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+    }
+
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -460,11 +470,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
 //        mToolbarTitle.setText(navDestination.getLabel().toString());
         LogUtil.logD(TAG, "[onDestinationChanged] label = " + navDestination.getLabel().toString());
-        String navHomeLabel = getResources().getString(R.string.menu_home);
+        String navHomeLabel = getResources().getString(R.string.menu_main);
         if (navHomeLabel.equals(navDestination.getLabel().toString())) {
             mFab.setVisibility(View.VISIBLE);
         } else {
-//            mFab.setVisibility(View.GONE);
+            mFab.setVisibility(View.INVISIBLE);
         }
     }
 

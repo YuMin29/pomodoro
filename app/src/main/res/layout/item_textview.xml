@@ -21,20 +21,21 @@
 
         <Button
             android:id="@+id/add_num"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_weight="1"
-            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            style="@style/ButtonStyle"
             android:stateListAnimator="@null"
             android:text="+"
+            android:padding="0dp"
+            android:minWidth="0dp"
+            android:layout_weight="1"
             android:textColor="@color/colorPrimaryText" />
 
         <LinearLayout
             android:id="@+id/count_linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
             android:orientation="vertical">
 
             <TextView
@@ -61,13 +62,14 @@
 
         <Button
             android:id="@+id/minus_num"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_weight="1"
-            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            style="@style/ButtonStyle"
             android:stateListAnimator="@null"
+            android:layout_weight="1"
             android:text="-"
+            android:padding="0dp"
+            android:minWidth="0dp"
             android:textColor="@color/colorPrimaryText"/>
     </LinearLayout>
 </layout>
