@@ -36,7 +36,12 @@ public class ExpiredMissionFragment extends DataBindingFragment {
     private FragmentExpiredMissionBinding mFragmentExpiredMissionBinding;
     private List<Category> mCategory = new ArrayList<>();
     private List<UserMission> mFinishedMissions = new ArrayList<>();
-    ExpandableBaseAdapter mExpandableViewAdapter;;
+    ExpandableBaseAdapter mExpandableViewAdapter;
+
+    // singleton
+    public static ExpiredMissionFragment newInstance(){
+        return new ExpiredMissionFragment();
+    }
 
     @Override
     protected void initViewModel() {

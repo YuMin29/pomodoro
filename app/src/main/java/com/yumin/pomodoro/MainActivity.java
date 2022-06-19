@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         if (navHomeLabel.equals(navDestination.getLabel().toString())) {
             mFab.setVisibility(View.VISIBLE);
         } else {
-            mFab.setVisibility(View.GONE);
+//            mFab.setVisibility(View.GONE);
         }
     }
 

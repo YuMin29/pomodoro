@@ -45,6 +45,11 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
     Category mComing = null;
     private int mTodayMissionSize = -1;
 
+    // singleton
+    public static HomeFragment newInstance(){
+        return new HomeFragment();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

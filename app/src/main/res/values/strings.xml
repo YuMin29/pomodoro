@@ -10,6 +10,7 @@
     <string name="login_fragment_label">登入</string>
     <string name="register_fragment_label">註冊</string>
     <string name="reset_password_fragment_label">重設密碼</string>
+    <string name="menu_main">首頁</string>
     <string name="menu_home">任務管理</string>
     <string name="menu_backup">備份數據</string>
     <string name="menu_restore">還原數據</string>
@@ -186,4 +187,10 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <array name="tab_titles">
+        <item>@string/menu_home</item>
+        <item>@string/menu_calender</item>
+        <item>@string/menu_expired_mission</item>
+    </array>
 </resources>

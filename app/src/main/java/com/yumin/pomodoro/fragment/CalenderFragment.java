@@ -48,6 +48,11 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     private RecyclerView mRecyclerView;
     private MissionStateAdapter mMissionStateAdapter;
 
+    // singleton
+    public static CalenderFragment newInstance(){
+        return new CalenderFragment();
+    }
+
     @Override
     protected void initViewModel() {
         mCalenderViewModel = getFragmentScopeViewModel(CalenderViewModel.class);
