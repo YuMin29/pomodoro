@@ -44,6 +44,7 @@ public class SlideExpandableListView extends ExpandableListView {
             case MotionEvent.ACTION_MOVE:
                 if (mIsChildLayout) {
                     super.onTouchEvent(motionEvent);
+                    getParent().requestDisallowInterceptTouchEvent(true); // disable viewpager touch event
                     return performActionMove(motionEvent);
                 }
             case MotionEvent.ACTION_UP:
