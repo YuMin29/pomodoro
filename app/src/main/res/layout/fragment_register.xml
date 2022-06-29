@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
@@ -16,16 +17,15 @@
             android:id="@+id/register_email_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/email_title"
-            android:textSize="18dp"
-            android:gravity="center"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/email_title"
             android:textColor="@color/colorPrimaryText"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toTopOf="@+id/register_email"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/register_email"
@@ -33,29 +33,33 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/edittext"
+            android:drawableLeft="@drawable/ic_person"
+            android:drawablePadding="5dp"
             android:hint="@string/create_account_email_tint"
-            android:textColorHint="@color/calender_background"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
             android:textColor="@color/colorPrimaryText"
-            android:backgroundTint="@color/colorPrimaryText"
+            android:textColorHint="@color/calender_background"
+            app:layout_constraintBottom_toTopOf="@+id/register_password_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/register_email_title"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/register_password_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/password_title"
-            android:textSize="18dp"
-            android:gravity="center"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/password_title"
             android:textColor="@color/colorPrimaryText"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toTopOf="@+id/register_password"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/register_email"/>
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/register_password"
@@ -63,43 +67,61 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/edittext"
+            android:backgroundTint="@color/colorPrimaryText"
+            android:drawableLeft="@drawable/ic_person"
+            android:drawablePadding="5dp"
             android:hint="@string/create_account_password_tint"
             android:inputType="textPassword"
-            android:textColorHint="@color/calender_background"
+            android:padding="10dp"
             android:textColor="@color/colorPrimaryText"
-            android:backgroundTint="@color/colorPrimaryText"
+            android:textColorHint="@color/calender_background"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/register_password_title"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/create_account"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="50dp"
-            android:layout_marginTop="60dp"
-            android:text="@string/create_account"
-            android:background="@color/colorPrimaryTransparent"
-            android:textColor="@color/colorPrimaryText"
             android:onClick="@{()->registerClickProxy.createAccount()}"
+            android:text="@string/create_account"
+            android:textColor="@color/colorPrimaryText"
+            app:cornerRadius="25dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/register_password"/>
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:strokeColor="#FF7055"
+            app:strokeWidth="1dp" />
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/reset_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
             android:layout_marginTop="18dp"
-            android:textColor="@color/colorPrimaryText"
             android:text="@string/back"
             android:onClick="@{()->registerClickProxy.registerBack()}"
+            app:strokeWidth="1dp"
+            app:cornerRadius="25dp"
+            app:strokeColor="#FF7055"
+            android:textColor="#FF7055"
+            android:backgroundTint="@color/colorPrimaryText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/create_account"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

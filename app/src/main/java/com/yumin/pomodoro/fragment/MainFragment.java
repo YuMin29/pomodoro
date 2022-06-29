@@ -1,5 +1,6 @@
 package com.yumin.pomodoro.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,6 +44,7 @@ public class MainFragment extends DataBindingFragment implements MainActivity.Re
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((MainActivity)getActivity()).fullScreenMode(false);
         mFragmentMainBinding = (FragmentMainBinding) getBinding();
         // init tab layout items
         mTabFragmentList = new ArrayList<>();

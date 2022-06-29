@@ -1,25 +1,25 @@
 package com.yumin.pomodoro.fragment;
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-
+import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.fragment.NavHostFragment;
-
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
@@ -32,30 +32,25 @@ import com.yumin.pomodoro.databinding.FragmentTimerBinding;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.PrefUtils;
 import com.yumin.pomodoro.viewmodel.TimerViewModel;
-
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 public class TimerFragment extends DataBindingFragment {
     private static final String TAG = TimerFragment.class.getSimpleName();
-    FragmentTimerBinding mFragmentTimerBinding;
-    TimerViewModel mTimerViewModel;
-    boolean mEnabledVibrate;
-    boolean mEnabledNotification;
-    int mMissionCount;
-    int mNumberOfCompletion;
-    TimerStatus timerStatus = TimerStatus.MISSION_INIT;
-    long mMissionTime;
-    TimerStatusReceiver mTimerStatusReceiver;
+    public static final String BUNDLE_FLOAT_VIEW_BACKGROUND_COLOR = "floatViewBackgroundColor";
+    private FragmentTimerBinding mFragmentTimerBinding;
+    private TimerViewModel mTimerViewModel;
+    private int mMissionCount;
+    private int mNumberOfCompletion;
+    private TimerStatus mTimerStatus = TimerStatus.MISSION_INIT;
+    private long mMissionTime;
+    private TimerStatusReceiver mTimerStatusReceiver;
     private int mMissionBackgroundColor;
     private boolean mIsAutoStartMission = false;
-    private int mBreakBackgroundColor = Color.parseColor("#87CEEB");
+    private int mBreakBackgroundColor;
     private long mMissionBreakTime;
     private MissionState mMissionState = null;
-    GifDrawable gifDrawable;
+    private int mFloatViewBackgroundColor;
 
     public enum TimerStatus {
         MISSION_INIT,
@@ -73,7 +68,6 @@ public class TimerFragment extends DataBindingFragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         mTimerStatusReceiver = new TimerStatusReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CountDownTimerService.ACTION_TIMER_INFO);
@@ -114,7 +108,6 @@ public class TimerFragment extends DataBindingFragment {
     void navigateUp() {
         LogUtil.logE(TAG, "[navigateUp]");
         NavHostFragment.findNavController(this).navigateUp();
-        ((MainActivity)getActivity()).fullScreenMode(false);
     }
 
     public int getStatusBarHeight() {
@@ -127,193 +120,140 @@ public class TimerFragment extends DataBindingFragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mFragmentTimerBinding = (FragmentTimerBinding) getBinding();
-        LogUtil.logE(TAG, "[onViewCreated]");
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         ((MainActivity)getActivity()).fullScreenMode(true);
+        mBreakBackgroundColor = ContextCompat.getColor(getActivity(),R.color.break_timer_background);
+        mFloatViewBackgroundColor = this.getArguments() != null ? this.getArguments().getInt(BUNDLE_FLOAT_VIEW_BACKGROUND_COLOR,
+                ContextCompat.getColor(getActivity(),R.color.colorPrimary)) : ContextCompat.getColor(getActivity(),R.color.colorPrimary);
+    }
 
-        mFragmentTimerBinding.closeIcon.setPadding(0,getStatusBarHeight(),0,0);
-        mFragmentTimerBinding.closeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // pause timer if started
-                if (timerStatus == TimerStatus.MISSION_START || timerStatus == TimerStatus.BREAK_START)
-                    pauseTimer();
-                else if (timerStatus == TimerStatus.MISSION_PAUSE)
-                    timerStatus = TimerStatus.MISSION_KEEP_PAUSE;
-                else if (timerStatus == TimerStatus.BREAK_PAUSE)
-                    timerStatus = TimerStatus.BREAK_KEEP_PAUSE;
-
-                // showing a dialog to check whether to exit this page or not
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.finish_mission)
-                        .setMessage(R.string.check_finish_mission)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // exit & cancel notification
-                                if (timerStatus != TimerStatus.MISSION_STOP ||
-                                        timerStatus != TimerStatus.BREAK_STOP) {
-                                }
-                                navigateUp();
-
-                                // update completed status
-                                if (mMissionCount != -1 && mNumberOfCompletion != -1) {
-                                    if ((mMissionCount - mNumberOfCompletion) < 1) {
-                                        mTimerViewModel.updateMissionState(true, mNumberOfCompletion);
-                                    }
-                                }
-                            }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (timerStatus == TimerStatus.BREAK_PAUSE || timerStatus == TimerStatus.MISSION_PAUSE)
-                                    continueTimer();
-                                else if (timerStatus == TimerStatus.BREAK_KEEP_PAUSE)
-                                    timerStatus = TimerStatus.BREAK_PAUSE;
-                                else if (timerStatus == TimerStatus.MISSION_KEEP_PAUSE)
-                                    timerStatus = TimerStatus.MISSION_PAUSE;
-                            }
-                        })
-                        .create();
-                alertDialog.show();
-            }
-        });
-
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
         mTimerViewModel.setMissionStringId(MissionManager.getInstance().getStrOperateId());
         observeViewModel();
+        mFragmentTimerBinding = (FragmentTimerBinding) getBinding();
+        // set up float view background when init timer fragment
+        mFragmentTimerBinding.floatView.setBackgroundColor(mFloatViewBackgroundColor);
+        mFragmentTimerBinding.floatView.setVisibility(View.VISIBLE);
+        mFragmentTimerBinding.floatView.bringToFront();
+        return rootView;
+    }
 
-        GifImageView gifImageView = mFragmentTimerBinding.clockGif;
-        try {
-            gifDrawable = new GifDrawable(getResources(), R.drawable.clock3);
-            gifImageView.setImageDrawable(gifDrawable);
-            gifDrawable.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        LogUtil.logE(TAG, "[onViewCreated]");
+
+        mFragmentTimerBinding.closeIcon.setPadding(0,getStatusBarHeight(),0,0);
+        mFragmentTimerBinding.closeIcon.setOnClickListener(v -> stopTimer());
+
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 // pause timer if started
-                if (timerStatus == TimerStatus.MISSION_START || timerStatus == TimerStatus.BREAK_START)
-                    pauseTimer();
-                else if (timerStatus == TimerStatus.MISSION_PAUSE)
-                    timerStatus = TimerStatus.MISSION_KEEP_PAUSE;
-                else if (timerStatus == TimerStatus.BREAK_PAUSE)
-                    timerStatus = TimerStatus.BREAK_KEEP_PAUSE;
-
-                // showing a dialog to check whether to exit this page or not
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.finish_mission)
-                        .setMessage(R.string.check_finish_mission)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // exit & cancel notification
-                                if (timerStatus != TimerStatus.MISSION_STOP ||
-                                        timerStatus != TimerStatus.BREAK_STOP) {
-                                }
-                                navigateUp();
-
-                                // update completed status
-                                if (mMissionCount != -1 && mNumberOfCompletion != -1) {
-                                    if ((mMissionCount - mNumberOfCompletion) < 1) {
-                                        mTimerViewModel.updateMissionState(true, mNumberOfCompletion);
-                                    }
-                                }
-                            }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (timerStatus == TimerStatus.BREAK_PAUSE || timerStatus == TimerStatus.MISSION_PAUSE)
-                                    continueTimer();
-                                else if (timerStatus == TimerStatus.BREAK_KEEP_PAUSE)
-                                    timerStatus = TimerStatus.BREAK_PAUSE;
-                                else if (timerStatus == TimerStatus.MISSION_KEEP_PAUSE)
-                                    timerStatus = TimerStatus.MISSION_PAUSE;
-                            }
-                        })
-                        .create();
-                alertDialog.show();
+                stopTimer();
             }
         });
+
+        mFragmentTimerBinding.waveView.setWaveStart(true);
+        mFragmentTimerBinding.textViewTime.bringToFront();
     }
 
-    public void setStatusBarColor(int color) {
-        LogUtil.logE(TAG, "[setStatusBarColor] color = " + color);
-        ((MainActivity) getContext()).getWindow().setStatusBarColor(color);
+    private void stopTimer() {
+        // pause timer if started
+        if (mTimerStatus == TimerStatus.MISSION_START || mTimerStatus == TimerStatus.BREAK_START)
+            pauseTimer();
+        else if (mTimerStatus == TimerStatus.MISSION_PAUSE)
+            mTimerStatus = TimerStatus.MISSION_KEEP_PAUSE;
+        else if (mTimerStatus == TimerStatus.BREAK_PAUSE)
+            mTimerStatus = TimerStatus.BREAK_KEEP_PAUSE;
+
+        // showing a dialog to check whether to exit this page or not
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.finish_mission)
+                .setMessage(R.string.check_finish_mission)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    // exit & cancel notification
+                    if (mTimerStatus != TimerStatus.MISSION_STOP ||
+                            mTimerStatus != TimerStatus.BREAK_STOP) {
+                    }
+                    navigateUp();
+
+                    // update completed status
+                    if (mMissionCount != -1 && mNumberOfCompletion != -1) {
+                        if ((mMissionCount - mNumberOfCompletion) < 1) {
+                            mTimerViewModel.updateMissionState(true, mNumberOfCompletion);
+                        }
+                    }
+                }).setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    if (mTimerStatus == TimerStatus.BREAK_PAUSE || mTimerStatus == TimerStatus.MISSION_PAUSE)
+                        continueTimer();
+                    else if (mTimerStatus == TimerStatus.BREAK_KEEP_PAUSE)
+                        mTimerStatus = TimerStatus.BREAK_PAUSE;
+                    else if (mTimerStatus == TimerStatus.MISSION_KEEP_PAUSE)
+                        mTimerStatus = TimerStatus.MISSION_PAUSE;
+                })
+                .create();
+        alertDialog.show();
     }
 
     private void observeViewModel() {
-        mTimerViewModel.gerFetchDataResult().observe(getViewLifecycleOwner(), new Observer<TimerViewModel.Result>() {
-            @Override
-            public void onChanged(TimerViewModel.Result result) {
-                if (result.isInit()) {
-                    LogUtil.logE(TAG, "[gerFetchDataResult] isInit");
-                    mNumberOfCompletion = result.missionNumberOfCompletion;
-                    mMissionState = result.missionState;
+        mTimerViewModel.gerFetchDataResult().observe(getViewLifecycleOwner(), result -> {
+            if (result.isInit()) {
+                LogUtil.logE(TAG, "[gerFetchDataResult] isInit");
+                mNumberOfCompletion = result.missionNumberOfCompletion;
+                mMissionState = result.missionState;
 
-                    UserMission mission = result.mission;
-                    // format
-                    mMissionTime = Long.valueOf(mission.getTime() * 60 * 1000);
-                    mMissionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
-                    // assign value
-                    mMissionCount = mission.getGoal();
-                    mEnabledVibrate = mission.isEnableVibrate();
-                    mEnabledNotification = mission.isEnableNotification();
-                    mMissionBackgroundColor = mission.getColor();
+                UserMission mission = result.mission;
+                // format
+                mMissionTime = Long.valueOf(mission.getTime() * 60 * 1000);
+                mMissionBreakTime = Long.valueOf(mission.getShortBreakTime() * 60 * 1000);
+                // assign value
+                mMissionCount = mission.getGoal();
+                mMissionBackgroundColor = mission.getColor();
 
-                    if (timerStatus == TimerStatus.MISSION_INIT) {
-                        initTimerLayout(mMissionTime, mMissionBackgroundColor);
-                        if (mMissionTime != 0) {
-                            if (mIsAutoStartMission) {
-                                startTimer();
-                            }
+                if (mTimerStatus == TimerStatus.MISSION_INIT) {
+                    initTimerLayout(mMissionTime, mMissionBackgroundColor);
+                    if (mMissionTime != 0) {
+                        if (mIsAutoStartMission) {
+                            startTimer();
                         }
                     }
                 }
+
+                // floatView invisible
+                mFragmentTimerBinding.floatView.setVisibility(View.INVISIBLE);
             }
         });
 
-        mTimerViewModel.getTimerServiceStatus().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                timerStatus = TimerStatus.values()[integer];
-                if (timerStatus == TimerStatus.BREAK_START) {
-//                    mFragmentTimerBinding.timerRelativeLayout.setBackgroundColor(mBreakBackgroundColor);
-                    setStatusBarColor(mBreakBackgroundColor);
-                    initTimerValues(mMissionBreakTime);
-                }
+        mTimerViewModel.getTimerServiceStatus().observe(getViewLifecycleOwner(), integer -> {
+            mTimerStatus = TimerStatus.values()[integer];
+            if (mTimerStatus == TimerStatus.BREAK_START) {
+                mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(mBreakBackgroundColor);
+            }
 
-                if (timerStatus == TimerStatus.MISSION_INIT) {
-                    initTimerLayout(mMissionTime, mMissionBackgroundColor);
-                }
+            if (mTimerStatus == TimerStatus.MISSION_INIT) {
+                initTimerLayout(mMissionTime, mMissionBackgroundColor);
+            }
 
-                if (timerStatus == TimerStatus.MISSION_STOP) {
-                    initTimerLayout(mMissionBreakTime, mBreakBackgroundColor);
-                }
+            if (mTimerStatus == TimerStatus.MISSION_STOP) {
+                initTimerLayout(mMissionBreakTime, mBreakBackgroundColor);
+            }
 
-                if (timerStatus == TimerStatus.MISSION_START) {
-//                    mFragmentTimerBinding.timerRelativeLayout.setBackgroundColor(mMissionBackgroundColor);
-                    setStatusBarColor(mMissionBackgroundColor);
-                    initTimerValues(mMissionTime);
-                }
+            if (mTimerStatus == TimerStatus.MISSION_START) {
+                mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(mMissionBackgroundColor);
+            }
 
-                if (timerStatus == TimerStatus.MISSION_FINISHED) {
-                    stopService();
-                    navigateUp();
-                }
+            if (mTimerStatus == TimerStatus.MISSION_FINISHED) {
+                stopService();
+                navigateUp();
             }
         });
 
-        mTimerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                mIsAutoStartMission = aBoolean;
-            }
-        });
+        mTimerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), aBoolean -> mIsAutoStartMission = aBoolean);
     }
 
     String msTimeFormatter(long milliSeconds) {
@@ -321,14 +261,6 @@ public class TimerFragment extends DataBindingFragment {
                 TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
                 TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
         return hms;
-    }
-
-    private void initTimerValues(long timeMilli) {
-//        mFragmentTimerBinding.progressBarCircle.setMax((int) timeMilli / 1000);
-    }
-
-    void setProgressBarValues(long time) {
-//        mFragmentTimerBinding.progressBarCircle.setProgress((int) time / 1000);
     }
 
     private void startService(String action){
@@ -340,100 +272,129 @@ public class TimerFragment extends DataBindingFragment {
         getActivity().startService(intent);
     }
 
+    private Point getWindowSize(){
+        Point size = new Point();
+        getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+        return size;
+    }
+
     private void startTimer() {
+        LogUtil.logD(TAG,"[startTimer]");
         if (mMissionState == null)
             mTimerViewModel.initMissionState();
 
-        gifDrawable.start();
+        mFragmentTimerBinding.imageViewStartPause.setText(R.string.timer_pause);
 
-        // changing play icon to stop icon
-        mFragmentTimerBinding.imageViewStartPause.setImageResource(R.drawable.ic_baseline_pause_24);
         // changing the timer status to started
-        if (timerStatus == TimerStatus.MISSION_INIT) {
-            timerStatus = TimerStatus.MISSION_START;
+        if (mTimerStatus == TimerStatus.MISSION_INIT) {
+            mTimerStatus = TimerStatus.MISSION_START;
             startService(CountDownTimerService.ACTION_START_MISSION);
 
-        } else if (timerStatus == TimerStatus.BREAK_STOP || timerStatus == TimerStatus.MISSION_STOP) {
-            timerStatus = TimerStatus.BREAK_START;
+        } else if (mTimerStatus == TimerStatus.BREAK_STOP || mTimerStatus == TimerStatus.MISSION_STOP) {
+            mTimerStatus = TimerStatus.BREAK_START;
             startService(CountDownTimerService.ACTION_START_BREAK);
         }
     }
 
     public void initTimerLayout(long time, int backgroundColor) {
-        setStatusBarColor(backgroundColor);
-//        mFragmentTimerBinding.timerRelativeLayout.setBackgroundColor(backgroundColor);
-        initTimerValues(time);
-        mFragmentTimerBinding.imageViewStartPause.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-        mFragmentTimerBinding.imageViewReset.setVisibility(View.GONE);
+        mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(backgroundColor);
+        mFragmentTimerBinding.imageViewStartPause.setText(R.string.timer_start);
         mFragmentTimerBinding.textViewTime.setText(msTimeFormatter(time));
-        setProgressBarValues(time);
     }
 
     public void pauseTimer() {
-        mFragmentTimerBinding.imageViewStartPause.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-        mFragmentTimerBinding.imageViewReset.setVisibility(View.VISIBLE);
+        mFragmentTimerBinding.imageViewStartPause.setText(R.string.timer_start);
+        mFragmentTimerBinding.imageViewStartPause.setVisibility(View.INVISIBLE);
 
-        gifDrawable.stop();
+        double toX = getWindowSize().x * 0.25; // move x
+        mFragmentTimerBinding.stop.setVisibility(View.VISIBLE);
+        mFragmentTimerBinding.stop.animate().translationX((float) toX)
+                .setDuration(500)
+                .alpha((float) 1.0)
+                .setInterpolator(new DecelerateInterpolator());
 
-        if (timerStatus == TimerStatus.MISSION_START) {
-            timerStatus = TimerStatus.MISSION_PAUSE;
+        mFragmentTimerBinding.timerContinue.setVisibility(View.VISIBLE);
+        mFragmentTimerBinding.timerContinue.animate().translationX((float) -toX)
+                .setDuration(500)
+                .alpha((float) 1.0)
+                .setInterpolator(new DecelerateInterpolator());
+
+        if (mTimerStatus == TimerStatus.MISSION_START) {
+            mTimerStatus = TimerStatus.MISSION_PAUSE;
             startService(CountDownTimerService.ACTION_PAUSE_MISSION);
-        } else if (timerStatus == TimerStatus.BREAK_START) {
-            timerStatus = TimerStatus.BREAK_PAUSE;
+        } else if (mTimerStatus == TimerStatus.BREAK_START) {
+            mTimerStatus = TimerStatus.BREAK_PAUSE;
             startService(CountDownTimerService.ACTION_PAUSE_BREAK);
         }
     }
 
     private void continueTimer() {
-        mFragmentTimerBinding.imageViewStartPause.setImageResource(R.drawable.ic_baseline_pause_24);
-        mFragmentTimerBinding.imageViewReset.setVisibility(View.GONE);
+        LogUtil.logD(TAG,"[continueTimer]");
+        mFragmentTimerBinding.imageViewStartPause.setText(R.string.timer_pause);
+        mFragmentTimerBinding.stop.animate().translationX((float) 0)
+                .setDuration(500)
+                .alpha((float) 0.0)
+                .setInterpolator(new DecelerateInterpolator())
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
 
-        gifDrawable.start();
+                    }
 
-        if (timerStatus == TimerStatus.MISSION_PAUSE) {
-            timerStatus = TimerStatus.MISSION_START;
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (mTimerStatus == TimerStatus.MISSION_START) {
+                            LogUtil.logD(TAG,"[onAnimationEnd]");
+                            mFragmentTimerBinding.timerContinue.setVisibility(View.INVISIBLE);
+                            mFragmentTimerBinding.stop.setVisibility(View.INVISIBLE);
+                            mFragmentTimerBinding.imageViewStartPause.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+
+        mFragmentTimerBinding.timerContinue.animate().translationX((float) 0)
+                .setDuration(500)
+                .alpha((float) 0.0)
+                .setInterpolator(new DecelerateInterpolator());
+
+        if (mTimerStatus == TimerStatus.MISSION_PAUSE) {
+            mTimerStatus = TimerStatus.MISSION_START;
             startService(CountDownTimerService.ACTION_CONTINUE_MISSION);
-        } else if (timerStatus == TimerStatus.BREAK_PAUSE) {
-            timerStatus = TimerStatus.BREAK_START;
+        } else if (mTimerStatus == TimerStatus.BREAK_PAUSE) {
+            mTimerStatus = TimerStatus.BREAK_START;
             startService(CountDownTimerService.ACTION_CONTINUE_BREAK);
         }
     }
 
-    private void resetTimer() {
-        long timeMilli;
-        mFragmentTimerBinding.imageViewReset.setVisibility(View.GONE);
-        if (timerStatus == TimerStatus.BREAK_PAUSE) {
-            timerStatus = TimerStatus.BREAK_STOP;
-            timeMilli = mMissionBreakTime;
-            startService(CountDownTimerService.ACTION_RESET_BREAK);
-        } else {
-            timerStatus = TimerStatus.MISSION_INIT;
-            timeMilli = mMissionTime;
-            startService(CountDownTimerService.ACTION_RESET_MISSION);
-        }
-        initTimerValues(timeMilli);
-        mFragmentTimerBinding.textViewTime.setText(msTimeFormatter(timeMilli));
-        setProgressBarValues(timeMilli);
-    }
-
     public class ClickProxy {
         public void onStartClick() {
-            if (timerStatus == TimerStatus.MISSION_INIT) {
+            if (mTimerStatus == TimerStatus.MISSION_INIT) {
                 startTimer();
-            } else if (timerStatus == TimerStatus.MISSION_START ||
-                    timerStatus == TimerStatus.BREAK_START) {
+            } else if (mTimerStatus == TimerStatus.MISSION_START ||
+                    mTimerStatus == TimerStatus.BREAK_START) {
                 pauseTimer();
-            } else if (timerStatus == TimerStatus.MISSION_PAUSE ||
-                    timerStatus == TimerStatus.BREAK_PAUSE) {
+            } else if (mTimerStatus == TimerStatus.MISSION_PAUSE ||
+                    mTimerStatus == TimerStatus.BREAK_PAUSE) {
                 continueTimer();
-            } else if (timerStatus == TimerStatus.MISSION_STOP ||
-                    timerStatus == TimerStatus.BREAK_STOP) {
+            } else if (mTimerStatus == TimerStatus.MISSION_STOP ||
+                    mTimerStatus == TimerStatus.BREAK_STOP) {
                 startTimer();
             }
         }
 
-        public void onResetClick() {
-            resetTimer();
+        public void onStopClick() {
+            LogUtil.logD(TAG,"[onStopClick]");
+            stopTimer();
         }
     }
 
@@ -441,10 +402,9 @@ public class TimerFragment extends DataBindingFragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && CountDownTimerService.ACTION_TIMER_INFO.equals(intent.getAction())) {
-                long timeLong = intent.getLongExtra(CountDownTimerService.EXTRA_TIME_LONG, 0);
                 String timeStr = intent.getStringExtra(CountDownTimerService.EXTRA_TIME_STR);
                 mFragmentTimerBinding.textViewTime.setText(timeStr);
-                setProgressBarValues(timeLong);
+                mFragmentTimerBinding.textViewTime.bringToFront(); // on top
             }
         }
     }

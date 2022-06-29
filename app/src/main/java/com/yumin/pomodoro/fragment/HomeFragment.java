@@ -117,8 +117,10 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
                 }
 
                 if ((groupPosition == GroupIndex.GROUP_TODAY_POSITION) && (!isFinished)) {
-                    MissionManager.getInstance().setOperateId(userMission);
-                    navigate(R.id.fragment_timer);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(TimerFragment.BUNDLE_FLOAT_VIEW_BACKGROUND_COLOR,userMission.getColor());
+                    ((MainActivity)getActivity()).setFabExplodeBackgroundColor(userMission.getColor());
+                    ((MainActivity)getActivity()).startFabExplodeAnimation(bundle,userMission);
                 }
                 return true;
             }

@@ -193,4 +193,10 @@
         <item>@string/menu_calender</item>
         <item>@string/menu_expired_mission</item>
     </array>
+
+    <string name="timer_continue">繼續</string>
+    <string name="timer_start">開始</string>
+    <string name="timer_stop">停止</string>
+    <string name="timer_pause">暫停</string>
+
 </resources>

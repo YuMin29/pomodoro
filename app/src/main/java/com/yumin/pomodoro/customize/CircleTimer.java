@@ -141,7 +141,6 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
 
     public void pauseTimer() {
         mImageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
-        mImageViewReset.setVisibility(View.VISIBLE);
         mTimerStatus = TimerStatus.PAUSE;
         pauseCountDownTimer();
     }
@@ -149,7 +148,6 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
     public void startTimer() {
         initTimerValues();
         setProgressBarValues(mMissionTime);
-        mImageViewReset.setVisibility(View.GONE);
         mImageViewStartStop.setImageResource(R.drawable.ic_baseline_pause_24);
         mTimerStatus = TimerStatus.STARTED;
         startCountDownTimer(mMissionTime);
@@ -202,7 +200,6 @@ public class CircleTimer extends RelativeLayout implements View.OnClickListener{
             public void onFinish() {
                 mTextViewTime.setText(msTimeFormatter(mMissionTime));
                 setProgressBarValues(mMissionTime);
-                mImageViewReset.setVisibility(View.GONE);
                 mImageViewStartStop.setImageResource(R.drawable.ic_baseline_play_arrow_24);
                 mTimerStatus = TimerStatus.STOPPED;
 

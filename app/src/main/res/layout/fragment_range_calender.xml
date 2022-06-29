@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
+        android:background="@color/colorPrimaryText"
         android:orientation="vertical">
 
         <LinearLayout
@@ -70,7 +70,7 @@
                     android:id="@+id/calendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#fff"
+                    android:background="@color/colorPrimaryText"
                     app:calendar_height="46dp"
                     app:calendar_padding="10dp"
                     app:current_month_lunar_text_color="#CFCFCF"
@@ -86,7 +86,7 @@
                     app:scheme_text_color="#333"
                     app:scheme_theme_color="#333"
                     app:select_mode="range_mode"
-                    app:selected_text_color="#fff"
+                    app:selected_text_color="@color/colorPrimaryText"
                     app:selected_theme_color="#EE7621"
                     app:week_background="#fff"
                     app:week_text_color="#111"

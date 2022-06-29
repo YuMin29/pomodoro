@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,6 +45,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yumin.pomodoro.BR;
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.repository.firebase.User;
 import com.yumin.pomodoro.databinding.FragmentLoginBinding;
@@ -60,7 +59,7 @@ import org.jetbrains.annotations.NotNull;
 
 // TODO: [10/24] 登入帳密可以在fragment先檢查是否為空,但後續驗證帳號有效與否 應該交給view model 去call repository api處理
 //               再把結果透過view model回傳到fragment
-public class LoginFragment extends DataBindingFragment {
+public class LoginFragment extends DataBindingFragment{
     private static final String TAG = LoginFragment.class.getSimpleName();
     private static final int RC_GOOGLE_SIGN_IN = 1001;
     LoginViewModel mLoginViewModel;
@@ -79,6 +78,8 @@ public class LoginFragment extends DataBindingFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.logD(TAG,"[onCreate]");
+        ((MainActivity)getActivity()).fullScreenMode(true);
         mAuth = FirebaseAuth.getInstance();
         FacebookSdk.sdkInitialize(getContext());
         // TODO: [10/24] 應該搬到VIEW MODEL?
@@ -92,6 +93,7 @@ public class LoginFragment extends DataBindingFragment {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), googleSignInOptions);
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -187,6 +189,7 @@ public class LoginFragment extends DataBindingFragment {
     }
 
     private void navigate(int id) {
+        LogUtil.logD(TAG,"[navigate]");
         NavHostFragment.findNavController(this).navigate(id);
     }
 
@@ -342,6 +345,11 @@ public class LoginFragment extends DataBindingFragment {
                 .addBindingParam(BR.loginClickProxy, new LoginFragment.ClickProxy());
     }
 
+    public void navigateUp(){
+        LogUtil.logD(TAG,"[navigateUp]");
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
     public class ClickProxy {
         public void login() {
             loginAccount();
@@ -351,6 +359,9 @@ public class LoginFragment extends DataBindingFragment {
         }
         public void forgetPassword() {
             goToResetPassword();
+        }
+        public void back(){
+            navigateUp();
         }
     }
 }

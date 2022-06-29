@@ -9,7 +9,25 @@
         android:id="@+id/nav_main"
         android:name="com.yumin.pomodoro.fragment.MainFragment"
         android:label="@string/menu_main"
-        tools:layout="@layout/fragment_main"/>
+        tools:layout="@layout/fragment_main">
+
+        <action
+            android:id="@+id/main_to_login"
+            app:destination="@+id/fragment_login"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+
+        <action
+            android:id="@+id/main_to_settings"
+            app:destination="@+id/nav_settings"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_home"
@@ -33,7 +51,18 @@
         android:id="@+id/nav_settings"
         android:name="com.yumin.pomodoro.fragment.SettingsFragment"
         android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+
+        <action
+            android:id="@+id/setting_to_login"
+            app:destination="@+id/fragment_login"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+
+
+    </fragment>
 
     <fragment android:id="@+id/add_mission_fragment"
         android:name="com.yumin.pomodoro.fragment.AddMissionFragment"
@@ -65,7 +94,7 @@
     <fragment android:id="@+id/fragment_login"
         android:name="com.yumin.pomodoro.fragment.LoginFragment"
         android:label="@string/login_fragment_label"
-        tools:layout="@layout/fragment_login"/>
+        tools:layout="@layout/fragment_login" />
 
 
     <fragment android:id="@+id/fragment_register"
