@@ -1,13 +1,8 @@
 package com.yumin.pomodoro;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -15,32 +10,25 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -63,8 +51,6 @@ import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.PrefUtils;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener {
@@ -307,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
     }
 
     public void fullScreenMode(boolean enable) {
+        LogUtil.logD(TAG,"[fullScreenMode] enable = "+enable);
         mTopView.setVisibility(enable ? View.GONE : View.VISIBLE);
         mUserSignIn.setVisibility(enable ? View.GONE : View.VISIBLE);
         mBottomNavigationView.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
@@ -318,6 +305,20 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         navHostFragment.setLayoutParams(layoutParams);
 
         mFab.setVisibility(enable? View.INVISIBLE : View.VISIBLE);
+        // add fab animation
+        if (!enable) {
+            scaleViewFromCenter(mFab);
+        }
+    }
+
+    public void scaleViewFromCenter(View view) {
+        Animation anim = new ScaleAnimation(
+                0f, 1f, // Start and end values for the X axis scaling
+                0f, 1f, // Start and end values for the Y axis scaling
+                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+        anim.setDuration(1000);
+        view.startAnimation(anim);
     }
 
     public void fabVisible(int visibility){
@@ -376,6 +377,11 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 //        } else {
 //            mFab.setVisibility(View.INVISIBLE);
 //        }
+
+        if (navDestination.getId() == R.id.add_mission_fragment ||
+            navDestination.getId() == R.id.edit_mission_fragment) {
+            mUserSignIn.setVisibility(View.INVISIBLE);
+        }
     }
 
     public interface RefreshHomeFragment {

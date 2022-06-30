@@ -53,7 +53,7 @@ public class SettingsFragment extends DataBindingFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity)getActivity()).fullScreenMode(false);
-        ((MainActivity)getActivity()).fabVisible(View.INVISIBLE);
+//        ((MainActivity)getActivity()).fabVisible(View.INVISIBLE);
         mFragmentSettingsBinding = (FragmentSettingsBinding) getBinding();
         observeViewModel();
 
@@ -99,8 +99,8 @@ public class SettingsFragment extends DataBindingFragment {
 
     private void showLockAlertDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        dialog.setTitle("高級版功能");
-        dialog.setMessage("即將上線!");
+        dialog.setTitle(R.string.premium_function);
+        dialog.setMessage(R.string.premium_description);
         dialog.setPositiveButton(R.string.ok,null);
         dialog.show();
     }
@@ -201,18 +201,18 @@ public class SettingsFragment extends DataBindingFragment {
         }
 
         public void onBackupClick(){
-            // 解鎖
             if (isLoginFirebase()) {
-//                showAlertDialog(R.string.menu_backup,R.string.backup_message,R.id.fragment_backup);
-                showLockAlertDialog();
+                showAlertDialog(R.string.menu_backup,R.string.backup_message,R.id.fragment_backup);
+                // TODO: show lock dialog due to charge fee
+//                showLockAlertDialog();
             }
         }
 
         public void onRestoreClick(){
-            // 解鎖
             if (isLoginFirebase()) {
-//                showAlertDialog(R.string.menu_restore,R.string.restore_message,R.id.fragment_restore);
-                showLockAlertDialog();
+                showAlertDialog(R.string.menu_restore,R.string.restore_message,R.id.fragment_restore);
+                // TODO: show lock dialog due to charge fee
+//                showLockAlertDialog();
             }
         }
     }

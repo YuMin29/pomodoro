@@ -104,9 +104,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_baseline_add_24"
-            app:backgroundTint="@color/colorPrimary"
-            app:tint="@color/colorPrimaryText"
+            app:srcCompat="@drawable/fab25_70"
+            app:maxImageSize="66dp"
+            app:tint="@null"
+            app:backgroundTint="@android:color/transparent"
             app:layout_anchor="@id/bottomAppBar" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

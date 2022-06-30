@@ -3,7 +3,7 @@ package com.yumin.pomodoro;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class PrefManager {
+public class PreferenceManager {
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mEditor;
     Context mContext;
@@ -11,7 +11,7 @@ public class PrefManager {
     private static final String PREFERENCE_NAME = "pomodoro-welcome";
     private static final String FIRST_TIME_LAUNCH = "firstTimeLaunch";
 
-    public PrefManager(Context context) {
+    public PreferenceManager(Context context) {
         this.mContext = context;
         mSharedPreferences = mContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();

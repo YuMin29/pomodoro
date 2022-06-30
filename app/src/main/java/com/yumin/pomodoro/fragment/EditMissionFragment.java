@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
 import com.yumin.pomodoro.BR;
+import com.yumin.pomodoro.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.FragmentEditMissionBinding;
@@ -63,6 +64,7 @@ public class EditMissionFragment extends MissionBaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((MainActivity)getActivity()).fabVisible(View.INVISIBLE);
         mFragmentEditMissionBinding = (FragmentEditMissionBinding) getBinding();
         mFragmentEditMissionBinding.missionAttributeView.getItemRepeat().setOnRepeatTypeListener(this);
         mFragmentEditMissionBinding.missionAttributeView.getItemOperate().setOperateDayListener(this);

@@ -27,15 +27,15 @@ public class WelcomeActivity extends AppCompatActivity {
     private int[] mLayouts;
     private Button mSkipButton;
     private Button mNextButton;
-    private PrefManager mPrefManager;
+    private PreferenceManager mPreferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getSupportActionBar().hide();
         // Checking is first time launch before calling setContentView()
-        mPrefManager = new PrefManager(this);
-        if (!mPrefManager.isFirstTimeLaunch()) {
+        mPreferenceManager = new PreferenceManager(this);
+        if (!mPreferenceManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
         }
@@ -118,7 +118,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void launchHomeScreen() {
-        mPrefManager.setFirstTimeLaunch(false);
+        mPreferenceManager.setFirstTimeLaunch(false);
         startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
         finish();
     }

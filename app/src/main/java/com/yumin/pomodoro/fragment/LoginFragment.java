@@ -62,12 +62,12 @@ import org.jetbrains.annotations.NotNull;
 public class LoginFragment extends DataBindingFragment{
     private static final String TAG = LoginFragment.class.getSimpleName();
     private static final int RC_GOOGLE_SIGN_IN = 1001;
-    LoginViewModel mLoginViewModel;
-    CallbackManager mCallbackManager;
-    FirebaseAuth mAuth;
-    FragmentLoginBinding mFragmentLoginBinding;
-    GoogleSignInClient mGoogleSignInClient;
-    AlertDialog mSyncProgressBar;
+    private LoginViewModel mLoginViewModel;
+    private CallbackManager mCallbackManager;
+    private FirebaseAuth mFirebaseAuth;
+    private FragmentLoginBinding mFragmentLoginBinding;
+    private GoogleSignInClient mGoogleSignInClient;
+    private AlertDialog mProgressBarDialog;
     private boolean mSyncData = false;
 
     @Override
@@ -79,8 +79,9 @@ public class LoginFragment extends DataBindingFragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtil.logD(TAG,"[onCreate]");
+        // TODO: full screen 設定應該可以先在DataBindingFragment寫好?
         ((MainActivity)getActivity()).fullScreenMode(true);
-        mAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
         FacebookSdk.sdkInitialize(getContext());
         // TODO: [10/24] 應該搬到VIEW MODEL?
         // Configure sign-in to request the user's ID, email address, and basic
@@ -144,8 +145,8 @@ public class LoginFragment extends DataBindingFragment{
             public void onChanged(LoginViewModel.Result result) {
                 if (result.isComplete()) {
                     if (result.getFirebaseMissions().size() > 0 && !mSyncData) {
-                        mSyncProgressBar = createProgressBarDialog();
-                        mSyncProgressBar.show();
+                        mProgressBarDialog = createProgressBarDialog();
+                        mProgressBarDialog.show();
                         mLoginViewModel.syncFirebaseMissionsToRoom();
                         mSyncData = true;
                     } else {
@@ -159,8 +160,8 @@ public class LoginFragment extends DataBindingFragment{
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
-                    if (mSyncProgressBar != null)
-                        mSyncProgressBar.dismiss();
+                    if (mProgressBarDialog != null)
+                        mProgressBarDialog.dismiss();
                     navigate(R.id.nav_home);
                 }
 
@@ -184,7 +185,7 @@ public class LoginFragment extends DataBindingFragment{
         AlertDialog progressBarDialog = createProgressBarDialog();
         progressBarDialog.show();
         mFragmentLoginBinding.login.setEnabled(false);
-        mAuth.signInWithCredential(credential)
+        mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(getOnCompleteListener(progressBarDialog));
     }
 
@@ -207,7 +208,7 @@ public class LoginFragment extends DataBindingFragment{
         AlertDialog progressBarDialog = createProgressBarDialog();
         progressBarDialog.show();
         mFragmentLoginBinding.login.setEnabled(false);
-        mAuth.signInWithEmailAndPassword(email, password)
+        mFirebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
@@ -243,7 +244,7 @@ public class LoginFragment extends DataBindingFragment{
 
     private void singInSuccess() {
         LogUtil.logD(TAG, "[singInSuccess]");
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             addUserToFirebase(user);
             mLoginViewModel.setFirebaseUserExist(true);
@@ -313,7 +314,7 @@ public class LoginFragment extends DataBindingFragment{
         AlertDialog progressBarDialog = createProgressBarDialog();
         progressBarDialog.show();
         mFragmentLoginBinding.login.setEnabled(false);
-        mAuth.signInWithCredential(credential)
+        mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(getOnCompleteListener(progressBarDialog));
     }
 

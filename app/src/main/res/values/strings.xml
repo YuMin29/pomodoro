@@ -199,4 +199,6 @@
     <string name="timer_stop">停止</string>
     <string name="timer_pause">暫停</string>
 
+    <string name="premium_function">高級版功能</string>
+    <string name="premium_description">請付費解鎖此功能</string>
 </resources>
