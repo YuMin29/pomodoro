@@ -6,7 +6,7 @@
     <data>
         <variable
             name="expiredViewModel"
-            type="com.yumin.pomodoro.viewmodel.ExpiredMissionViewModel" />
+            type="com.yumin.pomodoro.ui.mission.expired.ExpiredMissionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

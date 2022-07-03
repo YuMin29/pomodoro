@@ -6,11 +6,11 @@
     <data>
         <variable
             name="calenderViewModel"
-            type="com.yumin.pomodoro.viewmodel.CalenderViewModel" />
+            type="com.yumin.pomodoro.ui.calender.CalenderViewModel" />
 
         <variable
             name="calenderClickProxy"
-            type="com.yumin.pomodoro.fragment.CalenderFragment.ClickProxy" />
+            type="com.yumin.pomodoro.ui.calender.CalenderFragment.ClickProxy" />
     </data>
 
     <LinearLayout

@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
-import com.yumin.pomodoro.MainActivity;
+import com.yumin.pomodoro.ui.main.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.databinding.CircleTimerBinding;
 import com.yumin.pomodoro.utils.LogUtil;

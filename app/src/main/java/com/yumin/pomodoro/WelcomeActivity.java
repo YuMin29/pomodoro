@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yumin.pomodoro.ui.main.MainActivity;
+
 public class WelcomeActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private MyViewPagerAdapter mViewPagerAdapter;

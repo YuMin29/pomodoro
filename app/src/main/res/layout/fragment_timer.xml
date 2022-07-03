@@ -7,11 +7,11 @@
 
         <variable
             name="timerViewModel"
-            type="com.yumin.pomodoro.viewmodel.TimerViewModel" />
+            type="com.yumin.pomodoro.ui.timer.TimerViewModel" />
 
         <variable
             name="timerClickProxy"
-            type="com.yumin.pomodoro.fragment.TimerFragment.ClickProxy" />
+            type="com.yumin.pomodoro.ui.timer.TimerFragment.ClickProxy" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

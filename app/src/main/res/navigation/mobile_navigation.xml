@@ -7,92 +7,92 @@
 
     <fragment
         android:id="@+id/nav_main"
-        android:name="com.yumin.pomodoro.fragment.MainFragment"
+        android:name="com.yumin.pomodoro.ui.home.MainFragment"
         android:label="@string/menu_main"
         tools:layout="@layout/fragment_main" />
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.yumin.pomodoro.fragment.HomeFragment"
+        android:name="com.yumin.pomodoro.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_calender"
-        android:name="com.yumin.pomodoro.fragment.CalenderFragment"
+        android:name="com.yumin.pomodoro.ui.calender.CalenderFragment"
         android:label="@string/menu_calender"
         tools:layout="@layout/fragment_calender" />
 
     <fragment
         android:id="@+id/nav_save_mission"
-        android:name="com.yumin.pomodoro.fragment.ExpiredMissionFragment"
+        android:name="com.yumin.pomodoro.ui.mission.expired.ExpiredMissionFragment"
         android:label="@string/menu_save_mission"
         tools:layout="@layout/fragment_save_mission" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="com.yumin.pomodoro.fragment.SettingsFragment"
+        android:name="com.yumin.pomodoro.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/add_mission_fragment"
-        android:name="com.yumin.pomodoro.fragment.AddMissionFragment"
+        android:name="com.yumin.pomodoro.ui.mission.add.AddMissionFragment"
         android:label="@string/add_mission"
         tools:layout="@layout/fragment_add_mission" />
 
     <fragment
         android:id="@+id/edit_mission_fragment"
-        android:name="com.yumin.pomodoro.fragment.EditMissionFragment"
+        android:name="com.yumin.pomodoro.ui.mission.edit.EditMissionFragment"
         android:label="@string/edit_mission"
         tools:layout="@layout/fragment_edit_mission" />
 
     <fragment
         android:id="@+id/fragment_timer"
-        android:name="com.yumin.pomodoro.fragment.TimerFragment"
+        android:name="com.yumin.pomodoro.ui.timer.TimerFragment"
         android:label="@string/mission_timer"
         tools:layout="@layout/fragment_timer" />
 
     <fragment
         android:id="@+id/fragment_range_calender"
-        android:name="com.yumin.pomodoro.fragment.RangeCalenderFragment"
+        android:name="com.yumin.pomodoro.ui.calender.RangeCalenderFragment"
         android:label="@string/fragment_range_calender"
         tools:layout="@layout/fragment_range_calender" />
 
     <fragment
         android:id="@+id/fragment_login"
-        android:name="com.yumin.pomodoro.fragment.LoginFragment"
+        android:name="com.yumin.pomodoro.ui.login.LoginFragment"
         android:label="@string/login_fragment_label"
         tools:layout="@layout/fragment_login" />
 
 
     <fragment
         android:id="@+id/fragment_register"
-        android:name="com.yumin.pomodoro.fragment.RegisterFragment"
+        android:name="com.yumin.pomodoro.ui.login.register.RegisterFragment"
         android:label="@string/register_fragment_label"
         tools:layout="@layout/fragment_register" />
 
     <fragment
         android:id="@+id/fragment_reset_password"
-        android:name="com.yumin.pomodoro.fragment.ResetPasswordFragment"
+        android:name="com.yumin.pomodoro.ui.login.resetpassword.ResetPasswordFragment"
         android:label="@string/reset_password_fragment_label"
         tools:layout="@layout/fragment_reset_password" />
 
     <fragment
         android:id="@+id/fragment_backup"
-        android:name="com.yumin.pomodoro.fragment.BackupFragment"
+        android:name="com.yumin.pomodoro.ui.settings.backup.BackupFragment"
         android:label="@string/menu_backup"
         tools:layout="@layout/fragment_backup" />
 
     <fragment
         android:id="@+id/fragment_restore"
-        android:name="com.yumin.pomodoro.fragment.RestoreFragment"
+        android:name="com.yumin.pomodoro.ui.settings.restore.RestoreFragment"
         android:label="@string/menu_restore"
         tools:layout="@layout/fragment_restore" />
 
     <fragment
         android:id="@+id/fragment_expired_mission"
-        android:name="com.yumin.pomodoro.fragment.ExpiredMissionFragment"
+        android:name="com.yumin.pomodoro.ui.mission.expired.ExpiredMissionFragment"
         android:label="@string/menu_expired_mission"
         tools:layout="@layout/fragment_expired_mission" />
 

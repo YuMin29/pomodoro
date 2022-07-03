@@ -6,7 +6,7 @@
     <data>
         <variable
             name="rangeCalenderClickProxy"
-            type="com.yumin.pomodoro.fragment.RangeCalenderFragment.ClickProxy" />
+            type="com.yumin.pomodoro.ui.calender.RangeCalenderFragment.ClickProxy" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

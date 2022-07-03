@@ -3,7 +3,7 @@ package com.yumin.pomodoro.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.yumin.pomodoro.fragment.TimerFragment;
+import com.yumin.pomodoro.ui.timer.TimerFragment;
 
 public class PrefUtils {
     private static final String preferenceName = "missionSettings";

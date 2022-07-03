@@ -6,10 +6,10 @@
     <data>
         <variable
             name="editMissionClickProxy"
-            type="com.yumin.pomodoro.fragment.EditMissionFragment.ClickProxy" />
+            type="com.yumin.pomodoro.ui.mission.edit.EditMissionFragment.ClickProxy" />
         <variable
             name="editMissionViewModel"
-            type="com.yumin.pomodoro.viewmodel.EditMissionViewModel" />
+            type="com.yumin.pomodoro.ui.mission.edit.EditMissionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

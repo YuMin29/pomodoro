@@ -201,4 +201,5 @@
 
     <string name="premium_function">高級版功能</string>
     <string name="premium_description">請付費解鎖此功能</string>
+    <string name="debug_data_binding_warning">data binding warning</string>
 </resources>

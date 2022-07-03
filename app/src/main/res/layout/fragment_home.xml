@@ -6,10 +6,10 @@
     <data>
         <variable
             name="homeClickProxy"
-            type="com.yumin.pomodoro.fragment.HomeFragment.ClickProxy" />
+            type="com.yumin.pomodoro.ui.home.HomeFragment.ClickProxy" />
         <variable
             name="homeViewModel"
-            type="com.yumin.pomodoro.viewmodel.HomeViewModel" />
+            type="com.yumin.pomodoro.ui.home.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
