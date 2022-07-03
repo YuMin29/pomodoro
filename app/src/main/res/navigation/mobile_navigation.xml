@@ -9,31 +9,13 @@
         android:id="@+id/nav_main"
         android:name="com.yumin.pomodoro.fragment.MainFragment"
         android:label="@string/menu_main"
-        tools:layout="@layout/fragment_main">
-
-        <action
-            android:id="@+id/main_to_login"
-            app:destination="@+id/fragment_login"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
-
-        <action
-            android:id="@+id/main_to_settings"
-            app:destination="@+id/nav_settings"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_main" />
 
     <fragment
         android:id="@+id/nav_home"
         android:name="com.yumin.pomodoro.fragment.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home"/>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_calender"
@@ -51,75 +33,84 @@
         android:id="@+id/nav_settings"
         android:name="com.yumin.pomodoro.fragment.SettingsFragment"
         android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" >
+        tools:layout="@layout/fragment_settings" />
 
-        <action
-            android:id="@+id/setting_to_login"
-            app:destination="@+id/fragment_login"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
-
-
-    </fragment>
-
-    <fragment android:id="@+id/add_mission_fragment"
+    <fragment
+        android:id="@+id/add_mission_fragment"
         android:name="com.yumin.pomodoro.fragment.AddMissionFragment"
         android:label="@string/add_mission"
-        tools:layout="@layout/fragment_add_mission"/>
+        tools:layout="@layout/fragment_add_mission" />
 
-    <fragment android:id="@+id/edit_mission_fragment"
+    <fragment
+        android:id="@+id/edit_mission_fragment"
         android:name="com.yumin.pomodoro.fragment.EditMissionFragment"
         android:label="@string/edit_mission"
-        tools:layout="@layout/fragment_edit_mission"/>
+        tools:layout="@layout/fragment_edit_mission" />
 
-    <fragment android:id="@+id/fragment_timer"
+    <fragment
+        android:id="@+id/fragment_timer"
         android:name="com.yumin.pomodoro.fragment.TimerFragment"
         android:label="@string/mission_timer"
-        tools:layout="@layout/fragment_timer">
+        tools:layout="@layout/fragment_timer" />
 
-        <action
-            android:id="@+id/timer_to_home"
-            app:destination="@+id/nav_home"
-            app:popUpTo="@id/fragment_timer"
-            app:popUpToInclusive="true"/>
-    </fragment>
-
-    <fragment android:id="@+id/fragment_range_calender"
+    <fragment
+        android:id="@+id/fragment_range_calender"
         android:name="com.yumin.pomodoro.fragment.RangeCalenderFragment"
         android:label="@string/fragment_range_calender"
-        tools:layout="@layout/fragment_range_calender"/>
+        tools:layout="@layout/fragment_range_calender" />
 
-    <fragment android:id="@+id/fragment_login"
+    <fragment
+        android:id="@+id/fragment_login"
         android:name="com.yumin.pomodoro.fragment.LoginFragment"
         android:label="@string/login_fragment_label"
         tools:layout="@layout/fragment_login" />
 
 
-    <fragment android:id="@+id/fragment_register"
+    <fragment
+        android:id="@+id/fragment_register"
         android:name="com.yumin.pomodoro.fragment.RegisterFragment"
         android:label="@string/register_fragment_label"
-        tools:layout="@layout/fragment_register"/>
-        
-    <fragment android:id="@+id/fragment_reset_password"
+        tools:layout="@layout/fragment_register" />
+
+    <fragment
+        android:id="@+id/fragment_reset_password"
         android:name="com.yumin.pomodoro.fragment.ResetPasswordFragment"
         android:label="@string/reset_password_fragment_label"
-        tools:layout="@layout/fragment_reset_password"/>
+        tools:layout="@layout/fragment_reset_password" />
 
-    <fragment android:id="@+id/fragment_backup"
+    <fragment
+        android:id="@+id/fragment_backup"
         android:name="com.yumin.pomodoro.fragment.BackupFragment"
         android:label="@string/menu_backup"
-        tools:layout="@layout/fragment_backup"/>
+        tools:layout="@layout/fragment_backup" />
 
-    <fragment android:id="@+id/fragment_restore"
+    <fragment
+        android:id="@+id/fragment_restore"
         android:name="com.yumin.pomodoro.fragment.RestoreFragment"
         android:label="@string/menu_restore"
-        tools:layout="@layout/fragment_restore"/>
+        tools:layout="@layout/fragment_restore" />
 
-    <fragment android:id="@+id/fragment_expired_mission"
+    <fragment
+        android:id="@+id/fragment_expired_mission"
         android:name="com.yumin.pomodoro.fragment.ExpiredMissionFragment"
         android:label="@string/menu_expired_mission"
-        tools:layout="@layout/fragment_expired_mission"/>
+        tools:layout="@layout/fragment_expired_mission" />
 
+    <action
+        android:id="@+id/action_global_editMissionFragment"
+        app:destination="@+id/edit_mission_fragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left" />
+
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@+id/fragment_login"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left" />
+
+    <action
+        android:id="@+id/action_global_addMissionFragment"
+        app:destination="@+id/add_mission_fragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left" />
 </navigation>

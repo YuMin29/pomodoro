@@ -8,7 +8,6 @@ import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -101,7 +100,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
             public void onEdit(UserMission userMission, int groupPosition, int childPosition) {
                 LogUtil.logD(TAG, "[onEdit] groupPosition = " + groupPosition + " ,childPosition = " + childPosition);
                 MissionManager.getInstance().setStrEditId(userMission);
-                navigate(R.id.edit_mission_fragment);
+                navigate(R.id.action_global_editMissionFragment);
             }
         });
         mFragmentHomeBinding.homeListView.setAdapter(mExpandableViewAdapter);
@@ -237,7 +236,7 @@ public class HomeFragment extends DataBindingFragment implements MainActivity.Re
 
     public class ClickProxy{
         public void addMission(){
-            navigate(R.id.add_mission_fragment);
+            navigate(R.id.action_global_addMissionFragment);
         }
     }
 }
