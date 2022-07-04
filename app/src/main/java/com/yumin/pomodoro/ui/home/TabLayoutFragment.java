@@ -12,21 +12,19 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.databinding.FragmentMainBinding;
 import com.yumin.pomodoro.ui.calender.CalenderFragment;
-import com.yumin.pomodoro.ui.home.HomeFragment;
 import com.yumin.pomodoro.ui.main.MainActivity;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.base.DataBindingConfig;
 import com.yumin.pomodoro.base.DataBindingFragment;
 import com.yumin.pomodoro.ui.mission.expired.ExpiredMissionFragment;
-import com.yumin.pomodoro.ui.home.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends DataBindingFragment implements MainActivity.RefreshHomeFragment{
+public class TabLayoutFragment extends DataBindingFragment implements MainActivity.RefreshHomeFragment{
     private static final String TAG = "[MainFragment]";
     private String[] mTabTitles = null ;
-    MainViewModel mMainViewModel = null;
+    TabLayoutViewModel mMainViewModel = null;
     FragmentMainBinding mFragmentMainBinding = null;
     List<Fragment> mTabFragmentList = null;
 
@@ -35,7 +33,7 @@ public class MainFragment extends DataBindingFragment implements MainActivity.Re
 
     @Override
     protected void initViewModel() {
-        mMainViewModel = getFragmentScopeViewModel(MainViewModel.class);
+        mMainViewModel = getFragmentScopeViewModel(TabLayoutViewModel.class);
     }
 
     @Override
@@ -57,9 +55,9 @@ public class MainFragment extends DataBindingFragment implements MainActivity.Re
             mFragmentMainBinding.tabLayout.addTab(mFragmentMainBinding.tabLayout.newTab().setText(mTabTitles[i]),i);
         }
 
-        mTabFragmentList.add(new HomeFragment());
-        mTabFragmentList.add(new CalenderFragment());
-        mTabFragmentList.add(new ExpiredMissionFragment());
+        mTabFragmentList.add(HomeFragment.newInstance());
+        mTabFragmentList.add(CalenderFragment.newInstance());
+        mTabFragmentList.add(ExpiredMissionFragment.newInstance());
 
         mFragmentMainBinding.viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager(),FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @NonNull

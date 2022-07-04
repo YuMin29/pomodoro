@@ -1,21 +1,27 @@
 package com.yumin.pomodoro.ui.home;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
+
+import com.yumin.pomodoro.base.BaseApplication;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.data.repository.room.RoomApiServiceImpl;
 import com.yumin.pomodoro.data.repository.room.RoomRepository;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.TimeToMillisecondUtil;
-import com.yumin.pomodoro.base.BaseApplication;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
-    private RoomRepository mDataRepository;
+    public MutableLiveData<String> finishedMissionCount = new MutableLiveData<>();
+    public MutableLiveData<String> unfinishedMissionCount = new MutableLiveData<>();
+    public MutableLiveData<String> totalFinishedTime = new MutableLiveData<>();
     LiveData<List<UserMission>> mTodayNoneRepeatMissions;
     LiveData<List<UserMission>> mTodayRepeatEverydayMissions;
     LiveData<List<UserMission>> mTodayRepeatCustomizeMissions;
@@ -23,6 +29,7 @@ public class HomeViewModel extends AndroidViewModel {
     LiveData<List<UserMission>> mComingRepeatEverydayMissions;
     LiveData<List<UserMission>> mComingRepeatCustomizeMissions;
     LiveData<List<UserMission>> mCompletedMissions;
+    private RoomRepository mDataRepository;
 
     public HomeViewModel(Application application) {
         super(application);
@@ -46,35 +53,29 @@ public class HomeViewModel extends AndroidViewModel {
         mComingNoneRepeatMissions = mDataRepository.getComingNoneRepeatMissions();
         mComingRepeatEverydayMissions = mDataRepository.getComingRepeatEverydayMissions();
         mComingRepeatCustomizeMissions = mDataRepository.getComingRepeatCustomizeMissions();
+        finishedMissionCount.postValue("0");
+        totalFinishedTime.postValue("0");
+        totalFinishedTime.postValue("0");
     }
 
     public MediatorLiveData<Result> getTodayMissions() {
         // observe today missions
         MediatorLiveData<Result> todayMissions = new MediatorLiveData<Result>();
         final Result result = new Result();
-        todayMissions.addSource(mTodayNoneRepeatMissions, new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG, "mTodayNoneRepeatMissions [onChanged] SIZE = " + userMissions.size());
-                result.setNoneRepeatMissions(userMissions);
-                todayMissions.setValue(result);
-            }
+        todayMissions.addSource(mTodayNoneRepeatMissions, userMissions -> {
+            LogUtil.logD(TAG, "mTodayNoneRepeatMissions [onChanged] SIZE = " + userMissions.size());
+            result.setNoneRepeatMissions(userMissions);
+            todayMissions.setValue(result);
         });
-        todayMissions.addSource(mTodayRepeatEverydayMissions, new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG, "mTodayRepeatEverydayMissions [onChanged] SIZE = " + userMissions.size());
-                result.setRepeatEverydayMissions(userMissions);
-                todayMissions.setValue(result);
-            }
+        todayMissions.addSource(mTodayRepeatEverydayMissions, userMissions -> {
+            LogUtil.logD(TAG, "mTodayRepeatEverydayMissions [onChanged] SIZE = " + userMissions.size());
+            result.setRepeatEverydayMissions(userMissions);
+            todayMissions.setValue(result);
         });
-        todayMissions.addSource(mTodayRepeatCustomizeMissions, new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG, "mTodayRepeatCustomizeMissions [onChanged] SIZE = " + userMissions.size());
-                result.setRepeatCustomizeMissions(userMissions);
-                todayMissions.setValue(result);
-            }
+        todayMissions.addSource(mTodayRepeatCustomizeMissions, userMissions -> {
+            LogUtil.logD(TAG, "mTodayRepeatCustomizeMissions [onChanged] SIZE = " + userMissions.size());
+            result.setRepeatCustomizeMissions(userMissions);
+            todayMissions.setValue(result);
         });
         return todayMissions;
     }
@@ -83,29 +84,20 @@ public class HomeViewModel extends AndroidViewModel {
         // observe coming missions
         MediatorLiveData<Result> comingMissions = new MediatorLiveData<>();
         final Result result = new Result();
-        comingMissions.addSource(mComingNoneRepeatMissions, new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG, "mComingNoneRepeatMissions [onChanged] SIZE = " + userMissions.size());
-                result.setNoneRepeatMissions(userMissions);
-                comingMissions.setValue(result);
-            }
+        comingMissions.addSource(mComingNoneRepeatMissions, userMissions -> {
+            LogUtil.logD(TAG, "mComingNoneRepeatMissions [onChanged] SIZE = " + userMissions.size());
+            result.setNoneRepeatMissions(userMissions);
+            comingMissions.setValue(result);
         });
-        comingMissions.addSource(mComingRepeatEverydayMissions, new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG, "mComingRepeatEverydayMissions [onChanged] SIZE = " + userMissions.size());
-                result.setRepeatEverydayMissions(userMissions);
-                comingMissions.setValue(result);
-            }
+        comingMissions.addSource(mComingRepeatEverydayMissions, userMissions -> {
+            LogUtil.logD(TAG, "mComingRepeatEverydayMissions [onChanged] SIZE = " + userMissions.size());
+            result.setRepeatEverydayMissions(userMissions);
+            comingMissions.setValue(result);
         });
-        comingMissions.addSource(mComingRepeatCustomizeMissions, new Observer<List<UserMission>>() {
-            @Override
-            public void onChanged(List<UserMission> userMissions) {
-                LogUtil.logD(TAG, "mComingRepeatCustomizeMissions [onChanged] SIZE = " + userMissions.size());
-                result.setRepeatCustomizeMissions(userMissions);
-                comingMissions.setValue(result);
-            }
+        comingMissions.addSource(mComingRepeatCustomizeMissions, userMissions -> {
+            LogUtil.logD(TAG, "mComingRepeatCustomizeMissions [onChanged] SIZE = " + userMissions.size());
+            result.setRepeatCustomizeMissions(userMissions);
+            comingMissions.setValue(result);
         });
         return comingMissions;
     }
@@ -113,6 +105,29 @@ public class HomeViewModel extends AndroidViewModel {
     public LiveData<List<UserMission>> getCompletedMissions() {
         LogUtil.logE(TAG, "[getCompletedMissions]");
         return mCompletedMissions;
+    }
+
+    public void updateUI(List<UserMission> completeMissions, int todayMissionSize) {
+        if (completeMissions == null) {
+            finishedMissionCount.postValue("0");
+        } else {
+            finishedMissionCount.postValue(String.valueOf(completeMissions.size()));
+            int usedTime = 0;
+            for (UserMission mission : completeMissions) {
+                usedTime += (mission.getTime() * mission.getGoal());
+            }
+            float num = (float) usedTime / 60;
+            DecimalFormat decimalFormat = new DecimalFormat("0.0");
+            totalFinishedTime.postValue(decimalFormat.format(num) + "h");
+            // unfinished mission count - finished mission count
+
+            if (todayMissionSize >= 0)
+                unfinishedMissionCount.postValue(String.valueOf(todayMissionSize - completeMissions.size()));
+        }
+    }
+
+    public void deleteMission(UserMission mission) {
+        mDataRepository.deleteMission(mission);
     }
 
     public class Result {
@@ -135,9 +150,5 @@ public class HomeViewModel extends AndroidViewModel {
         public boolean isCompleted() {
             return (mNoneRepeatMissions != null && mRepeatEverydayMissions != null && mRepeatCustomizeMissions != null);
         }
-    }
-
-    public void deleteMission(UserMission mission) {
-        mDataRepository.deleteMission(mission);
     }
 }

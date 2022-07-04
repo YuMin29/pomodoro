@@ -5,7 +5,7 @@
     <data>
         <variable
             name="mainViewModel"
-            type="com.yumin.pomodoro.ui.home.MainViewModel" />
+            type="com.yumin.pomodoro.ui.home.TabLayoutViewModel" />
 
     </data>
 

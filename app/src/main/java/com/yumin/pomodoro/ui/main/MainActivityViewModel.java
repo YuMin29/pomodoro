@@ -25,6 +25,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MutableLiveData<String> getUserName() {
         return userName;
     }
+
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
     }
@@ -57,6 +58,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             public void onComplete(@NonNull Task<Void> task) {
                 LogUtil.logE(TAG, "sign out [onComplete]");
                 mMainActivityNavigator.refresh();
+                userName.setValue(getApplication().getString(R.string.nav_header_title_no_user));
             }
         });
     }

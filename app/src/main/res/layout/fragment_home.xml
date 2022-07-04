@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/colorPrimaryText"
-                    android:text="0"
+                    android:text="@{homeViewModel.finishedMissionCount}"
                     android:textSize="32sp"
                     android:layout_weight="4"/>
             </LinearLayout>
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/colorPrimaryText"
-                    android:text="0"
+                    android:text="@{homeViewModel.unfinishedMissionCount}"
                     android:textSize="32sp"
                     android:layout_weight="4"/>
             </LinearLayout>
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/colorPrimaryText"
-                    android:text="0"
+                    android:text="@{homeViewModel.totalFinishedTime}"
                     android:textSize="32sp"
                     android:layout_weight="4"/>
             </LinearLayout>
@@ -139,7 +139,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_item" />
+            app:layout_constraintTop_toBottomOf="@+id/add_item"
+            android:animateLayoutChanges="true"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
