@@ -53,7 +53,7 @@ public class LoginViewModel extends AndroidViewModel {
     private LiveData<List<MissionState>> mRoomMissionState;
     private MediatorLiveData mResultMediatorLiveData = new MediatorLiveData();
     private MutableLiveData<Boolean> mFirebaseUserExist = new MutableLiveData<>();
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private LoginNavigator mLoginNavigator;
     private FirebaseAuth mFirebaseAuth;
@@ -220,7 +220,7 @@ public class LoginViewModel extends AndroidViewModel {
                 UserMission insertUserMission = userMission;
                 insertUserMission.setId(0);
 
-                disposables.add(mRoomRepository.addMissionAndGetId(insertUserMission)
+                compositeDisposable.add(mRoomRepository.addMissionAndGetId(insertUserMission)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<String>() {
@@ -246,8 +246,8 @@ public class LoginViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if(disposables != null && !disposables.isDisposed()){
-            disposables.dispose();
+        if(compositeDisposable != null && !compositeDisposable.isDisposed()){
+            compositeDisposable.dispose();
         }
     }
 

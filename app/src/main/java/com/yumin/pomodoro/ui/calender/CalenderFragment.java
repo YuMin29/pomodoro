@@ -180,11 +180,12 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         LogUtil.logE(TAG,"[onCalendarSelect] day = " +currentTime);
         List<MissionState> missionStateList = mMissionStateMap.get(Long.valueOf(currentTime));
         if (null == missionStateList) {
-            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.VISIBLE);
-            mFragmentCalenderBinding.recyclerView.setVisibility(View.GONE);
+//            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.VISIBLE);
+//            mFragmentCalenderBinding.recyclerView.setVisibility(View.GONE);
+            setUpRecyclerViewAdapter(null, null);
         } else {
             setUpRecyclerViewAdapter(mUserMissionMap.get(currentTime), mMissionStateMap.get(Long.valueOf(currentTime)));
-            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.GONE);
+//            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.GONE);
             mFragmentCalenderBinding.recyclerView.setVisibility(View.VISIBLE);
         }
     }

@@ -79,8 +79,8 @@ public class ItemDateView extends LinearLayout {
 
         if (compareResult == 0)
             mViewBinding.valTextview.setText("TODAY");
-        else
-            mViewBinding.valTextview.setTextSize(26);
+//        else
+//            mViewBinding.valTextview.setTextSize(26);
 
         mViewBinding.valTextview.setText(simpleDateFormat.format(date));
 

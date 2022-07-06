@@ -7,8 +7,6 @@ import com.yumin.pomodoro.data.UserMission;
 
 import java.util.List;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Single;
 
 public interface ApiService<T,E> {
     LiveData<List<T>> getMissions();

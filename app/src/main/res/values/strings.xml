@@ -22,7 +22,7 @@
     <string name="home_not_finish_mission">今日待辦任務</string>
     <string name="home_finish_mission">今日完成任務</string>
     <string name="count_list_time">預計時間</string>
-    <string name="home_finish_time">已用時間</string>
+    <string name="home_finish_time">今日已用時間</string>
     <string name="menu_expired_mission">過期任務</string>
     <string name="menu_lock">解鎖高級版</string>
 
@@ -202,4 +202,9 @@
     <string name="premium_function">高級版功能</string>
     <string name="premium_description">請付費解鎖此功能</string>
     <string name="debug_data_binding_warning">data binding warning</string>
+
+    <!--empty state-->
+    <string name="empty_screen">We do not have anything\nhere right now.</string>
+    <string name="please_retry">Please Retry</string>
+    <string name="retry">Retry</string>
 </resources>

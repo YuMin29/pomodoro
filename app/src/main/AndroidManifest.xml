@@ -40,6 +40,10 @@
 
         </activity>
 
+        <activity android:name=".ui.blog.BlogActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/BlogTheme"/>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

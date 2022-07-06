@@ -2,6 +2,7 @@ package com.yumin.pomodoro.ui.main;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -9,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
@@ -26,6 +28,7 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yumin.pomodoro.BR;
 import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.base.DataBindingActivity;
@@ -33,6 +36,7 @@ import com.yumin.pomodoro.base.DataBindingConfig;
 import com.yumin.pomodoro.base.MissionManager;
 import com.yumin.pomodoro.data.UserMission;
 import com.yumin.pomodoro.databinding.ActivityMainBinding;
+import com.yumin.pomodoro.ui.blog.BlogActivity;
 import com.yumin.pomodoro.utils.LogUtil;
 import com.yumin.pomodoro.utils.PrefUtils;
 
@@ -67,6 +71,12 @@ public class MainActivity extends DataBindingActivity implements NavController.O
         this.getSupportActionBar().hide();
         mActivityMainBinding.topView.setPadding(0, getStatusBarHeight(), 0, 0);
         mActivityMainBinding.bottomNavigationView.getMenu().getItem(1).setEnabled(false);
+        mActivityMainBinding.bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem item) {
+                // empty block
+            }
+        });
 
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         mNavController.addOnDestinationChangedListener(this);
@@ -186,6 +196,7 @@ public class MainActivity extends DataBindingActivity implements NavController.O
         mActivityMainBinding.userSignIn.setVisibility(enable ? View.GONE : View.VISIBLE);
         mActivityMainBinding.bottomNavigationView.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
         mActivityMainBinding.bottomAppBar.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
+        mActivityMainBinding.articles.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
 
         View navHostFragment = findViewById(R.id.nav_host_fragment_activity_main);
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) navHostFragment.getLayoutParams();
@@ -226,6 +237,12 @@ public class MainActivity extends DataBindingActivity implements NavController.O
     }
 
     @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition( R.anim.slide_in_top, R.anim.slide_from_top );
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         return true;
@@ -259,6 +276,11 @@ public class MainActivity extends DataBindingActivity implements NavController.O
         public void onFabClick(){
             setFabExplodeBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
             startFabExplodeAnimation(null,null);
+        }
+
+        public void article(){
+            startActivity(BlogActivity.newIntent(MainActivity.this));
+
         }
     }
 }

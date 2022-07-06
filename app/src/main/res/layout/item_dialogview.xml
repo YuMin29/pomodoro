@@ -11,10 +11,8 @@
         android:id="@+id/item_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp"
+        android:padding="5dp"
         android:background="@drawable/home_item_shape"
         android:orientation="vertical">
 
@@ -30,8 +28,8 @@
 
         <com.yumin.pomodoro.customize.ColorView
             android:id="@+id/colorView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal|center_vertical"/>
 
@@ -50,7 +48,6 @@
             android:gravity="center"
             android:singleLine="false"
             android:text="@{itemDescription}"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="14sp" />
+            android:textColor="@color/colorPrimaryText"/>
     </LinearLayout>
 </layout>
