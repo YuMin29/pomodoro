@@ -17,6 +17,7 @@ import com.yumin.pomodoro.R;
 import com.yumin.pomodoro.base.DataBindingConfig;
 import com.yumin.pomodoro.base.DataBindingFragment;
 import com.yumin.pomodoro.ui.mission.expired.ExpiredMissionFragment;
+import com.yumin.pomodoro.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,8 @@ public class TabLayoutFragment extends DataBindingFragment implements MainActivi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity)getActivity()).fullScreenMode(false);
+        LogUtil.logD(TAG,"[onViewCreated] fullScreenMode");
+        ((MainActivity)getActivity()).fullScreenMode(false,false);
         mFragmentMainBinding = (FragmentMainBinding) getBinding();
         // init tab layout items
         mTabFragmentList = new ArrayList<>();

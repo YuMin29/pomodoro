@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
@@ -121,7 +123,8 @@ public class TimerFragment extends DataBindingFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((MainActivity)getActivity()).fullScreenMode(true);
+        LogUtil.logD(TAG,"[onCreate] fullScreenMode");
+        ((MainActivity)getActivity()).fullScreenMode(true,true);
         mBreakBackgroundColor = ContextCompat.getColor(getActivity(),R.color.break_timer_background);
         mFloatViewBackgroundColor = this.getArguments() != null ? this.getArguments().getInt(BUNDLE_FLOAT_VIEW_BACKGROUND_COLOR,
                 ContextCompat.getColor(getActivity(),R.color.colorPrimary)) : ContextCompat.getColor(getActivity(),R.color.colorPrimary);
@@ -231,7 +234,7 @@ public class TimerFragment extends DataBindingFragment {
         mTimerViewModel.getTimerServiceStatus().observe(getViewLifecycleOwner(), integer -> {
             mTimerStatus = TimerStatus.values()[integer];
             if (mTimerStatus == TimerStatus.BREAK_START) {
-                mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(mBreakBackgroundColor);
+                setTimerLayoutColor(mBreakBackgroundColor);
             }
 
             if (mTimerStatus == TimerStatus.MISSION_INIT) {
@@ -243,7 +246,7 @@ public class TimerFragment extends DataBindingFragment {
             }
 
             if (mTimerStatus == TimerStatus.MISSION_START) {
-                mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(mMissionBackgroundColor);
+                setTimerLayoutColor(mMissionBackgroundColor);
             }
 
             if (mTimerStatus == TimerStatus.MISSION_FINISHED) {
@@ -253,6 +256,14 @@ public class TimerFragment extends DataBindingFragment {
         });
 
         mTimerViewModel.getAutoStartNextMission().observe(getViewLifecycleOwner(), aBoolean -> mIsAutoStartMission = aBoolean);
+    }
+
+    private void setTimerLayoutColor(int color) {
+        mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(color);
+        mFragmentTimerBinding.imageViewStartPause.setBackgroundColor(color);
+        mFragmentTimerBinding.timerContinue.setBackgroundColor(color);
+        mFragmentTimerBinding.stop.setTextColor(color);
+        mFragmentTimerBinding.stop.setStrokeColor(ColorStateList.valueOf(color));
     }
 
     String msTimeFormatter(long milliSeconds) {
@@ -296,7 +307,7 @@ public class TimerFragment extends DataBindingFragment {
     }
 
     public void initTimerLayout(long time, int backgroundColor) {
-        mFragmentTimerBinding.timerConstraintLayout.setBackgroundColor(backgroundColor);
+        setTimerLayoutColor(backgroundColor);
         mFragmentTimerBinding.imageViewStartPause.setText(R.string.timer_start);
         mFragmentTimerBinding.textViewTime.setText(msTimeFormatter(time));
     }
@@ -342,7 +353,8 @@ public class TimerFragment extends DataBindingFragment {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (mTimerStatus == TimerStatus.MISSION_START) {
+                        if (mTimerStatus == TimerStatus.MISSION_START ||
+                                mTimerStatus == TimerStatus.BREAK_START) {
                             LogUtil.logD(TAG,"[onAnimationEnd]");
                             mFragmentTimerBinding.timerContinue.setVisibility(View.INVISIBLE);
                             mFragmentTimerBinding.stop.setVisibility(View.INVISIBLE);

@@ -48,7 +48,9 @@ public class SettingsFragment extends DataBindingFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity)getActivity()).fullScreenMode(false);
+
+        LogUtil.logD("[SettingsFragment]","[onViewCreated] fullScreenMode");
+        ((MainActivity)getActivity()).fullScreenMode(false,false);
 //        ((MainActivity)getActivity()).fabVisible(View.INVISIBLE);
         mFragmentSettingsBinding = (FragmentSettingsBinding) getBinding();
         observeViewModel();

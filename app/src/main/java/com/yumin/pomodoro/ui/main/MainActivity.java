@@ -190,22 +190,26 @@ public class MainActivity extends DataBindingActivity implements NavController.O
         mRefreshHomeFragment.onRefresh();
     }
 
-    public void fullScreenMode(boolean enable) {
-        LogUtil.logD(TAG,"[fullScreenMode] enable = "+enable);
+    public void fullScreenMode(boolean enable, boolean disableFab) {
+        LogUtil.logD(TAG,"[fullScreenMode] enable = "+enable +", disableFab = "+disableFab);
         mActivityMainBinding.topView.setVisibility(enable ? View.GONE : View.VISIBLE);
-        mActivityMainBinding.userSignIn.setVisibility(enable ? View.GONE : View.VISIBLE);
+//        mActivityMainBinding.userSignIn.setVisibility(enable ? View.GONE : View.VISIBLE);
         mActivityMainBinding.bottomNavigationView.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
         mActivityMainBinding.bottomAppBar.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
-        mActivityMainBinding.articles.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
+//        mActivityMainBinding.articles.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
 
         View navHostFragment = findViewById(R.id.nav_host_fragment_activity_main);
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) navHostFragment.getLayoutParams();
         layoutParams.setMargins(0, 0, 0, enable ? 0 : getActionBarHeight());
         navHostFragment.setLayoutParams(layoutParams);
 
-        mActivityMainBinding.fab.setVisibility(enable? View.INVISIBLE : View.VISIBLE);
+        if (disableFab)
+            mActivityMainBinding.fab.hide();
+        else
+            mActivityMainBinding.fab.show();
+
         // add fab animation
-        if (!enable) {
+        if (!disableFab) {
             scaleViewFromCenter(mActivityMainBinding.fab);
         }
     }
@@ -260,7 +264,10 @@ public class MainActivity extends DataBindingActivity implements NavController.O
     public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
         if (navDestination.getId() == R.id.add_mission_fragment ||
             navDestination.getId() == R.id.edit_mission_fragment) {
-            mActivityMainBinding.userSignIn.setVisibility(View.INVISIBLE);
+//            mActivityMainBinding.userSignIn.setVisibility(View.INVISIBLE);
+
+            LogUtil.logD(TAG,"[onDestinationChanged] fullScreenMode");
+            fullScreenMode(false,true);
         }
     }
 

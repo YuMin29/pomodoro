@@ -37,7 +37,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/ic_rabbit" />
+            app:srcCompat="@drawable/ic_tomato_24" />
 
         <TextView
             android:id="@+id/tv_message"
@@ -57,7 +57,7 @@
             android:text="@string/please_retry"
             android:textColor="@color/gray" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_retry"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
@@ -65,7 +65,9 @@
             android:layout_marginTop="16dp"
             android:onClick="@{() -> viewModel.onRetryClick()}"
             android:text="@string/retry"
-            android:textSize="20sp" />
+            android:backgroundTint="@color/colorPrimary"
+            android:textSize="20sp"
+            app:cornerRadius="25dp"/>
     </LinearLayout>
 
 </layout>

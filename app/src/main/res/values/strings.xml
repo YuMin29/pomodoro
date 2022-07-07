@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">pomodoro</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+<!--    <string name="navigation_drawer_open">Open navigation drawer</string>-->
+<!--    <string name="navigation_drawer_close">Close navigation drawer</string>-->
     <string name="nav_header_title_no_user">尚未登錄</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+<!--    <string name="nav_header_subtitle">android.studio@android.com</string>-->
+<!--    <string name="nav_header_desc">Navigation header</string>-->
+<!--    <string name="action_settings">Settings</string>-->
 
     <string name="login_fragment_label">登入</string>
     <string name="register_fragment_label">註冊</string>
@@ -14,48 +14,48 @@
     <string name="menu_home">任務管理</string>
     <string name="menu_backup">備份數據</string>
     <string name="menu_restore">還原數據</string>
-    <string name="menu_total">統計</string>
+<!--    <string name="menu_total">統計</string>-->
     <string name="menu_calender">日曆</string>
     <string name="menu_save_mission">已完成任務</string>
     <string name="menu_settings">設置</string>
-    <string name="menu_category">Category</string>
+<!--    <string name="menu_category">Category</string>-->
     <string name="home_not_finish_mission">今日待辦任務</string>
     <string name="home_finish_mission">今日完成任務</string>
-    <string name="count_list_time">預計時間</string>
+<!--    <string name="count_list_time">預計時間</string>-->
     <string name="home_finish_time">今日已用時間</string>
     <string name="menu_expired_mission">過期任務</string>
-    <string name="menu_lock">解鎖高級版</string>
+<!--    <string name="menu_lock">解鎖高級版</string>-->
 
     <string name="mission_time">番茄時間</string>
     <string name="mission_break">短休息時間</string>
-    <string name="mission_long_break">長休息時間</string>
+<!--    <string name="mission_long_break">長休息時間</string>-->
     <string name="mission_repeat">重複</string>
     <string name="mission_goal">番茄數</string>
     <string name="mission_finish_goal">已完成番茄數</string>
     <string name="mission_theme">主題</string>
     <string name="mission_sound">背景音</string>
     <string name="mission_vibrate">震動</string>
-    <string name="mission_sound_level">音量</string>
-    <string name="mission_notification">顯示通知</string>
+<!--    <string name="mission_sound_level">音量</string>-->
+<!--    <string name="mission_notification">顯示通知</string>-->
     <string name="mission_operate_day">執行日</string>
     <string name="mission_keep_awake">保持亮屏</string>
     <string name="mission_name">任務名稱</string>
-    <string name="mission_delete">刪除</string>
-    <string name="mission_edit">編輯</string>
+<!--    <string name="mission_delete">刪除</string>-->
+<!--    <string name="mission_edit">編輯</string>-->
 
     <string name="minute">分鐘</string>
-    <string name="default_val">0</string>
+<!--    <string name="default_val">0</string>-->
     <string name="add_mission">新增蕃茄任務</string>
     <string name="edit_mission">編輯蕃茄任務</string>
     <string name="mission_timer">蕃茄時鐘</string>
     <string name="category_today">今天</string>
     <string name="category_coming">即將到來</string>
 
-    <string name="mission_break_timer">蕃茄休息時鐘</string>
-    <string name="timer_break">休息一下</string>
-    <string name="timer_format">%tm:%ts</string>
-    <string name="type_mission">MISSION</string>
-    <string name="type_break">BREAK</string>
+<!--    <string name="mission_break_timer">蕃茄休息時鐘</string>-->
+<!--    <string name="timer_break">休息一下</string>-->
+<!--    <string name="timer_format">%tm:%ts</string>-->
+<!--    <string name="type_mission">MISSION</string>-->
+<!--    <string name="type_break">BREAK</string>-->
     <string name="fragment_range_calender">range</string>
 
     <array name="repeat_array">
@@ -119,9 +119,9 @@
         <item>Woodpecker Peck</item>
     </array>
 
-    <string-array name="ringtone_name">
-        <item></item>
-    </string-array>
+<!--    <string-array name="ringtone_name">-->
+<!--        <item></item>-->
+<!--    </string-array>-->
 
     <string-array name="background_music_list">
         <item>無</item>
@@ -145,7 +145,7 @@
 
     <string name="finish_mission">結束任務</string>
     <string name="check_finish_mission">確認結束任務？</string>
-    <string name="notification_title">蕃茄任務:</string>
+<!--    <string name="notification_title">蕃茄任務:</string>-->
     <string name="notification_break_message">休息一下吧!</string>
     <string name="notification_mission_message">執行蕃茄任務!</string>
     <string name="notification_finished_message">任務完成</string>
@@ -175,18 +175,18 @@
     <string name="slide_4_title">檢視您的任務狀態</string>
     <string name="slide_4_desc">透過日曆及過期任務 一覽無遺您的任務狀態</string>
 
-    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
-    <string name="play_again">Play Again</string>
+<!--    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>-->
+<!--    <string name="play_again">Play Again</string>-->
 
     <string name="next">下一頁</string>
     <string name="skip">略過</string>
     <string name="start">開始!</string>
 
     <string name="network_warning">請設置網路</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+<!--    <string name="dummy_button">Dummy Button</string>-->
+<!--    <string name="dummy_content">DUMMY\nCONTENT</string>-->
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+<!--    <string name="hello_blank_fragment">Hello blank fragment</string>-->
 
     <array name="tab_titles">
         <item>@string/menu_home</item>
@@ -201,10 +201,12 @@
 
     <string name="premium_function">高級版功能</string>
     <string name="premium_description">請付費解鎖此功能</string>
-    <string name="debug_data_binding_warning">data binding warning</string>
+<!--    <string name="debug_data_binding_warning">data binding warning</string>-->
 
     <!--empty state-->
-    <string name="empty_screen">We do not have anything\nhere right now.</string>
-    <string name="please_retry">Please Retry</string>
-    <string name="retry">Retry</string>
+    <string name="blog_title">科普番茄任務</string>
+    <string name="empty_screen">目前沒有任何文章</string>
+    <string name="please_retry">請重試</string>
+    <string name="retry">重試</string>
+    <string name="color_selector">請選擇顏色</string>
 </resources>

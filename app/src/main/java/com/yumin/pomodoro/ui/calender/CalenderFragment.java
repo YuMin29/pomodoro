@@ -171,8 +171,23 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
         LogUtil.logE(TAG,"[onCalendarSelect] calendar.getYear() = "+calendar.getYear()+
                         ",calendar.getMonth() = "+calendar.getMonth()+",calendar.getDay() = "+calendar.getDay());
+
+        mTextMonthDay.setText(calendar.getMonth() + getString(R.string.calender_month)
+                + calendar.getDay() + getString(R.string.calender_day));
+
+        mTextLunar.setText(isToday(calendar) ? getString(R.string.calender_today) : "");
+
+        mTextLunar.setVisibility(View.VISIBLE);
+        mTextYear.setVisibility(View.VISIBLE);
+
         if (isClick)
             updateRecyclerViewData(calendar);
+    }
+
+    private boolean isToday(Calendar calendar) {
+        return mCalendarView.getCurYear() == calendar.getYear() &&
+                mCalendarView.getCurMonth() == calendar.getMonth() &&
+                mCalendarView.getCurDay() == calendar.getDay();
     }
 
     private void updateRecyclerViewData(Calendar calendar){
@@ -180,19 +195,17 @@ public class CalenderFragment extends DataBindingFragment implements CalendarVie
         LogUtil.logE(TAG,"[onCalendarSelect] day = " +currentTime);
         List<MissionState> missionStateList = mMissionStateMap.get(Long.valueOf(currentTime));
         if (null == missionStateList) {
-//            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.VISIBLE);
-//            mFragmentCalenderBinding.recyclerView.setVisibility(View.GONE);
             setUpRecyclerViewAdapter(null, null);
         } else {
             setUpRecyclerViewAdapter(mUserMissionMap.get(currentTime), mMissionStateMap.get(Long.valueOf(currentTime)));
-//            mFragmentCalenderBinding.noMissionStateLinearLayout.setVisibility(View.GONE);
             mFragmentCalenderBinding.recyclerView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onYearChange(int year) {
-
+        LogUtil.logD(TAG,"[onYearChange] YEAR = "+year);
+        mTextMonthDay.setText(String.valueOf(year));
     }
 
     public class ClickProxy {

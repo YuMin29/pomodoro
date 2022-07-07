@@ -28,7 +28,8 @@ public class AddMissionFragment extends MissionBaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity)getActivity()).setFabVisibility(View.INVISIBLE);
+////        ((MainActivity)getActivity()).setFabVisibility(View.INVISIBLE);
+//        ((MainActivity)getActivity()).fullScreenMode(false,true);
         mFragmentAddMissionBinding = (FragmentAddMissionBinding) getBinding();
         mFragmentAddMissionBinding.missionAttributeView.getItemRepeat().setOnRepeatTypeListener(this);
         mFragmentAddMissionBinding.missionAttributeView.getItemOperate().setOperateDayListener(this);

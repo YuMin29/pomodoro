@@ -222,14 +222,16 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/backImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:theme="@style/Ripple"
             android:onClick="@{()->loginClickProxy.back()}"
-            android:src="@drawable/ic_baseline_arrow_back_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_baseline_arrow_back_30"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

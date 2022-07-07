@@ -47,8 +47,8 @@ public class LoginFragment extends DataBindingFragment implements LoginNavigator
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtil.logD(TAG,"[onCreate]");
-        ((MainActivity)getActivity()).fullScreenMode(true);
+        LogUtil.logD(TAG,"[onCreate] fullScreenMode");
+        ((MainActivity)getActivity()).fullScreenMode(true,true);
 
         FacebookSdk.sdkInitialize(getContext());
 

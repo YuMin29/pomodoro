@@ -59,7 +59,7 @@ public class BlogActivity extends DataBindingActivity implements BlogRecyclerVie
         });
 
         setSupportActionBar(mActivityBlogBinding.toolbar);
-        getSupportActionBar().setTitle("Blog");
+        getSupportActionBar().setTitle(R.string.blog_title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

@@ -24,6 +24,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
+            android:padding="10dp"
             android:background="@drawable/mission_item_shape"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -97,6 +98,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
+            android:padding="10dp"
             android:background="@drawable/mission_item_shape"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -148,11 +150,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="32dp"
             android:background="@drawable/mission_item_shape"
             android:orientation="vertical"
+            android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mission_settings_linearLayout">
 
@@ -259,4 +263,4 @@
 
         </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout></layout>
+    </androidx.constraintlayout.widget.ConstraintLayout></layout>

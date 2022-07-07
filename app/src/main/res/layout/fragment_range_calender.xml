@@ -12,49 +12,48 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryText"
         android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/iv_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="12dp"
+                android:contentDescription="@string/app_name"
+                android:onClick="@{()->rangeCalenderClickProxy.onClear()}"
+                android:padding="7dp"
+                android:scaleType="centerInside"
+                android:theme="@style/Ripple"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_baseline_close_30"
+                android:tint="#333333" />
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingLeft="16dp"
+                android:layout_marginRight="42dp"
+                android:gravity="center"
                 android:text="@string/range_choose"
-                android:textColor="@color/colorPrimaryText"
                 android:textSize="22sp"
                 tools:ignore="RelativeOverlap,RtlSymmetry" />
-
-            <ImageView
-                android:id="@+id/iv_clear"
-                android:layout_width="32dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="12dp"
-                android:background="@drawable/bg_ripple"
-                android:contentDescription="@string/app_name"
-                android:onClick="@{()->rangeCalenderClickProxy.onClear()}"
-                android:padding="7dp"
-                android:scaleType="centerInside"
-                android:src="@mipmap/ic_clear"
-                android:tint="#333333" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/tv_commit"
             app:layout_constraintEnd_toEndOf="parent"
@@ -70,10 +69,10 @@
                     android:id="@+id/calendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimaryText"
+                    android:background="@color/calender_background"
                     app:calendar_height="46dp"
                     app:calendar_padding="10dp"
-                    app:current_month_lunar_text_color="#CFCFCF"
+                    app:current_month_lunar_text_color="@color/colorPrimaryDark"
                     app:current_month_text_color="#4f4f4f"
                     app:day_text_size="18sp"
                     app:max_select_range="-1"
@@ -87,7 +86,7 @@
                     app:scheme_theme_color="#333"
                     app:select_mode="range_mode"
                     app:selected_text_color="@color/colorPrimaryText"
-                    app:selected_theme_color="#EE7621"
+                    app:selected_theme_color="@color/colorPrimary"
                     app:week_background="#fff"
                     app:week_text_color="#111"
                     app:week_view="com.yumin.pomodoro.customize.CustomRangeWeekView"
@@ -102,7 +101,7 @@
                     android:layout_height="1px"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
-                    android:background="@color/line_color" />
+                    android:background="@color/colorPrimaryDark" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -147,7 +146,7 @@
                     <View
                         android:layout_width="1px"
                         android:layout_height="match_parent"
-                        android:background="@color/line_color" />
+                        android:background="@color/colorPrimaryDark" />
 
                     <LinearLayout
                         android:layout_width="0dp"

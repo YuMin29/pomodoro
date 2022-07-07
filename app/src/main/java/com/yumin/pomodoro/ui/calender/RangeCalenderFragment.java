@@ -51,7 +51,7 @@ public class RangeCalenderFragment extends DataBindingFragment implements Calend
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
     @Override
