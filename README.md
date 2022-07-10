@@ -10,11 +10,4 @@
 - [x] Offer a quick task feature. Can operate task directly without setup task attribute.
 - [x] Can backup and restore task data after sign-in.
 - [x] Auto-sync remote data after sign-in.
- 
-## Images
 
-![timer](timer.png)
-
-## Links
-
-You can download test version [here](https://drive.google.com/file/d/1aCQ_0F08ftO9vxWDw-HYG3VKDfCFPi0J/view?usp=sharing).
